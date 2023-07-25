@@ -1,41 +1,17 @@
-# Mermaid Chart
+# Credentials
 
-[MermaidJS](https://mermaid-js.github.io/) is library for generating svg charts and diagrams from text.
+## Certifications
 
-{{< hint info >}}
-**Override Mermaid Initialization Config**
+### AWS Certified Solutions Architect Associate (AWS-CSA-A)
+#### Expected Aug. 2023
+### Red Hat Certified Engineer (RHCE) 
+#### Mar. 2023
+### Red Hat Certified Professional (RHCP) 
+#### Apr. 2022
+### CompTIA Security Plus (Sec+) 
+#### Feb. 2022
 
-To override the [initialization config](https://mermaid-js.github.io/mermaid/#/Setup) for Mermaid,
-create a `mermaid.json` file in your `assets` folder!
-{{< /hint >}}
+## Degree
 
-## Example
-
-{{< columns >}}
-```tpl
-{{</*/* mermaid [class="text-center"]*/*/>}}
-stateDiagram-v2
-    State1: The state with a note
-    note right of State1
-        Important information! You can write
-        notes.
-    end note
-    State1 --> State2
-    note left of State2 : This is the note to the left.
-{{</*/* /mermaid */*/>}}
-```
-
-<--->
-
-{{< mermaid >}}
-stateDiagram-v2
-    State1: The state with a note
-    note right of State1
-        Important information! You can write
-        notes.
-    end note
-    State1 --> State2
-    note left of State2 : This is the note to the left.
-{{< /mermaid >}}
-
-{{< /columns >}}
+### BS - Civil Engineering - Washington State University 
+#### May 2018

@@ -9,17 +9,6 @@ I am a certified **Red Hat Engineer** specializing in Cloud & IT Security Automa
 intense industry experience and **$5,000,000** of sold and delivered services in the solutions architecture
 and sales engineering space.
 
-## Credentials:
-
-### Red Hat Certified Engineer (RHCE) 
-#### Mar. 2023
-### Red Hat Certified Professional (RHCP) 
-#### Apr. 2022
-### CompTIA Security Plus (Sec+) 
-#### Feb. 2022
-### BS - Civil Engineering - Washington State University 
-#### May 2018
-
 ## Experience:
 
 ### Lead Solutions Architect - Syxsense Inc. 
