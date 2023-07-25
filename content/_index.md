@@ -3,7 +3,7 @@ title: Introduction
 type: docs
 ---
 
-# Who we are
+# Who I Am
 
 ## Graham Brooks
 
