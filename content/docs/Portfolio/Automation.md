@@ -1,45 +1,20 @@
-# Columns
+# Automation Projects
+## Hard Drive Auditor
+    github.com/LittleSeneca/hard-drive-auditor
+Many organizations have stacks of hard drives laying around the office. Many of these hard drives are unlabeled. Thats dangerous! This tool provides a fast process to quickly analyze hard drives for their file contents. No need to manually click through file systems.
 
-Columns help organize shorter pieces of content horizontally for readability.
+If the drive is a standard un-encrypted windows drive, it will simply crawl through the drive, finding and displaying the hostname from the registry and the user folder contents.
 
+If its a bitlocker encrypted windows drive, it will prompt you for the recovery password (which im assuming can be pulled from your Org's ADUC). Once the password has been accepted, the script will automatically mount the bitlocker drive and scan it like an un-encrypted windows drive.
 
-```html
-{{</* columns */>}} <!-- begin columns block -->
-# Left Content
-Lorem markdownum insigne...
+If the drive is a filesystem without a operating system, it will output the root directory file system of the drive.
 
-<---> <!-- magic separator, between columns -->
+If the drive is a linux filesystem, it will output the root directory file system of the drive and state that it is a linux boot device.
 
-# Mid Content
-Lorem markdownum insigne...
+## Clonezilla Image Builder
+    github.com/LittleSeneca/clonezilla-builder
+Clonezilla is awesome! By default it has a huge amount of power. 
 
-<---> <!-- magic separator, between columns -->
+But, with a bit of effort, its existing utility can be greatly expanded. 
 
-# Right Content
-Lorem markdownum insigne...
-{{</* /columns */>}}
-```
-
-## Example
-
-{{< columns >}}
-## Left Content
-Lorem markdownum insigne. Olympo signis Delphis! Retexi Nereius nova develat
-stringit, frustra Saturnius uteroque inter! Oculis non ritibus Telethusa
-protulit, sed sed aere valvis inhaesuro Pallas animam: qui _quid_, ignes.
-Miseratus fonte Ditis conubia.
-
-<--->
-
-## Mid Content
-Lorem markdownum insigne. Olympo signis Delphis! Retexi Nereius nova develat
-stringit, frustra Saturnius uteroque inter!
-
-<--->
-
-## Right Content
-Lorem markdownum insigne. Olympo signis Delphis! Retexi Nereius nova develat
-stringit, frustra Saturnius uteroque inter! Oculis non ritibus Telethusa
-protulit, sed sed aere valvis inhaesuro Pallas animam: qui _quid_, ignes.
-Miseratus fonte Ditis conubia.
-{{< /columns >}}
+Unfortunately, it can be very cumbersome to unpackage and repackage a clonezilla image. That is why I built this tool. It efficiently unpackes and repackes clonezilla images with changes made to the syslinux, live, home, EFI, and Boot folders. Currently, I have added a boot menu entry which pulls a user determined github repo and prompts the user to run a script from the pulled repo.
