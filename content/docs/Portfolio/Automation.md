@@ -1,6 +1,7 @@
 # Automation Projects
 ## Hard Drive Auditor
-    [github.com/LittleSeneca/hard-drive-auditor](https://github.com/LittleSeneca/hard-drive-auditor)
+[github.com/LittleSeneca/hard-drive-auditor](https://github.com/LittleSeneca/hard-drive-auditor)
+
 Many organizations have stacks of hard drives laying around the office. Many of these hard drives are unlabeled. Thats dangerous! This tool provides a fast process to quickly analyze hard drives for their file contents. No need to manually click through file systems.
 
 If the drive is a standard un-encrypted windows drive, it will simply crawl through the drive, finding and displaying the hostname from the registry and the user folder contents.
@@ -12,7 +13,8 @@ If the drive is a filesystem without a operating system, it will output the root
 If the drive is a linux filesystem, it will output the root directory file system of the drive and state that it is a linux boot device.
 
 ## Clonezilla Image Builder
-    [github.com/LittleSeneca/clonezilla-builder](https://github.com/LittleSeneca/clonezilla-builder)
+[github.com/LittleSeneca/clonezilla-builder](https://github.com/LittleSeneca/clonezilla-builder)
+
 Clonezilla is awesome! By default it has a huge amount of power. 
 
 But, with a bit of effort, its existing utility can be greatly expanded. 
