@@ -10,6 +10,8 @@
     Awarded Apr. 2022
 ### CompTIA Security Plus (Sec+) 
     Earned Feb. 2022
+### Red Hat Certified Systems Administrator (RHCSA) 
+    Earned Sep. 2020
 
 ## Degrees
 
