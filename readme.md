@@ -1,6 +1,5 @@
-# Setting Up a Hugo Site Using AWS Amplify
-
-This README guides you through the process of setting up a Hugo site by forking a GitHub repository and deploying it using AWS Amplify.
+# How to Use this Repository to build your own site. 
+The website that this repository provides is located at [brooks-security.com](https://www.brooks-security.com).
 
 ## Prerequisites
 

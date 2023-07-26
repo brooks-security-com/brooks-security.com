@@ -17,12 +17,14 @@ In addition to these professional markers, the blog also features a traditional 
 
 ## Where to Find Me
 ### LinkedIn
-    linkedin.com/in/littleseneca/
+    [linkedin.com/in/littleseneca](https://linkedin.com/in/littleseneca/)
 ### Github
-    github.com/littleseneca
+    [github.com/littleseneca](https://github.com/littleseneca)
 ### Reddit
-    reddit.com/u/littleseneca
+    [reddit.com/u/littleseneca](https://reddit.com/u/littleseneca)
 ### Mastodon
-    mastodon.social/@littleseneca
+    [mastodon.social/@littleseneca](https://mastodon.social/@littleseneca)
 ### Instagram
-    instagram.com/littleseneca/
+    [instagram.com/littleseneca](https://instagram.com/littleseneca/)
+### Discord
+    @littleseneca
