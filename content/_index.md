@@ -3,22 +3,26 @@ title: Introduction
 type: docs
 ---
 
-# Who I Am
+## Who I Am
 
-## Graham Brooks
+My name is Graham Brooks. My online handle is @littleseneca in most places. I am an IT Security Automation specialist with a professional certification in Linux. My career path has been defined by goal-oriented learning, practical project experiences, and aligning roles with my skills and interests. Specialization in IT Security and Linux paved the way for a transition to a Solutions Architect role, where I honed my skills in conducting technical demos, managing new business, training pre-sales engineers, and facilitating sales.
 
-Lorem **markdownum** emicat gestu. Cannis sol pressit ducta. **Est** Idaei,
-tremens ausim se tutaeque, illi ulnis hausit, sed, lumina cutem. Quae avis
-sequens!
+Presently, I am immersed in learning Kubernetes, intending to specialize further in Container Security and Automation in the Cloud. I am also deeply committed to mentoring, sharing my knowledge, and guiding others on their professional journey. I believe that continuous learning is fundamental to career growth and, to that end, I continue to explore new tools and technologies, enriching my portfolio and enhancing my skills in a personal lab. Adapting to the dynamic IT industry landscape remains my goal, ensuring I remain at the forefront of emerging trends and technologies. When I'm not working, I'm either hiking with my wife and kids, training in the gym, or doing some kind of art project.
 
-    var panel = ram_design;
-    if (backup + system) {
-        file.readPoint = network_native;
-        sidebar_engine_device(cell_tftp_raster,
-                dual_login_paper.adf_vci.application_reader_design(
-                graphicsNvramCdma, lpi_footer_snmp, integer_model));
-    }
+## Purpose of this Blog
 
-## Locis suis novi cum suoque decidit eadem
+This blog serves as a comprehensive showcase of my professional journey in the IT industry, specifically in Automation, Security, and Linux administration. It is a blend of my formal resume, a record of my certifications, an overview of platforms I have experience with, and valuable projects I have worked on. The projects are further detailed with associated GitHub links and descriptions, providing insight into my hands-on experience and my problem-solving approach.
 
-Idmoniae ripis, at aves, ali missa adest, ut _et autem_, et ab?
+In addition to these professional markers, the blog also features a traditional blog section where I share content that piques my interest. This might range from new IT trends, technical tutorials, to personal insights about the industry.
+
+## Where to Find Me
+### LinkedIn
+    linkedin.com/in/littleseneca/
+### Github
+    github.com/littleseneca
+### Reddit
+    reddit.com/u/littleseneca
+### Mastodon
+    mastodon.social/@littleseneca
+### Instagram
+    instagram.com/littleseneca/
