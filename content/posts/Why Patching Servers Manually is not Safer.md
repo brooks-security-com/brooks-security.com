@@ -16,7 +16,9 @@ menu = "main"
 +++
 
 As part of my job, I frequently talk to IT managers and senior technical staff. A frequent statement I hear sounds like this, “We patch our servers manually to reduce the risk of an outage." This stance is understandable. Regrettable, but understandable. Lets dig into it. 
-Human Errors: Intentions vs. RealityHumans have expertise but are also prone to mistakes. In server patching, these mistakes can be significant:
+
+## Human Errors: Intentions vs. Reality
+Humans have expertise but are also prone to mistakes. In server patching, these mistakes can be significant:
 
 * Oversight in Patch Sequencing: Applying patches in the wrong order can destabilize a system.
 * Misconfigured Settings: A small error can disrupt services.
@@ -24,7 +26,9 @@ Human Errors: Intentions vs. RealityHumans have expertise but are also prone to 
 * Time Overlaps: Patching during high usage can cause outages.
 
 These errors can lead to business interruptions, data breaches, and system vulnerabilities.
-Process Control: The Consistency DilemmaConsistency is crucial in server maintenance. Manual patching can introduce variations. Different technicians might apply patches differently, leading to deviations. IT leadership often prefers manual patching, believing that human intervention provides a safety layer. They trust human technicians to notice and correct mistakes.
+
+## Process Control: The Consistency Dilemma
+Consistency is crucial in server maintenance. Manual patching can introduce variations. Different technicians might apply patches differently, leading to deviations. IT leadership often prefers manual patching, believing that human intervention provides a safety layer. They trust human technicians to notice and correct mistakes.
 
 ## Automation: The Two-sided Coin
 Automation offers accuracy and repeatability. However, it works best when set up correctly. A poorly configured automation can multiply errors. Every seasoned IT professional knows the horrors of a badly configured automation tool, which is why they assume automation is inherently risky for critical systems. But with the right setup, automation can be more efficient and reliable than manual operations.
