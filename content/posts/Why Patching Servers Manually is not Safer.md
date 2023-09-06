@@ -8,7 +8,7 @@ tags = [
     "security",
     "automation",
 ]
-date = "2022-12-17"
+date = "2023-09-06"
 categories = [
     "Career",
 ]
