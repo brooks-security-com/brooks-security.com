@@ -1,4 +1,24 @@
-baseURL = 'https://brooks-security.com/'
+baseURL = 'https://www.brooks-security.com/'
 languageCode = 'en-us'
-title = 'Brooks Security'
+title = 'Graham Brooks'
 theme = 'hugo-book'
+
+[deployment] # Deployment settings start here
+  # Target configuration for S3
+  [[deployment.targets]]
+    name = "brooks-security"
+    URL = "s3://brooks-security.com?region=us-east-1"
+    cloudFrontDistributionID = "E1QZQDBCV5WT01"
+
+  # Matchers for deployment
+  [[deployment.matchers]]
+    # Example: Cache-Control headers for images
+    pattern = "^.+\\.(jpg|jpeg|png|gif|webp|svg)$"
+    cacheControl = "max-age=31536000, no-transform, public"
+    gzip = true
+
+  [[deployment.matchers]]
+    # Example: Cache-Control for CSS and JS
+    pattern = "^.+\\.(css|js)$"
+    cacheControl = "max-age=31536000, no-transform, public"
+    gzip = true

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Blog on Graham Brooks</title>
+    <link>https://www.brooks-security.com/posts/</link>
+    <description>Recent content in Blog on Graham Brooks</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 08 Jan 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://www.brooks-security.com/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Grand Goals for 2024</title>
+      <link>https://www.brooks-security.com/posts/grand-goals-for-2024/</link>
+      <pubDate>Mon, 08 Jan 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.brooks-security.com/posts/grand-goals-for-2024/</guid>
+      <description>I have some difficult but needed goals for 2024. This year, I&amp;rsquo;ve set my sights on an targeted series of certifications, each chosen to deepen my understanding and authority in the IT Security and Cloud Security space.
+2024 - A Year of Intensive Learning # AWS Solutions Architect Associate - January # Starting the year strong, I&amp;rsquo;m diving into the AWS Solutions Architect Associate certification. It’s all about mastering the art of designing and managing scalable systems on AWS.</description>
+    </item>
+    
+    <item>
+      <title>Cost-effective Migration to the Cloud</title>
+      <link>https://www.brooks-security.com/posts/cost-effective-migration-to-the-cloud/</link>
+      <pubDate>Fri, 15 Sep 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.brooks-security.com/posts/cost-effective-migration-to-the-cloud/</guid>
+      <description>The transition from on-premises data centers to cloud-hosted providers has become increasingly prevalent, offering organizations the benefits of flexibility, scalability, and often, a reduced total cost of ownership. However, with this migration comes unique challenges, particularly in terms of security and cost management. Let’s delve into why enlisting expert assistance during this transition can both reduce costs and enhance security.
+Understanding Security Differences # The security paradigm for cloud-hosted services differs significantly from that of traditional on-premises data centers.</description>
+    </item>
+    
+    <item>
+      <title>How I&#39;m Developing My Career: The Power of Goal-Oriented Learning</title>
+      <link>https://www.brooks-security.com/posts/how-im-developing-my-career-the-power-of-goal-oriented-learning-copy/</link>
+      <pubDate>Wed, 06 Sep 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.brooks-security.com/posts/how-im-developing-my-career-the-power-of-goal-oriented-learning-copy/</guid>
+      <description>Crafting a career is a journey of choices and learning. As an IT Security Automation specialist with a professional certification in Linux, I&amp;rsquo;ve navigated this journey through a mix of goal-oriented certifications, practical projects, and roles that matched my growing interests and skills.
+Certifications as Learning Goals # Certifications gave a concrete form to my learning goals. After earning a degree in Civil Engineering (Which in retrospect - should have been a degree in Computer Science), I transitioned into the IT sector, gaining hands-on experience with various IT tools and platforms.</description>
+    </item>
+    
+    <item>
+      <title>Why Patching Servers Manually is not Safer</title>
+      <link>https://www.brooks-security.com/posts/why-patching-servers-manually-is-not-safer/</link>
+      <pubDate>Wed, 06 Sep 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.brooks-security.com/posts/why-patching-servers-manually-is-not-safer/</guid>
+      <description>As part of my job, I frequently talk to IT managers and senior technical staff. A frequent statement I hear sounds like this, “We patch our servers manually to reduce the risk of an outage.&amp;quot; This stance is understandable. Regrettable, but understandable. Lets dig into it.
+Human Errors: Intentions vs. Reality # Humans have expertise but are also prone to mistakes. In server patching, these mistakes can be significant:
+Oversight in Patch Sequencing: Applying patches in the wrong order can destabilize a system.</description>
+    </item>
+    
+    <item>
+      <title>The Necessity of Coding Skills for Sysadmins: Bridging the DevOps Gap</title>
+      <link>https://www.brooks-security.com/posts/the-necessity-of-coding-skills-for-sysadmins-bridging-the-devops-gap/</link>
+      <pubDate>Thu, 17 Nov 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.brooks-security.com/posts/the-necessity-of-coding-skills-for-sysadmins-bridging-the-devops-gap/</guid>
+      <description>The role of a System Administrator, or SysAdmin, is evolving. The lines between development and operations are blurring, and the rise of DevOps culture necessitates SysAdmins to add a new skill to their repertoire: coding.
+The Convergence of Development and Operations # The tech world is experiencing a fundamental shift as the walls between development and operations start to crumble. This shift is largely driven by the DevOps movement—a cultural phenomenon that encourages greater collaboration and integration between the traditionally separate developer and IT operations teams.</description>
+    </item>
+    
+    <item>
+      <title>Why Ansible Outshines Chef and Puppet for Configuration Management</title>
+      <link>https://www.brooks-security.com/posts/why-ansible-outshines-chef-and-puppet-for-configuration-management/</link>
+      <pubDate>Mon, 17 Oct 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.brooks-security.com/posts/why-ansible-outshines-chef-and-puppet-for-configuration-management/</guid>
+      <description>When it comes to configuration management and IT automation, Ansible, Chef, and Puppet are generally the primary topics of conversation. While each has its strengths, Ansible stands out as the preferred choice for many organizations. Its utilization of Python and the lack of an agent-based architecture offer several significant advantages.
+1. Python-Powered Simplicity # Ansible, powered by Python, reaps all the benefits of the underlying language. Python’s clean syntax and readability make Ansible&amp;rsquo;s Playbooks (its configuration scripts) easier to create, understand, and maintain than Chef&amp;rsquo;s Ruby-based Cookbooks or Puppet&amp;rsquo;s Puppet Manifests.</description>
+    </item>
+    
+    <item>
+      <title>The Strength of Python for Linux Automation</title>
+      <link>https://www.brooks-security.com/posts/the-strength-of-python-for-linux-automation/</link>
+      <pubDate>Sat, 17 Sep 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.brooks-security.com/posts/the-strength-of-python-for-linux-automation/</guid>
+      <description>Python and Ruby offer robust functionality. However, Python holds distinct advantages for Linux automation.
+1. Comprehensive Standard Library # Python&amp;rsquo;s &amp;lsquo;batteries included&amp;rsquo; philosophy equips it with a robust standard library. This reduces reliance on external modules. Ruby possesses a commendable library, but Python’s is more extensive.
+2. Streamlined Syntax # Python&amp;rsquo;s clear and readable syntax expedites scripting. Its simplicity boosts productivity and speeds development, surpassing Ruby in this context.
+3. Ideal for Linux Operations # Python provides comprehensive libraries for Linux operations.</description>
+    </item>
+    
+    <item>
+      <title>The Profitability of Honesty: A Practical Approach to Ethical Business</title>
+      <link>https://www.brooks-security.com/posts/the-profitability-of-honesty-a-practical-approach-to-ethical-business/</link>
+      <pubDate>Sat, 10 Sep 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.brooks-security.com/posts/the-profitability-of-honesty-a-practical-approach-to-ethical-business/</guid>
+      <description>Doing business is often about numbers, but there&amp;rsquo;s more to it than just profit. Ethics, although often overshadowed by monetary pursuits, stand as the cornerstone of every transaction.
+Truthfulness, a vital ethic, surprisingly yields high returns. Paradoxical as it may sound, honesty can secure sales, even when it seems like it could jeopardize them. The key lies in understanding that short-term profits should not overshadow long-term customer trust.
+The principle is clear: Morals should guide business actions.</description>
+    </item>
+    
+    <item>
+      <title>Colemak: An Efficient Keyboard Layout</title>
+      <link>https://www.brooks-security.com/posts/colemak-an-efficient-keyboard-layout/</link>
+      <pubDate>Sat, 12 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.brooks-security.com/posts/colemak-an-efficient-keyboard-layout/</guid>
+      <description>Colemak is a keyboard layout devised by Shai Coleman, prioritizing efficiency, speed, and ergonomics. The design situates the most used keys beneath the strongest fingers, reducing finger travel by 35% compared to QWERTY. This reduction in movement increases typing speed, enhances comfort, reduces finger fatigue, and mitigates the risk of Repetitive Strain Injury (RSI).
+Transition to Colemak # Transitioning to Colemak was an absolute commitment, a leap from QWERTY to Colemak.</description>
+    </item>
+    
+  </channel>
+</rss>

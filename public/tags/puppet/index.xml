@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>puppet on Graham Brooks</title>
+    <link>https://www.brooks-security.com/tags/puppet/</link>
+    <description>Recent content in puppet on Graham Brooks</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 17 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://www.brooks-security.com/tags/puppet/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Why Ansible Outshines Chef and Puppet for Configuration Management</title>
+      <link>https://www.brooks-security.com/posts/why-ansible-outshines-chef-and-puppet-for-configuration-management/</link>
+      <pubDate>Mon, 17 Oct 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.brooks-security.com/posts/why-ansible-outshines-chef-and-puppet-for-configuration-management/</guid>
+      <description>When it comes to configuration management and IT automation, Ansible, Chef, and Puppet are generally the primary topics of conversation. While each has its strengths, Ansible stands out as the preferred choice for many organizations. Its utilization of Python and the lack of an agent-based architecture offer several significant advantages.
+1. Python-Powered Simplicity # Ansible, powered by Python, reaps all the benefits of the underlying language. Python’s clean syntax and readability make Ansible&amp;rsquo;s Playbooks (its configuration scripts) easier to create, understand, and maintain than Chef&amp;rsquo;s Ruby-based Cookbooks or Puppet&amp;rsquo;s Puppet Manifests.</description>
+    </item>
+    
+  </channel>
+</rss>

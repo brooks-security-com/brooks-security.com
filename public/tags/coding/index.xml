@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>coding on Graham Brooks</title>
+    <link>https://www.brooks-security.com/tags/coding/</link>
+    <description>Recent content in coding on Graham Brooks</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 08 Jan 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://www.brooks-security.com/tags/coding/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Grand Goals for 2024</title>
+      <link>https://www.brooks-security.com/posts/grand-goals-for-2024/</link>
+      <pubDate>Mon, 08 Jan 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.brooks-security.com/posts/grand-goals-for-2024/</guid>
+      <description>I have some difficult but needed goals for 2024. This year, I&amp;rsquo;ve set my sights on an targeted series of certifications, each chosen to deepen my understanding and authority in the IT Security and Cloud Security space.
+2024 - A Year of Intensive Learning # AWS Solutions Architect Associate - January # Starting the year strong, I&amp;rsquo;m diving into the AWS Solutions Architect Associate certification. It’s all about mastering the art of designing and managing scalable systems on AWS.</description>
+    </item>
+    
+    <item>
+      <title>Cost-effective Migration to the Cloud</title>
+      <link>https://www.brooks-security.com/posts/cost-effective-migration-to-the-cloud/</link>
+      <pubDate>Fri, 15 Sep 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.brooks-security.com/posts/cost-effective-migration-to-the-cloud/</guid>
+      <description>The transition from on-premises data centers to cloud-hosted providers has become increasingly prevalent, offering organizations the benefits of flexibility, scalability, and often, a reduced total cost of ownership. However, with this migration comes unique challenges, particularly in terms of security and cost management. Let’s delve into why enlisting expert assistance during this transition can both reduce costs and enhance security.
+Understanding Security Differences # The security paradigm for cloud-hosted services differs significantly from that of traditional on-premises data centers.</description>
+    </item>
+    
+    <item>
+      <title>How I&#39;m Developing My Career: The Power of Goal-Oriented Learning</title>
+      <link>https://www.brooks-security.com/posts/how-im-developing-my-career-the-power-of-goal-oriented-learning-copy/</link>
+      <pubDate>Wed, 06 Sep 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.brooks-security.com/posts/how-im-developing-my-career-the-power-of-goal-oriented-learning-copy/</guid>
+      <description>Crafting a career is a journey of choices and learning. As an IT Security Automation specialist with a professional certification in Linux, I&amp;rsquo;ve navigated this journey through a mix of goal-oriented certifications, practical projects, and roles that matched my growing interests and skills.
+Certifications as Learning Goals # Certifications gave a concrete form to my learning goals. After earning a degree in Civil Engineering (Which in retrospect - should have been a degree in Computer Science), I transitioned into the IT sector, gaining hands-on experience with various IT tools and platforms.</description>
+    </item>
+    
+    <item>
+      <title>The Necessity of Coding Skills for Sysadmins: Bridging the DevOps Gap</title>
+      <link>https://www.brooks-security.com/posts/the-necessity-of-coding-skills-for-sysadmins-bridging-the-devops-gap/</link>
+      <pubDate>Thu, 17 Nov 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.brooks-security.com/posts/the-necessity-of-coding-skills-for-sysadmins-bridging-the-devops-gap/</guid>
+      <description>The role of a System Administrator, or SysAdmin, is evolving. The lines between development and operations are blurring, and the rise of DevOps culture necessitates SysAdmins to add a new skill to their repertoire: coding.
+The Convergence of Development and Operations # The tech world is experiencing a fundamental shift as the walls between development and operations start to crumble. This shift is largely driven by the DevOps movement—a cultural phenomenon that encourages greater collaboration and integration between the traditionally separate developer and IT operations teams.</description>
+    </item>
+    
+    <item>
+      <title>Colemak: An Efficient Keyboard Layout</title>
+      <link>https://www.brooks-security.com/posts/colemak-an-efficient-keyboard-layout/</link>
+      <pubDate>Sat, 12 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.brooks-security.com/posts/colemak-an-efficient-keyboard-layout/</guid>
+      <description>Colemak is a keyboard layout devised by Shai Coleman, prioritizing efficiency, speed, and ergonomics. The design situates the most used keys beneath the strongest fingers, reducing finger travel by 35% compared to QWERTY. This reduction in movement increases typing speed, enhances comfort, reduces finger fatigue, and mitigates the risk of Repetitive Strain Injury (RSI).
+Transition to Colemak # Transitioning to Colemak was an absolute commitment, a leap from QWERTY to Colemak.</description>
+    </item>
+    
+  </channel>
+</rss>

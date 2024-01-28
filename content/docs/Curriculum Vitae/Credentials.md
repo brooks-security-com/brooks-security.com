@@ -3,7 +3,7 @@
 ## Certifications
 
 ### AWS Certified Solutions Architect Associate (AWS-CSA-A)
-    Expected Aug. 2023
+    Earned Jan. 2024
 ### Red Hat Certified Engineer (RHCE) 
     Earned Mar. 2023
 ### Red Hat Certified Professional (RHCP) 

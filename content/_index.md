@@ -26,13 +26,7 @@ In addition to these professional markers, the blog also features a traditional 
 ### Github
 [github.com/littleseneca](https://github.com/littleseneca)
 
-### Reddit
-[reddit.com/u/littleseneca](https://reddit.com/u/littleseneca)
-
 <---> <!-- magic separator, between columns -->
-
-### Mastodon
-[mastodon.social/@littleseneca](https://mastodon.social/@littleseneca)
 
 ### Instagram
 [instagram.com/littleseneca](https://instagram.com/littleseneca/)

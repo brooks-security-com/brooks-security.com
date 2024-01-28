@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="As part of my job, I frequently talk to IT managers and senior technical staff. A frequent statement I hear sounds like this, “We patch our servers manually to reduce the risk of an outage.&quot; This stance is understandable. Regrettable, but understandable. Lets dig into it.
+Human Errors: Intentions vs. Reality # Humans have expertise but are also prone to mistakes. In server patching, these mistakes can be significant:
+Oversight in Patch Sequencing: Applying patches in the wrong order can destabilize a system.">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="Why Patching Servers Manually is not Safer" />
+<meta property="og:description" content="As part of my job, I frequently talk to IT managers and senior technical staff. A frequent statement I hear sounds like this, “We patch our servers manually to reduce the risk of an outage.&quot; This stance is understandable. Regrettable, but understandable. Lets dig into it.
+Human Errors: Intentions vs. Reality # Humans have expertise but are also prone to mistakes. In server patching, these mistakes can be significant:
+Oversight in Patch Sequencing: Applying patches in the wrong order can destabilize a system." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.brooks-security.com/posts/why-patching-servers-manually-is-not-safer/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-09-06T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-09-06T00:00:00+00:00" />
+<title>Why Patching Servers Manually is not Safer | Graham Brooks</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/favicon.png" >
+<link rel="stylesheet" href="/book.min.33a48f5432973b8ff9a82679d9e45d67f2c15d4399bd2829269455cfe390b5e8.css" integrity="sha256-M6SPVDKXO4/5qCZ52eRdZ/LBXUOZvSgpJpRVz&#43;OQteg=" crossorigin="anonymous">
+  <script defer src="/flexsearch.min.js"></script>
+  <script defer src="/en.search.min.f73893710e2bd89bee3b5d32cd718b0154cb9742368d5b0c7bbe65cfcef5998d.js" integrity="sha256-9ziTcQ4r2JvuO10yzXGLAVTLl0I2jVsMe75lz871mY0=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><span>Graham Brooks</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="Search" aria-label="Search" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>Curriculum Vitae</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/curriculum-vitae/credentials/" class="">Credentials</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/curriculum-vitae/platforms/" class="">Platforms</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/curriculum-vitae/work-experience/" class="">Work Experience</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>Portfolio</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/portfolio/automation/" class="">Automation</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/portfolio/containers/" class="">Containers</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/portfolio/gitops/" class="">Git Ops</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/portfolio/machine-learning/" class="">Machine Learning</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/portfolio/x-as-code/" class="">X as Code</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="/posts/"  >
+        Blog
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Why Patching Servers Manually is not Safer</strong>
+
+  <label for="toc-control">
+    
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#human-errors-intentions-vs-reality">Human Errors: Intentions vs. Reality</a></li>
+    <li><a href="#process-control-the-consistency-dilemma">Process Control: The Consistency Dilemma</a></li>
+    <li><a href="#automation-the-two-sided-coin">Automation: The Two-sided Coin</a></li>
+    <li><a href="#change-control-and-automation-the-harmonized-approach">Change Control and Automation: The Harmonized Approach</a></li>
+    <li><a href="#tool-selection-picking-the-right-automation-solution">Tool Selection: Picking the Right Automation Solution</a></li>
+    <li><a href="#transitioning-to-safe-automation">Transitioning to Safe Automation:</a></li>
+    <li><a href="#in-conclusion">In Conclusion</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+<article class="markdown">
+  <h1>
+    <a href="/posts/why-patching-servers-manually-is-not-safer/">Why Patching Servers Manually is not Safer</a>
+  </h1>
+  
+  <h5>September 6, 2023</h5>
+
+
+
+  
+  <div>
+    
+      <a href="/categories/career/">Career</a>
+  </div>
+  
+
+  
+  <div>
+    
+      <a href="/tags/skills/">skills</a>, 
+      <a href="/tags/patching/">patching</a>, 
+      <a href="/tags/sysadmin/">sysadmin</a>, 
+      <a href="/tags/security/">security</a>, 
+      <a href="/tags/automation/">automation</a>
+  </div>
+  
+
+
+
+<p>As part of my job, I frequently talk to IT managers and senior technical staff. A frequent statement I hear sounds like this, “We patch our servers manually to reduce the risk of an outage.&quot; This stance is understandable. Regrettable, but understandable. Lets dig into it.</p>
+<h2 id="human-errors-intentions-vs-reality">
+  Human Errors: Intentions vs. Reality
+  <a class="anchor" href="#human-errors-intentions-vs-reality">#</a>
+</h2>
+<p>Humans have expertise but are also prone to mistakes. In server patching, these mistakes can be significant:</p>
+<ul>
+<li>Oversight in Patch Sequencing: Applying patches in the wrong order can destabilize a system.</li>
+<li>Misconfigured Settings: A small error can disrupt services.</li>
+<li>Version Mismatch: Using an outdated patch can threaten system stability.</li>
+<li>Time Overlaps: Patching during high usage can cause outages.</li>
+</ul>
+<p>These errors can lead to business interruptions, data breaches, and system vulnerabilities.</p>
+<h2 id="process-control-the-consistency-dilemma">
+  Process Control: The Consistency Dilemma
+  <a class="anchor" href="#process-control-the-consistency-dilemma">#</a>
+</h2>
+<p>Consistency is crucial in server maintenance. Manual patching can introduce variations. Different technicians might apply patches differently, leading to deviations. IT leadership often prefers manual patching, believing that human intervention provides a safety layer. They trust human technicians to notice and correct mistakes.</p>
+<h2 id="automation-the-two-sided-coin">
+  Automation: The Two-sided Coin
+  <a class="anchor" href="#automation-the-two-sided-coin">#</a>
+</h2>
+<p>Automation offers accuracy and repeatability. However, it works best when set up correctly. A poorly configured automation can multiply errors. Every seasoned IT professional knows the horrors of a badly configured automation tool, which is why they assume automation is inherently risky for critical systems. But with the right setup, automation can be more efficient and reliable than manual operations.</p>
+<h2 id="change-control-and-automation-the-harmonized-approach">
+  Change Control and Automation: The Harmonized Approach
+  <a class="anchor" href="#change-control-and-automation-the-harmonized-approach">#</a>
+</h2>
+<p>The solution to the Automation vs. Human debate is change control. The primary concern most people have with automation is that if it goes off the rails, it goes off the rails hard and breaks a lot of things. This doesn’t mean that automation is bad. Just that there needs to be complementary systems in place to keep automation in check. That’s what change control is for. It ensures that each change is logged and can be tracked, making rollbacks much simpler if needed:</p>
+<ul>
+<li>Scientific Precision: Automated processes eliminate human variables.</li>
+<li>Feedback Efficiency: Problems can be identified and solved quickly.</li>
+<li>Human-led vs. Machine-led Discipline: Machines follow protocols consistently, whereas humans might skip steps or document inaccurately.</li>
+</ul>
+<h2 id="tool-selection-picking-the-right-automation-solution">
+  Tool Selection: Picking the Right Automation Solution
+  <a class="anchor" href="#tool-selection-picking-the-right-automation-solution">#</a>
+</h2>
+<p>So, how do you choose the right automation tool? Here are some checklist items to look for in your search:</p>
+<ul>
+<li>Scalability: Tools should grow with your organization.</li>
+<li>Security: Ensure tools protect against threats.</li>
+<li>Usability: Look for easy-to-use tools with good documentation and support.</li>
+<li>Integration: Tools should work with existing systems.</li>
+<li>Feedback Mechanisms: Tools should provide real-time alerts and support for change control.</li>
+</ul>
+<h2 id="transitioning-to-safe-automation">
+  Transitioning to Safe Automation:
+  <a class="anchor" href="#transitioning-to-safe-automation">#</a>
+</h2>
+<p>Shifting from manual to automated systems requires a careful approach:</p>
+<ul>
+<li>Incremental Rollout: Start with less critical systems and expand as you learn.</li>
+<li>Robust Monitoring: Keep a comprehensive view of your systems.</li>
+<li>Continuous Review: Adjust your strategies as the digital environment changes.</li>
+<li>Training: Ensure your team understands how to use the automation tools effectively.</li>
+</ul>
+<h2 id="in-conclusion">
+  In Conclusion
+  <a class="anchor" href="#in-conclusion">#</a>
+</h2>
+<p>While manual server patching offers control, it also brings risks. Combining human expertise with automation can provide the best results, allowing businesses to benefit from both human insight and machine precision.</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#human-errors-intentions-vs-reality">Human Errors: Intentions vs. Reality</a></li>
+    <li><a href="#process-control-the-consistency-dilemma">Process Control: The Consistency Dilemma</a></li>
+    <li><a href="#automation-the-two-sided-coin">Automation: The Two-sided Coin</a></li>
+    <li><a href="#change-control-and-automation-the-harmonized-approach">Change Control and Automation: The Harmonized Approach</a></li>
+    <li><a href="#tool-selection-picking-the-right-automation-solution">Tool Selection: Picking the Right Automation Solution</a></li>
+    <li><a href="#transitioning-to-safe-automation">Transitioning to Safe Automation:</a></li>
+    <li><a href="#in-conclusion">In Conclusion</a></li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
