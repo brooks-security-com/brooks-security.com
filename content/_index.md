@@ -6,11 +6,9 @@ type: docs
 ## Who I Am
 ![Scenario 1: Across columns](/grahambrooks.png)
 
+My name is Graham Brooks. My online handle is @littleseneca most places. I am an IT Security Automation specialist with a professional certifications in Linux Server Automation, Cloud Computing, and Security Administration. My career path has been defined by goal-oriented learning, practical project experiences, and aligning roles with my skills and interests. Specialization in IT Security and Linux paved the way for a transition to a Solutions Architect role, where I have provided security hardening services to clients in a pre and post sales solutions architecture capacity.  
 
-
-My name is Graham Brooks. My online handle is @littleseneca most places. I am an IT Security Automation specialist with a professional certification in Linux. My career path has been defined by goal-oriented learning, practical project experiences, and aligning roles with my skills and interests. Specialization in IT Security and Linux paved the way for a transition to a Solutions Architect role, where I honed my skills in conducting technical demos, managing new business, training pre-sales engineers, and facilitating sales.
-
-Presently, I am immersed in learning Kubernetes and AWS, intending to specialize further in Container Security and Automation in the Cloud. I am also deeply committed to mentoring, sharing my knowledge, and guiding others on their professional journey. I believe that continuous learning is fundamental to career growth and, to that end, I continue to explore new tools and technologies, enriching my portfolio and enhancing my skills in a personal lab. Adapting to the dynamic IT industry landscape remains my goal, ensuring I remain at the forefront of emerging trends and technologies. When I'm not working, I'm either hiking with my wife and kid, training in the gym, or doing some kind of art project.
+Presently, I am immersed in learning Kubernetes and AWS, intending to specialize further in Container Security and Automation in the Cloud. I am also deeply committed to mentoring, sharing my knowledge, and guiding others on their professional journey. I believe that continuous learning is fundamental to career growth and, to that end, I continue to explore new tools and technologies, enriching my portfolio and enhancing my skills in a personal lab. When I'm not working, I'm either hiking with my wife and kid, training in the gym, or doing some kind of art project.
 
 ## Purpose of this Blog
 
@@ -21,17 +19,11 @@ In addition to these professional markers, the blog also features a traditional 
 ## Where to Find Me
 {{< columns >}} <!-- begin columns block -->
 ### LinkedIn
-[linkedin.com/in/littleseneca](https://linkedin.com/in/littleseneca/)
+[linkedin.com/in/littleseneca](https://linkedin.com/in/grahamwbrooks/)
 
-### Github
-[github.com/littleseneca](https://github.com/littleseneca)
 
 <---> <!-- magic separator, between columns -->
-
-### Instagram
-[instagram.com/littleseneca](https://instagram.com/littleseneca/)
-
-### Discord
-@littleseneca
+### Github
+[github.com/littleseneca](https://github.com/littleseneca)
 
 {{< /columns >}}

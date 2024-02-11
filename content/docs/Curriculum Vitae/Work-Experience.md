@@ -2,32 +2,35 @@
 
 ## Context:
 
-I am a seasoned Red Hat Certified Engineer with a specialized focus in Cloud & IT Security Automation. I have 7 years of intense industry experience and have successfully sold and delivered services valued in the 8-figure range. My expertise spans across solutions architecture and sales engineering, where I have consistently delivered high-value solutions to complex technical challenge.
+I am a skilled Red Hat Certified Engineer with extensive experience in designing and implementing security automation solutions in both traditional and cloud environments. I have Expertise in deploying scalable, secure infrastructures using Ansible and Python, with a focus on automation to enhance operational efficiencies. With over 7 years of experience in IT and Security, including 3 years of specialized expertise in solutions architecture, I have driven significant improvements in security posture for clients across government, education, and banking sectors at an international scale.  
 
 ## Experience:
 
-### Presales Manager - Syxsense Inc.
+### Lead Solutions Architect - Syxsense Inc.
 **2023 - Present**
-- Lead a team of 5 pre-sales engineers at Syxsense, providing training, project guidance, and sales support across the US and IMEA.
-- Provided primary technical sales support on a successful competitive $40 million bid for a high-profile project with national scope and international presence.
-- Act as the primary liaison between Development and Sales teams, relaying customer feedback to the Product Manager and aiding in the creation of our development roadmap.
-- Contribute to marketing efforts by creating collateral, hosting webcasts, and representing the company at monthly partner conferences across North America.
+- Hybrid and Multi-Cloud Expertise: Led the design and implementation of security solutions across hybrid and multi-cloud environments, focusing on automation to streamline operations and enhance security.
+- Technical Leadership and Automation: Oversaw the deployment of automated security solutions using Ansible and Python, significantly reducing manual overhead and improving response times.
+- Strategic Development Contributions: Key player in strategic planning for security automation, aligning product development with emerging cloud security trends and customer needs.
+- Industry Advocacy: Acted as the technical spokesperson at industry events, sharing insights on effective security automation practices in hybrid and multi-cloud settings.
 
 ### Senior Security Solutions Architect - Syxsense Inc.
 **2022 - 2023**
-- As a technical sales specialist for Syxsense's East Coast operations, supported 5 Account Executives and facilitated $2,000,000 in sales in 11 months.
-- Hosted 24 marketing webcasts and was the go-to technical expert at in-person marketing events, including BlackHat USA.
-- Also built the Syxsense platform’s user guide.
+- Solutions Engineering: Designed and implemented tailored security automation solutions in the critical infrastructure space, leveraging Ansible and Python for seamless integration of AWS Hosted EC2 instances into our platforms.
+- Vulnerability Management: Developed advanced vulnerability management frameworks for Linux servers in regulated on-premises environments, enhancing security for customers with over 30 thousand endpoints under management.
+- Product Support: Built the Syxsense platform’s user guide and provided technical support to customers.
+- Platform Engineering: Committed code (mostly Bash and Python) for the Syxsense platform to improve availability of our solution for linux endpoints. 
 
 ### Solutions Architect - Syxsense Inc.
 **2021 - 2022**
-- Managed $1,000,000 worth of new business through technical demos, proof of concept tests, and RFI/RFP responses.
-- Developed and presented educational webinars for the Marketing Team.
+- Sales Engineering: Collected over 100 new logos to Syxsense, providing proof of concepts & RFI/RFP responses.
+- Solutions Architecture: Co-architected our solution to match clients' environments.
+- Marketing Initiatives: Developed and presented educational webinars for the Marketing Team.
 
 ### Linux Analyst - Schweitzer Engineering Laboratories
 **2020 - 2021**
-- Provided support for the company's Linux users and created a standardized, domain-integrated Ubuntu Linux image.
-- Collaborated with the Security Operations team to apply CIS benchmarks to all new and existing Linux endpoints using the Chef configuration platform.
+- Operations Support: Provided support for company's Linux users.
+- Platform Development: Created a standardized, domain-integrated Ubuntu Linux distribution for the company.
+- Security Operations: Collaborated with the Security Operations team to apply CIS benchmarks to all new and existing Linux endpoints using the Chef configuration as code platform.
 
 ### IT Technician - Schweitzer Engineering Laboratories
 **2018 - 2020**
