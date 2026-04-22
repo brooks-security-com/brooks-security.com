@@ -18,8 +18,9 @@ permissions:
   contents: read
 
 env:
-  # Must be >= 0.158.0 to satisfy the hugo-book theme and find shortcodes
-  # under the new `layouts/_shortcodes/` path (Hugo layouts-v2 convention).
+  # Must be >= 0.158.0 for hugo-book (shortcodes under `layouts/_shortcodes/`).
+  # We pull the `extended_withdeploy` edition: extended for the theme's SCSS,
+  # withdeploy for the `hugo deploy` subcommand (split out in 0.159.2).
   HUGO_VERSION: '0.160.1'
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -41,7 +42,7 @@ jobs:
         run: |
           # Extract into /tmp because the repo root already has a hugo/ dir,
           # and `tar` refuses to overwrite a directory with the hugo binary.
-          curl -fsSL "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz" -o /tmp/hugo.tar.gz
+          curl -fsSL "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_withdeploy_${HUGO_VERSION}_linux-amd64.tar.gz" -o /tmp/hugo.tar.gz
           tar -xzf /tmp/hugo.tar.gz -C /tmp hugo
           sudo mv /tmp/hugo /usr/local/bin/hugo
           hugo version
@@ -76,7 +77,7 @@ jobs:
         run: |
           # Extract into /tmp because the repo root already has a hugo/ dir,
           # and `tar` refuses to overwrite a directory with the hugo binary.
-          curl -fsSL "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz" -o /tmp/hugo.tar.gz
+          curl -fsSL "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_withdeploy_${HUGO_VERSION}_linux-amd64.tar.gz" -o /tmp/hugo.tar.gz
           tar -xzf /tmp/hugo.tar.gz -C /tmp hugo
           sudo mv /tmp/hugo /usr/local/bin/hugo
           hugo version
