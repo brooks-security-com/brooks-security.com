@@ -1,6 +1,3 @@
-[submodule "themes/hugo-book"]
-	path = themes/hugo-book
-	url = https://github.com/alex-shpak/hugo-book
-[submodule "terraform/hugo/themes/hugo-book"]
-	path = terraform/hugo/themes/hugo-book
+[submodule "hugo/themes/hugo-book"]
+	path = hugo/themes/hugo-book
 	url = https://github.com/alex-shpak/hugo-book

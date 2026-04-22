@@ -29,13 +29,10 @@ jobs:
     name: 'Hugo Build'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout (with theme submodule)
         uses: actions/checkout@v4
         with:
-          # `submodules: recursive` is a no-op here — the hugo-book submodule
-          # in .gitmodules still points to the old root-level path and no
-          # gitlink exists for hugo/themes/hugo-book. The "Fetch hugo-book
-          # theme" step below clones it explicitly instead.
+          submodules: recursive
           fetch-depth: 0
 
       - name: Install Hugo (extended)
@@ -46,12 +43,6 @@ jobs:
           tar -xzf /tmp/hugo.tar.gz -C /tmp hugo
           sudo mv /tmp/hugo /usr/local/bin/hugo
           hugo version
-
-      - name: Fetch hugo-book theme
-        run: |
-          # Idempotent: wipe any stray partial checkout and clone fresh.
-          rm -rf hugo/themes/hugo-book
-          git clone --depth 1 https://github.com/alex-shpak/hugo-book hugo/themes/hugo-book
 
       - name: Hugo Build (minified)
         working-directory: hugo
@@ -73,13 +64,10 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     environment: production
     steps:
-      - name: Checkout
+      - name: Checkout (with theme submodule)
         uses: actions/checkout@v4
         with:
-          # `submodules: recursive` is a no-op here — the hugo-book submodule
-          # in .gitmodules still points to the old root-level path and no
-          # gitlink exists for hugo/themes/hugo-book. The "Fetch hugo-book
-          # theme" step below clones it explicitly instead.
+          submodules: recursive
           fetch-depth: 0
 
       - name: Install Hugo (extended)
@@ -90,12 +78,6 @@ jobs:
           tar -xzf /tmp/hugo.tar.gz -C /tmp hugo
           sudo mv /tmp/hugo /usr/local/bin/hugo
           hugo version
-
-      - name: Fetch hugo-book theme
-        run: |
-          # Idempotent: wipe any stray partial checkout and clone fresh.
-          rm -rf hugo/themes/hugo-book
-          git clone --depth 1 https://github.com/alex-shpak/hugo-book hugo/themes/hugo-book
 
       - name: Restore build artifact
         uses: actions/download-artifact@v4
