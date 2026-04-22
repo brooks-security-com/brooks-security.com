@@ -1,0 +1,90 @@
+name: 'Hugo Deploy'
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'hugo/**'
+      - '.github/workflows/hugo-deploy.yml'
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'hugo/**'
+      - '.github/workflows/hugo-deploy.yml'
+
+permissions:
+  contents: read
+
+env:
+  HUGO_VERSION: '0.140.2'
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+
+jobs:
+  build:
+    name: 'Hugo Build'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (with theme submodule)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Install Hugo (extended)
+        run: |
+          curl -fsSL "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz" -o hugo.tar.gz
+          tar -xzf hugo.tar.gz hugo
+          sudo mv hugo /usr/local/bin/hugo
+          hugo version
+
+      - name: Hugo Build (minified)
+        working-directory: hugo
+        run: hugo --minify --gc
+
+      - name: Upload build artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: actions/upload-artifact@v4
+        with:
+          name: hugo-public
+          path: hugo/public
+          retention-days: 1
+          if-no-files-found: error
+
+  deploy:
+    name: 'Hugo Deploy (S3 + CloudFront)'
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    environment: production
+    steps:
+      - name: Checkout (with theme submodule)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Install Hugo (extended)
+        run: |
+          curl -fsSL "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz" -o hugo.tar.gz
+          tar -xzf hugo.tar.gz hugo
+          sudo mv hugo /usr/local/bin/hugo
+
+      - name: Restore build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: hugo-public
+          path: hugo/public
+
+      - name: Hugo Deploy (sync S3 + CloudFront invalidation)
+        working-directory: hugo
+        # `hugo deploy` reads the [deployment] block in hugo.toml:
+        #   target "brooks-security" -> s3://brooks-security.com?region=us-east-1
+        #   cloudFrontDistributionID = "E1QZQDBCV5WT01"
+        # With AWS_* env vars set, gocloud.dev uses the standard AWS credential
+        # chain -- no profile needed.
+        run: hugo deploy --target brooks-security --maxDeletes -1 --invalidateCDN
