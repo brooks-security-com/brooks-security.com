@@ -188,9 +188,16 @@ what shipped, when, and why.
 
 ## 4. GitHub Actions pipelines
 
-Two workflows live in `.github/workflows/`. They're independent — a PR that
-only touches `hugo/` won't trigger the Terraform workflow, and vice versa —
-because each is path-filtered at the top of the file.
+Two workflows live in `.github/workflows/`. Both fire on **every** push and PR
+to `master` — so every PR sees both status checks run and (hopefully) pass.
+Each workflow starts with a lightweight `Detect Changes` job
+(`dorny/paths-filter@v3`) that compares the diff against the base. If the
+relevant paths (`terraform/**` or `hugo/**`) haven't changed, the downstream
+jobs still execute but short-circuit to a single `echo "…marking check as
+passed."` step and return green in seconds. The practical upshot: a PR that
+only touches `hugo/` still gets a passing Terraform check, and vice versa —
+which lets GitHub branch protection require both checks without forcing
+every PR to touch both paths.
 
 Both run on GitHub-hosted `ubuntu-latest` runners. There is no self-hosted
 infrastructure. Authentication to AWS is via three repository secrets:
@@ -208,8 +215,8 @@ that retires these long-lived keys.
 
 ### 4.1 `terraform.yml` — infrastructure pipeline
 
-**Triggered on**: push or pull_request to `master`, but only when
-`terraform/**` or the workflow file itself changes.
+**Triggered on**: push or pull_request to `master` (always — the path filter
+lives inside the workflow, not in the trigger).
 
 **Terraform version**: `1.14.4` (pinned), installed via
 `hashicorp/setup-terraform@v3`.
@@ -218,10 +225,11 @@ Jobs:
 
 | Job                  | When                      | What it does                                                                 |
 |----------------------|---------------------------|------------------------------------------------------------------------------|
-| `terraform-fmt`      | PR and push               | `terraform fmt -check -recursive` — fails if anything is unformatted.        |
-| `terraform-validate` | After fmt                 | `terraform init -backend=false` + `terraform validate`. No AWS call.         |
-| `terraform-plan`     | PRs only                  | Full `terraform init` + `terraform plan`. Output posted to the PR as a comment (updates in place on subsequent pushes).  |
-| `terraform-apply`    | Push to master only       | `terraform init` + `plan` + `apply -auto-approve`. Gated on the `production` GitHub environment.                         |
+| `changes`            | Every run                 | `dorny/paths-filter@v3` detects whether `terraform/**` or the workflow itself changed. Exposes a `terraform` output consumed by every downstream job. |
+| `terraform-fmt`      | PR and push               | `terraform fmt -check -recursive` — fails if anything is unformatted. Short-circuits to pass when `needs.changes.outputs.terraform != 'true'`. |
+| `terraform-validate` | After fmt                 | `terraform init -backend=false` + `terraform validate`. No AWS call. Same short-circuit.                                   |
+| `terraform-plan`     | PRs only                  | Full `terraform init` + `terraform plan`. Output posted to the PR as a comment (updates in place on subsequent pushes). Same short-circuit. |
+| `terraform-apply`    | Push to master only       | `terraform init` + `plan` + `apply -auto-approve`. Gated on the `production` GitHub environment. Same short-circuit.        |
 
 The plan comment is keyed by an HTML marker (`<!-- brooks-security-terraform-plan -->`), so re-pushing to a PR edits the existing comment instead of appending new ones. A ✅ or ❌ emoji in the comment header reflects the plan's exit status.
 
@@ -231,8 +239,8 @@ the `brooks-security` named profile by default — see §5 for how this is wired
 
 ### 4.2 `hugo-deploy.yml` — site content pipeline
 
-**Triggered on**: push or pull_request to `master`, but only when `hugo/**`
-or the workflow file itself changes.
+**Triggered on**: push or pull_request to `master` (always — the path filter
+lives inside the workflow, not in the trigger).
 
 **Hugo version**: `0.160.1` (pinned, extended/withdeploy edition). Extended is
 required because hugo-book uses SCSS; withdeploy is required because the
@@ -240,10 +248,11 @@ required because hugo-book uses SCSS; withdeploy is required because the
 
 Jobs:
 
-| Job      | When                | What it does                                                                                                 |
-|----------|---------------------|--------------------------------------------------------------------------------------------------------------|
-| `build`  | PR and push         | Checkout (with submodule), install Hugo, run `hugo --minify --gc`. On push, the built `public/` is uploaded as a short-lived artifact for the deploy job. |
-| `deploy` | Push to master only | Checkout, install Hugo, download the build artifact, run `hugo deploy --target brooks-security --invalidateCDN`. Gated on the `production` GitHub environment.                |
+| Job       | When                | What it does                                                                                                 |
+|-----------|---------------------|--------------------------------------------------------------------------------------------------------------|
+| `changes` | Every run           | `dorny/paths-filter@v3` detects whether `hugo/**` or the workflow itself changed. Exposes a `hugo` output consumed by every downstream job. |
+| `build`   | PR and push         | Checkout (with submodule), install Hugo, run `hugo --minify --gc`. On push, the built `public/` is uploaded as a short-lived artifact for the deploy job. Short-circuits to pass when `needs.changes.outputs.hugo != 'true'`. |
+| `deploy`  | Push to master only | Checkout, install Hugo, download the build artifact, run `hugo deploy --target brooks-security --invalidateCDN`. Gated on the `production` GitHub environment. Same short-circuit.                |
 
 `hugo deploy` reads the `[deployment]` block in `hugo/hugo.toml`, which
 targets `s3://brooks-security.com?region=us-east-1` and invalidates CloudFront
