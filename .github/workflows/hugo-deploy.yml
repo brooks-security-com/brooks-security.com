@@ -1,18 +1,18 @@
 name: 'Hugo Deploy'
 
+# The workflow fires on every push/PR to master so GitHub branch-protection
+# "required status checks" always see it run. A `changes` job detects whether
+# anything under `hugo/` (or this workflow file) actually changed; the
+# downstream jobs short-circuit to success if not. Net effect: the checks are
+# always present on every PR, but they finish in seconds and pass cleanly when
+# the diff has no Hugo content in it.
 on:
   push:
     branches:
       - master
-    paths:
-      - 'hugo/**'
-      - '.github/workflows/hugo-deploy.yml'
   pull_request:
     branches:
       - master
-    paths:
-      - 'hugo/**'
-      - '.github/workflows/hugo-deploy.yml'
 
 permissions:
   contents: read
@@ -28,17 +28,42 @@ env:
   AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
 
 jobs:
+  changes:
+    name: 'Detect Changes'
+    runs-on: ubuntu-latest
+    outputs:
+      hugo: ${{ steps.filter.outputs.hugo }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Filter paths
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            hugo:
+              - 'hugo/**'
+              - '.github/workflows/hugo-deploy.yml'
+
   build:
     name: 'Hugo Build'
     runs-on: ubuntu-latest
+    needs: changes
     steps:
+      - name: No Hugo changes — skipping
+        if: needs.changes.outputs.hugo != 'true'
+        run: echo "No Hugo changes in this diff — marking check as passed."
+
       - name: Checkout (with theme submodule)
+        if: needs.changes.outputs.hugo == 'true'
         uses: actions/checkout@v4
         with:
           submodules: recursive
           fetch-depth: 0
 
       - name: Install Hugo (extended)
+        if: needs.changes.outputs.hugo == 'true'
         run: |
           # Extract into /tmp because the repo root already has a hugo/ dir,
           # and `tar` refuses to overwrite a directory with the hugo binary.
@@ -48,11 +73,12 @@ jobs:
           hugo version
 
       - name: Hugo Build (minified)
+        if: needs.changes.outputs.hugo == 'true'
         working-directory: hugo
         run: hugo --minify --gc
 
       - name: Upload build artifact
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        if: needs.changes.outputs.hugo == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v4
         with:
           name: hugo-public
@@ -63,17 +89,23 @@ jobs:
   deploy:
     name: 'Hugo Deploy (S3 + CloudFront)'
     runs-on: ubuntu-latest
-    needs: build
+    needs: [changes, build]
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     environment: production
     steps:
+      - name: No Hugo changes — skipping
+        if: needs.changes.outputs.hugo != 'true'
+        run: echo "No Hugo changes in this diff — marking check as passed."
+
       - name: Checkout (with theme submodule)
+        if: needs.changes.outputs.hugo == 'true'
         uses: actions/checkout@v4
         with:
           submodules: recursive
           fetch-depth: 0
 
       - name: Install Hugo (extended)
+        if: needs.changes.outputs.hugo == 'true'
         run: |
           # Extract into /tmp because the repo root already has a hugo/ dir,
           # and `tar` refuses to overwrite a directory with the hugo binary.
@@ -83,12 +115,14 @@ jobs:
           hugo version
 
       - name: Restore build artifact
+        if: needs.changes.outputs.hugo == 'true'
         uses: actions/download-artifact@v4
         with:
           name: hugo-public
           path: hugo/public
 
       - name: Hugo Deploy (sync S3 + CloudFront invalidation)
+        if: needs.changes.outputs.hugo == 'true'
         working-directory: hugo
         # `hugo deploy` reads the [deployment] block in hugo.toml:
         #   target "brooks-security" -> s3://brooks-security.com?region=us-east-1
