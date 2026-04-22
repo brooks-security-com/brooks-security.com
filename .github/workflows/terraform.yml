@@ -1,6 +1,6 @@
 name: 'Terraform'
 
-# The workflow fires on every push/PR to master so GitHub branch-protection
+# The workflow fires on every push/PR to main so GitHub branch-protection
 # "required status checks" always see it run. Inside each job, a
 # `dorny/paths-filter@v3` step detects whether anything under `terraform/`
 # (or this workflow file) actually changed; the real work steps only run when
@@ -9,10 +9,10 @@ name: 'Terraform'
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
 
 permissions:
   contents: read
