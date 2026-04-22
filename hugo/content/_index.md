@@ -1,44 +1,43 @@
 ---
 title: Introduction
 type: docs
+bookToc: false
 ---
 
-## Who I Am
-![Scenario 1: Across columns](/grahambrooks.png)
+<img src="/grahambrooks.png" alt="Graham Brooks" style="float: left; max-width: min(160px, 32%); height: auto; margin: 0.35rem 1.25rem 0.75rem 0;" />
 
-My name is Graham Brooks. My online handle is @littleseneca most places. I am a Software Engineer who likes to talk to people and solve human problems. I have some professional certifications in [Linux Server Automation, Cloud Computing, and Security Administration](https://brooks-security.com/docs/curriculum-vitae/credentials/). Currently, I work as the Site Reliability Engineer and Security Officer for [AvatarFleet](https://avatarfleet.com), where we provide HR and logistics support to the largest names in the trucking industry. I also moonlight as the Chief Technology Officer and sole developer for [Valdyr.io](https://valdyr.io), a SaaS platform for managing and automating compliance documentation using private language models and visual diagramming. 
+My name is Graham Brooks. My online handle is @little_seneca most places. I am a Software Engineer who likes to talk to people and solve hard problems. I have some professional certifications in [Linux Server Automation, Cloud Computing, and Security Administration](https://brooks-security.com/docs/curriculum-vitae/credentials/). Currently, I work as the Site Reliability Engineer and as the Security Officer for [AvatarFleet](https://avatarfleet.com), where we provide HR and logistics support to the largest names in the transportation industry. 
 
-## Purpose of this Blog
+Beyond work, I am a husband, father, Lutheran, proud social libertarian, and community activist. In my free time, I enjoy painting, playing Warhammer 40K, powerlifting, hiking, and running. I am also studying for my CISSP and volunteer with the CyberPeace Corps as a Cyber Security Architect.
 
-I think it's important to keep track of your work. This portfolio site is a collection of personal and professional projects I have worked on. In addition to these professional markers, the blog also features a traditional blog section where I share content that piques my interest. This might range from new IT trends, technical tutorials, to personal insights about the industry.
-
-## Shameless Bragging for recruiters
-
-1. I've lead sales engineering teams that have generated over 10 million dollars in direct revenue.
-2. I've mentored multiple people in the IT industry into high paying jobs.
-3. I have built AvatarFleet's security compliance program from the ground up, passing multiple external audits with flying colors.
-4. I have supported multiple house hold names in manufacturing, retail, and distribution to protect their employees confidential information.
-5. I've worked on projects worth over 100 million dollars.
-6. I've written over 30,000 lines of production code in the last 3 months.
-    6.1 JS/React
-    6.2 Python/Flask
-    6.3 Terraform
-    6.4 Ansible
-    6.5 Gitlab CI
-7. I've deployed over 100 containers in the last 10 days.
-8. I actively protect multiple high-profile clients from threat actors.
+I believe it's important to document your work and reflect on what you learn along the way. This site serves as both a portfolio of personal and professional projects and a traditional blog where I share ideas that interest me. Topics range from emerging IT trends and technical tutorials to personal perspectives on the industry and random philosophy thoughts.
 
 ## Where to Find Me
-{{< columns >}} <!-- begin columns block -->
-### LinkedIn
-[linkedin.com/in/littleseneca](https://linkedin.com/in/grahamwbrooks/)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/grahamwbrooks/)
+[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/littleseneca)
+[![X](https://img.shields.io/badge/X-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/little_seneca)
 
+## Featured Projects
 
-<---> <!-- magic separator, between columns -->
-### Github
-[github.com/littleseneca](https://github.com/littleseneca)
-
-### Gitlab
-[gitlab.com/graham.brooks1](https://gitlab.com/graham.brooks1)
-
-{{< /columns >}}
+<div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: stretch; margin-top: 0.5rem;">
+  <div style="flex: 1 1 320px; background: #f1f3f5; border-radius: 12px; padding: 1rem 1.1rem;">
+    <h3 style="margin-top: 0;">GitOps Platform Delivery</h3>
+    <p>Declarative deployments with auditable, safer change management.</p>
+    <ul>
+      <li>Reduced config drift across environments</li>
+      <li>Standardized release flow with PR-based approvals</li>
+      <li>Faster rollback and recovery through versioned infrastructure</li>
+    </ul>
+    <p><a href="/docs/portfolio/gitops/">View GitOps project</a></p>
+  </div>
+  <div style="flex: 1 1 320px; background: #f1f3f5; border-radius: 12px; padding: 1rem 1.1rem;">
+    <h3 style="margin-top: 0;">Local NVD Vulnerability Database</h3>
+    <p>Reliable internal vulnerability intelligence without external API bottlenecks.</p>
+    <ul>
+      <li>Local mirror for deterministic vulnerability lookups</li>
+      <li>Better scan performance with fewer rate-limit constraints</li>
+      <li>Supports offline and controlled security workflows</li>
+    </ul>
+    <p><a href="/docs/portfolio/security/">View Local NVD project</a></p>
+  </div>
+</div>

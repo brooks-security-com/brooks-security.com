@@ -3,6 +3,12 @@ languageCode = 'en-us'
 title = 'Graham Brooks'
 theme = 'hugo-book'
 
+[params]
+BookLogo = 'grahambrooks.png'
+
+[markup.goldmark.renderer]
+unsafe = true
+
 [deployment] # Deployment settings start here
   # Target configuration for S3
   [[deployment.targets]]
