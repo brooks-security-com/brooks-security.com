@@ -37,9 +37,11 @@ jobs:
 
       - name: Install Hugo (extended)
         run: |
-          curl -fsSL "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz" -o hugo.tar.gz
-          tar -xzf hugo.tar.gz hugo
-          sudo mv hugo /usr/local/bin/hugo
+          # Extract into /tmp because the repo root already has a hugo/ dir,
+          # and `tar` refuses to overwrite a directory with the hugo binary.
+          curl -fsSL "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz" -o /tmp/hugo.tar.gz
+          tar -xzf /tmp/hugo.tar.gz -C /tmp hugo
+          sudo mv /tmp/hugo /usr/local/bin/hugo
           hugo version
 
       - name: Hugo Build (minified)
@@ -70,9 +72,12 @@ jobs:
 
       - name: Install Hugo (extended)
         run: |
-          curl -fsSL "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz" -o hugo.tar.gz
-          tar -xzf hugo.tar.gz hugo
-          sudo mv hugo /usr/local/bin/hugo
+          # Extract into /tmp because the repo root already has a hugo/ dir,
+          # and `tar` refuses to overwrite a directory with the hugo binary.
+          curl -fsSL "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz" -o /tmp/hugo.tar.gz
+          tar -xzf /tmp/hugo.tar.gz -C /tmp hugo
+          sudo mv /tmp/hugo /usr/local/bin/hugo
+          hugo version
 
       - name: Restore build artifact
         uses: actions/download-artifact@v4
