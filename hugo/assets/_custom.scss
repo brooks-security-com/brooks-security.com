@@ -1,0 +1,32 @@
+.blog-card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.blog-card {
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.blog-card-title {
+  margin-top: 0;
+  margin-bottom: 0.35rem;
+}
+
+.blog-card-meta {
+  margin-bottom: 0.65rem;
+}
+
+.blog-card-summary {
+  flex-grow: 1;
+}
+
+.blog-card-link {
+  margin-bottom: 0;
+}

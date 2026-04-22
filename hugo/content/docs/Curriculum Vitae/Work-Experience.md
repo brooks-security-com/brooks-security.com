@@ -2,40 +2,61 @@
 
 ## Context:
 
-I am a skilled Red Hat Certified Engineer with extensive experience in designing and implementing security automation solutions in both traditional and cloud environments. I have Expertise in deploying scalable, secure infrastructures using Ansible and Python, with a focus on automation to enhance operational efficiencies. With over 7 years of experience in IT and Security, including 3 years of specialized expertise in solutions architecture, I have driven significant improvements in security posture for clients across government, education, and banking sectors at an international scale.  
+I am a skilled Red Hat Certified Engineer with extensive experience in designing and implementing security automation solutions in both traditional and cloud environments. I have expertise in deploying scalable, secure infrastructures using Ansible, Terraform, and Python, with a focus on automation to enhance operational efficiencies. I also administer PostgreSQL in production, including on-premises deployments and Amazon Aurora RDS. Beyond engineering, I have extensive experience in contract negotiations from both sides of the table: as a vendor and as a customer. With nine years of experience in IT and security, including several years of specialized work in solutions architecture and security engineering, I have driven significant improvements in security posture for organizations across SaaS, critical infrastructure, government, education, and banking sectors.
 
 ## Experience:
+### Senior Security & Systems Engineer — AvatarFleet
+**Mar 2024 – Present** · Full-time · Moscow, Idaho, United States · Remote
 
-### Lead Solutions Architect - Syxsense Inc.
-**2023 - Present**
-- Hybrid and Multi-Cloud Expertise: Led the design and implementation of security solutions across hybrid and multi-cloud environments, focusing on automation to streamline operations and enhance security.
-- Technical Leadership and Automation: Oversaw the deployment of automated security solutions using Ansible and Python, significantly reducing manual overhead and improving response times.
-- Strategic Development Contributions: Key player in strategic planning for security automation, aligning product development with emerging cloud security trends and customer needs.
-- Industry Advocacy: Acted as the technical spokesperson at industry events, sharing insights on effective security automation practices in hybrid and multi-cloud settings.
+- **SOC 2 Type 2 accreditation:** Led AvatarFleet through SOC 2 Type 1 and Type 2 accreditation by establishing comprehensive security policies and procedures, strengthening compliance, and building customer trust. Achieved SOC 2 Type 2 two years in a row with no adverse findings.
+- **Security program initiation:** Developed and implemented AvatarFleet’s initial security program, including foundational policies, procedures, and a security-aware culture, in an early-stage startup environment.
+- **Cloud security enforcement:** Drove AWS security improvements through Terraform and Ansible, standardizing controls and automating compliance for a stronger security posture.
+- **Enterprise infrastructure:** Architected and built the organization’s enterprise infrastructure from the ground up, replacing legacy infrastructure with minimal downtime.
 
-### Senior Security Solutions Architect - Syxsense Inc.
-**2022 - 2023**
-- Solutions Engineering: Designed and implemented tailored security automation solutions in the critical infrastructure space, leveraging Ansible and Python for seamless integration of AWS Hosted EC2 instances into our platforms.
-- Vulnerability Management: Developed advanced vulnerability management frameworks for Linux servers in regulated on-premises environments, enhancing security for customers with over 30 thousand endpoints under management.
-- Product Support: Built the Syxsense platform’s user guide and provided technical support to customers.
-- Platform Engineering: Committed code (mostly Bash and Python) for the Syxsense platform to improve availability of our solution for linux endpoints. 
+### Founder & Principal Consultant — Seneca Cyber
+**April 2024 – Present** · Part-time · Moscow, Idaho, United States · Remote
 
-### Solutions Architect - Syxsense Inc.
-**2021 - 2022**
-- Sales Engineering: Collected over 100 new logos to Syxsense, providing proof of concepts & RFI/RFP responses.
-- Solutions Architecture: Co-architected our solution to match clients' environments.
-- Marketing Initiatives: Developed and presented educational webinars for the Marketing Team.
+- **Owner-operated MSP/MSSP:** Run Seneca Cyber as an independent managed services and managed security services practice.
+- **Cross-sector client delivery:** Supported multiple organizations, including a medical practice and the City of Moscow.
+- **Security and infrastructure execution:** Delivered cybersecurity and IT infrastructure services across both on-premises and cloud environments.
 
-### Linux Analyst - Schweitzer Engineering Laboratories
-**2020 - 2021**
-- Operations Support: Provided support for company's Linux users.
-- Platform Development: Created a standardized, domain-integrated Ubuntu Linux distribution for the company.
-- Security Operations: Collaborated with the Security Operations team to apply CIS benchmarks to all new and existing Linux endpoints using the Chef configuration as code platform.
 
-### IT Technician - Schweitzer Engineering Laboratories
-**2018 - 2020**
-- Provided desktop support and played a key role in the company’s transition from Windows 7 to Windows 10.
+### Lead Solutions Architect — Syxsense Inc.
+**Mar 2023 – Mar 2024** · Full-time · Moscow, Idaho, United States · Remote
 
-### IT Technician Intern - Washington State University
-**2016 - 2018**
-- Provided basic desktop and physical networking support within the Chemistry department while studying for a Civil Engineering degree.
+- **Hybrid and multi-cloud expertise:** Led the design and implementation of security solutions across hybrid and multi-cloud environments, focusing on automation to streamline operations and enhance security.
+- **Technical leadership and automation:** Oversaw deployment of automated security solutions using Ansible and Python, reducing manual overhead and improving response times.
+- **Strategic development contributions:** Helped align product development with emerging cloud security trends and customer needs.
+- **Industry advocacy:** Served as a technical voice at industry events on security automation in hybrid and multi-cloud settings.
+
+### Senior Security Solutions Architect — Syxsense Inc.
+**Apr 2022 – Mar 2023** · Full-time · Salt Lake City, Utah, United States
+
+- **Solutions engineering:** Designed and implemented tailored security automation solutions in critical infrastructure, leveraging Ansible and Python for integration of AWS-hosted EC2 workloads into the platform.
+- **Vulnerability management:** Developed vulnerability management frameworks for Linux servers in regulated on-premises environments, supporting customers with tens of thousands of endpoints under management.
+- **Product support:** Contributed to the platform user guide and technical customer support.
+- **Platform engineering:** Committed code (mostly Bash and Python) to improve Linux endpoint availability and reliability.
+
+### Solutions Architect — Syxsense Inc.
+**Apr 2021 – Apr 2022** · Full-time · Salt Lake City, Utah, United States
+
+- **Sales engineering:** Helped bring more than 100 new logos to Syxsense through proofs of concept and RFI/RFP responses.
+- **Solutions architecture:** Co-architected deployments to match client environments.
+- **Marketing initiatives:** Developed and delivered educational webinars for the marketing team.
+
+### Associate Information Technology Analyst — Schweitzer Engineering Laboratories
+**Sep 2020 – Apr 2021** · Full-time · Pullman, Washington, United States
+
+- **Operations support:** Supported Linux users across the organization.
+- **Platform development:** Created a standardized, domain-integrated Ubuntu Linux distribution for the company.
+- **Security operations:** Partnered with Security Operations to apply CIS benchmarks to Linux endpoints using Chef.
+
+### Information Technology Technician — Schweitzer Engineering Laboratories
+**Aug 2018 – Sep 2020** · Full-time · Pullman, Washington, United States
+
+- **Desktop support and migration:** Provided desktop support and played a key role in the organization’s transition from Windows 7 to Windows 10.
+
+### IT Technician — Washington State University
+**Nov 2016 – Aug 2018** · Part-time · Pullman, Washington, United States · On-site
+
+- **Department IT support:** Provided desktop and basic physical networking support in the Chemistry department while completing undergraduate studies.

@@ -1,5 +1,43 @@
 # GitOps
 ## Brooks-Security.com
-[github.com/LittleSeneca/brooks-security.com](https://github.com/LittleSeneca/brooks-security.com)
 
-The web content you are currently reading has been provided through the combiniation of Hugo static website builder, Github, and AWS Amplify. I am using a monitor configured within AWS Amplify to detect when I push new content into my Github repository. When Github is updated, that causes AWS Amplify to rebuild my docker container hosting my Hugo website. In the future, I plan to simplify this process further, by integrating an S3 bucket into the AWS Amplify container, so that I dont need to rebuild the container every time I upload content. This will also allow me to push content live much faster. Within the repository above is a detailed tutorial on building out your own hugo website using this one as an example.
+[![GitHub: LittleSeneca/brooks-security.com](https://img.shields.io/badge/GitHub-LittleSeneca%2Fbrooks--security.com-181717?logo=github&logoColor=white)](https://github.com/LittleSeneca/brooks-security.com)
+
+This portfolio is managed with GitOps: content in Hugo, infrastructure in Terraform, and deployments automated through GitHub Actions. The repository `readme.md` describes the stack as Hugo + AWS (S3, CloudFront, Route 53) with Terraform managing infrastructure changes.
+
+The key point: **everything runs for about $0.50 per month in AWS**.
+
+## What the repo actually does
+
+- Builds static content from `hugo/`
+- Provisions and manages AWS resources from `terraform/`
+- Runs checks on pull requests (Hugo build + Terraform validation/plan)
+- Deploys on merge to `master` (`hugo deploy`, Terraform apply when infra changes, CloudFront invalidation)
+
+## Traffic graph
+
+```mermaid
+flowchart LR
+    U[Visitor browser] --> R[Route 53 DNS]
+    R --> C[CloudFront distribution]
+    C -->|Cache hit| V[Response from edge cache]
+    C -->|Cache miss| S[S3 origin bucket]
+    S --> C
+    C --> U
+```
+
+## CI/CD graph (chain of custody)
+
+```mermaid
+flowchart LR
+    A[Write content or infra changes] --> B[Commit to feature branch]
+    B --> C[Open PR to master]
+    C --> D[GitHub Actions checks]
+    D --> E[Squash and merge]
+    E --> F[Production workflows]
+    F --> G[Hugo deploy syncs to S3]
+    F --> H[Terraform apply for infra updates]
+    G --> I[CloudFront invalidation]
+    H --> I
+    I --> J[Route 53 serves brooks-security.com]
+```
