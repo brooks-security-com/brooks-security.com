@@ -18,7 +18,9 @@ permissions:
   contents: read
 
 env:
-  HUGO_VERSION: '0.140.2'
+  # Must be >= 0.158.0 to satisfy the hugo-book theme and find shortcodes
+  # under the new `layouts/_shortcodes/` path (Hugo layouts-v2 convention).
+  HUGO_VERSION: '0.160.1'
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
