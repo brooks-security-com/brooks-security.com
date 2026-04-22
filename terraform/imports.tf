@@ -24,16 +24,6 @@ import {
 }
 
 import {
-  to = aws_route53_record.apex_mx
-  id = "Z0929787253OYUX8XP5MU_brooks-security.com_MX"
-}
-
-import {
-  to = aws_route53_record.apex_txt
-  id = "Z0929787253OYUX8XP5MU_brooks-security.com_TXT"
-}
-
-import {
   to = aws_route53_record.www_a
   id = "Z0929787253OYUX8XP5MU_www.brooks-security.com_A"
 }
@@ -41,11 +31,6 @@ import {
 import {
   to = aws_route53_record.www_aaaa
   id = "Z0929787253OYUX8XP5MU_www.brooks-security.com_AAAA"
-}
-
-import {
-  to = aws_route53_record.dmarc
-  id = "Z0929787253OYUX8XP5MU__dmarc.brooks-security.com_TXT"
 }
 
 import {

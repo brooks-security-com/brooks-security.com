@@ -1,6 +1,6 @@
 # brooks-security.com
 
-Personal portfolio site built with [Hugo](https://gohugo.io), hosted as a static site on AWS (S3 + CloudFront + Route 53), and managed with Terraform.
+Personal portfolio site built with [Hugo](https://gohugo.io), hosted as a static site on AWS (S3 + CloudFront + Route 53), and managed with Terraform. Total cost in AWS is $0.50 per month.
 
 ## Stack at a glance
 
@@ -74,4 +74,4 @@ CloudFront uses a viewer-request function (`hugo`) to map pretty URLs like `/pos
 - Do not push directly to `master`; use PRs.
 - Prefer CI/CD for deploys instead of local `terraform apply`.
 - Keep the `hugo-book` submodule initialized in local and CI environments.
-- Email (MX) is Google Workspace; AWS handles web hosting and DNS.
+

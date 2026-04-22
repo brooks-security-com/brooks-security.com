@@ -49,33 +49,6 @@ resource "aws_route53_record" "www_aaaa" {
   }
 }
 
-# Google Workspace MX
-resource "aws_route53_record" "apex_mx" {
-  zone_id = aws_route53_zone.main.zone_id
-  name    = var.domain
-  type    = "MX"
-  ttl     = 60
-  records = ["1 SMTP.GOOGLE.COM"]
-}
-
-# Google site verification TXT
-resource "aws_route53_record" "apex_txt" {
-  zone_id = aws_route53_zone.main.zone_id
-  name    = var.domain
-  type    = "TXT"
-  ttl     = 60
-  records = ["google-site-verification=Xkgt-o9WznhZrUtbFmksDTM2QgvXMI8OsGy1gy2uLBE"]
-}
-
-# DMARC
-resource "aws_route53_record" "dmarc" {
-  zone_id = aws_route53_zone.main.zone_id
-  name    = "_dmarc.${var.domain}"
-  type    = "TXT"
-  ttl     = 300
-  records = ["v=DMARC1; p=quarantine"]
-}
-
 # ACM DNS validation CNAMEs — must be preserved for automatic cert renewal
 resource "aws_route53_record" "acm_validation_apex_1" {
   zone_id = aws_route53_zone.main.zone_id
