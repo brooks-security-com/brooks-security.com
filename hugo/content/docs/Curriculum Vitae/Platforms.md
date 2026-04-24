@@ -147,7 +147,7 @@ I do not write customer-facing software in Python as my primary job. I use it fo
 
 ## Inference and Language Models
 
-I use language models heavily at work and at home, but with hard boundaries. I keep usage to domains where I already have depth, so I can catch mistakes quickly. I avoid shipping AI-generated customer-facing content. If it is an internal tool, internal note, or Dockerfile grunt work, then all bets are off. Frankly, I rarely write code from scratch anymore; the workflow is usually prompting -> modifying -> prompting -> modifying -> testing -> modifying -> testing -> committing. I wrote more about that loop here: [Spec Driven Development](http://localhost:1313/posts/spec-driven-development/).
+I use language models heavily at work and at home, but with hard boundaries. I keep usage to domains where I already have depth, so I can catch mistakes quickly. I avoid shipping AI-generated customer-facing content. If it is an internal tool, internal note, or Dockerfile grunt work, then all bets are off. Frankly, I rarely write code from scratch anymore; the workflow is usually prompting -> modifying -> prompting -> modifying -> testing -> modifying -> testing -> committing. I wrote more about that loop here: [Spec Driven Development](https://brooks-security.com/posts/spec-driven-development/).
 
 ### Claude Code
 **2 Years of Experience**
