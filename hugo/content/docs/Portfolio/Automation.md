@@ -1,4 +1,15 @@
 # Automation Projects
+## Jarvis - Executive Summary Agent
+[![GitHub: LittleSeneca/jarvis-executive-summary](https://img.shields.io/badge/GitHub-LittleSeneca%2Fjarvis--executive--summary-181717?logo=github&logoColor=white)](https://github.com/LittleSeneca/jarvis-executive-summary)
+
+A containerized Python tool that pulls the last 24 hours of activity from a configurable set of data sources, summarizes each through Groq-hosted LLM inference, and posts a single consolidated executive brief to Slack — then exits. One container, one run, one well-formatted morning digest. No daemon, no scheduler, no loop.
+
+On startup, Jarvis runs every enabled plugin concurrently — each plugin fetches its own data (Site24x7, AWS SecurityHub, AWS Billing, Drata, Gmail, GitHub, Weather, News, Stocks, and Truth Social), pipes the payload through a rate-limited Groq inference queue using a plugin-owned prompt and temperature, then assembles all summaries into a single Slack Block Kit message posted to a DM or channel.
+
+Each data source is a self-contained plugin folder under `plugins/<name>/` implementing a `DataSourcePlugin` contract. Adding a new source means dropping a folder in, implementing the contract, and adding the plugin name to `ENABLED_PLUGINS` in `.env` — no core changes required. If a plugin fails, the digest still goes out with a note about the failed source; a partial brief beats silence.
+
+The container is a one-shot: start it, it runs, it exits. Scheduling (cron, ECS, EventBridge) is left entirely to the operator.
+
 ## Hard Drive Auditor
 [![GitHub: LittleSeneca/hard-drive-auditor](https://img.shields.io/badge/GitHub-LittleSeneca%2Fhard--drive--auditor-181717?logo=github&logoColor=white)](https://github.com/LittleSeneca/hard-drive-auditor)
 

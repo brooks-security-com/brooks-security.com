@@ -21,23 +21,13 @@ I believe it's important to document your work and reflect on what you learn alo
 
 <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: stretch; margin-top: 0.5rem;">
   <div style="flex: 1 1 320px; background: #f1f3f5; border-radius: 12px; padding: 1rem 1.1rem;">
-    <h3 style="margin-top: 0;">GitOps Platform Delivery</h3>
-    <p>Declarative deployments with auditable, safer change management.</p>
-    <ul>
-      <li>Reduced config drift across environments</li>
-      <li>Standardized release flow with PR-based approvals</li>
-      <li>Faster rollback and recovery through versioned infrastructure</li>
-    </ul>
-    <p><a href="/docs/portfolio/gitops/">View GitOps project</a></p>
+    <h3 style="margin-top: 0;">This Website!</h3>
+    <p>Anyone can build on AWS. But cost optimizing what you build without breaking functionality is the real proof of knowledge. This whole website costs me 50 cents per month to run, despite using all of the AWS best practice tooling, and it has a fully automated ci/cd pipeline for generating new content.</p>
+    <p><a href="/docs/portfolio/gitops/">View Git-Ops project</a></p>
   </div>
   <div style="flex: 1 1 320px; background: #f1f3f5; border-radius: 12px; padding: 1rem 1.1rem;">
-    <h3 style="margin-top: 0;">Local NVD Vulnerability Database</h3>
-    <p>Reliable internal vulnerability intelligence without external API bottlenecks.</p>
-    <ul>
-      <li>Local mirror for deterministic vulnerability lookups</li>
-      <li>Better scan performance with fewer rate-limit constraints</li>
-      <li>Supports offline and controlled security workflows</li>
-    </ul>
-    <p><a href="/docs/portfolio/security/">View Local NVD project</a></p>
+    <h3 style="margin-top: 0;">Jarvis - Executive Summary Agent</h3>
+    <p>One-shot containerized agent that delivers a daily AI-generated executive brief to Slack. Jarvis aggregates data from many sources—including AWS, GitHub, Gmail, Drata, and more—using a drop-in plugin architecture where new sources are easy to add. Each plugin can leverage per-plugin LLM inference via Groq with plugin-defined settings for customization.</p>
+    <p><a href="/docs/portfolio/automation/">View Jarvis project</a></p>
   </div>
 </div>
