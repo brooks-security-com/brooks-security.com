@@ -27,7 +27,7 @@ I believe it's important to document your work and reflect on what you learn alo
   </div>
   <div style="flex: 1 1 320px; background: #f1f3f5; border-radius: 12px; padding: 1rem 1.1rem;">
     <h3 style="margin-top: 0;">Jarvis - Executive Summary Agent</h3>
-    <p>One-shot containerized agent that delivers a daily AI-generated executive brief to Slack. Jarvis aggregates data from many sources—including AWS, GitHub, Gmail, Drata, and more—using a drop-in plugin architecture where new sources are easy to add. Each plugin can leverage per-plugin LLM inference via Groq with plugin-defined settings for customization.</p>
+    <p>One-shot containerized agent that delivers a daily AI-generated executive brief to Slack. Jarvis aggregates data from many sources, including AWS, GitHub, Gmail, Drata, and more, using a drop-in plugin architecture where new sources are easy to add. Each plugin can leverage per-plugin LLM inference via Groq with plugin-defined settings for customization.</p>
     <p><a href="/docs/portfolio/automation/">View Jarvis project</a></p>
   </div>
 </div>
