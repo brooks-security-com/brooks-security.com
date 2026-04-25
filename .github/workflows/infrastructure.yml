@@ -30,7 +30,7 @@ env:
 jobs:
   terraform-fmt:
     name: 'Terraform Format'
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, proxmox]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -61,7 +61,7 @@ jobs:
 
   terraform-validate:
     name: 'Terraform Validate'
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, proxmox]
     needs: terraform-fmt
     steps:
       - name: Checkout
@@ -98,7 +98,7 @@ jobs:
 
   terraform-plan:
     name: 'Terraform Plan'
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, proxmox]
     needs: terraform-validate
     if: github.event_name == 'pull_request'
     steps:
@@ -245,7 +245,7 @@ jobs:
 
   terraform-apply:
     name: 'Terraform Apply'
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, proxmox]
     needs: terraform-validate
     if: (github.ref == 'refs/heads/main' && github.event_name == 'push') || github.event_name == 'workflow_dispatch'
     environment: production
@@ -307,7 +307,7 @@ jobs:
 
   ansible-ping:
     name: 'Ansible Ping pve1'
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, proxmox]
     needs: terraform-apply
     steps:
       - name: Checkout
@@ -373,7 +373,7 @@ jobs:
 
   ansible-setup-runner:
     name: 'Setup GitHub Actions Runner'
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, proxmox]
     needs: terraform-apply
     permissions:
       contents: read
@@ -475,7 +475,7 @@ jobs:
 
   ansible-setup-caddy:
     name: 'Setup Caddy Reverse Proxy'
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, proxmox]
     needs: terraform-apply
     steps:
       - name: Checkout
