@@ -24,7 +24,7 @@ resource "proxmox_virtual_environment_container" "caddy" {
     ip_config {
       ipv4 {
         address = "192.168.2.201/16"
-        gateway = "192.168.1.1"
+        gateway = "192.168.0.1"
       }
     }
 
