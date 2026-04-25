@@ -24,6 +24,8 @@ env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
   AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
   TF_VAR_aws_profile: ''
+  TF_VAR_pve1_mgmt_ip: ${{ secrets.TF_VAR_PVE1_MGMT_IP }}
+  TF_VAR_caddy_tailscale_ip: ${{ secrets.TF_VAR_CADDY_TAILSCALE_IP }}
 
 jobs:
   terraform-fmt:
@@ -246,6 +248,10 @@ jobs:
         if: steps.filter.outputs.terraform != 'true'
         run: echo "No Terraform changes in this diff - marking check as passed."
 
+      - name: Connect to Tailscale
+        if: steps.filter.outputs.terraform == 'true'
+        uses: ./.github/actions/tailscale-connect
+
       - name: Setup Terraform
         if: steps.filter.outputs.terraform == 'true'
         uses: hashicorp/setup-terraform@v3
@@ -274,6 +280,24 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          terraform_wrapper: false
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: terraform
+
+      - name: Get pve1 Tailscale IP
+        id: pve1
+        run: |
+          PVE1_IP=$(terraform output -raw pve1_tailscale_ip)
+          echo "::add-mask::$PVE1_IP"
+          echo "ip=$PVE1_IP" >> "$GITHUB_OUTPUT"
+        working-directory: terraform
 
       - name: Connect to Tailscale
         uses: ./.github/actions/tailscale-connect
@@ -309,7 +333,7 @@ jobs:
           ansible_password: "$PROXMOX_ROOT_PASS"
           ansible_ssh_pass: "$PROXMOX_ROOT_PASS"
           EOF
-          ansible pve1.prod.brooks-security.com \
+          ansible "${{ steps.pve1.outputs.ip }}" \
             -m ping \
             -u "$PROXMOX_ROOT_USER" \
             -e "@$VARS_FILE"
@@ -333,12 +357,15 @@ jobs:
         run: terraform init
         working-directory: terraform
 
-      - name: Get runner IP from Terraform output
+      - name: Get runner IP and pve1 Tailscale IP from Terraform output
         id: runner
         run: |
           RUNNER_IP=$(terraform output -raw runner_ip_address)
+          PVE1_IP=$(terraform output -raw pve1_tailscale_ip)
           echo "::add-mask::$RUNNER_IP"
+          echo "::add-mask::$PVE1_IP"
           echo "ip=$RUNNER_IP" >> "$GITHUB_OUTPUT"
+          echo "pve1_ip=$PVE1_IP" >> "$GITHUB_OUTPUT"
         working-directory: terraform
 
       - name: Connect to Tailscale
@@ -382,11 +409,103 @@ jobs:
           ansible_user: root
           ansible_password: "$PROXMOX_ROOT_PASS"
           ansible_ssh_pass: "$PROXMOX_ROOT_PASS"
-          ansible_ssh_extra_args: "-o StrictHostKeyChecking=no -o ProxyCommand='sshpass -e ssh -W %h:%p -o StrictHostKeyChecking=no $PROXMOX_ROOT_USER@pve1.prod.brooks-security.com'"
+          ansible_ssh_extra_args: "-o StrictHostKeyChecking=no -o ProxyCommand='sshpass -e ssh -W %h:%p -o StrictHostKeyChecking=no $PROXMOX_ROOT_USER@${{ steps.runner.outputs.pve1_ip }}'"
           runner_token: "$RUNNER_TOKEN"
           EOF
           export SSHPASS="$PROXMOX_ROOT_PASS"
           sshpass -e ansible-playbook ansible/playbooks/github-runner.yml \
             -i "github-runner," \
+            -e "@$VARS_FILE"
+          rm -f "$VARS_FILE"
+
+  ansible-setup-caddy:
+    name: 'Setup Caddy Reverse Proxy'
+    runs-on: ubuntu-latest
+    needs: terraform-apply
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          terraform_wrapper: false
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: terraform
+
+      - name: Get Caddy IP and pve1 Tailscale IP from Terraform output
+        id: caddy
+        run: |
+          CADDY_IP=$(terraform output -raw caddy_ip_address)
+          PVE1_IP=$(terraform output -raw pve1_tailscale_ip)
+          PVE1_MGMT_IP=$(terraform output -raw pve1_mgmt_ip)
+          echo "::add-mask::$CADDY_IP"
+          echo "::add-mask::$PVE1_IP"
+          echo "::add-mask::$PVE1_MGMT_IP"
+          echo "ip=$CADDY_IP" >> "$GITHUB_OUTPUT"
+          echo "pve1_ip=$PVE1_IP" >> "$GITHUB_OUTPUT"
+          echo "pve1_mgmt_ip=$PVE1_MGMT_IP" >> "$GITHUB_OUTPUT"
+        working-directory: terraform
+
+      - name: Connect to Tailscale
+        uses: ./.github/actions/tailscale-connect
+
+      - name: Fetch credentials from SSM
+        run: |
+          ROOT_USER=$(aws ssm get-parameter \
+            --name /proxmox/auth/root_user \
+            --with-decryption \
+            --query Parameter.Value \
+            --output text)
+          ROOT_PASS=$(aws ssm get-parameter \
+            --name /proxmox/auth/root_password \
+            --with-decryption \
+            --query Parameter.Value \
+            --output text)
+          CADDY_KEY_ID=$(aws ssm get-parameter \
+            --name /caddy/aws/access_key_id \
+            --with-decryption \
+            --query Parameter.Value \
+            --output text)
+          CADDY_KEY_SECRET=$(aws ssm get-parameter \
+            --name /caddy/aws/secret_access_key \
+            --with-decryption \
+            --query Parameter.Value \
+            --output text)
+          echo "::add-mask::$ROOT_USER"
+          echo "::add-mask::$ROOT_PASS"
+          echo "::add-mask::$CADDY_KEY_ID"
+          echo "::add-mask::$CADDY_KEY_SECRET"
+          echo "PROXMOX_ROOT_USER=$ROOT_USER" >> "$GITHUB_ENV"
+          echo "PROXMOX_ROOT_PASS=$ROOT_PASS" >> "$GITHUB_ENV"
+          echo "CADDY_AWS_ACCESS_KEY_ID=$CADDY_KEY_ID" >> "$GITHUB_ENV"
+          echo "CADDY_AWS_SECRET_ACCESS_KEY=$CADDY_KEY_SECRET" >> "$GITHUB_ENV"
+
+      - name: Install Ansible and sshpass
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y sshpass
+          pip install ansible
+
+      - name: Run Caddy playbook
+        run: |
+          VARS_FILE=$(mktemp)
+          cat > "$VARS_FILE" <<EOF
+          ansible_host: "${{ steps.caddy.outputs.ip }}"
+          ansible_user: root
+          ansible_password: "$PROXMOX_ROOT_PASS"
+          ansible_ssh_pass: "$PROXMOX_ROOT_PASS"
+          ansible_ssh_extra_args: "-o StrictHostKeyChecking=no -o ProxyCommand='sshpass -e ssh -W %h:%p -o StrictHostKeyChecking=no $PROXMOX_ROOT_USER@${{ steps.caddy.outputs.pve1_ip }}'"
+          caddy_aws_access_key_id: "$CADDY_AWS_ACCESS_KEY_ID"
+          caddy_aws_secret_access_key: "$CADDY_AWS_SECRET_ACCESS_KEY"
+          pve1_mgmt_ip: "${{ steps.caddy.outputs.pve1_mgmt_ip }}"
+          caddy_acme_email: "graham.brooks@avatarfleet.com"
+          EOF
+          export SSHPASS="$PROXMOX_ROOT_PASS"
+          sshpass -e ansible-playbook ansible/playbooks/caddy.yml \
+            -i "caddy," \
             -e "@$VARS_FILE"
           rm -f "$VARS_FILE"
