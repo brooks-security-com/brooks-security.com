@@ -29,7 +29,7 @@ resource "proxmox_virtual_environment_container" "github_runner" {
     ip_config {
       ipv4 {
         address = "192.168.2.200/16"
-        gateway = "192.168.1.1"
+        gateway = "192.168.0.1"
       }
     }
 
