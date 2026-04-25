@@ -21,6 +21,10 @@ resource "proxmox_virtual_environment_container" "caddy" {
   initialization {
     hostname = "caddy"
 
+    dns {
+      servers = ["8.8.8.8"]
+    }
+
     ip_config {
       ipv4 {
         address = "192.168.2.201/16"
