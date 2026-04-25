@@ -1,0 +1,85 @@
+name: 'Ansible'
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'ansible/**'
+      - '.github/workflows/ansible.yml'
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+
+jobs:
+  ping:
+    name: 'Ping pve1'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fetch Tailscale credentials from SSM
+        run: |
+          CLIENT_ID=$(aws ssm get-parameter \
+            --name /tailscale/oauth/client_id \
+            --with-decryption \
+            --query Parameter.Value \
+            --output text)
+          CLIENT_SECRET=$(aws ssm get-parameter \
+            --name /tailscale/oauth/client_secret \
+            --with-decryption \
+            --query Parameter.Value \
+            --output text)
+          echo "::add-mask::$CLIENT_ID"
+          echo "::add-mask::$CLIENT_SECRET"
+          echo "TS_OAUTH_CLIENT_ID=$CLIENT_ID" >> "$GITHUB_ENV"
+          echo "TS_OAUTH_CLIENT_SECRET=$CLIENT_SECRET" >> "$GITHUB_ENV"
+
+      - name: Connect to Tailscale
+        uses: tailscale/tailscale-github-action@v2
+        with:
+          oauth-client-id: ${{ env.TS_OAUTH_CLIENT_ID }}
+          oauth-client-secret: ${{ env.TS_OAUTH_CLIENT_SECRET }}
+          tags: tag:ci
+
+      - name: Fetch Proxmox SSH credentials from SSM
+        run: |
+          ROOT_USER=$(aws ssm get-parameter \
+            --name /proxmox/auth/root_user \
+            --with-decryption \
+            --query Parameter.Value \
+            --output text)
+          ROOT_PASS=$(aws ssm get-parameter \
+            --name /proxmox/auth/root_password \
+            --with-decryption \
+            --query Parameter.Value \
+            --output text)
+          echo "::add-mask::$ROOT_USER"
+          echo "::add-mask::$ROOT_PASS"
+          echo "PROXMOX_ROOT_USER=$ROOT_USER" >> "$GITHUB_ENV"
+          echo "PROXMOX_ROOT_PASS=$ROOT_PASS" >> "$GITHUB_ENV"
+
+      - name: Install Ansible and sshpass
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y sshpass
+          pip install ansible
+
+      - name: Ansible ping pve1
+        working-directory: ansible
+        run: |
+          VARS_FILE=$(mktemp)
+          cat > "$VARS_FILE" <<EOF
+          ansible_password: "$PROXMOX_ROOT_PASS"
+          ansible_ssh_pass: "$PROXMOX_ROOT_PASS"
+          EOF
+          ansible pve1.prod.brooks-security.com \
+            -m ping \
+            -u "$PROXMOX_ROOT_USER" \
+            -e "@$VARS_FILE"
+          rm -f "$VARS_FILE"

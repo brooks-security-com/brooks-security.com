@@ -1,0 +1,5 @@
+all:
+  children:
+    proxmox:
+      hosts:
+        pve1.prod.brooks-security.com:
