@@ -314,3 +314,79 @@ jobs:
             -u "$PROXMOX_ROOT_USER" \
             -e "@$VARS_FILE"
           rm -f "$VARS_FILE"
+
+  ansible-setup-runner:
+    name: 'Setup GitHub Actions Runner'
+    runs-on: ubuntu-latest
+    needs: terraform-apply
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          terraform_wrapper: false
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: terraform
+
+      - name: Get runner IP from Terraform output
+        id: runner
+        run: |
+          RUNNER_IP=$(terraform output -raw runner_ip_address)
+          echo "::add-mask::$RUNNER_IP"
+          echo "ip=$RUNNER_IP" >> "$GITHUB_OUTPUT"
+        working-directory: terraform
+
+      - name: Connect to Tailscale
+        uses: ./.github/actions/tailscale-connect
+
+      - name: Fetch credentials from SSM
+        run: |
+          RUNNER_TOKEN=$(aws ssm get-parameter \
+            --name /github/actions-runner/token \
+            --with-decryption \
+            --query Parameter.Value \
+            --output text)
+          ROOT_USER=$(aws ssm get-parameter \
+            --name /proxmox/auth/root_user \
+            --with-decryption \
+            --query Parameter.Value \
+            --output text)
+          ROOT_PASS=$(aws ssm get-parameter \
+            --name /proxmox/auth/root_password \
+            --with-decryption \
+            --query Parameter.Value \
+            --output text)
+          echo "::add-mask::$RUNNER_TOKEN"
+          echo "::add-mask::$ROOT_USER"
+          echo "::add-mask::$ROOT_PASS"
+          echo "RUNNER_TOKEN=$RUNNER_TOKEN" >> "$GITHUB_ENV"
+          echo "PROXMOX_ROOT_USER=$ROOT_USER" >> "$GITHUB_ENV"
+          echo "PROXMOX_ROOT_PASS=$ROOT_PASS" >> "$GITHUB_ENV"
+
+      - name: Install Ansible and sshpass
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y sshpass
+          pip install ansible
+
+      - name: Run GitHub runner playbook
+        run: |
+          VARS_FILE=$(mktemp)
+          cat > "$VARS_FILE" <<EOF
+          ansible_host: "${{ steps.runner.outputs.ip }}"
+          ansible_user: root
+          ansible_password: "$PROXMOX_ROOT_PASS"
+          ansible_ssh_pass: "$PROXMOX_ROOT_PASS"
+          ansible_ssh_extra_args: "-o StrictHostKeyChecking=no -o ProxyCommand='sshpass -e ssh -W %h:%p -o StrictHostKeyChecking=no $PROXMOX_ROOT_USER@pve1.prod.brooks-security.com'"
+          runner_token: "$RUNNER_TOKEN"
+          EOF
+          export SSHPASS="$PROXMOX_ROOT_PASS"
+          sshpass -e ansible-playbook ansible/playbooks/github-runner.yml \
+            -i "github-runner," \
+            -e "@$VARS_FILE"
+          rm -f "$VARS_FILE"

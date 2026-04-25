@@ -1,0 +1,99 @@
+---
+- name: Setup GitHub Actions self-hosted runner
+  hosts: all
+  become: true
+  vars:
+    runner_version: "2.321.0"
+    runner_dir: /opt/actions-runner
+    runner_user: runner
+    runner_labels: "self-hosted,linux,x64,proxmox"
+    github_url: "https://github.com/LittleSeneca/brooks-security.com"
+
+  tasks:
+    - name: Install dependencies
+      apt:
+        name:
+          - curl
+          - git
+          - jq
+          - libicu-dev
+        state: present
+        update_cache: true
+
+    - name: Create runner user
+      user:
+        name: "{{ runner_user }}"
+        system: true
+        shell: /bin/bash
+        home: "{{ runner_dir }}"
+        create_home: false
+
+    - name: Create runner directory
+      file:
+        path: "{{ runner_dir }}"
+        state: directory
+        owner: "{{ runner_user }}"
+        group: "{{ runner_user }}"
+        mode: "0755"
+
+    - name: Check if runner is already configured
+      stat:
+        path: "{{ runner_dir }}/.runner"
+      register: runner_config_file
+
+    - name: Download runner archive
+      get_url:
+        url: "https://github.com/actions/runner/releases/download/v{{ runner_version }}/actions-runner-linux-x64-{{ runner_version }}.tar.gz"
+        dest: /tmp/actions-runner.tar.gz
+        mode: "0644"
+      when: not runner_config_file.stat.exists
+
+    - name: Extract runner archive
+      unarchive:
+        src: /tmp/actions-runner.tar.gz
+        dest: "{{ runner_dir }}"
+        remote_src: true
+        owner: "{{ runner_user }}"
+        group: "{{ runner_user }}"
+      when: not runner_config_file.stat.exists
+
+    - name: Configure runner
+      command: >
+        ./config.sh
+        --url {{ github_url }}
+        --token {{ runner_token }}
+        --name {{ inventory_hostname }}
+        --labels {{ runner_labels }}
+        --unattended
+        --replace
+      args:
+        chdir: "{{ runner_dir }}"
+      become_user: "{{ runner_user }}"
+      when: not runner_config_file.stat.exists
+      no_log: true
+
+    - name: Check for existing runner service file
+      find:
+        paths: /etc/systemd/system
+        patterns: "actions.runner.*.service"
+      register: runner_service_files
+
+    - name: Install runner as systemd service
+      command: ./svc.sh install {{ runner_user }}
+      args:
+        chdir: "{{ runner_dir }}"
+      when: runner_service_files.files | length == 0
+
+    - name: Find runner service file
+      find:
+        paths: /etc/systemd/system
+        patterns: "actions.runner.*.service"
+      register: runner_service_files_final
+
+    - name: Start and enable runner service
+      systemd:
+        name: "{{ runner_service_files_final.files[0].path | basename | replace('.service', '') }}"
+        state: started
+        enabled: true
+        daemon_reload: true
+      when: runner_service_files_final.files | length > 0
