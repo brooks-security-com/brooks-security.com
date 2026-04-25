@@ -30,10 +30,8 @@ resource "tailscale_acl" "main" {
     ]
 
     tagOwners = {
-      "tag:proxmox" = ["autogroup:admin"]
-      # Empty list: any OAuth client with Devices:Write scope can create tag:ci nodes.
-      # Used by the GitHub Actions Tailscale action.
-      "tag:ci" = []
+      "tag:proxmox" = ["a.younger.cato@gmail.com"]
+      "tag:ci"      = ["a.younger.cato@gmail.com"]
     }
   })
 }
