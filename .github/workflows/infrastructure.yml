@@ -433,20 +433,26 @@ jobs:
           sudo apt-get install -y sshpass
           pip install ansible
 
+      - name: Configure container SSH via pve1
+        run: |
+          export SSHPASS="$PROXMOX_ROOT_PASS"
+          sshpass -e ssh -o StrictHostKeyChecking=no \
+            "$PROXMOX_ROOT_USER@pve1.prod.brooks-security.com" \
+            'pct exec 200 -- bash -c "mkdir -p /etc/ssh/sshd_config.d && printf \"PermitRootLogin yes\nPasswordAuthentication yes\n\" > /etc/ssh/sshd_config.d/99-ansible.conf && systemctl enable ssh --now && systemctl restart ssh"'
+
       - name: Run GitHub runner playbook
         run: |
           VARS_FILE=$(mktemp)
           cat > "$VARS_FILE" <<EOF
-          ansible_host: "${{ steps.runner.outputs.ip }}"
           ansible_user: root
           ansible_password: "$PROXMOX_ROOT_PASS"
           ansible_ssh_pass: "$PROXMOX_ROOT_PASS"
-          ansible_ssh_extra_args: "-o StrictHostKeyChecking=no -o ProxyCommand='sshpass -e ssh -W %h:%p -o StrictHostKeyChecking=no $PROXMOX_ROOT_USER@${{ steps.runner.outputs.pve1_ip }}'"
+          ansible_ssh_extra_args: "-o StrictHostKeyChecking=no -o ProxyCommand='sshpass -e ssh -W %h:%p -o StrictHostKeyChecking=no $PROXMOX_ROOT_USER@pve1.prod.brooks-security.com'"
           runner_token: "$RUNNER_TOKEN"
           EOF
           export SSHPASS="$PROXMOX_ROOT_PASS"
-          sshpass -e ansible-playbook ansible/playbooks/github-runner.yml \
-            -i "github-runner," \
+          ansible-playbook ansible/playbooks/github-runner.yml \
+            -i ansible/inventory.yml \
             -e "@$VARS_FILE"
           rm -f "$VARS_FILE"
 
@@ -522,22 +528,28 @@ jobs:
           sudo apt-get install -y sshpass
           pip install ansible
 
+      - name: Configure container SSH via pve1
+        run: |
+          export SSHPASS="$PROXMOX_ROOT_PASS"
+          sshpass -e ssh -o StrictHostKeyChecking=no \
+            "$PROXMOX_ROOT_USER@pve1.prod.brooks-security.com" \
+            'pct exec 201 -- bash -c "mkdir -p /etc/ssh/sshd_config.d && printf \"PermitRootLogin yes\nPasswordAuthentication yes\n\" > /etc/ssh/sshd_config.d/99-ansible.conf && systemctl enable ssh --now && systemctl restart ssh"'
+
       - name: Run Caddy playbook
         run: |
           VARS_FILE=$(mktemp)
           cat > "$VARS_FILE" <<EOF
-          ansible_host: "${{ steps.caddy.outputs.ip }}"
           ansible_user: root
           ansible_password: "$PROXMOX_ROOT_PASS"
           ansible_ssh_pass: "$PROXMOX_ROOT_PASS"
-          ansible_ssh_extra_args: "-o StrictHostKeyChecking=no -o ProxyCommand='sshpass -e ssh -W %h:%p -o StrictHostKeyChecking=no $PROXMOX_ROOT_USER@${{ steps.caddy.outputs.pve1_ip }}'"
+          ansible_ssh_extra_args: "-o StrictHostKeyChecking=no -o ProxyCommand='sshpass -e ssh -W %h:%p -o StrictHostKeyChecking=no $PROXMOX_ROOT_USER@pve1.prod.brooks-security.com'"
           caddy_aws_access_key_id: "$CADDY_AWS_ACCESS_KEY_ID"
           caddy_aws_secret_access_key: "$CADDY_AWS_SECRET_ACCESS_KEY"
           pve1_mgmt_ip: "${{ steps.caddy.outputs.pve1_mgmt_ip }}"
           caddy_acme_email: "graham.brooks@avatarfleet.com"
           EOF
           export SSHPASS="$PROXMOX_ROOT_PASS"
-          sshpass -e ansible-playbook ansible/playbooks/caddy.yml \
-            -i "caddy," \
+          ansible-playbook ansible/playbooks/caddy.yml \
+            -i ansible/inventory.yml \
             -e "@$VARS_FILE"
           rm -f "$VARS_FILE"

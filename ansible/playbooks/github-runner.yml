@@ -1,6 +1,6 @@
 ---
 - name: Setup GitHub Actions self-hosted runner
-  hosts: all
+  hosts: runners
   become: true
   vars:
     runner_version: "2.321.0"
