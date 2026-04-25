@@ -351,7 +351,7 @@ jobs:
           echo "PROXMOX_ROOT_USER=$ROOT_USER" >> "$GITHUB_ENV"
           echo "PROXMOX_ROOT_PASS=$ROOT_PASS" >> "$GITHUB_ENV"
 
-      - name:Ansible ping pve1
+      - name: Ansible ping pve1
         working-directory: ansible
         run: |
           VARS_FILE=$(mktemp)
@@ -436,7 +436,7 @@ jobs:
           echo "::add-mask::$TOKEN"
           echo "token=$TOKEN" >> "$GITHUB_OUTPUT"
 
-      - name:Configure container SSH via pve1
+      - name: Configure container SSH via pve1
         run: |
           export SSHPASS="$PROXMOX_ROOT_PASS"
           sshpass -e ssh -o StrictHostKeyChecking=no \
@@ -527,7 +527,7 @@ jobs:
           echo "CADDY_AWS_ACCESS_KEY_ID=$CADDY_KEY_ID" >> "$GITHUB_ENV"
           echo "CADDY_AWS_SECRET_ACCESS_KEY=$CADDY_KEY_SECRET" >> "$GITHUB_ENV"
 
-      - name:Configure container SSH via pve1
+      - name: Configure container SSH via pve1
         run: |
           export SSHPASS="$PROXMOX_ROOT_PASS"
           sshpass -e ssh -o StrictHostKeyChecking=no \
