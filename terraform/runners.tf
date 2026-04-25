@@ -19,7 +19,7 @@ resource "proxmox_virtual_environment_container" "github_runner" {
   }
 
   disk {
-    datastore_id = "local"
+    datastore_id = "local-lvm"
     size         = 20
   }
 
