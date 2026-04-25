@@ -41,7 +41,7 @@ jobs:
           echo "TS_OAUTH_CLIENT_SECRET=$CLIENT_SECRET" >> "$GITHUB_ENV"
 
       - name: Connect to Tailscale
-        uses: tailscale/tailscale-github-action@v2
+        uses: tailscale/github-action@v2
         with:
           oauth-client-id: ${{ env.TS_OAUTH_CLIENT_ID }}
           oauth-client-secret: ${{ env.TS_OAUTH_CLIENT_SECRET }}
