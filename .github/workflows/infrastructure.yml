@@ -129,10 +129,12 @@ jobs:
             --name /proxmox/auth/api_url \
             --query Parameter.Value \
             --output text)
-          curl -sf --max-time 10 -k "${API_URL}" > /dev/null || {
+          HTTP_CODE=$(curl -s -o /dev/null --max-time 10 -k -w "%{http_code}" "${API_URL}")
+          if [ "${HTTP_CODE}" = "000" ]; then
             echo "Cannot reach Proxmox API at ${API_URL} — aborting plan"
             exit 1
-          }
+          fi
+          echo "Proxmox API reachable (HTTP ${HTTP_CODE})"
 
       - name: Setup Terraform
         if: steps.filter.outputs.terraform == 'true'
@@ -275,10 +277,12 @@ jobs:
             --name /proxmox/auth/api_url \
             --query Parameter.Value \
             --output text)
-          curl -sf --max-time 10 -k "${API_URL}" > /dev/null || {
+          HTTP_CODE=$(curl -s -o /dev/null --max-time 10 -k -w "%{http_code}" "${API_URL}")
+          if [ "${HTTP_CODE}" = "000" ]; then
             echo "Cannot reach Proxmox API at ${API_URL} — aborting plan"
             exit 1
-          }
+          fi
+          echo "Proxmox API reachable (HTTP ${HTTP_CODE})"
 
       - name: Setup Terraform
         if: steps.filter.outputs.terraform == 'true'
