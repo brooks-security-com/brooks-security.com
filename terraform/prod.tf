@@ -40,13 +40,13 @@ resource "aws_route53_record" "pve1_prod" {
   name    = "pve1.prod.${var.domain}"
   type    = "A"
   ttl     = 60
-  records = var.caddy_tailscale_ip != null ? [var.caddy_tailscale_ip] : local.pve1_ipv4
+  records = (var.caddy_tailscale_ip != null && var.caddy_tailscale_ip != "") ? [var.caddy_tailscale_ip] : local.pve1_ipv4
 }
 
 # Wildcard *.prod.brooks-security.com — routes all prod subdomains through Caddy.
 # Only created once caddy_tailscale_ip is known (after first Ansible run).
 resource "aws_route53_record" "wildcard_prod" {
-  count   = var.caddy_tailscale_ip != null ? 1 : 0
+  count   = (var.caddy_tailscale_ip != null && var.caddy_tailscale_ip != "") ? 1 : 0
   zone_id = aws_route53_zone.prod.zone_id
   name    = "*.prod.${var.domain}"
   type    = "A"
