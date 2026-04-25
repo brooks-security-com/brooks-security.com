@@ -375,6 +375,8 @@ jobs:
     name: 'Setup GitHub Actions Runner'
     runs-on: ubuntu-latest
     needs: terraform-apply
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -405,8 +407,8 @@ jobs:
 
       - name: Fetch credentials from SSM
         run: |
-          RUNNER_TOKEN=$(aws ssm get-parameter \
-            --name /github/actions-runner/token \
+          ADMIN_TOKEN=$(aws ssm get-parameter \
+            --name /github/admin_token \
             --with-decryption \
             --query Parameter.Value \
             --output text)
@@ -420,12 +422,25 @@ jobs:
             --with-decryption \
             --query Parameter.Value \
             --output text)
-          echo "::add-mask::$RUNNER_TOKEN"
+          echo "::add-mask::$ADMIN_TOKEN"
           echo "::add-mask::$ROOT_USER"
           echo "::add-mask::$ROOT_PASS"
-          echo "RUNNER_TOKEN=$RUNNER_TOKEN" >> "$GITHUB_ENV"
+          echo "GH_ADMIN_TOKEN=$ADMIN_TOKEN" >> "$GITHUB_ENV"
           echo "PROXMOX_ROOT_USER=$ROOT_USER" >> "$GITHUB_ENV"
           echo "PROXMOX_ROOT_PASS=$ROOT_PASS" >> "$GITHUB_ENV"
+
+      - name: Generate runner registration token
+        id: runner_token
+        env:
+          GH_TOKEN: ${{ env.GH_ADMIN_TOKEN }}
+        run: |
+          TOKEN=$(gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            /repos/${{ github.repository }}/actions/runners/registration-token \
+            --jq '.token')
+          echo "::add-mask::$TOKEN"
+          echo "token=$TOKEN" >> "$GITHUB_OUTPUT"
 
       - name: Install Ansible and sshpass
         run: |
@@ -441,6 +456,8 @@ jobs:
             'pct exec 200 -- bash -c "mkdir -p /etc/ssh/sshd_config.d && printf \"PermitRootLogin yes\nPasswordAuthentication yes\n\" > /etc/ssh/sshd_config.d/99-ansible.conf && systemctl enable ssh --now && systemctl restart ssh"'
 
       - name: Run GitHub runner playbook
+        env:
+          RUNNER_TOKEN: ${{ steps.runner_token.outputs.token }}
         run: |
           VARS_FILE=$(mktemp)
           cat > "$VARS_FILE" <<EOF
