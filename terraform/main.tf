@@ -46,7 +46,8 @@ provider "tailscale" {
 }
 
 provider "proxmox" {
-  endpoint  = data.aws_ssm_parameter.proxmox_api_url.value
+  # Strip any API path suffix — the provider constructs its own paths internally.
+  endpoint  = trimsuffix(data.aws_ssm_parameter.proxmox_api_url.value, "/api2/json")
   api_token = "${data.aws_ssm_parameter.proxmox_token_id.value}=${data.aws_ssm_parameter.proxmox_token_secret.value}"
   insecure  = true
 }

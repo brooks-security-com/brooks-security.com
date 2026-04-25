@@ -1,0 +1,25 @@
+{
+	email {{ caddy_acme_email }}
+}
+
+*.prod.brooks-security.com {
+	tls {
+		dns route53 {
+			region us-east-1
+		}
+	}
+
+	# Proxmox web UI — terminates the self-signed cert, presents a valid Let's Encrypt cert.
+	@pve1 host pve1.prod.brooks-security.com
+	handle @pve1 {
+		reverse_proxy https://{{ pve1_mgmt_ip }}:8006 {
+			transport http {
+				tls_insecure_skip_verify
+			}
+		}
+	}
+
+	handle {
+		respond "Service not configured" 404
+	}
+}
