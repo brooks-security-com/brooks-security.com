@@ -1,0 +1,51 @@
+name: 'Connect to Tailscale'
+description: 'Fetches Tailscale OAuth credentials from AWS SSM and connects to the tailnet'
+
+inputs:
+  tags:
+    description: 'Tailscale tags'
+    required: false
+    default: 'tag:ci'
+  args:
+    description: 'Additional arguments for tailscale up'
+    required: false
+    default: '--accept-dns=false'
+  version:
+    description: 'Tailscale version'
+    required: false
+    default: 'latest'
+
+runs:
+  using: composite
+  steps:
+    - name: Fetch Tailscale credentials from SSM
+      shell: bash
+      run: |
+        CLIENT_ID=$(aws ssm get-parameter \
+          --name /tailscale/oauth/client_id \
+          --with-decryption \
+          --query Parameter.Value \
+          --output text)
+        CLIENT_SECRET=$(aws ssm get-parameter \
+          --name /tailscale/oauth/client_secret \
+          --with-decryption \
+          --query Parameter.Value \
+          --output text)
+        echo "::add-mask::$CLIENT_ID"
+        echo "::add-mask::$CLIENT_SECRET"
+        echo "TAILSCALE_OAUTH_CLIENT_ID=$CLIENT_ID" >> "$GITHUB_ENV"
+        echo "TAILSCALE_OAUTH_SECRET=$CLIENT_SECRET" >> "$GITHUB_ENV"
+
+    - name: Cleanup leftover Tailscale files
+      shell: bash
+      run: rm -f tailscale.tgz ~/.cache/tailscale.tgz
+      continue-on-error: true
+
+    - name: Connect to Tailscale
+      uses: tailscale/github-action@v4
+      with:
+        oauth-client-id: ${{ env.TAILSCALE_OAUTH_CLIENT_ID }}
+        oauth-secret: ${{ env.TAILSCALE_OAUTH_SECRET }}
+        tags: ${{ inputs.tags }}
+        args: ${{ inputs.args }}
+        version: ${{ inputs.version }}
