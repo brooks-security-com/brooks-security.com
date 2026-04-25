@@ -14,6 +14,10 @@ terraform {
       source  = "tailscale/tailscale"
       version = "~> 0.17"
     }
+    proxmox = {
+      source  = "bpg/proxmox"
+      version = "0.104.0"
+    }
   }
 
   # `profile` is intentionally omitted here (partial backend config) so CI can
@@ -39,4 +43,9 @@ provider "aws" {
 provider "tailscale" {
   oauth_client_id     = data.aws_ssm_parameter.tailscale_oauth_client_id.value
   oauth_client_secret = data.aws_ssm_parameter.tailscale_oauth_client_secret.value
+}
+
+provider "proxmox" {
+  endpoint  = data.aws_ssm_parameter.proxmox_api_url.value
+  api_token = "${data.aws_ssm_parameter.proxmox_token_id.value}=${data.aws_ssm_parameter.proxmox_token_secret.value}"
 }
