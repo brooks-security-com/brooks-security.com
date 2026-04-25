@@ -10,6 +10,10 @@ terraform {
       source  = "hashicorp/tls"
       version = "~> 4.0"
     }
+    tailscale = {
+      source  = "tailscale/tailscale"
+      version = "~> 0.17"
+    }
   }
 
   # `profile` is intentionally omitted here (partial backend config) so CI can
@@ -30,4 +34,9 @@ provider "aws" {
   # Null when var.aws_profile is empty so the provider falls through to
   # AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY env vars in CI.
   profile = var.aws_profile != "" ? var.aws_profile : null
+}
+
+provider "tailscale" {
+  oauth_client_id     = data.aws_ssm_parameter.tailscale_oauth_client_id.value
+  oauth_client_secret = data.aws_ssm_parameter.tailscale_oauth_client_secret.value
 }
