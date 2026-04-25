@@ -1,11 +1,9 @@
-name: 'Terraform'
+name: 'Infrastructure'
 
-# The workflow fires on every push/PR to main so GitHub branch-protection
-# "required status checks" always see it run. Inside each job, a
-# `dorny/paths-filter@v3` step detects whether anything under `terraform/`
-# (or this workflow file) actually changed; the real work steps only run when
-# it did. Net effect: the checks are always present on every PR, but finish
-# in seconds and pass cleanly when the diff has no Terraform in it.
+# Runs on every push/PR to main so required status checks are always present.
+# Paths-filter inside each job skips real work when nothing relevant changed.
+# On push to main (or workflow_dispatch): fmt → validate → apply → ansible ping.
+# On pull request:                        fmt → validate → plan.
 on:
   push:
     branches:
@@ -13,6 +11,7 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -24,8 +23,6 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
   AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
-  # Blank out the local dev profile so the AWS provider uses the env-var
-  # credentials above (see terraform/variables.tf -> aws_profile).
   TF_VAR_aws_profile: ''
 
 jobs:
@@ -43,7 +40,7 @@ jobs:
           filters: |
             terraform:
               - 'terraform/**'
-              - '.github/workflows/terraform.yml'
+              - '.github/workflows/infrastructure.yml'
 
       - name: No Terraform changes - marking check as passed
         if: steps.filter.outputs.terraform != 'true'
@@ -75,7 +72,7 @@ jobs:
           filters: |
             terraform:
               - 'terraform/**'
-              - '.github/workflows/terraform.yml'
+              - '.github/workflows/infrastructure.yml'
 
       - name: No Terraform changes - marking check as passed
         if: steps.filter.outputs.terraform != 'true'
@@ -113,7 +110,7 @@ jobs:
           filters: |
             terraform:
               - 'terraform/**'
-              - '.github/workflows/terraform.yml'
+              - '.github/workflows/infrastructure.yml'
 
       - name: No Terraform changes - marking check as passed
         if: steps.filter.outputs.terraform != 'true'
@@ -145,8 +142,6 @@ jobs:
             cp plan_full.txt plan_output.txt
           fi
 
-          # GitHub PR comment bodies cap at 65535 chars. Truncate with head+tail
-          # so callers still see what changed and what errored.
           if [ "$(wc -c < plan_output.txt)" -gt 60000 ]; then
             {
               echo "Plan output truncated due to size..."
@@ -232,7 +227,7 @@ jobs:
     name: 'Terraform Apply'
     runs-on: ubuntu-latest
     needs: terraform-validate
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: (github.ref == 'refs/heads/main' && github.event_name == 'push') || github.event_name == 'workflow_dispatch'
     environment: production
     steps:
       - name: Checkout
@@ -245,7 +240,7 @@ jobs:
           filters: |
             terraform:
               - 'terraform/**'
-              - '.github/workflows/terraform.yml'
+              - '.github/workflows/infrastructure.yml'
 
       - name: No Terraform changes - marking check as passed
         if: steps.filter.outputs.terraform != 'true'
@@ -271,3 +266,51 @@ jobs:
         if: steps.filter.outputs.terraform == 'true'
         run: terraform apply -auto-approve tfplan
         working-directory: terraform
+
+  ansible-ping:
+    name: 'Ansible Ping pve1'
+    runs-on: ubuntu-latest
+    needs: terraform-apply
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Connect to Tailscale
+        uses: ./.github/actions/tailscale-connect
+
+      - name: Fetch Proxmox SSH credentials from SSM
+        run: |
+          ROOT_USER=$(aws ssm get-parameter \
+            --name /proxmox/auth/root_user \
+            --with-decryption \
+            --query Parameter.Value \
+            --output text)
+          ROOT_PASS=$(aws ssm get-parameter \
+            --name /proxmox/auth/root_password \
+            --with-decryption \
+            --query Parameter.Value \
+            --output text)
+          echo "::add-mask::$ROOT_USER"
+          echo "::add-mask::$ROOT_PASS"
+          echo "PROXMOX_ROOT_USER=$ROOT_USER" >> "$GITHUB_ENV"
+          echo "PROXMOX_ROOT_PASS=$ROOT_PASS" >> "$GITHUB_ENV"
+
+      - name: Install Ansible and sshpass
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y sshpass
+          pip install ansible
+
+      - name: Ansible ping pve1
+        working-directory: ansible
+        run: |
+          VARS_FILE=$(mktemp)
+          cat > "$VARS_FILE" <<EOF
+          ansible_password: "$PROXMOX_ROOT_PASS"
+          ansible_ssh_pass: "$PROXMOX_ROOT_PASS"
+          EOF
+          ansible pve1.prod.brooks-security.com \
+            -m ping \
+            -u "$PROXMOX_ROOT_USER" \
+            -e "@$VARS_FILE"
+          rm -f "$VARS_FILE"
