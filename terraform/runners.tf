@@ -26,6 +26,10 @@ resource "proxmox_virtual_environment_container" "github_runner" {
   initialization {
     hostname = "github-runner"
 
+    dns {
+      servers = ["8.8.8.8"]
+    }
+
     ip_config {
       ipv4 {
         address = "192.168.2.200/16"
