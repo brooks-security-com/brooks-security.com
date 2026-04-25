@@ -129,7 +129,7 @@ jobs:
             --name /proxmox/auth/api_url \
             --query Parameter.Value \
             --output text)
-          curl -sf --max-time 10 -k "${API_URL}/api2/json/version" > /dev/null || {
+          curl -sf --max-time 10 -k "${API_URL}" > /dev/null || {
             echo "Cannot reach Proxmox API at ${API_URL} — aborting plan"
             exit 1
           }
@@ -275,7 +275,7 @@ jobs:
             --name /proxmox/auth/api_url \
             --query Parameter.Value \
             --output text)
-          curl -sf --max-time 10 -k "${API_URL}/api2/json/version" > /dev/null || {
+          curl -sf --max-time 10 -k "${API_URL}" > /dev/null || {
             echo "Cannot reach Proxmox API at ${API_URL} — aborting plan"
             exit 1
           }
