@@ -3,3 +3,11 @@ all:
     proxmox:
       hosts:
         pve1.prod.brooks-security.com:
+    runners:
+      hosts:
+        github-runner:
+          ansible_host: 192.168.2.200
+    caddy:
+      hosts:
+        caddy:
+          ansible_host: 192.168.2.201

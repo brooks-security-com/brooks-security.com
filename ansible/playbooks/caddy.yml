@@ -1,6 +1,6 @@
 ---
 - name: Configure Caddy reverse proxy
-  hosts: all
+  hosts: caddy
   become: true
   vars:
     caddy_config_dir: /etc/caddy
