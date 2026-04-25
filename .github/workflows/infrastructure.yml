@@ -118,6 +118,22 @@ jobs:
         if: steps.filter.outputs.terraform != 'true'
         run: echo "No Terraform changes in this diff - marking check as passed."
 
+      - name: Connect to Tailscale
+        if: steps.filter.outputs.terraform == 'true'
+        uses: ./.github/actions/tailscale-connect
+
+      - name: Verify Proxmox API connectivity
+        if: steps.filter.outputs.terraform == 'true'
+        run: |
+          API_URL=$(aws ssm get-parameter \
+            --name /proxmox/auth/api_url \
+            --query Parameter.Value \
+            --output text)
+          curl -sf --max-time 10 -k "${API_URL}/api2/json/version" > /dev/null || {
+            echo "Cannot reach Proxmox API at ${API_URL} — aborting plan"
+            exit 1
+          }
+
       - name: Setup Terraform
         if: steps.filter.outputs.terraform == 'true'
         uses: hashicorp/setup-terraform@v3
@@ -251,6 +267,18 @@ jobs:
       - name: Connect to Tailscale
         if: steps.filter.outputs.terraform == 'true'
         uses: ./.github/actions/tailscale-connect
+
+      - name: Verify Proxmox API connectivity
+        if: steps.filter.outputs.terraform == 'true'
+        run: |
+          API_URL=$(aws ssm get-parameter \
+            --name /proxmox/auth/api_url \
+            --query Parameter.Value \
+            --output text)
+          curl -sf --max-time 10 -k "${API_URL}/api2/json/version" > /dev/null || {
+            echo "Cannot reach Proxmox API at ${API_URL} — aborting plan"
+            exit 1
+          }
 
       - name: Setup Terraform
         if: steps.filter.outputs.terraform == 'true'
