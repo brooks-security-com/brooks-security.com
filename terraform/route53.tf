@@ -49,6 +49,15 @@ resource "aws_route53_record" "www_aaaa" {
   }
 }
 
+# pve.brooks-security.com — short alias for the Proxmox UI via Caddy
+resource "aws_route53_record" "pve" {
+  zone_id = aws_route53_zone.main.zone_id
+  name    = "pve.${var.domain}"
+  type    = "A"
+  ttl     = 60
+  records = local.pve1_ipv4
+}
+
 # ACM DNS validation CNAMEs — must be preserved for automatic cert renewal
 resource "aws_route53_record" "acm_validation_apex_1" {
   zone_id = aws_route53_zone.main.zone_id

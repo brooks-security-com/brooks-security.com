@@ -31,25 +31,12 @@ resource "aws_route53_record" "prod_ns" {
 
 # --- Host records ---
 
-# pve1 points to pve1's Tailscale IP by default. Once var.caddy_tailscale_ip is
-# set (after Tailscale is installed on the Caddy LXC), it flips to Caddy so that
-# HTTPS traffic gets a valid cert. SSH to pve1 should use its Tailscale IP directly
-# (see pve1_tailscale_ip output) after that point.
-resource "aws_route53_record" "pve1_prod" {
-  zone_id = aws_route53_zone.prod.zone_id
-  name    = "pve1.prod.${var.domain}"
-  type    = "A"
-  ttl     = 60
-  records = (var.caddy_tailscale_ip != null && var.caddy_tailscale_ip != "") ? [var.caddy_tailscale_ip] : local.pve1_ipv4
-}
-
-# Wildcard *.prod.brooks-security.com — routes all prod subdomains through Caddy.
-# Only created once caddy_tailscale_ip is known (after first Ansible run).
+# All prod subdomains route through pve1's Tailscale IP. pve1 forwards port 443
+# to the Caddy LXC (192.168.2.201) via iptables — no Tailscale needed on CT 201.
 resource "aws_route53_record" "wildcard_prod" {
-  count   = (var.caddy_tailscale_ip != null && var.caddy_tailscale_ip != "") ? 1 : 0
   zone_id = aws_route53_zone.prod.zone_id
   name    = "*.prod.${var.domain}"
   type    = "A"
   ttl     = 60
-  records = [var.caddy_tailscale_ip]
+  records = local.pve1_ipv4
 }

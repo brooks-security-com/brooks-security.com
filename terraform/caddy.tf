@@ -73,6 +73,7 @@ resource "aws_iam_user_policy" "caddy_dns01" {
         ]
         Resource = [
           "arn:aws:route53:::hostedzone/${aws_route53_zone.prod.zone_id}",
+          "arn:aws:route53:::hostedzone/${aws_route53_zone.main.zone_id}",
           "arn:aws:route53:::change/*",
         ]
       },
