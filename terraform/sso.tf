@@ -3,10 +3,13 @@
 # Set the portal subdomain to "brooks-security" there: Settings → Customization.
 data "aws_ssoadmin_instances" "main" {}
 
+data "aws_region" "current" {}
+
 locals {
   sso_instance_arn      = one(data.aws_ssoadmin_instances.main.arns)
   sso_identity_store_id = one(data.aws_ssoadmin_instances.main.identity_store_ids)
-  sso_portal_url        = "https://ssoins-722361e11922c4b7.portal.us-east-1.app.aws"
+  sso_instance_id       = split("/", local.sso_instance_arn)[1]
+  sso_portal_url        = "https://${local.sso_instance_id}.portal.${data.aws_region.current.name}.app.aws"
 }
 
 # --- ACM certificate for aws.brooks-security.com ---
