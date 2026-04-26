@@ -1,14 +1,12 @@
-# Enable AWS IAM Identity Center (singleton per account).
-# If it already exists, import it:
-#   terraform import aws_ssoadmin_instance.main arn:aws:sso:::instance/<id>
-resource "aws_ssoadmin_instance" "main" {
-  name = "brooks-security"
-}
+# IAM Identity Center must be enabled manually in the AWS console before running
+# terraform apply (Settings → Enable in the IAM Identity Center console).
+# Set the portal subdomain to "brooks-security" there: Settings → Customization.
+data "aws_ssoadmin_instances" "main" {}
 
 locals {
-  # Default subdomain is the identity_store_id (e.g. d-9067644baf).
-  # Set var.sso_portal_subdomain if you customise the portal URL in the console.
-  sso_portal_url = "https://${coalesce(var.sso_portal_subdomain, aws_ssoadmin_instance.main.identity_store_id)}.awsapps.com/start"
+  sso_instance_arn      = one(data.aws_ssoadmin_instances.main.arns)
+  sso_identity_store_id = one(data.aws_ssoadmin_instances.main.identity_store_ids)
+  sso_portal_url        = "https://${coalesce(var.sso_portal_subdomain, local.sso_identity_store_id)}.awsapps.com/start"
 }
 
 # --- ACM certificate for aws.brooks-security.com ---
@@ -114,7 +112,7 @@ resource "aws_cloudfront_distribution" "sso" {
 # --- IAM Identity Center user, permission set, and account assignment ---
 
 resource "aws_identitystore_user" "graham" {
-  identity_store_id = aws_ssoadmin_instance.main.identity_store_id
+  identity_store_id = local.sso_identity_store_id
 
   display_name = "Graham Brooks"
   user_name    = "a.younger.cato@gmail.com"
@@ -132,7 +130,7 @@ resource "aws_identitystore_user" "graham" {
 
 resource "aws_ssoadmin_permission_set" "administrator" {
   name             = "AdministratorAccess"
-  instance_arn     = aws_ssoadmin_instance.main.arn
+  instance_arn     = local.sso_instance_arn
   session_duration = "PT8H"
 }
 
