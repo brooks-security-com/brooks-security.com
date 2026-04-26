@@ -24,6 +24,6 @@ output "pve1_tailscale_ip" {
 }
 
 output "pve1_mgmt_ip" {
-  value       = var.pve1_mgmt_ip
+  value       = data.aws_ssm_parameter.pve1_mgmt_ip.value
   description = "pve1 bridge management IP used by Caddy to proxy to Proxmox UI"
 }

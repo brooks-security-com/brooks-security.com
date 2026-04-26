@@ -24,7 +24,6 @@ env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
   AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
   TF_VAR_aws_profile: ''
-  TF_VAR_pve1_mgmt_ip: ${{ secrets.TF_VAR_PVE1_MGMT_IP }}
 
 jobs:
   terraform-fmt:
@@ -544,7 +543,7 @@ jobs:
           caddy_aws_access_key_id: "$CADDY_AWS_ACCESS_KEY_ID"
           caddy_aws_secret_access_key: "$CADDY_AWS_SECRET_ACCESS_KEY"
           pve1_mgmt_ip: "${{ steps.caddy.outputs.pve1_mgmt_ip }}"
-          caddy_acme_email: "graham.brooks@avatarfleet.com"
+          caddy_acme_email: "a.younger.cato@gmail.com"
           EOF
           export SSHPASS="$PROXMOX_ROOT_PASS"
           ansible-playbook ansible/playbooks/caddy.yml \

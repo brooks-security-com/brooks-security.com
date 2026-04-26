@@ -17,9 +17,3 @@ variable "aws_profile" {
   default = "brooks-security"
 }
 
-# Management IP of the pve1 Proxmox node on the vmbr0 bridge. Caddy uses this
-# to reverse-proxy HTTPS traffic to the Proxmox web UI on port 8006.
-variable "pve1_mgmt_ip" {
-  type        = string
-  description = "Proxmox node bridge IP reachable from the Caddy LXC (e.g. 192.168.1.10)"
-}
