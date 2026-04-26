@@ -3,6 +3,12 @@ variable "domain" {
   default = "brooks-security.com"
 }
 
+variable "sso_portal_subdomain" {
+  type        = string
+  description = "Custom IAM Identity Center portal subdomain (the 'xyz' in xyz.awsapps.com/start). Leave null to use the default identity_store_id."
+  default     = "brooks-security"
+}
+
 variable "aws_account_id" {
   type    = string
   default = "570516803292"
