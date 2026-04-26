@@ -22,7 +22,7 @@ I believe it's important to document your work and reflect on what you learn alo
 <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: stretch; margin-top: 0.5rem;">
   <div style="flex: 1 1 320px; background: #f1f3f5; border-radius: 12px; padding: 1rem 1.1rem;">
     <h3 style="margin-top: 0;">This Website!</h3>
-    <p>Anyone can build on AWS. But cost optimizing what you build without breaking functionality is the real proof of knowledge. This whole website costs me 50 cents per month to run, despite using all of the AWS best practice tooling, and it has a fully automated ci/cd pipeline for generating new content.</p>
+    <p>Anyone can build on AWS. But cost optimizing what you build without breaking functionality is the real proof of knowledge. This whole website (plus the underlying infrastructure and CI/CD pipelines) costs me $1.05 per month to run, despite using all of the AWS best practice tooling. And, it's brutally simple to maintain!</p>
     <p><a href="/docs/portfolio/gitops/">View Git-Ops project</a></p>
   </div>
   <div style="flex: 1 1 320px; background: #f1f3f5; border-radius: 12px; padding: 1rem 1.1rem;">
