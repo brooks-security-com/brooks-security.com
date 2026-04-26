@@ -25,7 +25,6 @@ env:
   AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
   TF_VAR_aws_profile: ''
   TF_VAR_pve1_mgmt_ip: ${{ secrets.TF_VAR_PVE1_MGMT_IP }}
-  TF_VAR_caddy_tailscale_ip: ${{ secrets.TF_VAR_CADDY_TAILSCALE_IP }}
 
 jobs:
   terraform-fmt:

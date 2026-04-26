@@ -10,6 +10,14 @@ resource "proxmox_virtual_environment_container" "github_runner" {
   unprivileged = true
   tags         = ["github-runner"]
 
+  # Tailscale requires /dev/net/tun. After creation, add to /etc/pve/lxc/200.conf on pve1:
+  #   lxc.cgroup2.devices.allow: c 10:200 rwm
+  #   lxc.mount.entry: /dev/net/tun dev/net/tun none bind,create=file
+  # Then restart the container. prevent_destroy guards against re-creation wiping these.
+  lifecycle {
+    prevent_destroy = true
+  }
+
   cpu {
     cores = 2
   }

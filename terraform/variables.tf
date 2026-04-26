@@ -23,12 +23,3 @@ variable "pve1_mgmt_ip" {
   type        = string
   description = "Proxmox node bridge IP reachable from the Caddy LXC (e.g. 192.168.1.10)"
 }
-
-# Tailscale IP assigned to the Caddy LXC after Ansible installs Tailscale.
-# Leave null on first deploy; once Tailscale is running on the Caddy LXC,
-# set this to flip *.prod and pve1.prod DNS to route through Caddy.
-variable "caddy_tailscale_ip" {
-  type        = string
-  description = "Tailscale IP of the Caddy LXC (set after first Ansible run)"
-  default     = null
-}
