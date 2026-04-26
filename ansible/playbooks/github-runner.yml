@@ -10,6 +10,21 @@
     github_url: "https://github.com/LittleSeneca/brooks-security.com"
 
   tasks:
+    - name: Add NodeSource repo for Node.js 20
+      shell: curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+      args:
+        creates: /etc/apt/sources.list.d/nodesource.list
+
+    - name: Add GitHub CLI repo key
+      shell: curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+      args:
+        creates: /usr/share/keyrings/githubcli-archive-keyring.gpg
+
+    - name: Add GitHub CLI repo
+      shell: echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" > /etc/apt/sources.list.d/github-cli.list
+      args:
+        creates: /etc/apt/sources.list.d/github-cli.list
+
     - name: Install dependencies
       apt:
         name:
@@ -21,8 +36,18 @@
           - sshpass
           - ansible
           - python3-pip
+          - nodejs
+          - gh
         state: present
         update_cache: true
+
+    - name: Install AWS CLI v2
+      shell: |
+        curl -fsSL https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o /tmp/awscliv2.zip
+        unzip -o /tmp/awscliv2.zip -d /tmp
+        /tmp/aws/install --update
+      args:
+        creates: /usr/local/bin/aws
 
     - name: Create runner user
       user:
@@ -31,6 +56,13 @@
         shell: /bin/bash
         home: "{{ runner_dir }}"
         create_home: false
+
+    - name: Grant runner user passwordless sudo
+      copy:
+        content: "{{ runner_user }} ALL=(ALL) NOPASSWD: ALL\n"
+        dest: "/etc/sudoers.d/{{ runner_user }}"
+        mode: "0440"
+        validate: visudo -cf %s
 
     - name: Create runner directory
       file:
