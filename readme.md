@@ -1,6 +1,6 @@
 # brooks-security.com
 
-Personal portfolio site built with [Hugo](https://gohugo.io), hosted as a static site on AWS (S3 + CloudFront + Route 53), and managed with Terraform. Infrastructure automation also provisions and configures a homelab running on Proxmox. Total AWS cost is about $0.50 per month.
+Personal portfolio site built with [Hugo](https://gohugo.io), hosted as a static site on AWS (S3 + CloudFront + Route 53), and managed with Terraform. Infrastructure automation also provisions and configures a homelab running on Proxmox. Total AWS cost is about $1.05 per month.
 
 ## Stack at a glance
 
@@ -106,8 +106,8 @@ A self-hosted runner on a public repository is a potential attack surface: a pul
 | Control | What it does |
 |---|---|
 | **First-time contributor approval** | GitHub Actions requires a maintainer to approve workflows before they run on any PR from a contributor who has not previously had a PR merged |
-| **OIDC deploy role scoped to `master`** | The AWS role used for deployments uses `StringEquals` on `ref:refs/heads/master` - PRs from forks cannot assume the role even if the workflow runs |
-| **Plan on PR, apply on merge** | `terraform plan` runs on PRs (read-only); `terraform apply` only runs after a PR is merged to `master` |
+| **OIDC deploy role scoped to `main`** | The AWS role used for deployments uses `StringEquals` on `ref:refs/heads/main` - PRs from forks cannot assume the role even if the workflow runs |
+| **Plan on PR, apply on merge** | `terraform plan` runs on PRs (read-only); `terraform apply` only runs after a PR is merged to `main` |
 | **Production environment gate** | The apply and deploy jobs target the `production` GitHub environment, requiring an explicit approval click before they execute |
 | **No long-lived secrets in GitHub** | All sensitive values live in AWS SSM Parameter Store; only short-lived OIDC tokens and scoped IAM credentials are used |
 | **Least-privilege IAM** | The Caddy DNS-01 user, OIDC deploy role, and Proxmox API token are each scoped to the minimum set of permissions they need |
@@ -115,9 +115,9 @@ A self-hosted runner on a public repository is a potential attack surface: a pul
 
 ## Day-to-day workflow
 
-1. Create a feature branch from `master`.
+1. Create a feature branch from `main`.
 2. Make changes in `hugo/` (content) and/or `terraform/` (infra).
-3. Open a PR to `master`.
+3. Open a PR to `main`.
 4. Wait for checks:
    - Terraform: fmt → validate → plan (when terraform files changed)
    - Hugo: build (when hugo files changed)
@@ -166,7 +166,7 @@ hugo server -D
 
 ## Operational notes
 
-- Do not push directly to `master`; use PRs.
+- Do not push directly to `main`; use PRs.
 - Prefer CI/CD for deploys over local `terraform apply`.
 - Keep the `hugo-book` submodule initialized in local and CI environments.
 - The runner container has `lifecycle { prevent_destroy = true }` - destroying it requires a manual `terraform state rm` to avoid losing the registered runner.
