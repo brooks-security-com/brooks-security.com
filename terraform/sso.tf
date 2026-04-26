@@ -6,7 +6,7 @@ data "aws_ssoadmin_instances" "main" {}
 locals {
   sso_instance_arn      = one(data.aws_ssoadmin_instances.main.arns)
   sso_identity_store_id = one(data.aws_ssoadmin_instances.main.identity_store_ids)
-  sso_portal_url        = "https://${coalesce(var.sso_portal_subdomain, local.sso_identity_store_id)}.awsapps.com/start"
+  sso_portal_url        = "https://ssoins-722361e11922c4b7.portal.us-east-1.app.aws"
 }
 
 # --- ACM certificate for aws.brooks-security.com ---
