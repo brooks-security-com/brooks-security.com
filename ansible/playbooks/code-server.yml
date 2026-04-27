@@ -32,14 +32,6 @@
         shell: /bin/bash
         create_home: true
 
-    - name: Set workspace ownership
-      file:
-        path: "{{ workspace_dir }}"
-        state: directory
-        owner: "{{ coder_user }}"
-        group: "{{ coder_user }}"
-        mode: "0755"
-
     - name: Install code-server
       shell: curl -fsSL https://code-server.dev/install.sh | sh
       args:

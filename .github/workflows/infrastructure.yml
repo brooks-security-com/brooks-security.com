@@ -618,6 +618,16 @@ jobs:
             "$PROXMOX_ROOT_USER@pve1.prod.brooks-security.com" \
             'pct exec 202 -- bash -c "mkdir -p /etc/ssh/sshd_config.d && printf \"PermitRootLogin yes\nPasswordAuthentication yes\n\" > /etc/ssh/sshd_config.d/99-ansible.conf && systemctl enable ssh --now && systemctl restart ssh"'
 
+      - name: Fix workspace ownership on pve1 host
+        # Unprivileged LXC UID mapping: container uid 1000 (coder) = host uid 101000.
+        # chown must be done from the host as root@pam; container root cannot chown
+        # bind-mount entries owned by actual host root.
+        run: |
+          export SSHPASS="$PROXMOX_ROOT_PASS"
+          sshpass -e ssh -o StrictHostKeyChecking=no \
+            "$PROXMOX_ROOT_USER@pve1.prod.brooks-security.com" \
+            'mkdir -p /var/lib/pve/code-server/workspace && chown 101000:101000 /var/lib/pve/code-server/workspace'
+
       - name: Run code-server playbook
         run: |
           VARS_FILE=$(mktemp)
