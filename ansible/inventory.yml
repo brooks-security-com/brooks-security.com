@@ -11,7 +11,7 @@ all:
       hosts:
         caddy:
           ansible_host: 192.168.2.201
-    code-server:
+    code_server:
       hosts:
         code-server:
           ansible_host: 192.168.2.202
