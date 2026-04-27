@@ -30,8 +30,9 @@ resource "tailscale_acl" "main" {
     ]
 
     tagOwners = {
-      "tag:proxmox" = ["a.younger.cato@gmail.com"]
-      "tag:ci"      = ["a.younger.cato@gmail.com"]
+      "tag:proxmox"      = ["a.younger.cato@gmail.com"]
+      "tag:ci"           = ["a.younger.cato@gmail.com"]
+      "tag:code-server"  = ["a.younger.cato@gmail.com"]
     }
   })
 }

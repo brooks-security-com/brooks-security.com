@@ -16,6 +16,15 @@ pve.brooks-security.com {
 	}
 }
 
+code.brooks-security.com {
+	tls {
+		dns route53 {
+			region us-east-1
+		}
+	}
+	reverse_proxy http://192.168.2.202:8080
+}
+
 *.prod.brooks-security.com {
 	tls {
 		dns route53 {

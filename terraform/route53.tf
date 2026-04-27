@@ -49,6 +49,16 @@ resource "aws_route53_record" "www_aaaa" {
   }
 }
 
+# code.brooks-security.com — code-server (VS Code in browser) via Caddy
+# Resolves to pve1 Tailscale IP — only reachable via Tailscale
+resource "aws_route53_record" "code" {
+  zone_id = aws_route53_zone.main.zone_id
+  name    = "code.${var.domain}"
+  type    = "A"
+  ttl     = 60
+  records = local.pve1_ipv4
+}
+
 # pve.brooks-security.com — short alias for the Proxmox UI via Caddy
 resource "aws_route53_record" "pve" {
   zone_id = aws_route53_zone.main.zone_id
