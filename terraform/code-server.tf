@@ -5,10 +5,16 @@ resource "proxmox_virtual_environment_container" "code_server" {
   unprivileged = true
   tags         = ["code-server"]
 
-  # Tailscale requires /dev/net/tun. After creation, add to /etc/pve/lxc/202.conf on pve1:
+  # Two manual entries required in /etc/pve/lxc/202.conf on pve1 after first apply,
+  # then restart the container. prevent_destroy guards against re-creation wiping these.
+  #
+  # Tailscale TUN device:
   #   lxc.cgroup2.devices.allow: c 10:200 rwm
   #   lxc.mount.entry: /dev/net/tun dev/net/tun none bind,create=file
-  # Then restart the container. prevent_destroy guards against re-creation wiping these.
+  #
+  # Workspace bind mount (Proxmox API forbids bind mounts for non-root@pam tokens):
+  #   mp0: /var/lib/pve/code-server/workspace,mp=/home/coder/workspace
+  #   (pre-step: mkdir -p /var/lib/pve/code-server/workspace on pve1)
   lifecycle {
     prevent_destroy = true
   }
@@ -24,13 +30,6 @@ resource "proxmox_virtual_environment_container" "code_server" {
   disk {
     datastore_id = "local-lvm"
     size         = 20
-  }
-
-  # Bind-mount the workspace from pve1 for persistence and easy snapshotting.
-  # Pre-step: run `mkdir -p /var/lib/pve/code-server/workspace` on pve1 before first apply.
-  mount_point {
-    path   = "/home/coder/workspace"
-    volume = "/var/lib/pve/code-server/workspace"
   }
 
   initialization {
