@@ -550,3 +550,87 @@ jobs:
             -i ansible/inventory.yml \
             -e "@$VARS_FILE"
           rm -f "$VARS_FILE"
+
+  ansible-setup-code-server:
+    name: 'Setup code-server'
+    runs-on: [self-hosted, Linux, X64, proxmox]
+    needs: [terraform-apply, ansible-setup-caddy]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          terraform_wrapper: false
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: terraform
+
+      - name: Get code-server IP from Terraform output
+        id: cs
+        run: |
+          CS_IP=$(terraform output -raw code_server_ip_address)
+          echo "::add-mask::$CS_IP"
+          echo "ip=$CS_IP" >> "$GITHUB_OUTPUT"
+        working-directory: terraform
+
+      - name: Connect to Tailscale
+        uses: ./.github/actions/tailscale-connect
+
+      - name: Fetch credentials from SSM
+        run: |
+          ROOT_USER=$(aws ssm get-parameter \
+            --name /proxmox/auth/root_user \
+            --with-decryption \
+            --query Parameter.Value \
+            --output text)
+          ROOT_PASS=$(aws ssm get-parameter \
+            --name /proxmox/auth/root_password \
+            --with-decryption \
+            --query Parameter.Value \
+            --output text)
+          CS_PASSWORD=$(aws ssm get-parameter \
+            --name /code-server/auth/password \
+            --with-decryption \
+            --query Parameter.Value \
+            --output text)
+          TS_AUTH_KEY=$(aws ssm get-parameter \
+            --name /code-server/tailscale/auth_key \
+            --with-decryption \
+            --query Parameter.Value \
+            --output text)
+          echo "::add-mask::$ROOT_USER"
+          echo "::add-mask::$ROOT_PASS"
+          echo "::add-mask::$CS_PASSWORD"
+          echo "::add-mask::$TS_AUTH_KEY"
+          echo "PROXMOX_ROOT_USER=$ROOT_USER" >> "$GITHUB_ENV"
+          echo "PROXMOX_ROOT_PASS=$ROOT_PASS" >> "$GITHUB_ENV"
+          echo "CS_PASSWORD=$CS_PASSWORD" >> "$GITHUB_ENV"
+          echo "TS_AUTH_KEY=$TS_AUTH_KEY" >> "$GITHUB_ENV"
+
+      - name: Configure container SSH via pve1
+        run: |
+          export SSHPASS="$PROXMOX_ROOT_PASS"
+          sshpass -e ssh -o StrictHostKeyChecking=no \
+            "$PROXMOX_ROOT_USER@pve1.prod.brooks-security.com" \
+            'pct exec 202 -- bash -c "mkdir -p /etc/ssh/sshd_config.d && printf \"PermitRootLogin yes\nPasswordAuthentication yes\n\" > /etc/ssh/sshd_config.d/99-ansible.conf && systemctl enable ssh --now && systemctl restart ssh"'
+
+      - name: Run code-server playbook
+        run: |
+          VARS_FILE=$(mktemp)
+          cat > "$VARS_FILE" <<EOF
+          ansible_user: root
+          ansible_password: "$PROXMOX_ROOT_PASS"
+          ansible_ssh_pass: "$PROXMOX_ROOT_PASS"
+          ansible_ssh_extra_args: "-o StrictHostKeyChecking=no -o ProxyCommand='sshpass -e ssh -W %h:%p -o StrictHostKeyChecking=no $PROXMOX_ROOT_USER@pve1.prod.brooks-security.com'"
+          code_server_password: "$CS_PASSWORD"
+          tailscale_auth_key: "$TS_AUTH_KEY"
+          EOF
+          export SSHPASS="$PROXMOX_ROOT_PASS"
+          ansible-playbook ansible/playbooks/code-server.yml \
+            -i ansible/inventory.yml \
+            -e "@$VARS_FILE"
+          rm -f "$VARS_FILE"
