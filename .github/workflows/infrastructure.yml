@@ -609,11 +609,23 @@ jobs:
             pct stop 202
             sleep 3
             pct start 202
-            sleep 5
             echo "Container 202 restarted with updated config"
           else
             echo "No config changes needed for container 202"
           fi
+
+          # Wait up to 2 minutes for SSH to be reachable before handing off to Ansible.
+          # pct start returns immediately; Ubuntu takes ~20s to boot and start sshd.
+          echo "Waiting for SSH on 192.168.2.202..."
+          for i in $(seq 1 24); do
+            if nc -z 192.168.2.202 22 2>/dev/null; then
+              echo "SSH ready after ~$((i * 5))s"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Timed out waiting for SSH on 192.168.2.202"
+          exit 1
           REMOTE
 
   ansible-setup-code-server:
@@ -668,13 +680,20 @@ jobs:
       - name: Run code-server playbook
         run: |
           VARS_FILE=$(mktemp)
+          # Write secrets as single-quoted YAML strings so any special characters
+          # in the values (", #, :, etc.) cannot break the YAML parse and silently
+          # drop ansible_ssh_extra_args, which causes the %h/%p proxy tokens to
+          # go unexpanded and SSH to report "Connection to UNKNOWN port 65535".
+          # Single-quote the value and escape any embedded single quotes as '\''.
+          CS_PASSWORD_ESCAPED=$(printf '%s' "$CS_PASSWORD" | sed "s/'/'\\\\''/g")
+          TS_AUTH_KEY_ESCAPED=$(printf '%s' "$TS_AUTH_KEY" | sed "s/'/'\\\\''/g")
           cat > "$VARS_FILE" <<EOF
           ansible_user: root
           ansible_password: "$PROXMOX_ROOT_PASS"
           ansible_ssh_pass: "$PROXMOX_ROOT_PASS"
           ansible_ssh_extra_args: "-o StrictHostKeyChecking=no -o ProxyCommand='sshpass -e ssh -W %h:%p -o StrictHostKeyChecking=no $PROXMOX_ROOT_USER@pve1.prod.brooks-security.com'"
-          code_server_password: "$CS_PASSWORD"
-          tailscale_auth_key: "$TS_AUTH_KEY"
+          code_server_password: '$CS_PASSWORD_ESCAPED'
+          tailscale_auth_key: '$TS_AUTH_KEY_ESCAPED'
           EOF
           export SSHPASS="$PROXMOX_ROOT_PASS"
           ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook ansible/playbooks/code-server.yml \
