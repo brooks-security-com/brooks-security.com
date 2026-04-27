@@ -677,7 +677,7 @@ jobs:
           tailscale_auth_key: "$TS_AUTH_KEY"
           EOF
           export SSHPASS="$PROXMOX_ROOT_PASS"
-          ansible-playbook ansible/playbooks/code-server.yml \
+          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook ansible/playbooks/code-server.yml \
             -i ansible/inventory.yml \
             -e "@$VARS_FILE"
           rm -f "$VARS_FILE"
