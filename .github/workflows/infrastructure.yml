@@ -551,31 +551,78 @@ jobs:
             -e "@$VARS_FILE"
           rm -f "$VARS_FILE"
 
-  ansible-setup-code-server:
-    name: 'Setup code-server'
+  pve1-configure-code-server-lxc:
+    name: 'Configure code-server LXC on pve1'
     runs-on: [self-hosted, Linux, X64, proxmox]
-    needs: [terraform-apply, ansible-setup-caddy]
+    needs: terraform-apply
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: ${{ env.TF_VERSION }}
-          terraform_wrapper: false
+      - name: Connect to Tailscale
+        uses: ./.github/actions/tailscale-connect
 
-      - name: Terraform Init
-        run: terraform init
-        working-directory: terraform
-
-      - name: Get code-server IP from Terraform output
-        id: cs
+      - name: Fetch credentials from SSM
         run: |
-          CS_IP=$(terraform output -raw code_server_ip_address)
-          echo "::add-mask::$CS_IP"
-          echo "ip=$CS_IP" >> "$GITHUB_OUTPUT"
-        working-directory: terraform
+          ROOT_USER=$(aws ssm get-parameter \
+            --name /proxmox/auth/root_user \
+            --with-decryption \
+            --query Parameter.Value \
+            --output text)
+          ROOT_PASS=$(aws ssm get-parameter \
+            --name /proxmox/auth/root_password \
+            --with-decryption \
+            --query Parameter.Value \
+            --output text)
+          echo "::add-mask::$ROOT_USER"
+          echo "::add-mask::$ROOT_PASS"
+          echo "PROXMOX_ROOT_USER=$ROOT_USER" >> "$GITHUB_ENV"
+          echo "PROXMOX_ROOT_PASS=$ROOT_PASS" >> "$GITHUB_ENV"
+
+      - name: Apply LXC 202 host-side config
+        # Runs as actual root on pve1 (not the API token), so bind mounts and
+        # cgroup/TUN config are permitted. Script is idempotent: restarts the
+        # container only when config changes are detected.
+        run: |
+          export SSHPASS="$PROXMOX_ROOT_PASS"
+          sshpass -e ssh -o StrictHostKeyChecking=no \
+            "$PROXMOX_ROOT_USER@pve1.prod.brooks-security.com" bash -s << 'REMOTE'
+          set -e
+          CHANGED=0
+
+          # Workspace bind mount — pct set is idempotent; skip if mp0 already set
+          mkdir -p /var/lib/pve/code-server/workspace
+          chown 101000:101000 /var/lib/pve/code-server/workspace
+          if ! grep -qF "mp0:" /etc/pve/lxc/202.conf 2>/dev/null; then
+            pct set 202 -mp0 /var/lib/pve/code-server/workspace,mp=/home/coder/workspace
+            CHANGED=1
+          fi
+
+          # Tailscale TUN device — must be written directly (no pct flag for lxc.*)
+          if ! grep -qF "lxc.cgroup2.devices.allow" /etc/pve/lxc/202.conf 2>/dev/null; then
+            printf "lxc.cgroup2.devices.allow: c 10:200 rwm\nlxc.mount.entry: /dev/net/tun dev/net/tun none bind,create=file\n" \
+              >> /etc/pve/lxc/202.conf
+            CHANGED=1
+          fi
+
+          if [ "$CHANGED" = "1" ]; then
+            pct stop 202
+            sleep 3
+            pct start 202
+            sleep 5
+            echo "Container 202 restarted with updated config"
+          else
+            echo "No config changes needed for container 202"
+          fi
+          REMOTE
+
+  ansible-setup-code-server:
+    name: 'Setup code-server'
+    runs-on: [self-hosted, Linux, X64, proxmox]
+    needs: [pve1-configure-code-server-lxc, ansible-setup-caddy]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Connect to Tailscale
         uses: ./.github/actions/tailscale-connect
@@ -617,16 +664,6 @@ jobs:
           sshpass -e ssh -o StrictHostKeyChecking=no \
             "$PROXMOX_ROOT_USER@pve1.prod.brooks-security.com" \
             'pct exec 202 -- bash -c "mkdir -p /etc/ssh/sshd_config.d && printf \"PermitRootLogin yes\nPasswordAuthentication yes\n\" > /etc/ssh/sshd_config.d/99-ansible.conf && systemctl enable ssh --now && systemctl restart ssh"'
-
-      - name: Fix workspace ownership on pve1 host
-        # Unprivileged LXC UID mapping: container uid 1000 (coder) = host uid 101000.
-        # chown must be done from the host as root@pam; container root cannot chown
-        # bind-mount entries owned by actual host root.
-        run: |
-          export SSHPASS="$PROXMOX_ROOT_PASS"
-          sshpass -e ssh -o StrictHostKeyChecking=no \
-            "$PROXMOX_ROOT_USER@pve1.prod.brooks-security.com" \
-            'mkdir -p /var/lib/pve/code-server/workspace && chown 101000:101000 /var/lib/pve/code-server/workspace'
 
       - name: Run code-server playbook
         run: |

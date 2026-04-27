@@ -5,16 +5,13 @@ resource "proxmox_virtual_environment_container" "code_server" {
   unprivileged = true
   tags         = ["code-server"]
 
-  # Two manual entries required in /etc/pve/lxc/202.conf on pve1 after first apply,
-  # then restart the container. prevent_destroy guards against re-creation wiping these.
-  #
-  # Tailscale TUN device:
+  # The pve1-configure-code-server-lxc CI job writes these entries to
+  # /etc/pve/lxc/202.conf after apply (Proxmox API forbids bind mounts and
+  # lxc.* directives for non-root@pam tokens) and restarts the container:
+  #   mp0: /var/lib/pve/code-server/workspace,mp=/home/coder/workspace
   #   lxc.cgroup2.devices.allow: c 10:200 rwm
   #   lxc.mount.entry: /dev/net/tun dev/net/tun none bind,create=file
-  #
-  # Workspace bind mount (Proxmox API forbids bind mounts for non-root@pam tokens):
-  #   mp0: /var/lib/pve/code-server/workspace,mp=/home/coder/workspace
-  #   (pre-step: mkdir -p /var/lib/pve/code-server/workspace on pve1)
+  # prevent_destroy guards against Terraform wiping those out-of-band changes.
   lifecycle {
     prevent_destroy = true
   }
