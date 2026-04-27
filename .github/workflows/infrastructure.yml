@@ -454,7 +454,7 @@ jobs:
           runner_token: "$RUNNER_TOKEN"
           EOF
           export SSHPASS="$PROXMOX_ROOT_PASS"
-          ansible-playbook ansible/playbooks/github-runner.yml \
+          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook ansible/playbooks/github-runner.yml \
             -i ansible/inventory.yml \
             -e "@$VARS_FILE"
           rm -f "$VARS_FILE"
@@ -546,7 +546,7 @@ jobs:
           caddy_acme_email: "a.younger.cato@gmail.com"
           EOF
           export SSHPASS="$PROXMOX_ROOT_PASS"
-          ansible-playbook ansible/playbooks/caddy.yml \
+          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook ansible/playbooks/caddy.yml \
             -i ansible/inventory.yml \
             -e "@$VARS_FILE"
           rm -f "$VARS_FILE"
