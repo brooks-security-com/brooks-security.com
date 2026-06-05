@@ -2,6 +2,8 @@
 
 ## Certifications
 
+### Certified Information Systems Security Professional (CISSP)
+    Earned Jun. 5, 2026
 ### AWS Certified Solutions Architect Associate (AWS-CSA-A)
     Earned Jan. 2024
 ### Red Hat Certified Engineer (RHCE) 
