@@ -85,12 +85,6 @@ import {
   id = "brooks-security.com"
 }
 
-# Tailscale
-import {
-  to = tailscale_acl.main
-  id = "acl"
-}
-
 # CloudFront
 import {
   to = aws_cloudfront_origin_access_control.oac

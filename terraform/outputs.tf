@@ -17,14 +17,3 @@ output "acm_certificate_arn" {
 output "route53_zone_id" {
   value = aws_route53_zone.main.zone_id
 }
-
-output "pve1_tailscale_ip" {
-  value       = local.pve1_ipv4[0]
-  description = "pve1 Tailscale IPv4 — use this for SSH after DNS flips to Caddy"
-}
-
-output "pve1_mgmt_ip" {
-  value       = data.aws_ssm_parameter.pve1_mgmt_ip.value
-  description = "pve1 bridge management IP used by Caddy to proxy to Proxmox UI"
-  sensitive   = true
-}
