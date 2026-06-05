@@ -6,7 +6,7 @@ bookToc: false
 
 <img src="/grahambrooks.png" alt="Graham Brooks" style="float: left; max-width: min(160px, 32%); height: auto; margin: 0.35rem 1.25rem 0.75rem 0;" />
 
-My name is Graham Brooks. My online handle is @little_seneca most places. I am a Software Engineer who likes to talk to people and solve hard problems. I have some professional certifications in [Linux Server Automation, Cloud Computing, and Security Administration](https://brooks-security.com/docs/curriculum-vitae/credentials/). Currently, I work as the Site Reliability Engineer and as the Security Officer for [AvatarFleet](https://avatarfleet.com), where we provide HR and logistics support to the largest names in the transportation industry. 
+My name is Graham Brooks. I am a Software Engineer who likes to talk to people and solve hard problems. I have some professional certifications in [Linux Server Automation, Cloud Computing, and Security Administration](https://brooks-security.com/docs/curriculum-vitae/credentials/). Currently, I work as the Site Reliability Engineer and as the Security Officer for [AvatarFleet](https://avatarfleet.com), where we provide HR and logistics support to the largest names in the transportation industry. 
 
 Beyond work, I am a husband, father, and community activist. In my free time, I enjoy painting, powerlifting, hiking, running, and helping run a community tabletop gaming club where we play everything from Magic: The Gathering to Warhammer to One Page Rules to D&D.
 
@@ -15,7 +15,6 @@ I believe it's important to document your work and reflect on what you learn alo
 ## Where to Find Me
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/grahamwbrooks/)
 [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/littleseneca)
-[![X](https://img.shields.io/badge/X-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/little_seneca)
 
 ## Featured Projects
 
