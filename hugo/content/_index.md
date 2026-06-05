@@ -6,7 +6,7 @@ bookToc: false
 
 <img src="/grahambrooks.png" alt="Graham Brooks" style="float: left; max-width: min(160px, 32%); height: auto; margin: 0.35rem 1.25rem 0.75rem 0;" />
 
-My name is Graham Brooks. I am a Software Engineer who likes to talk to people and solve hard problems. I have some professional certifications in [Linux Server Automation, Cloud Computing, and Security Administration](https://brooks-security.com/docs/curriculum-vitae/credentials/). Currently, I work as the Site Reliability Engineer and as the Security Officer for [AvatarFleet](https://avatarfleet.com), where we provide HR and logistics support to the largest names in the transportation industry. 
+My name is Graham Brooks. I am a Software Engineer who likes to talk to people and solve hard problems. I am a [CISSP](https://www.isc2.org/certifications/cissp) and hold professional certifications in [Linux Server Automation, Cloud Computing, and Security Administration](https://brooks-security.com/docs/curriculum-vitae/credentials/). Currently, I work as the Site Reliability Engineer and as the Security Officer for [AvatarFleet](https://avatarfleet.com), where we provide HR and logistics support to the largest names in the transportation industry. 
 
 Beyond work, I am a husband, father, and community activist. In my free time, I enjoy painting, powerlifting, hiking, running, and helping run a community tabletop gaming club where we play everything from Magic: The Gathering to Warhammer to One Page Rules to D&D.
 
