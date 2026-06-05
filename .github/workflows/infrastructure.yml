@@ -2,8 +2,11 @@ name: 'Infrastructure'
 
 # Runs on every push/PR to main so required status checks are always present.
 # Paths-filter inside each job skips real work when nothing relevant changed.
-# On push to main (or workflow_dispatch): fmt → validate → apply → ansible ping.
+# On push to main (or workflow_dispatch): fmt → validate → apply.
 # On pull request:                        fmt → validate → plan.
+#
+# Manages the AWS website infrastructure only (S3, CloudFront, Route 53, ACM,
+# IAM, SSO). Runs on GitHub-hosted runners — no private-network access needed.
 on:
   push:
     branches:
@@ -28,7 +31,7 @@ env:
 jobs:
   terraform-fmt:
     name: 'Terraform Format'
-    runs-on: [self-hosted, Linux, X64, proxmox]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -59,7 +62,7 @@ jobs:
 
   terraform-validate:
     name: 'Terraform Validate'
-    runs-on: [self-hosted, Linux, X64, proxmox]
+    runs-on: ubuntu-latest
     needs: terraform-fmt
     steps:
       - name: Checkout
@@ -96,7 +99,7 @@ jobs:
 
   terraform-plan:
     name: 'Terraform Plan'
-    runs-on: [self-hosted, Linux, X64, proxmox]
+    runs-on: ubuntu-latest
     needs: terraform-validate
     if: github.event_name == 'pull_request'
     steps:
@@ -115,24 +118,6 @@ jobs:
       - name: No Terraform changes - marking check as passed
         if: steps.filter.outputs.terraform != 'true'
         run: echo "No Terraform changes in this diff - marking check as passed."
-
-      - name: Connect to Tailscale
-        if: steps.filter.outputs.terraform == 'true'
-        uses: ./.github/actions/tailscale-connect
-
-      - name: Verify Proxmox API connectivity
-        if: steps.filter.outputs.terraform == 'true'
-        run: |
-          API_URL=$(aws ssm get-parameter \
-            --name /proxmox/auth/api_url \
-            --query Parameter.Value \
-            --output text)
-          HTTP_CODE=$(curl -s -o /dev/null --max-time 10 -k -w "%{http_code}" "${API_URL}")
-          if [ "${HTTP_CODE}" = "000" ]; then
-            echo "Cannot reach Proxmox API at ${API_URL} — aborting plan"
-            exit 1
-          fi
-          echo "Proxmox API reachable (HTTP ${HTTP_CODE})"
 
       - name: Setup Terraform
         if: steps.filter.outputs.terraform == 'true'
@@ -243,7 +228,7 @@ jobs:
 
   terraform-apply:
     name: 'Terraform Apply'
-    runs-on: [self-hosted, Linux, X64, proxmox]
+    runs-on: ubuntu-latest
     needs: terraform-validate
     if: (github.ref == 'refs/heads/main' && github.event_name == 'push') || github.event_name == 'workflow_dispatch'
     environment: production
@@ -263,24 +248,6 @@ jobs:
       - name: No Terraform changes - marking check as passed
         if: steps.filter.outputs.terraform != 'true'
         run: echo "No Terraform changes in this diff - marking check as passed."
-
-      - name: Connect to Tailscale
-        if: steps.filter.outputs.terraform == 'true'
-        uses: ./.github/actions/tailscale-connect
-
-      - name: Verify Proxmox API connectivity
-        if: steps.filter.outputs.terraform == 'true'
-        run: |
-          API_URL=$(aws ssm get-parameter \
-            --name /proxmox/auth/api_url \
-            --query Parameter.Value \
-            --output text)
-          HTTP_CODE=$(curl -s -o /dev/null --max-time 10 -k -w "%{http_code}" "${API_URL}")
-          if [ "${HTTP_CODE}" = "000" ]; then
-            echo "Cannot reach Proxmox API at ${API_URL} — aborting plan"
-            exit 1
-          fi
-          echo "Proxmox API reachable (HTTP ${HTTP_CODE})"
 
       - name: Setup Terraform
         if: steps.filter.outputs.terraform == 'true'
@@ -302,382 +269,3 @@ jobs:
         if: steps.filter.outputs.terraform == 'true'
         run: terraform apply -auto-approve tfplan
         working-directory: terraform
-
-  ansible-ping:
-    name: 'Ansible Ping pve1'
-    runs-on: [self-hosted, Linux, X64, proxmox]
-    needs: terraform-apply
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: ${{ env.TF_VERSION }}
-          terraform_wrapper: false
-
-      - name: Terraform Init
-        run: terraform init
-        working-directory: terraform
-
-      - name: Get pve1 Tailscale IP
-        id: pve1
-        run: |
-          PVE1_IP=$(terraform output -raw pve1_tailscale_ip)
-          echo "::add-mask::$PVE1_IP"
-          echo "ip=$PVE1_IP" >> "$GITHUB_OUTPUT"
-        working-directory: terraform
-
-      - name: Connect to Tailscale
-        uses: ./.github/actions/tailscale-connect
-
-      - name: Fetch Proxmox SSH credentials from SSM
-        run: |
-          ROOT_USER=$(aws ssm get-parameter \
-            --name /proxmox/auth/root_user \
-            --with-decryption \
-            --query Parameter.Value \
-            --output text)
-          ROOT_PASS=$(aws ssm get-parameter \
-            --name /proxmox/auth/root_password \
-            --with-decryption \
-            --query Parameter.Value \
-            --output text)
-          echo "::add-mask::$ROOT_USER"
-          echo "::add-mask::$ROOT_PASS"
-          echo "PROXMOX_ROOT_USER=$ROOT_USER" >> "$GITHUB_ENV"
-          echo "PROXMOX_ROOT_PASS=$ROOT_PASS" >> "$GITHUB_ENV"
-
-      - name: Ansible ping pve1
-        working-directory: ansible
-        run: |
-          VARS_FILE=$(mktemp)
-          cat > "$VARS_FILE" <<EOF
-          ansible_password: "$PROXMOX_ROOT_PASS"
-          ansible_ssh_pass: "$PROXMOX_ROOT_PASS"
-          EOF
-          ansible "${{ steps.pve1.outputs.ip }}" \
-            -m ping \
-            -u "$PROXMOX_ROOT_USER" \
-            -e "@$VARS_FILE"
-          rm -f "$VARS_FILE"
-
-  ansible-setup-runner:
-    name: 'Setup GitHub Actions Runner'
-    runs-on: [self-hosted, Linux, X64, proxmox]
-    needs: terraform-apply
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: ${{ env.TF_VERSION }}
-          terraform_wrapper: false
-
-      - name: Terraform Init
-        run: terraform init
-        working-directory: terraform
-
-      - name: Get runner IP and pve1 Tailscale IP from Terraform output
-        id: runner
-        run: |
-          RUNNER_IP=$(terraform output -raw runner_ip_address)
-          PVE1_IP=$(terraform output -raw pve1_tailscale_ip)
-          echo "::add-mask::$RUNNER_IP"
-          echo "::add-mask::$PVE1_IP"
-          echo "ip=$RUNNER_IP" >> "$GITHUB_OUTPUT"
-          echo "pve1_ip=$PVE1_IP" >> "$GITHUB_OUTPUT"
-        working-directory: terraform
-
-      - name: Connect to Tailscale
-        uses: ./.github/actions/tailscale-connect
-
-      - name: Fetch credentials from SSM
-        run: |
-          ADMIN_TOKEN=$(aws ssm get-parameter \
-            --name /github/admin_token \
-            --with-decryption \
-            --query Parameter.Value \
-            --output text)
-          ROOT_USER=$(aws ssm get-parameter \
-            --name /proxmox/auth/root_user \
-            --with-decryption \
-            --query Parameter.Value \
-            --output text)
-          ROOT_PASS=$(aws ssm get-parameter \
-            --name /proxmox/auth/root_password \
-            --with-decryption \
-            --query Parameter.Value \
-            --output text)
-          echo "::add-mask::$ADMIN_TOKEN"
-          echo "::add-mask::$ROOT_USER"
-          echo "::add-mask::$ROOT_PASS"
-          echo "GH_ADMIN_TOKEN=$ADMIN_TOKEN" >> "$GITHUB_ENV"
-          echo "PROXMOX_ROOT_USER=$ROOT_USER" >> "$GITHUB_ENV"
-          echo "PROXMOX_ROOT_PASS=$ROOT_PASS" >> "$GITHUB_ENV"
-
-      - name: Generate runner registration token
-        id: runner_token
-        env:
-          GH_TOKEN: ${{ env.GH_ADMIN_TOKEN }}
-        run: |
-          TOKEN=$(gh api \
-            --method POST \
-            -H "Accept: application/vnd.github+json" \
-            /repos/${{ github.repository }}/actions/runners/registration-token \
-            --jq '.token')
-          echo "::add-mask::$TOKEN"
-          echo "token=$TOKEN" >> "$GITHUB_OUTPUT"
-
-      - name: Configure container SSH via pve1
-        run: |
-          export SSHPASS="$PROXMOX_ROOT_PASS"
-          sshpass -e ssh -o StrictHostKeyChecking=no \
-            "$PROXMOX_ROOT_USER@pve1.prod.brooks-security.com" \
-            'pct exec 200 -- bash -c "mkdir -p /etc/ssh/sshd_config.d && printf \"PermitRootLogin yes\nPasswordAuthentication yes\n\" > /etc/ssh/sshd_config.d/99-ansible.conf && systemctl enable ssh --now && systemctl restart ssh"'
-
-      - name: Run GitHub runner playbook
-        env:
-          RUNNER_TOKEN: ${{ steps.runner_token.outputs.token }}
-        run: |
-          VARS_FILE=$(mktemp)
-          cat > "$VARS_FILE" <<EOF
-          ansible_user: root
-          ansible_password: "$PROXMOX_ROOT_PASS"
-          ansible_ssh_pass: "$PROXMOX_ROOT_PASS"
-          ansible_ssh_extra_args: "-o StrictHostKeyChecking=no -o ProxyCommand='sshpass -e ssh -W %h:%p -o StrictHostKeyChecking=no $PROXMOX_ROOT_USER@pve1.prod.brooks-security.com'"
-          runner_token: "$RUNNER_TOKEN"
-          EOF
-          export SSHPASS="$PROXMOX_ROOT_PASS"
-          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook ansible/playbooks/github-runner.yml \
-            -i ansible/inventory.yml \
-            -e "@$VARS_FILE"
-          rm -f "$VARS_FILE"
-
-  ansible-setup-caddy:
-    name: 'Setup Caddy Reverse Proxy'
-    runs-on: [self-hosted, Linux, X64, proxmox]
-    needs: terraform-apply
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: ${{ env.TF_VERSION }}
-          terraform_wrapper: false
-
-      - name: Terraform Init
-        run: terraform init
-        working-directory: terraform
-
-      - name: Get Caddy IP and pve1 Tailscale IP from Terraform output
-        id: caddy
-        run: |
-          CADDY_IP=$(terraform output -raw caddy_ip_address)
-          PVE1_IP=$(terraform output -raw pve1_tailscale_ip)
-          PVE1_MGMT_IP=$(terraform output -raw pve1_mgmt_ip)
-          echo "::add-mask::$CADDY_IP"
-          echo "::add-mask::$PVE1_IP"
-          echo "::add-mask::$PVE1_MGMT_IP"
-          echo "ip=$CADDY_IP" >> "$GITHUB_OUTPUT"
-          echo "pve1_ip=$PVE1_IP" >> "$GITHUB_OUTPUT"
-          echo "pve1_mgmt_ip=$PVE1_MGMT_IP" >> "$GITHUB_OUTPUT"
-        working-directory: terraform
-
-      - name: Connect to Tailscale
-        uses: ./.github/actions/tailscale-connect
-
-      - name: Fetch credentials from SSM
-        run: |
-          ROOT_USER=$(aws ssm get-parameter \
-            --name /proxmox/auth/root_user \
-            --with-decryption \
-            --query Parameter.Value \
-            --output text)
-          ROOT_PASS=$(aws ssm get-parameter \
-            --name /proxmox/auth/root_password \
-            --with-decryption \
-            --query Parameter.Value \
-            --output text)
-          CADDY_KEY_ID=$(aws ssm get-parameter \
-            --name /caddy/aws/access_key_id \
-            --with-decryption \
-            --query Parameter.Value \
-            --output text)
-          CADDY_KEY_SECRET=$(aws ssm get-parameter \
-            --name /caddy/aws/secret_access_key \
-            --with-decryption \
-            --query Parameter.Value \
-            --output text)
-          echo "::add-mask::$ROOT_USER"
-          echo "::add-mask::$ROOT_PASS"
-          echo "::add-mask::$CADDY_KEY_ID"
-          echo "::add-mask::$CADDY_KEY_SECRET"
-          echo "PROXMOX_ROOT_USER=$ROOT_USER" >> "$GITHUB_ENV"
-          echo "PROXMOX_ROOT_PASS=$ROOT_PASS" >> "$GITHUB_ENV"
-          echo "CADDY_AWS_ACCESS_KEY_ID=$CADDY_KEY_ID" >> "$GITHUB_ENV"
-          echo "CADDY_AWS_SECRET_ACCESS_KEY=$CADDY_KEY_SECRET" >> "$GITHUB_ENV"
-
-      - name: Configure container SSH via pve1
-        run: |
-          export SSHPASS="$PROXMOX_ROOT_PASS"
-          sshpass -e ssh -o StrictHostKeyChecking=no \
-            "$PROXMOX_ROOT_USER@pve1.prod.brooks-security.com" \
-            'pct exec 201 -- bash -c "mkdir -p /etc/ssh/sshd_config.d && printf \"PermitRootLogin yes\nPasswordAuthentication yes\n\" > /etc/ssh/sshd_config.d/99-ansible.conf && systemctl enable ssh --now && systemctl restart ssh"'
-
-      - name: Run Caddy playbook
-        run: |
-          VARS_FILE=$(mktemp)
-          cat > "$VARS_FILE" <<EOF
-          ansible_user: root
-          ansible_password: "$PROXMOX_ROOT_PASS"
-          ansible_ssh_pass: "$PROXMOX_ROOT_PASS"
-          ansible_ssh_extra_args: "-o StrictHostKeyChecking=no -o ProxyCommand='sshpass -e ssh -W %h:%p -o StrictHostKeyChecking=no $PROXMOX_ROOT_USER@pve1.prod.brooks-security.com'"
-          caddy_aws_access_key_id: "$CADDY_AWS_ACCESS_KEY_ID"
-          caddy_aws_secret_access_key: "$CADDY_AWS_SECRET_ACCESS_KEY"
-          pve1_mgmt_ip: "${{ steps.caddy.outputs.pve1_mgmt_ip }}"
-          caddy_acme_email: "a.younger.cato@gmail.com"
-          EOF
-          export SSHPASS="$PROXMOX_ROOT_PASS"
-          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook ansible/playbooks/caddy.yml \
-            -i ansible/inventory.yml \
-            -e "@$VARS_FILE"
-          rm -f "$VARS_FILE"
-
-  pve1-configure-code-server-lxc:
-    name: 'Configure code-server LXC on pve1'
-    runs-on: [self-hosted, Linux, X64, proxmox]
-    needs: terraform-apply
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Connect to Tailscale
-        uses: ./.github/actions/tailscale-connect
-
-      - name: Fetch credentials from SSM
-        run: |
-          ROOT_USER=$(aws ssm get-parameter \
-            --name /proxmox/auth/root_user \
-            --with-decryption \
-            --query Parameter.Value \
-            --output text)
-          ROOT_PASS=$(aws ssm get-parameter \
-            --name /proxmox/auth/root_password \
-            --with-decryption \
-            --query Parameter.Value \
-            --output text)
-          echo "::add-mask::$ROOT_USER"
-          echo "::add-mask::$ROOT_PASS"
-          echo "PROXMOX_ROOT_USER=$ROOT_USER" >> "$GITHUB_ENV"
-          echo "PROXMOX_ROOT_PASS=$ROOT_PASS" >> "$GITHUB_ENV"
-
-      - name: Apply LXC 202 host-side config
-        # Runs as actual root on pve1 (not the API token), so bind mounts and
-        # cgroup/TUN config are permitted. Script is idempotent: restarts the
-        # container only when config changes are detected.
-        run: |
-          export SSHPASS="$PROXMOX_ROOT_PASS"
-          sshpass -e ssh -o StrictHostKeyChecking=no \
-            "$PROXMOX_ROOT_USER@pve1.prod.brooks-security.com" bash -s << 'REMOTE'
-          set -e
-          CHANGED=0
-
-          # Workspace bind mount — pct set is idempotent; skip if mp0 already set
-          mkdir -p /var/lib/pve/code-server/workspace
-          chown 101000:101000 /var/lib/pve/code-server/workspace
-          if ! grep -qF "mp0:" /etc/pve/lxc/202.conf 2>/dev/null; then
-            pct set 202 -mp0 /var/lib/pve/code-server/workspace,mp=/home/coder/workspace
-            CHANGED=1
-          fi
-
-          # Tailscale TUN device — must be written directly (no pct flag for lxc.*)
-          if ! grep -qF "lxc.cgroup2.devices.allow" /etc/pve/lxc/202.conf 2>/dev/null; then
-            printf "lxc.cgroup2.devices.allow: c 10:200 rwm\nlxc.mount.entry: /dev/net/tun dev/net/tun none bind,create=file\n" \
-              >> /etc/pve/lxc/202.conf
-            CHANGED=1
-          fi
-
-          if [ "$CHANGED" = "1" ]; then
-            pct stop 202
-            sleep 3
-            pct start 202
-            sleep 5
-            echo "Container 202 restarted with updated config"
-          else
-            echo "No config changes needed for container 202"
-          fi
-          REMOTE
-
-  ansible-setup-code-server:
-    name: 'Setup code-server'
-    runs-on: [self-hosted, Linux, X64, proxmox]
-    needs: [pve1-configure-code-server-lxc, ansible-setup-caddy]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Connect to Tailscale
-        uses: ./.github/actions/tailscale-connect
-
-      - name: Fetch credentials from SSM
-        run: |
-          ROOT_USER=$(aws ssm get-parameter \
-            --name /proxmox/auth/root_user \
-            --with-decryption \
-            --query Parameter.Value \
-            --output text)
-          ROOT_PASS=$(aws ssm get-parameter \
-            --name /proxmox/auth/root_password \
-            --with-decryption \
-            --query Parameter.Value \
-            --output text)
-          CS_PASSWORD=$(aws ssm get-parameter \
-            --name /code-server/auth/password \
-            --with-decryption \
-            --query Parameter.Value \
-            --output text)
-          TS_AUTH_KEY=$(aws ssm get-parameter \
-            --name /code-server/tailscale/auth_key \
-            --with-decryption \
-            --query Parameter.Value \
-            --output text)
-          echo "::add-mask::$ROOT_USER"
-          echo "::add-mask::$ROOT_PASS"
-          echo "::add-mask::$CS_PASSWORD"
-          echo "::add-mask::$TS_AUTH_KEY"
-          echo "PROXMOX_ROOT_USER=$ROOT_USER" >> "$GITHUB_ENV"
-          echo "PROXMOX_ROOT_PASS=$ROOT_PASS" >> "$GITHUB_ENV"
-          echo "CS_PASSWORD=$CS_PASSWORD" >> "$GITHUB_ENV"
-          echo "TS_AUTH_KEY=$TS_AUTH_KEY" >> "$GITHUB_ENV"
-
-      - name: Configure container SSH via pve1
-        run: |
-          export SSHPASS="$PROXMOX_ROOT_PASS"
-          sshpass -e ssh -o StrictHostKeyChecking=no \
-            "$PROXMOX_ROOT_USER@pve1.prod.brooks-security.com" \
-            'pct exec 202 -- bash -c "mkdir -p /etc/ssh/sshd_config.d && printf \"PermitRootLogin yes\nPasswordAuthentication yes\n\" > /etc/ssh/sshd_config.d/99-ansible.conf && systemctl enable ssh --now && systemctl restart ssh"'
-
-      - name: Run code-server playbook
-        run: |
-          VARS_FILE=$(mktemp)
-          cat > "$VARS_FILE" <<EOF
-          ansible_user: root
-          ansible_password: "$PROXMOX_ROOT_PASS"
-          ansible_ssh_pass: "$PROXMOX_ROOT_PASS"
-          ansible_ssh_extra_args: "-o StrictHostKeyChecking=no -o ProxyCommand='sshpass -e ssh -W %h:%p -o StrictHostKeyChecking=no $PROXMOX_ROOT_USER@pve1.prod.brooks-security.com'"
-          code_server_password: "$CS_PASSWORD"
-          tailscale_auth_key: "$TS_AUTH_KEY"
-          EOF
-          export SSHPASS="$PROXMOX_ROOT_PASS"
-          ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook ansible/playbooks/code-server.yml \
-            -i ansible/inventory.yml \
-            -e "@$VARS_FILE"
-          rm -f "$VARS_FILE"
