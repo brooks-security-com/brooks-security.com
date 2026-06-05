@@ -8,7 +8,7 @@ bookToc: false
 
 My name is Graham Brooks. My online handle is @little_seneca most places. I am a Software Engineer who likes to talk to people and solve hard problems. I have some professional certifications in [Linux Server Automation, Cloud Computing, and Security Administration](https://brooks-security.com/docs/curriculum-vitae/credentials/). Currently, I work as the Site Reliability Engineer and as the Security Officer for [AvatarFleet](https://avatarfleet.com), where we provide HR and logistics support to the largest names in the transportation industry. 
 
-Beyond work, I am a husband, father, and community activist. In my free time, I enjoy painting, playing Warhammer 40K, powerlifting, hiking, and running.
+Beyond work, I am a husband, father, and community activist. In my free time, I enjoy painting, powerlifting, hiking, running, and helping run a community tabletop gaming club where we play everything from Magic: The Gathering to Warhammer to One Page Rules to D&D.
 
 I believe it's important to document your work and reflect on what you learn along the way. This site serves as both a portfolio of personal and professional projects and a traditional blog where I share ideas that interest me. Topics range from emerging IT trends and technical tutorials to personal perspectives on the industry and random philosophy thoughts.
 

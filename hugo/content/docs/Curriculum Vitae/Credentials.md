@@ -1,6 +1,6 @@
 # Credentials
 
-> **Note:** Some of the certifications listed below have likely expired by the current date, and I don't mind. For the most part, the value is in the experience gained along the way — with the exception of the CISSP, which I intend to keep current for the foreseeable future.
+> **Note:** Some of the certifications listed below have likely expired by the current date, and I don't mind. For the most part, the value is in the experience gained along the way. The exception is the CISSP, which I intend to keep current for the foreseeable future.
 
 ## Certifications
 
