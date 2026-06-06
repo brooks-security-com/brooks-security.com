@@ -16,6 +16,10 @@ I believe it's important to document your work and reflect on what you learn alo
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/grahamwbrooks/)
 [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/littleseneca)
 
+## Open Source Activity
+
+{{< github-heatmap >}}
+
 ## Featured Projects
 
 <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: stretch; margin-top: 0.5rem;">
