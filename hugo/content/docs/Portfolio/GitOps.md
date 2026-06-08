@@ -3,145 +3,126 @@
 
 [![GitHub: LittleSeneca/brooks-security.com](https://img.shields.io/badge/GitHub-LittleSeneca%2Fbrooks--security.com-181717?logo=github&logoColor=white)](https://github.com/LittleSeneca/brooks-security.com)
 
-This portfolio is managed with GitOps: content in Hugo, infrastructure in Terraform, and deployments automated through GitHub Actions running on a self-hosted runner inside a Proxmox homelab. The same repository that publishes this site also provisions the homelab containers that run its own CI/CD pipeline.
+This site is the artifact of its own pipeline. A single public repository holds the Hugo content you are reading *and* the Terraform that provisions the AWS infrastructure serving it. Push to `main`, and GitHub Actions builds the site, syncs it to S3, invalidates CloudFront, and reconciles the cloud infrastructure with `terraform apply`. No servers to babysit, no deploy button to press.
 
-**Everything runs for about $1.05 per month in AWS.**
+**The whole thing runs for roughly $1 a month in AWS.**
 
-## Network overview
+## What runs where
 
-The infrastructure spans two planes: a **public AWS plane** for the website and SSO portal, and a **private homelab plane** behind Tailscale.
+| Layer | Technology |
+|---|---|
+| Content | Hugo with the `hugo-book` theme (git submodule) |
+| Infrastructure as code | Terraform (`terraform/`) |
+| Hosting | Private S3 origin bucket behind CloudFront |
+| DNS / TLS | Route 53 + ACM (DNS-validated) |
+| AWS access portal | IAM Identity Center, fronted by a CloudFront 301 redirect |
+| Scheduled jobs | EventBridge → Lambda (nightly heatmap refresh) |
+| Secrets | AWS SSM Parameter Store |
+| CI/CD | GitHub Actions on **GitHub-hosted runners** |
 
-The homelab sits on a **dedicated network that is physically isolated from the household internet connection** - separate upstream, separate switch. Personal devices (laptops, phones) live on an entirely different network. The two never share a path. The only ingress to the homelab from anywhere outside it is through [Tailscale](https://tailscale.com), which creates an encrypted peer-to-peer mesh without requiring any open ports on the homelab's upstream router.
+A note on what this is **not**: there is no self-hosted runner, no Ansible, and nothing in the deployment path touching a homelab. Everything here runs on ephemeral GitHub-hosted runners against AWS. A separate Proxmox and Tailscale homelab does exist for private experiments, but it sits deliberately outside this repo's deploy path. More on that at the end.
+
+## Repository layout
+
+```text
+.
+├── .github/workflows/
+│   ├── infrastructure.yml      # terraform fmt → validate → plan/apply
+│   └── hugo-deploy.yml         # hugo build → deploy → CloudFront invalidation
+├── hugo/                       # site content, config, theme submodule, data/
+├── terraform/
+│   ├── *.tf                    # s3, cloudfront, route53, acm, iam, sso, lambda
+│   ├── imports.tf              # import blocks adopting pre-existing resources
+│   ├── bootstrap/              # one-time: tfstate bucket + lock table
+│   └── files/                  # CloudFront function + Lambda source
+├── specs/                      # design docs for in-flight work
+└── readme.md
+```
+
+## How a change ships
+
+Two workflows, both triggered on every push and pull request to `main`. Each uses a `paths-filter` so it only does real work when its own files changed. The checks still *report* either way, so branch protection's required status checks are satisfied on every PR.
+
+```mermaid
+flowchart TD
+    PR["Pull request to main"]
+    PR --> INFRA_PR["infrastructure.yml<br/>fmt → validate → plan<br/>(plan posted as PR comment)"]
+    PR --> HUGO_PR["hugo-deploy.yml<br/>build (proves it compiles)"]
+    INFRA_PR --> MERGE["Squash & merge to main"]
+    HUGO_PR --> MERGE
+    MERGE --> GATE{"production<br/>environment gate"}
+    GATE -->|approve| APPLY["terraform apply<br/>reconcile AWS"]
+    GATE -->|approve| DEPLOY["hugo deploy<br/>S3 sync + CloudFront invalidation"]
+```
+
+- **On a PR:** `infrastructure.yml` runs `terraform fmt -check`, `validate`, and `plan`, then posts the plan as a sticky PR comment so the diff is reviewable inline. `hugo-deploy.yml` builds the site to prove it compiles.
+- **On merge to `main`:** the `apply` and `deploy` jobs run. Both target the `production` GitHub Environment, so they pause for an explicit approval before touching anything. `terraform apply` reconciles AWS; `hugo deploy` syncs the rendered site to S3 and invalidates the CloudFront cache.
+
+## Public site architecture
+
+The site is a pile of static files in a **private** S3 bucket. The bucket blocks all public access; CloudFront is the only thing allowed to read it, via an Origin Access Control and a bucket policy scoped to the distribution's ARN.
 
 ```mermaid
 flowchart LR
-    subgraph internet["Public internet"]
-        browser["Browser / visitor"]
-        ghactions["GitHub Actions"]
-    end
-
-    subgraph aws["AWS (us-east-1)"]
-        r53["Route 53"]
-        cf_site["CloudFront (site)"]
-        s3["S3 origin bucket"]
-        cf_sso["CloudFront (SSO redirect)"]
-        sso_portal["IAM Identity Center"]
-        ssm["SSM Parameter Store"]
-        iam_oidc["IAM OIDC deploy role"]
-    end
-
-    subgraph tailscale["Tailscale mesh"]
-        ts_dev["Personal device"]
-    end
-
-    subgraph homelab["Homelab - dedicated network, isolated from home internet"]
-        subgraph pve1_host["pve1 - Proxmox VE host"]
-            ts_daemon["Tailscale daemon"]
-            ipt["iptables DNAT :443"]
-            pve_api["Proxmox VE :8006"]
-        end
-        caddy["LXC 201 - Caddy"]
-        runner["LXC 200 - GitHub runner"]
-    end
-
-    %% --- public site traffic ---
-    browser -- "brooks-security.com" --> r53
-    r53 -- "A/AAAA alias" --> cf_site
-    cf_site -- "cache miss" --> s3
-    s3 --> cf_site
-
-    %% --- SSO portal redirect ---
-    browser -- "aws.brooks-security.com" --> cf_sso
-    cf_sso -- "HTTP 301" --> sso_portal
-
-    %% --- Tailscale access to Proxmox UI ---
-    ts_dev -- "Tailscale tunnel" --> ts_daemon
-    ts_daemon --> ipt
-    ipt -- "DNAT" --> caddy
-    caddy -- "reverse_proxy https" --> pve_api
-
-    %% --- CI/CD ---
-    ghactions -- "trigger" --> runner
-    runner -- "Tailscale" --> ts_daemon
-    runner -- "OIDC" --> iam_oidc
-    iam_oidc -- "hugo deploy" --> s3
-    iam_oidc -- "CF invalidation" --> cf_site
-    iam_oidc -- "terraform apply" --> r53
-    runner -- "fetch secrets" --> ssm
-    runner -- "Ansible via pct exec" --> caddy
+    V["Visitor"] --> R53["Route 53<br/>apex + www"]
+    R53 --> CF["CloudFront<br/>ACM TLS · HTTP/2 · IPv6<br/>'hugo' edge function<br/>(/posts/foo/ → index.html)"]
+    CF -->|cache miss<br/>via OAC| S3["S3 origin (private)<br/>AES256 at rest<br/>no public access"]
+    S3 --> CF
+    CF --> V
 ```
 
-## Public website traffic
+`hugo deploy` reads the `[deployment]` block in `hugo.toml`: it pushes `hugo/public/` to `s3://brooks-security.com`, sets long-lived `Cache-Control` headers on hashed assets, and invalidates the distribution. A small CloudFront Function (`terraform/files/hugo-cf-function.js`) runs at the edge on every viewer request and turns Hugo's pretty URLs into the underlying `index.html` keys, so directory-style links resolve at the edge without an origin round trip.
+
+## AWS access portal: `aws.brooks-security.com`
+
+A second, tiny CloudFront distribution exists purely to give the IAM Identity Center login page a memorable address. Its only origin is a dummy; a CloudFront Function intercepts every request and returns a `301` to the real IAM Identity Center portal URL. No compute, no S3, just a redirect at the edge.
+
+Terraform also manages the identity side of this: the Identity Center user, an `AdministratorAccess` permission set, and the account assignment that binds them. (IAM Identity Center itself must be enabled once by hand in the console before Terraform can manage these resources.)
+
+## Nightly contribution-heatmap refresh
+
+The homepage shows a GitHub-style contribution heatmap, rendered as static inline SVG from `hugo/data/contributions.json`. That file is re-baked once a day so the calendar stays current without a human in the loop:
 
 ```mermaid
-flowchart LR
-    U["Visitor browser"] --> R["Route 53 DNS"]
-    R --> C["CloudFront distribution"]
-    C -- "Cache hit" --> V["Response from edge cache"]
-    C -- "Cache miss" --> S["S3 origin bucket"]
-    S --> C
-    C --> U
+flowchart TD
+    EB["EventBridge<br/>cron 09:00 UTC"] --> L["Lambda: contrib-dispatch (python3.12)<br/>reads GitHub PAT from SSM<br/>(/github/admin_token)"]
+    L -->|"POST workflow_dispatch"| WF["hugo-deploy.yml"]
+    WF --> Q["build step queries GitHub GraphQL<br/>contributionsCollection API"]
+    Q --> J["overwrite hugo/data/contributions.json"]
+    J --> D["redeploy → S3 + CloudFront"]
 ```
 
-A CloudFront viewer-request function rewrites pretty URLs (`/posts/foo/`) to the underlying S3 key (`/posts/foo/index.html`). A separate CloudFront distribution at `aws.brooks-security.com` issues an HTTP 301 to the IAM Identity Center portal - no compute involved, just a CloudFront Function at the edge.
+Kicking the workflow from EventBridge, rather than a GitHub Actions `schedule:` cron, is deliberate: GitHub auto-disables scheduled workflows after 60 days of repository inactivity, which a personal site can easily hit. EventBridge never sleeps. The whole job is one Lambda invocation per day, which is effectively free, and the heatmap fetch is fully fail-soft: any error leaves the last-known-good JSON in place so the build still succeeds.
 
-## Proxmox UI - `pve.brooks-security.com`
+## Terraform state & bootstrap
 
-Route 53 resolves `pve.brooks-security.com` to pve1's Tailscale IP (`100.64.x.x`). Because Tailscale IPs are only routable within the mesh, this address is invisible to the public internet.
-
-```mermaid
-flowchart LR
-    D["Personal device (Tailscale enrolled)"]
-    D -- "DNS resolves to 100.64.x.x" --> R["Route 53"]
-    R --> D
-    D -- "Tailscale tunnel :443" --> P["pve1 - iptables DNAT :443 → 192.168.2.201"]
-    P --> C["LXC 201 - Caddy (DNS-01 cert via Route 53)"]
-    C -- "reverse_proxy https (skip-verify)" --> X["Proxmox VE UI :8006"]
-```
-
-Caddy holds a browser-trusted certificate obtained via DNS-01 ACME challenge against Route 53 - no HTTP-01 challenge needed, which means the cert works even though the container has no public IP. From any enrolled device, `https://pve.brooks-security.com` opens the Proxmox UI with no port number and no certificate warning.
-
-## CI/CD pipeline
-
-```mermaid
-flowchart LR
-    A["Write content or infra changes"] --> B["Commit to feature branch"]
-    B --> C["Open PR to main"]
-    C --> D["Self-hosted runner checks"]
-    D --> E{"Checks pass?"}
-    E -- "no" --> G["Fix and push"]
-    G --> C
-    E -- "yes" --> F["Squash and merge (maintainer approval)"]
-    F --> H["Production workflows (approval gate)"]
-    H --> I["hugo deploy to S3 + CloudFront invalidation"]
-    H --> J["terraform apply - AWS infra"]
-    H --> K["Ansible - Caddy + runner provisioning"]
-```
-
-All jobs run on the self-hosted runner inside LXC 200. Because that container is on the homelab network and enrolled in Tailscale, the runner can reach the Proxmox API and SSH into other containers - all without any public ingress.
+State lives in an S3 backend (`brooks-security-tfstate`) with a DynamoDB lock table. Both are created once by the small `terraform/bootstrap/` module, whose own state is local and committed to the repo, which is the usual chicken-and-egg escape hatch. The main configuration adopts the already-existing AWS resources through `terraform/imports.tf`: a set of `import` blocks that pull live Route 53, ACM, S3, and CloudFront resources under management, so the steady-state plan is a clean no-op.
 
 ## Security model
 
-This is a **public repository** with a self-hosted runner. A malicious pull request could, without controls, execute arbitrary code on the runner. Several layers of defence address this:
-
-| Control | Mechanism |
+| Control | What it does |
 |---|---|
-| **First-time contributor approval** | GitHub requires a maintainer to approve Actions runs on any PR from a contributor who has not previously had a PR merged |
-| **OIDC role scoped to `main`** | The AWS deploy role trust policy uses `StringEquals` on `ref:refs/heads/main` - fork PRs cannot assume it |
-| **Plan on PR, apply on merge** | `terraform plan` runs on PRs (read-only); `terraform apply` only runs after merge to `main` |
-| **Production environment gate** | Apply and deploy jobs target the `production` GitHub environment, requiring an explicit approval before execution |
-| **Secrets in SSM, not GitHub** | No long-lived credentials are stored in GitHub secrets; SSM Parameter Store is the source of truth |
-| **Least-privilege IAM** | Caddy DNS-01 user, OIDC deploy role, and Proxmox API token are each scoped to the minimum permissions needed |
-| **Physical network isolation** | The runner is on a network with no public ingress; the only entry point is Tailscale |
+| **Ephemeral GitHub-hosted runners** | CI runs on disposable runners with no path into any private network; there is no long-lived self-hosted runner to compromise |
+| **Plan on PR, apply on merge** | `terraform plan` runs read-only on PRs; `apply` only runs after merge to `main` |
+| **Production environment gate** | `apply` and `deploy` jobs target the `production` GitHub Environment, requiring explicit approval before they execute |
+| **First-time contributor approval** | GitHub requires a maintainer to approve workflow runs on PRs from contributors with no prior merged PR |
+| **Private origin** | The S3 bucket blocks all public access; only CloudFront can read it, via Origin Access Control |
+| **Secrets in SSM** | The GitHub PAT used by the heatmap job lives in SSM Parameter Store and is referenced by ARN, never pulled into Terraform state |
+| **Least-privilege IAM** | The deploy credentials and the Lambda role are each scoped to the minimum actions they need (S3 + CloudFront for deploys; SSM read + scoped KMS decrypt for the Lambda) |
 
-## What this costs
+**On deploy credentials:** today the workflows authenticate to AWS with a scoped IAM user's access keys, stored as GitHub Actions secrets and passed through the standard credential chain (no profile in CI). A GitHub OIDC provider and a dedicated deploy role are already defined in `terraform/iam.tf`, staged for a planned cutover to short-lived, keyless credentials. When that lands, the static keys go away.
+
+## What it costs
 
 | Service | Monthly cost |
 |---|---|
-| Route 53 hosted zones (×2) | ~$1.00 |
+| Route 53 hosted zone | ~$0.50 |
 | S3 storage + requests | ~$0.01 |
-| CloudFront (low traffic) | ~$0.01 |
-| ACM, SSM, IAM | $0.00 |
-| **Total** | **~$1.05** |
+| CloudFront (low traffic, two distributions) | ~$0.01 |
+| Lambda + EventBridge (one invocation/day) | ~$0.00 |
+| ACM, SSM, IAM, Identity Center | $0.00 |
+| **Total** | **~$1/month** |
 
-The homelab hardware is sunk cost - Tailscale is free for personal use, and Proxmox is free (community edition).
+## The homelab (out of band)
+
+For full transparency: a separate Proxmox and Tailscale homelab exists and is reachable privately at `pve.brooks-security.com` over the Tailscale mesh. It is **not** part of this repository's deployment path and not managed by the Terraform here. The site ships entirely through GitHub-hosted runners and AWS. Homelab work that *is* tracked in this repo lives under `specs/` as design docs, for example an in-design `code-server` LXC, kept separate from the production site pipeline on purpose.
