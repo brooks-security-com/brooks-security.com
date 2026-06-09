@@ -122,6 +122,22 @@ jobs:
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
           "$HOME/.local/bin/hugo" version
 
+      # Bake the public reCAPTCHA site key into the contact form. Hugo maps
+      # HUGO_PARAMS_* env vars onto [params], so this overrides the empty
+      # params.recaptchaSiteKey in hugo.toml. Fail-soft: if the key can't be
+      # read, the form renders a dev-mode notice rather than breaking the build.
+      - name: Inject reCAPTCHA site key
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          set -uo pipefail
+          KEY="$(aws ssm get-parameter --name "/brooks-security.com/recaptcha/site_key" --with-decryption --query 'Parameter.Value' --output text 2>/dev/null || true)"
+          if [ -z "$KEY" ] || [ "$KEY" = "None" ]; then
+            echo "::warning::Could not read recaptcha site_key from SSM; contact form will render its dev-mode notice"
+          else
+            echo "HUGO_PARAMS_RECAPTCHASITEKEY=$KEY" >> "$GITHUB_ENV"
+            echo "Injected reCAPTCHA site key into Hugo params."
+          fi
+
       - name: Hugo Build (minified)
         if: steps.gate.outputs.run == 'true'
         working-directory: hugo

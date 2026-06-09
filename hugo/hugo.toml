@@ -5,6 +5,11 @@ theme = 'hugo-book'
 
 [params]
 BookLogo = 'grahambrooks.png'
+# Public reCAPTCHA v3 site key. Empty here on purpose: injected at build time
+# from SSM (/brooks-security.com/recaptcha/site_key) via the
+# HUGO_PARAMS_RECAPTCHASITEKEY env var (see .github/workflows/hugo-deploy.yml).
+# When empty, the contact-form shortcode renders a dev-mode notice.
+recaptchaSiteKey = ''
 
 [markup.goldmark.renderer]
 unsafe = true
