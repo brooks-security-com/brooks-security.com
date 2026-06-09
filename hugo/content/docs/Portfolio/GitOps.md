@@ -9,7 +9,7 @@ This site is the artifact of its own pipeline. A single public repository holds 
 
 [![Two-panel stick-figure cartoon titled "Secrecy Only in the Key": in the BAD panel, revealing how the method works lets an attacker decode everything; in the BETTER panel, the method is public but the attacker still can't break it without the secret key.](/images/moserware-aes-secrecy-only-in-the-key.png)](https://www.moserware.com/2009/09/stick-figure-guide-to-advanced.html)
 
-*“Big Idea #3: Secrecy Only in the Key,” from Moserware's [A Stick Figure Guide to the Advanced Encryption Standard (AES)](https://www.moserware.com/2009/09/stick-figure-guide-to-advanced.html).*
+*Image: “Big Idea #3: Secrecy Only in the Key,” by Jeff Moser, from [A Stick Figure Guide to the Advanced Encryption Standard (AES)](https://www.moserware.com/2009/09/stick-figure-guide-to-advanced.html) (Moserware). Used with permission; all rights remain with the author.*
 
 **The whole thing runs for roughly $1 a month in AWS.**
 
