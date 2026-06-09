@@ -88,13 +88,11 @@
   outline-offset: 1px;
 }
 
-/* Honeypot: out of the flow for humans, but not display:none (which some bots skip). */
+/* Honeypot: display:none so browser autofill skips it (off-screen fields are
+   still "visible" to Chrome's autofill and get populated, which false-trips the
+   bot check on real users). reCAPTCHA Enterprise is the primary bot defense. */
 .contact-hp {
-  position: absolute;
-  left: -9999px;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
+  display: none;
 }
 
 .contact-status {
