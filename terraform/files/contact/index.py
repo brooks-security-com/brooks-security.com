@@ -1,30 +1,27 @@
-"""Contact-form handler for brooks-security.com.
+"""Contact-form handler for brooks-security.com (reCAPTCHA Enterprise).
 
-The contact form uses a reCAPTCHA Enterprise score-based key, but verifies the
-token through the legacy `siteverify` endpoint using the key's legacy secret
-(the "Secret key" shown in the reCAPTCHA console, provided for third-party /
-non-Cloud-API integrations). The frontend mints the token with enterprise.js;
-this backend checks it with the classic endpoint, which avoids needing a GCP API
-key or service account.
+Invoked via a Lambda Function URL behind the CloudFront /api/contact behavior.
+The handler:
 
-Flow (behind the CloudFront /api/contact behavior):
-  1. Reject requests lacking the CloudFront-injected shared-secret header, so the
-     public Function URL can't be invoked directly.
-  2. Drop honeypot submissions silently.
-  3. Validate the form fields.
-  4. POST the token to siteverify with the legacy secret; require success, a
-     matching action, and a risk score at or above the floor.
-  5. Publish the message to an SNS topic that emails graham@brooks-security.com.
+  1. Rejects any request lacking the CloudFront-injected shared-secret header,
+     so the public Function URL cannot be invoked directly.
+  2. Drops honeypot submissions silently.
+  3. Validates the form fields.
+  4. Creates a reCAPTCHA Enterprise assessment for the token and checks that the
+     token is valid, the action matches, and the risk score clears the floor.
+  5. Publishes the message to an SNS topic that emails graham@brooks-security.com.
 
-The secret is read from SSM at runtime and never enters Terraform state. boto3
-ships with the runtime and urllib is stdlib, so there are no bundled deps.
+Auth to the reCAPTCHA Enterprise API uses a Google Cloud API key (read from SSM)
+passed as a query parameter, so there are no bundled dependencies (boto3 ships
+with the runtime and urllib is stdlib). The public site key is also read from
+SSM, since the assessment event must include it. Neither value enters Terraform
+state.
 """
 
 import base64
 import json
 import os
 import re
-import urllib.parse
 import urllib.request
 
 import boto3
@@ -32,16 +29,13 @@ import boto3
 _EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 _ssm = boto3.client("ssm")
 _sns = boto3.client("sns")
-_secret_cache = None
+_cache = {}
 
 
-def _secret():
-    global _secret_cache
-    if _secret_cache is None:
-        _secret_cache = _ssm.get_parameter(
-            Name=os.environ["RECAPTCHA_SECRET_SSM_PARAM"], WithDecryption=True
-        )["Parameter"]["Value"]
-    return _secret_cache
+def _ssm_param(name):
+    if name not in _cache:
+        _cache[name] = _ssm.get_parameter(Name=name, WithDecryption=True)["Parameter"]["Value"]
+    return _cache[name]
 
 
 def _header(event, name):
@@ -85,20 +79,22 @@ def handler(event, context):
     if not name or not message or not _EMAIL_RE.match(email) or not token:
         return _resp(400, {"error": "Please provide your name, a valid email, and a message."})
 
-    # 5. Verify the token via the legacy siteverify endpoint. Fail closed.
+    # 5. Create a reCAPTCHA Enterprise assessment. Fail closed on any error.
     try:
-        verify = _verify(token, _source_ip(event))
+        assessment = _assess(token)
     except Exception as exc:
-        print(f"reCAPTCHA verify error: {exc}")
+        print(f"reCAPTCHA assessment error: {exc}")
         return _resp(502, {"error": "Could not verify the request. Please try again."})
 
+    props = assessment.get("tokenProperties", {})
+    score = float(assessment.get("riskAnalysis", {}).get("score", 0))
     min_score = float(os.environ.get("RECAPTCHA_MIN_SCORE", "0.5"))
-    score = float(verify.get("score", 0))
-    # The action field may be absent in some legacy responses; only enforce it
-    # when present so a missing action doesn't reject a legitimate submission.
-    action_ok = verify.get("action", "contact") == "contact"
-    if not (verify.get("success") and action_ok and score >= min_score):
-        print(f"reCAPTCHA rejected: {json.dumps(verify)}")
+    if not (props.get("valid") and props.get("action") == "contact" and score >= min_score):
+        print(
+            "reCAPTCHA rejected: "
+            f"valid={props.get('valid')} reason={props.get('invalidReason')} "
+            f"action={props.get('action')} score={score}"
+        )
         return _resp(400, {"error": "Could not verify you are human. Please try again."})
 
     # 6. Publish to SNS.
@@ -125,22 +121,26 @@ def handler(event, context):
     return _resp(200, {"ok": True})
 
 
-def _verify(token, remote_ip):
-    payload = {"secret": _secret(), "response": token}
-    if remote_ip:
-        payload["remoteip"] = remote_ip
+def _assess(token):
+    project = os.environ["RECAPTCHA_PROJECT_ID"]
+    api_key = _ssm_param(os.environ["RECAPTCHA_API_KEY_SSM_PARAM"])
+    site_key = _ssm_param(os.environ["RECAPTCHA_SITE_KEY_SSM_PARAM"])
+    url = (
+        f"https://recaptchaenterprise.googleapis.com/v1/projects/{project}"
+        f"/assessments?key={api_key}"
+    )
+    payload = {
+        "event": {
+            "token": token,
+            "siteKey": site_key,
+            "expectedAction": "contact",
+        }
+    }
     req = urllib.request.Request(
-        "https://www.google.com/recaptcha/api/siteverify",
-        data=urllib.parse.urlencode(payload).encode(),
+        url,
+        data=json.dumps(payload).encode(),
         method="POST",
+        headers={"Content-Type": "application/json"},
     )
     with urllib.request.urlopen(req, timeout=5) as resp:
         return json.loads(resp.read().decode("utf-8", "replace"))
-
-
-def _source_ip(event):
-    # Behind CloudFront, the viewer IP is the first hop of X-Forwarded-For.
-    xff = _header(event, "x-forwarded-for")
-    if xff:
-        return xff.split(",")[0].strip()
-    return event.get("requestContext", {}).get("http", {}).get("sourceIp", "")
