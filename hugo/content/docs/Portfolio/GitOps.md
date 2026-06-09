@@ -5,6 +5,8 @@
 
 This site is the artifact of its own pipeline. A single public repository holds the Hugo content you are reading *and* the Terraform that provisions the AWS infrastructure serving it. Push to `main`, and GitHub Actions builds the site, syncs it to S3, invalidates CloudFront, and reconciles the cloud infrastructure with `terraform apply`. No servers to babysit, no deploy button to press.
 
+**Built in the open, on purpose.** This is [Kerckhoffs's Principle](https://en.wikipedia.org/wiki/Kerckhoffs%27s_principle) applied to a whole deployment rather than a single cipher: the security of a system should rest on its keys, not on hiding how it works. So nothing here is hidden. You can read every line of Terraform, review exactly how the site is built, served, and locked down, and stand up an identical copy yourself. What you *can't* do is break this one — not because you can't see how it works, but because you don't hold my keys. Never say never, but there's no obscurity to peel back: the whole attack surface is a short list of secrets in SSM and a couple of tightly scoped IAM principals.
+
 **The whole thing runs for roughly $1 a month in AWS.**
 
 ## What runs where
