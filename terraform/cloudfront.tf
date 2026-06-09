@@ -28,12 +28,12 @@ resource "aws_cloudfront_distribution" "main" {
     origin_access_control_id = aws_cloudfront_origin_access_control.oac.id
   }
 
-  # Contact-form backend: the Lambda Function URL, fronted same-origin under
-  # /api/contact (see the ordered_cache_behavior below). The custom header is
-  # the shared secret the Lambda checks so the Function URL can't be hit directly.
+  # Contact-form backend: the API Gateway HTTP API, fronted same-origin under
+  # /api/contact (see the ordered_cache_behavior below). The custom header is the
+  # shared secret the Lambda checks so the public API can't be hit directly.
   origin {
-    origin_id   = "contact-lambda"
-    domain_name = replace(replace(aws_lambda_function_url.contact.function_url, "https://", ""), "/", "")
+    origin_id   = "contact-api"
+    domain_name = replace(aws_apigatewayv2_api.contact.api_endpoint, "https://", "")
 
     custom_origin_config {
       http_port              = 80
@@ -62,16 +62,16 @@ resource "aws_cloudfront_distribution" "main" {
     }
   }
 
-  # Contact-form API. POST passthrough to the Lambda Function URL with caching
+  # Contact-form API. POST passthrough to the API Gateway origin with caching
   # disabled. Deliberately no `hugo` function association here: the pretty-URL
   # rewrite would mangle /api/contact into /api/contact/index.html.
   ordered_cache_behavior {
     path_pattern             = "/api/contact"
-    target_origin_id         = "contact-lambda"
+    target_origin_id         = "contact-api"
     viewer_protocol_policy   = "redirect-to-https"
     allowed_methods          = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
     cached_methods           = ["GET", "HEAD"]
-    compress                 = true
+    compress                 = false
     cache_policy_id          = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" # CachingDisabled (AWS-managed)
     origin_request_policy_id = "b689b0a8-53d0-40ab-baf2-68738e2966ac" # AllViewerExceptHostHeader (AWS-managed)
   }
