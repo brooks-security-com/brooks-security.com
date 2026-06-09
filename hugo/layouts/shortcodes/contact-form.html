@@ -32,7 +32,10 @@
   var form = document.getElementById('contact-form');
   var statusEl = form.querySelector('.contact-status');
   var btn = form.querySelector('.contact-submit');
-  var siteKey = {{ $siteKey | jsonify }};
+  // jsonify already yields a valid JS string literal ("..."); safeJS stops Hugo's
+  // script-context autoescaping from re-encoding it (which would bake the quotes
+  // into the value and make grecaptcha reject the site key).
+  var siteKey = {{ $siteKey | jsonify | safeJS }};
   var EMAIL = 'graham@brooks-security.com';
 
   function val(name) {
