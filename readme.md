@@ -14,7 +14,7 @@ Everything runs on GitHub-hosted runners against AWS. There is no self-hosted ru
 | DNS and TLS | Route 53 (`brooks-security.com`, `www`, `aws`) with ACM, DNS-validated |
 | AWS access portal | IAM Identity Center, fronted by a CloudFront 301 redirect |
 | Scheduled jobs | EventBridge to Lambda (nightly contribution-heatmap refresh) |
-| Contact form | Lambda Function URL behind CloudFront, with reCAPTCHA v3 and SNS email delivery |
+| Contact form | Lambda Function URL behind CloudFront, with reCAPTCHA Enterprise and SNS email delivery |
 | Secrets | AWS SSM Parameter Store |
 | CI/CD | GitHub Actions on GitHub-hosted runners |
 
@@ -70,11 +70,11 @@ EventBridge does the kicking, rather than a GitHub Actions `schedule:` cron, on 
 
 The Services section includes a working contact form, added without an API Gateway or any always-on backend. A new CloudFront behavior routes `/api/contact` to a Lambda Function URL, so the form posts same-origin (no CORS):
 
-1. The page loads reCAPTCHA v3 and, on submit, POSTs the form as JSON to `/api/contact`.
+1. The page loads reCAPTCHA Enterprise and, on submit, POSTs the form as JSON to `/api/contact`.
 2. CloudFront forwards the request to the `brooks-security-contact` Lambda (`python3.12`) over a Function URL, injecting a shared-secret header so the Function URL cannot be invoked directly.
-3. The Lambda verifies the reCAPTCHA token against Google's `siteverify` API (rejecting anything below the score threshold), checks the shared secret and a honeypot field, and publishes the message to an SNS topic that emails the site owner.
+3. The Lambda verifies the token via the legacy `siteverify` endpoint using the key's legacy secret (rejecting an invalid token, a mismatched action, or anything below the score threshold), checks the shared secret and a honeypot field, and publishes the message to an SNS topic that emails the site owner.
 
-The reCAPTCHA keys live in SSM (`/brooks-security.com/recaptcha/*`): the public site key is injected into the Hugo build from SSM at build time, and the secret key is read by the Lambda at runtime, never entering Terraform state. The whole feature is effectively free, costing a handful of Lambda invocations and SNS emails a month.
+The key is a reCAPTCHA Enterprise score-based key, but verification uses its **legacy secret** via the classic `siteverify` endpoint, so no GCP API key or service account is required. The legacy secret and the public site key live in SSM (`/brooks-security.com/recaptcha/*`): the site key is injected into the Hugo build from SSM at build time, and the Lambda reads the secret at runtime, neither entering Terraform state. (The frontend uses `enterprise.js`, since an Enterprise key is rejected by the classic `api.js`.) The whole feature is effectively free, costing a handful of Lambda invocations and SNS emails a month.
 
 ## Terraform quick start
 

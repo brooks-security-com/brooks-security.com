@@ -1,9 +1,34 @@
 # Spec: Services section + contact form (Lambda + reCAPTCHA v3 + SNS)
 
 **Branch:** `claude/loving-meitner-599625`
-**Status:** In design
+**Status:** Built; switched from classic reCAPTCHA v3 to reCAPTCHA Enterprise during testing
 
 ---
+
+## Amendment: reCAPTCHA Enterprise key, verified via legacy siteverify (supersedes the v3 details below)
+
+The key created in Google turned out to be a **reCAPTCHA Enterprise** score-based
+key, not a classic v3 key. An Enterprise key is rejected by the classic
+`api.js`, so the frontend was switched to `enterprise.js`. Enterprise keys carry
+a **legacy secret key** (for third-party / non-Cloud-API integrations), which
+lets the backend keep using the classic `siteverify` endpoint and avoid a GCP
+API key or service account. Final implemented behavior:
+
+- **Frontend:** loads `https://www.google.com/recaptcha/enterprise.js?render=<siteKey>`
+  and calls `grecaptcha.enterprise.execute(siteKey, {action: 'contact'})`. Has a
+  15s timeout / failure path so a bad key surfaces an error instead of hanging
+  on "Sending...".
+- **Backend:** the Lambda POSTs the token to
+  `https://www.google.com/recaptcha/api/siteverify` with the legacy secret, then
+  checks `success`, `action` (when present) `== "contact"`, and
+  `score >= recaptcha_min_score` (0.7).
+- **Secrets:** the legacy secret lives in SSM
+  (`/brooks-security.com/recaptcha/secret_key`, SecureString) and is read by the
+  Lambda at runtime; the public site key (`.../site_key`) is injected into the
+  Hugo build. Neither enters Terraform state. No API key or project id needed.
+
+Where the sections below say `api.js` for the frontend, read `enterprise.js`;
+everything else about the `siteverify`/secret-key backend still applies.
 
 ## Overview
 

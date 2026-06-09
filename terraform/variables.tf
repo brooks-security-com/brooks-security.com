@@ -54,23 +54,29 @@ variable "contact_email" {
   default = "graham@brooks-security.com"
 }
 
-# Pre-existing SSM SecureString holding the reCAPTCHA v3 *secret* key. Read by
-# the contact Lambda at runtime; referenced by ARN so its value never enters
-# Terraform state.
+# The reCAPTCHA key is a reCAPTCHA Enterprise score-based key, but the contact
+# Lambda verifies tokens through the legacy `siteverify` endpoint using the key's
+# legacy secret. This avoids needing a GCP API key or service account. The
+# frontend still uses enterprise.js (an Enterprise key is rejected by classic
+# api.js).
+
+# Pre-existing SSM SecureString holding the key's legacy reCAPTCHA secret (the
+# "Secret key" in the reCAPTCHA console). Read by the contact Lambda at runtime;
+# referenced by ARN so its value never enters Terraform state.
 variable "recaptcha_secret_ssm_param" {
   type    = string
   default = "/brooks-security.com/recaptcha/secret_key"
 }
 
-# Pre-existing SSM SecureString holding the reCAPTCHA v3 *site* key. Read by the
-# Hugo build job (hugo-deploy.yml) and baked into the contact form HTML. Public
-# by design (it ships to every visitor); kept in SSM only to centralize the keys.
+# Pre-existing SSM SecureString holding the reCAPTCHA *site* key. Read by the Hugo
+# build job (hugo-deploy.yml) and baked into the contact form HTML. Public by
+# design (it ships to every visitor); kept in SSM to centralize the keys.
 variable "recaptcha_site_key_ssm_param" {
   type    = string
   default = "/brooks-security.com/recaptcha/site_key"
 }
 
-# reCAPTCHA v3 minimum score (0.0–1.0) the contact Lambda will accept.
+# reCAPTCHA minimum score (0.0–1.0) the contact Lambda will accept.
 variable "recaptcha_min_score" {
   type    = number
   default = 0.7

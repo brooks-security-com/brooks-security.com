@@ -5,10 +5,11 @@
 # CloudFront-injected shared-secret header, then publishes the message to an SNS
 # topic that emails var.contact_email. No API Gateway, no always-on infra.
 #
-# The reCAPTCHA secret key is read at runtime from a pre-existing SSM
-# SecureString (var.recaptcha_secret_ssm_param) and referenced by a constructed
-# ARN so its value never enters Terraform state. boto3 ships with the Lambda
-# Python runtime, so the function has no bundled dependencies.
+# The key is a reCAPTCHA Enterprise score key, but the Lambda verifies tokens via
+# the legacy `siteverify` endpoint using the key's legacy secret, read at runtime
+# from a pre-existing SSM SecureString so its value never enters Terraform state.
+# boto3 ships with the Lambda Python runtime, so the function has no bundled
+# dependencies.
 
 # --- Shared secret: CloudFront origin header -> Lambda ----------------------
 # Generated here (lives only in the encrypted S3 state backend) and injected by
@@ -103,7 +104,7 @@ data "archive_file" "contact" {
 
 resource "aws_lambda_function" "contact" {
   function_name = "brooks-security-contact"
-  description   = "Contact form: verify reCAPTCHA v3 + shared secret, publish submission to SNS."
+  description   = "Contact form: reCAPTCHA siteverify (legacy secret) + shared secret, publish submission to SNS."
   role          = aws_iam_role.contact_lambda.arn
   runtime       = "python3.12"
   handler       = "index.handler"
@@ -114,10 +115,10 @@ resource "aws_lambda_function" "contact" {
 
   environment {
     variables = {
-      RECAPTCHA_SSM_PARAM = var.recaptcha_secret_ssm_param
-      RECAPTCHA_MIN_SCORE = tostring(var.recaptcha_min_score)
-      SNS_TOPIC_ARN       = aws_sns_topic.contact.arn
-      ORIGIN_SECRET       = random_password.contact_origin.result
+      RECAPTCHA_SECRET_SSM_PARAM = var.recaptcha_secret_ssm_param
+      RECAPTCHA_MIN_SCORE        = tostring(var.recaptcha_min_score)
+      SNS_TOPIC_ARN              = aws_sns_topic.contact.arn
+      ORIGIN_SECRET              = random_password.contact_origin.result
     }
   }
 }

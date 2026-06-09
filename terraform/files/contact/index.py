@@ -1,19 +1,23 @@
 """Contact-form handler for brooks-security.com.
 
-Invoked via a Lambda Function URL that sits behind the CloudFront /api/contact
-behavior. The handler:
+The contact form uses a reCAPTCHA Enterprise score-based key, but verifies the
+token through the legacy `siteverify` endpoint using the key's legacy secret
+(the "Secret key" shown in the reCAPTCHA console, provided for third-party /
+non-Cloud-API integrations). The frontend mints the token with enterprise.js;
+this backend checks it with the classic endpoint, which avoids needing a GCP API
+key or service account.
 
-  1. Rejects any request lacking the CloudFront-injected shared-secret header,
-     so the public Function URL cannot be invoked directly.
-  2. Drops honeypot submissions silently.
-  3. Validates the form fields.
-  4. Verifies the reCAPTCHA v3 token against Google's siteverify API
-     (success + matching action + score >= RECAPTCHA_MIN_SCORE).
-  5. Publishes the message to an SNS topic that emails graham@brooks-security.com.
+Flow (behind the CloudFront /api/contact behavior):
+  1. Reject requests lacking the CloudFront-injected shared-secret header, so the
+     public Function URL can't be invoked directly.
+  2. Drop honeypot submissions silently.
+  3. Validate the form fields.
+  4. POST the token to siteverify with the legacy secret; require success, a
+     matching action, and a risk score at or above the floor.
+  5. Publish the message to an SNS topic that emails graham@brooks-security.com.
 
-The reCAPTCHA secret is read from SSM (RECAPTCHA_SSM_PARAM) and cached across
-warm invocations. boto3 ships with the Lambda Python runtime and urllib is
-stdlib, so this has no bundled dependencies.
+The secret is read from SSM at runtime and never enters Terraform state. boto3
+ships with the runtime and urllib is stdlib, so there are no bundled deps.
 """
 
 import base64
@@ -31,11 +35,11 @@ _sns = boto3.client("sns")
 _secret_cache = None
 
 
-def _recaptcha_secret():
+def _secret():
     global _secret_cache
     if _secret_cache is None:
         _secret_cache = _ssm.get_parameter(
-            Name=os.environ["RECAPTCHA_SSM_PARAM"], WithDecryption=True
+            Name=os.environ["RECAPTCHA_SECRET_SSM_PARAM"], WithDecryption=True
         )["Parameter"]["Value"]
     return _secret_cache
 
@@ -81,19 +85,19 @@ def handler(event, context):
     if not name or not message or not _EMAIL_RE.match(email) or not token:
         return _resp(400, {"error": "Please provide your name, a valid email, and a message."})
 
-    # 5. Verify reCAPTCHA v3. Fail closed on any error.
+    # 5. Verify the token via the legacy siteverify endpoint. Fail closed.
     try:
-        verify = _verify_recaptcha(token, _source_ip(event))
+        verify = _verify(token, _source_ip(event))
     except Exception as exc:
         print(f"reCAPTCHA verify error: {exc}")
         return _resp(502, {"error": "Could not verify the request. Please try again."})
 
     min_score = float(os.environ.get("RECAPTCHA_MIN_SCORE", "0.5"))
-    if not (
-        verify.get("success")
-        and verify.get("action") == "contact"
-        and float(verify.get("score", 0)) >= min_score
-    ):
+    score = float(verify.get("score", 0))
+    # The action field may be absent in some legacy responses; only enforce it
+    # when present so a missing action doesn't reject a legitimate submission.
+    action_ok = verify.get("action", "contact") == "contact"
+    if not (verify.get("success") and action_ok and score >= min_score):
         print(f"reCAPTCHA rejected: {json.dumps(verify)}")
         return _resp(400, {"error": "Could not verify you are human. Please try again."})
 
@@ -103,7 +107,7 @@ def handler(event, context):
         f"Name:    {name}\n"
         f"Email:   {email}\n"
         f"Subject: {subject}\n"
-        f"Score:   {verify.get('score')}\n\n"
+        f"Score:   {score}\n\n"
         f"{message}\n"
     )
     sns_subject = re.sub(r"[\r\n]+", " ", f"[brooks-security.com] {subject}")
@@ -121,8 +125,8 @@ def handler(event, context):
     return _resp(200, {"ok": True})
 
 
-def _verify_recaptcha(token, remote_ip):
-    payload = {"secret": _recaptcha_secret(), "response": token}
+def _verify(token, remote_ip):
+    payload = {"secret": _secret(), "response": token}
     if remote_ip:
         payload["remoteip"] = remote_ip
     req = urllib.request.Request(
