@@ -4,7 +4,7 @@ weight: 3
 ---
 # Contact Me
 
-Have a security or infrastructure problem you'd like a hand with — or just want to talk shop? Fill out the form below and it'll land in my inbox. I read everything and try to reply within a couple of business days.
+Got a security, compliance, or infrastructure problem you want a hand with? Or do you just want to talk shop? Fill out the form below and it'll land in my inbox. I read everything, and I'll usually get back to you within a couple business days.
 
 Prefer email? Reach me directly at [graham@brooks-security.com](mailto:graham@brooks-security.com).
 

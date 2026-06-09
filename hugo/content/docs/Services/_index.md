@@ -5,11 +5,11 @@ title: "Services"
 ---
 # Services
 
-Beyond my full-time work, I take on a limited amount of independent consulting through my practice, **Brooks Security LLC** — focused on the two things I do best: building security programs that survive audits *and* attackers, and running cloud infrastructure that's automated, reliable, and not overpriced.
+Outside of my day job, I take on a small number of consulting clients through my company, Brooks Security LLC. I focus on two things I'm genuinely good at: building security and compliance programs that survive both audits and attackers, and running cloud infrastructure that's automated, reliable, and not overpriced.
 
-- **[Security Consulting](/docs/services/security-consulting/)** — SOC 2 and compliance readiness, cloud security, vulnerability management, and security program development.
-- **[Operations Consulting](/docs/services/operations-consulting/)** — infrastructure and configuration as code, CI/CD, cloud cost optimization, and reliability engineering.
+- **[Security Consulting](/docs/services/security-consulting/):** GRC done right. Policies and procedures, SOC 2 and audit readiness, risk management, cloud security, and vulnerability management.
+- **[Operations Consulting](/docs/services/operations-consulting/):** Infrastructure and configuration as code, CI/CD, cloud cost optimization, and reliability engineering.
 
-I keep my client load small on purpose, so the work stays high-quality and hands-on. If that sounds like a fit, I'd like to hear what you're working on.
+I keep my client list short on purpose, so the work stays hands-on and the quality stays high. If that sounds like what you need, I'd like to hear what you're working on.
 
 <a class="btn-primary" href="/docs/services/contact-me/">Contact me →</a>
