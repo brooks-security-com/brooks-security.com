@@ -21,6 +21,6 @@ This very site is a small proof of the philosophy: the content, the AWS infrastr
 
 I automate the boring parts and document the rest. Manual processes don't scale and they don't survive turnover; encoded ones do. I also won't reach for the heaviest tool by reflex — sometimes the right answer is Caddy instead of an ALB, or a one-shot container instead of a standing service.
 
-Independent consulting work runs through my practice, **Seneca Cyber**.
+Independent consulting work runs through my practice, **Brooks Security LLC**.
 
 Want to talk through your stack? [Get in touch.](/docs/services/contact-me/)

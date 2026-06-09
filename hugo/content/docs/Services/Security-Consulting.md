@@ -19,6 +19,6 @@ I've led a company through SOC 2 Type 1 and Type 2 — two years running with no
 
 Automation first. A control a human has to remember to run is a control that eventually doesn't get run — so I'd rather encode it once, prove it in a pipeline, and move on. I also keep things honest: I'll tell you what actually moves your risk needle versus what's compliance theater.
 
-Independent consulting work runs through my practice, **Seneca Cyber**.
+Independent consulting work runs through my practice, **Brooks Security LLC**.
 
 Ready to talk? [Get in touch.](/docs/services/contact-me/)

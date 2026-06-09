@@ -13,10 +13,10 @@ I am a skilled Red Hat Certified Engineer with extensive experience in designing
 - **Cloud security enforcement:** Drove AWS security improvements through Terraform and Ansible, standardizing controls and automating compliance for a stronger security posture.
 - **Enterprise infrastructure:** Architected and built the organization’s enterprise infrastructure from the ground up, replacing legacy infrastructure with minimal downtime.
 
-### Founder & Principal Consultant — Seneca Cyber
+### Founder & Principal Consultant — Brooks Security LLC
 **April 2024 – Present** · Part-time · Moscow, Idaho, United States · Remote
 
-- **Owner-operated MSP/MSSP:** Run Seneca Cyber as an independent managed services and managed security services practice.
+- **Owner-operated MSP/MSSP:** Run Brooks Security LLC as an independent managed services and managed security services practice.
 - **Cross-sector client delivery:** Supported multiple organizations, including a medical practice and the City of Moscow.
 - **Security and infrastructure execution:** Delivered cybersecurity and IT infrastructure services across both on-premises and cloud environments.
 
