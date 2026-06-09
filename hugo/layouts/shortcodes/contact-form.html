@@ -22,7 +22,16 @@
     <label for="cf-company">Company</label>
     <input type="text" id="cf-company" name="company" tabindex="-1" autocomplete="off">
   </div>
-  <button type="submit" class="contact-submit btn-primary">Send message</button>
+  <div class="contact-actions">
+    <button type="submit" class="contact-submit btn-primary">Send message</button>
+    <div class="contact-recaptcha">
+      <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" width="32" height="32" alt="reCAPTCHA">
+      <span class="contact-recaptcha-text">Protected by reCAPTCHA &middot;
+        <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy</a> &middot;
+        <a href="https://policies.google.com/terms" target="_blank" rel="noopener">Terms</a>
+      </span>
+    </div>
+  </div>
   <p class="contact-status" role="status" aria-live="polite"></p>
 </form>
 

@@ -95,6 +95,37 @@
   display: none;
 }
 
+.contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+}
+.contact-recaptcha {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.contact-recaptcha img {
+  flex: 0 0 auto;
+  margin: 0;
+}
+.contact-recaptcha-text {
+  font-size: 0.72rem;
+  line-height: 1.25;
+  color: var(--gray-500, #6e7781);
+}
+.contact-recaptcha-text a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+/* The inline badge above carries the required attribution, so hide Google's
+   floating bottom-right badge. */
+.grecaptcha-badge {
+  visibility: hidden;
+}
+
 .contact-status {
   margin: 0;
   min-height: 1.2em;
