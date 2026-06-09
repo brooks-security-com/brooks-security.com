@@ -5,10 +5,11 @@
 # CloudFront-injected shared-secret header, then publishes the message to an SNS
 # topic that emails var.contact_email. No API Gateway, no always-on infra.
 #
-# The reCAPTCHA secret key is read at runtime from a pre-existing SSM
-# SecureString (var.recaptcha_secret_ssm_param) and referenced by a constructed
-# ARN so its value never enters Terraform state. boto3 ships with the Lambda
-# Python runtime, so the function has no bundled dependencies.
+# Verification uses reCAPTCHA Enterprise: the Lambda calls the Cloud
+# createAssessment API with a GCP API key and the site key, both read at runtime
+# from pre-existing SSM SecureStrings so their values never enter Terraform
+# state. boto3 ships with the Lambda Python runtime, so the function has no
+# bundled dependencies.
 
 # --- Shared secret: CloudFront origin header -> Lambda ----------------------
 # Generated here (lives only in the encrypted S3 state backend) and injected by
@@ -66,13 +67,16 @@ resource "aws_iam_role_policy" "contact_lambda" {
         Resource = "arn:aws:logs:*:${var.aws_account_id}:*"
       },
       {
-        Sid      = "ReadRecaptchaSecret"
-        Effect   = "Allow"
-        Action   = ["ssm:GetParameter"]
-        Resource = "arn:aws:ssm:us-east-1:${var.aws_account_id}:parameter${var.recaptcha_secret_ssm_param}"
+        Sid    = "ReadRecaptchaParams"
+        Effect = "Allow"
+        Action = ["ssm:GetParameter"]
+        Resource = [
+          "arn:aws:ssm:us-east-1:${var.aws_account_id}:parameter${var.recaptcha_api_key_ssm_param}",
+          "arn:aws:ssm:us-east-1:${var.aws_account_id}:parameter${var.recaptcha_site_key_ssm_param}",
+        ]
       },
       {
-        # Decrypt the SecureString. Scoped to SSM-mediated calls so this never
+        # Decrypt the SecureStrings. Scoped to SSM-mediated calls so this never
         # grants broad KMS access even though it targets the AWS-managed key.
         Sid      = "DecryptSecret"
         Effect   = "Allow"
@@ -103,7 +107,7 @@ data "archive_file" "contact" {
 
 resource "aws_lambda_function" "contact" {
   function_name = "brooks-security-contact"
-  description   = "Contact form: verify reCAPTCHA v3 + shared secret, publish submission to SNS."
+  description   = "Contact form: reCAPTCHA Enterprise assessment + shared secret, publish submission to SNS."
   role          = aws_iam_role.contact_lambda.arn
   runtime       = "python3.12"
   handler       = "index.handler"
@@ -114,10 +118,12 @@ resource "aws_lambda_function" "contact" {
 
   environment {
     variables = {
-      RECAPTCHA_SSM_PARAM = var.recaptcha_secret_ssm_param
-      RECAPTCHA_MIN_SCORE = tostring(var.recaptcha_min_score)
-      SNS_TOPIC_ARN       = aws_sns_topic.contact.arn
-      ORIGIN_SECRET       = random_password.contact_origin.result
+      RECAPTCHA_PROJECT_ID         = var.recaptcha_project_id
+      RECAPTCHA_API_KEY_SSM_PARAM  = var.recaptcha_api_key_ssm_param
+      RECAPTCHA_SITE_KEY_SSM_PARAM = var.recaptcha_site_key_ssm_param
+      RECAPTCHA_MIN_SCORE          = tostring(var.recaptcha_min_score)
+      SNS_TOPIC_ARN                = aws_sns_topic.contact.arn
+      ORIGIN_SECRET                = random_password.contact_origin.result
     }
   }
 }

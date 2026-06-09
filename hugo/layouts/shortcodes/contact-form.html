@@ -26,13 +26,14 @@
   <p class="contact-status" role="status" aria-live="polite"></p>
 </form>
 
-<script src="https://www.google.com/recaptcha/api.js?render={{ $siteKey }}"></script>
+<script src="https://www.google.com/recaptcha/enterprise.js?render={{ $siteKey }}"></script>
 <script>
 (function () {
   var form = document.getElementById('contact-form');
   var statusEl = form.querySelector('.contact-status');
   var btn = form.querySelector('.contact-submit');
   var siteKey = {{ $siteKey | jsonify }};
+  var EMAIL = 'graham@brooks-security.com';
 
   function val(name) {
     var el = form.elements[name];
@@ -45,17 +46,41 @@
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
+
     // Honeypot tripped: pretend success, send nothing.
     if (form.elements['company'] && form.elements['company'].value) {
-      setStatus('Thanks — your message is on its way.', 'ok');
       form.reset();
+      setStatus('Thanks, your message is on its way.', 'ok');
       return;
     }
-    btn.disabled = true;
-    setStatus('Sending…', 'pending');
 
-    grecaptcha.ready(function () {
-      grecaptcha.execute(siteKey, { action: 'contact' }).then(function (token) {
+    btn.disabled = true;
+    setStatus('Sending...', 'pending');
+
+    // Single completion path with a hard timeout, so the form never gets stuck
+    // on "Sending..." if reCAPTCHA fails to load or return a token, or the
+    // request hangs. (reCAPTCHA throws internally on a bad/invalid site key in
+    // a way we can't catch via .then/.catch; the timer is the safety net.)
+    var done = false;
+    var timer = setTimeout(function () {
+      finish('That took too long. Please email me directly at ' + EMAIL + '.', 'error', false);
+    }, 15000);
+    function finish(msg, kind, reset) {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      if (reset) form.reset();
+      setStatus(msg, kind);
+      btn.disabled = false;
+    }
+
+    if (typeof grecaptcha === 'undefined' || !grecaptcha.enterprise) {
+      finish('The verification script could not load (an ad blocker may be blocking it). Please email me directly at ' + EMAIL + '.', 'error', false);
+      return;
+    }
+
+    grecaptcha.enterprise.ready(function () {
+      grecaptcha.enterprise.execute(siteKey, { action: 'contact' }).then(function (token) {
         return fetch('/api/contact', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -70,17 +95,14 @@
         });
       }).then(function (res) {
         if (res.ok) {
-          form.reset();
-          setStatus("Thanks — your message is on its way. I'll be in touch.", 'ok');
+          finish("Thanks, your message is on its way. I'll be in touch.", 'ok', true);
         } else {
-          return res.json().catch(function () { return {}; }).then(function (body) {
-            setStatus(body.error || 'Something went wrong. Please email graham@brooks-security.com directly.', 'error');
+          res.json().catch(function () { return {}; }).then(function (body) {
+            finish(body.error || ('Something went wrong. Please email me directly at ' + EMAIL + '.'), 'error', false);
           });
         }
       }).catch(function () {
-        setStatus('Network error. Please email graham@brooks-security.com directly.', 'error');
-      }).finally(function () {
-        btn.disabled = false;
+        finish('Network error. Please email me directly at ' + EMAIL + '.', 'error', false);
       });
     });
   });

@@ -17,7 +17,7 @@ This site is the artifact of its own pipeline. A single public repository holds 
 | DNS / TLS | Route 53 + ACM (DNS-validated) |
 | AWS access portal | IAM Identity Center, fronted by a CloudFront 301 redirect |
 | Scheduled jobs | EventBridge → Lambda (nightly heatmap refresh) |
-| Contact form | Lambda Function URL behind CloudFront, with reCAPTCHA v3 + SNS email |
+| Contact form | Lambda Function URL behind CloudFront, with reCAPTCHA Enterprise + SNS email |
 | Secrets | AWS SSM Parameter Store |
 | CI/CD | GitHub Actions on **GitHub-hosted runners** |
 
@@ -101,14 +101,14 @@ The Services section has a working contact form, and adding it didn't change the
 
 ```mermaid
 flowchart TD
-    B["Browser<br/>reCAPTCHA v3 token"] -->|"POST /api/contact"| CF["CloudFront<br/>/api/contact behavior<br/>injects shared-secret header"]
+    B["Browser<br/>reCAPTCHA Enterprise token"] -->|"POST /api/contact"| CF["CloudFront<br/>/api/contact behavior<br/>injects shared-secret header"]
     CF --> FU["Lambda Function URL<br/>brooks-security-contact (python3.12)"]
     FU --> V{"verify"}
-    V -->|"reCAPTCHA siteverify<br/>+ shared secret + honeypot"| OK["publish to SNS"]
+    V -->|"Enterprise createAssessment<br/>+ shared secret + honeypot"| OK["publish to SNS"]
     OK --> EM["email to me"]
 ```
 
-The Lambda does three things: confirm the request actually came through CloudFront (via a secret header CloudFront injects, so the public Function URL can't be hit directly), verify the reCAPTCHA v3 token against Google's `siteverify` API and reject low scores, then publish the message to an SNS topic that emails me. The reCAPTCHA keys live in SSM; the public site key is baked into the Hugo build from SSM at build time, and the secret key is read by the Lambda at runtime and never enters Terraform state.
+The Lambda does three things: confirm the request actually came through CloudFront (via a secret header CloudFront injects, so the public Function URL can't be hit directly), create a reCAPTCHA Enterprise assessment for the token and reject invalid tokens or low scores, then publish the message to an SNS topic that emails me. Verification uses a Google Cloud API key and the owning project rather than a classic secret key. The API key and public site key live in SSM; the site key is also baked into the Hugo build at build time, and the Lambda reads both at runtime, neither entering Terraform state.
 
 This is the whole point of well-tailored tooling. A dynamic feature, with bot protection and email delivery, bolted onto a static site for a rounding error. Reaching for API Gateway or a managed form service would have added monthly cost and moving parts; a Function URL behind the CloudFront distribution I already run adds neither.
 
@@ -125,7 +125,7 @@ State lives in an S3 backend (`brooks-security-tfstate`) with a DynamoDB lock ta
 | **Production environment gate** | `apply` and `deploy` jobs target the `production` GitHub Environment, requiring explicit approval before they execute |
 | **First-time contributor approval** | GitHub requires a maintainer to approve workflow runs on PRs from contributors with no prior merged PR |
 | **Private origin** | The S3 bucket blocks all public access; only CloudFront can read it, via Origin Access Control |
-| **Secrets in SSM** | The GitHub PAT (heatmap job) and the reCAPTCHA keys (contact form) live in SSM Parameter Store and are referenced by ARN, never pulled into Terraform state |
+| **Secrets in SSM** | The GitHub PAT (heatmap job) and the reCAPTCHA Enterprise API key + site key (contact form) live in SSM Parameter Store and are referenced by ARN, never pulled into Terraform state |
 | **Least-privilege IAM** | The deploy credentials and both Lambda roles are each scoped to the minimum actions they need (S3 + CloudFront for deploys; SSM read + scoped KMS decrypt for the heatmap Lambda; SSM read + scoped KMS decrypt + single-topic SNS publish for the contact Lambda) |
 | **Bot protection** | The contact form gates submissions with reCAPTCHA v3 scoring and a honeypot field, dropping bots before they reach the inbox |
 | **CloudFront-only Lambda** | The contact Lambda's Function URL is unauthenticated but rejects any request missing a secret header that only CloudFront injects, so it cannot be invoked directly |

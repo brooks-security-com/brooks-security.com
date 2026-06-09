@@ -1,26 +1,27 @@
-"""Contact-form handler for brooks-security.com.
+"""Contact-form handler for brooks-security.com (reCAPTCHA Enterprise).
 
-Invoked via a Lambda Function URL that sits behind the CloudFront /api/contact
-behavior. The handler:
+Invoked via a Lambda Function URL behind the CloudFront /api/contact behavior.
+The handler:
 
   1. Rejects any request lacking the CloudFront-injected shared-secret header,
      so the public Function URL cannot be invoked directly.
   2. Drops honeypot submissions silently.
   3. Validates the form fields.
-  4. Verifies the reCAPTCHA v3 token against Google's siteverify API
-     (success + matching action + score >= RECAPTCHA_MIN_SCORE).
+  4. Creates a reCAPTCHA Enterprise assessment for the token and checks that the
+     token is valid, the action matches, and the risk score clears the floor.
   5. Publishes the message to an SNS topic that emails graham@brooks-security.com.
 
-The reCAPTCHA secret is read from SSM (RECAPTCHA_SSM_PARAM) and cached across
-warm invocations. boto3 ships with the Lambda Python runtime and urllib is
-stdlib, so this has no bundled dependencies.
+Auth to the reCAPTCHA Enterprise API uses a Google Cloud API key (read from SSM)
+passed as a query parameter, so there are no bundled dependencies (boto3 ships
+with the runtime and urllib is stdlib). The public site key is also read from
+SSM, since the assessment event must include it. Neither value enters Terraform
+state.
 """
 
 import base64
 import json
 import os
 import re
-import urllib.parse
 import urllib.request
 
 import boto3
@@ -28,16 +29,13 @@ import boto3
 _EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 _ssm = boto3.client("ssm")
 _sns = boto3.client("sns")
-_secret_cache = None
+_cache = {}
 
 
-def _recaptcha_secret():
-    global _secret_cache
-    if _secret_cache is None:
-        _secret_cache = _ssm.get_parameter(
-            Name=os.environ["RECAPTCHA_SSM_PARAM"], WithDecryption=True
-        )["Parameter"]["Value"]
-    return _secret_cache
+def _ssm_param(name):
+    if name not in _cache:
+        _cache[name] = _ssm.get_parameter(Name=name, WithDecryption=True)["Parameter"]["Value"]
+    return _cache[name]
 
 
 def _header(event, name):
@@ -81,20 +79,22 @@ def handler(event, context):
     if not name or not message or not _EMAIL_RE.match(email) or not token:
         return _resp(400, {"error": "Please provide your name, a valid email, and a message."})
 
-    # 5. Verify reCAPTCHA v3. Fail closed on any error.
+    # 5. Create a reCAPTCHA Enterprise assessment. Fail closed on any error.
     try:
-        verify = _verify_recaptcha(token, _source_ip(event))
+        assessment = _assess(token)
     except Exception as exc:
-        print(f"reCAPTCHA verify error: {exc}")
+        print(f"reCAPTCHA assessment error: {exc}")
         return _resp(502, {"error": "Could not verify the request. Please try again."})
 
+    props = assessment.get("tokenProperties", {})
+    score = float(assessment.get("riskAnalysis", {}).get("score", 0))
     min_score = float(os.environ.get("RECAPTCHA_MIN_SCORE", "0.5"))
-    if not (
-        verify.get("success")
-        and verify.get("action") == "contact"
-        and float(verify.get("score", 0)) >= min_score
-    ):
-        print(f"reCAPTCHA rejected: {json.dumps(verify)}")
+    if not (props.get("valid") and props.get("action") == "contact" and score >= min_score):
+        print(
+            "reCAPTCHA rejected: "
+            f"valid={props.get('valid')} reason={props.get('invalidReason')} "
+            f"action={props.get('action')} score={score}"
+        )
         return _resp(400, {"error": "Could not verify you are human. Please try again."})
 
     # 6. Publish to SNS.
@@ -103,7 +103,7 @@ def handler(event, context):
         f"Name:    {name}\n"
         f"Email:   {email}\n"
         f"Subject: {subject}\n"
-        f"Score:   {verify.get('score')}\n\n"
+        f"Score:   {score}\n\n"
         f"{message}\n"
     )
     sns_subject = re.sub(r"[\r\n]+", " ", f"[brooks-security.com] {subject}")
@@ -121,22 +121,26 @@ def handler(event, context):
     return _resp(200, {"ok": True})
 
 
-def _verify_recaptcha(token, remote_ip):
-    payload = {"secret": _recaptcha_secret(), "response": token}
-    if remote_ip:
-        payload["remoteip"] = remote_ip
+def _assess(token):
+    project = os.environ["RECAPTCHA_PROJECT_ID"]
+    api_key = _ssm_param(os.environ["RECAPTCHA_API_KEY_SSM_PARAM"])
+    site_key = _ssm_param(os.environ["RECAPTCHA_SITE_KEY_SSM_PARAM"])
+    url = (
+        f"https://recaptchaenterprise.googleapis.com/v1/projects/{project}"
+        f"/assessments?key={api_key}"
+    )
+    payload = {
+        "event": {
+            "token": token,
+            "siteKey": site_key,
+            "expectedAction": "contact",
+        }
+    }
     req = urllib.request.Request(
-        "https://www.google.com/recaptcha/api/siteverify",
-        data=urllib.parse.urlencode(payload).encode(),
+        url,
+        data=json.dumps(payload).encode(),
         method="POST",
+        headers={"Content-Type": "application/json"},
     )
     with urllib.request.urlopen(req, timeout=5) as resp:
         return json.loads(resp.read().decode("utf-8", "replace"))
-
-
-def _source_ip(event):
-    # Behind CloudFront, the viewer IP is the first hop of X-Forwarded-For.
-    xff = _header(event, "x-forwarded-for")
-    if xff:
-        return xff.split(",")[0].strip()
-    return event.get("requestContext", {}).get("http", {}).get("sourceIp", "")

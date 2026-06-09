@@ -1,9 +1,31 @@
 # Spec: Services section + contact form (Lambda + reCAPTCHA v3 + SNS)
 
 **Branch:** `claude/loving-meitner-599625`
-**Status:** In design
+**Status:** Built; switched from classic reCAPTCHA v3 to reCAPTCHA Enterprise during testing
 
 ---
+
+## Amendment: reCAPTCHA Enterprise (supersedes the v3 details below)
+
+The key created in Google turned out to be a **reCAPTCHA Enterprise** key, not a
+classic v3 key, so the integration was switched to Enterprise. Where this spec
+says "v3 / `api.js` / `siteverify` / secret key" below, the implemented behavior
+is instead:
+
+- **Frontend:** loads `https://www.google.com/recaptcha/enterprise.js?render=<siteKey>`
+  and calls `grecaptcha.enterprise.execute(siteKey, {action: 'contact'})`.
+- **Backend:** the Lambda calls the Enterprise **createAssessment** API
+  (`POST https://recaptchaenterprise.googleapis.com/v1/projects/<projectId>/assessments?key=<apiKey>`)
+  with `{event: {token, siteKey, expectedAction: 'contact'}}`, then checks
+  `tokenProperties.valid`, `tokenProperties.action == "contact"`, and
+  `riskAnalysis.score >= recaptcha_min_score` (0.7).
+- **Auth/secrets:** there is **no classic secret key**. Verification uses a GCP
+  **API key** (SSM `/brooks-security.com/recaptcha/api_key`, SecureString,
+  restricted to the reCAPTCHA Enterprise API) plus the owning **project id**
+  (`var.recaptcha_project_id`, not secret). The Lambda reads the API key and the
+  site key from SSM at runtime; the build still injects the site key into Hugo.
+- The frontend also has a 15s timeout / failure path so a bad key surfaces an
+  error instead of hanging on "Sending...".
 
 ## Overview
 

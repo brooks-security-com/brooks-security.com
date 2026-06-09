@@ -54,23 +54,35 @@ variable "contact_email" {
   default = "graham@brooks-security.com"
 }
 
-# Pre-existing SSM SecureString holding the reCAPTCHA v3 *secret* key. Read by
-# the contact Lambda at runtime; referenced by ARN so its value never enters
-# Terraform state.
-variable "recaptcha_secret_ssm_param" {
+# reCAPTCHA Enterprise lives in Google Cloud. The contact Lambda authenticates to
+# the Enterprise createAssessment API with a GCP API key (stored in SSM) and the
+# project that owns the key (below). There is no classic "secret key".
+
+# GCP project ID (or number) that owns the reCAPTCHA Enterprise key. Not secret;
+# set this to your project before deploying or the assessment call will 404.
+variable "recaptcha_project_id" {
   type    = string
-  default = "/brooks-security.com/recaptcha/secret_key"
+  default = ""
 }
 
-# Pre-existing SSM SecureString holding the reCAPTCHA v3 *site* key. Read by the
-# Hugo build job (hugo-deploy.yml) and baked into the contact form HTML. Public
-# by design (it ships to every visitor); kept in SSM only to centralize the keys.
+# Pre-existing SSM SecureString holding a Google Cloud API key restricted to the
+# reCAPTCHA Enterprise API. Read by the contact Lambda at runtime; referenced by
+# ARN so its value never enters Terraform state.
+variable "recaptcha_api_key_ssm_param" {
+  type    = string
+  default = "/brooks-security.com/recaptcha/api_key"
+}
+
+# Pre-existing SSM SecureString holding the reCAPTCHA Enterprise *site* key. Read
+# by the Hugo build job (hugo-deploy.yml) and baked into the contact form HTML,
+# and by the Lambda at runtime (the assessment event must include it). Public by
+# design (it ships to every visitor).
 variable "recaptcha_site_key_ssm_param" {
   type    = string
   default = "/brooks-security.com/recaptcha/site_key"
 }
 
-# reCAPTCHA v3 minimum score (0.0–1.0) the contact Lambda will accept.
+# reCAPTCHA minimum score (0.0–1.0) the contact Lambda will accept.
 variable "recaptcha_min_score" {
   type    = number
   default = 0.7
