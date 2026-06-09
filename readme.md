@@ -2,7 +2,9 @@
 
 Personal portfolio site built with [Hugo](https://gohugo.io), served as a static site on AWS (S3, CloudFront, Route 53, ACM), and managed end to end with Terraform. The repository is its own deployment system: the same place that holds the content also holds the infrastructure that ships it. Total AWS cost is about $1 per month.
 
-Everything runs on GitHub-hosted runners against AWS. There is no self-hosted runner, no Ansible, and nothing in the deploy path touching a homelab.
+It's all public on purpose — [Kerckhoffs's Principle](https://en.wikipedia.org/wiki/Kerckhoffs%27s_principle) applied to infrastructure: the security is in the keys, not in hiding the design. Read every line of Terraform and stand up your own copy; you still can't break this one without the keys.
+
+Everything runs on GitHub-hosted runners against AWS. There is no self-hosted runner and no Ansible.
 
 ## Stack at a glance
 
@@ -14,7 +16,7 @@ Everything runs on GitHub-hosted runners against AWS. There is no self-hosted ru
 | DNS and TLS | Route 53 (`brooks-security.com`, `www`, `aws`) with ACM, DNS-validated |
 | AWS access portal | IAM Identity Center, fronted by a CloudFront 301 redirect |
 | Scheduled jobs | EventBridge to Lambda (nightly contribution-heatmap refresh) |
-| Contact form | Lambda Function URL behind CloudFront, with reCAPTCHA Enterprise and SNS email delivery |
+| Contact form | API Gateway HTTP API behind CloudFront, with reCAPTCHA Enterprise and SNS email delivery |
 | Secrets | AWS SSM Parameter Store |
 | CI/CD | GitHub Actions on GitHub-hosted runners |
 
@@ -68,13 +70,13 @@ EventBridge does the kicking, rather than a GitHub Actions `schedule:` cron, on 
 
 ## Contact form
 
-The Services section includes a working contact form, added without an API Gateway or any always-on backend. A new CloudFront behavior routes `/api/contact` to a Lambda Function URL, so the form posts same-origin (no CORS):
+The Services section includes a working contact form with no always-on backend. A CloudFront behavior routes `/api/contact` to an API Gateway HTTP API, so the form posts same-origin (no CORS), and both API Gateway and the Lambda are billed per request:
 
 1. The page loads reCAPTCHA Enterprise and, on submit, POSTs the form as JSON to `/api/contact`.
-2. CloudFront forwards the request to the `brooks-security-contact` Lambda (`python3.12`) over a Function URL, injecting a shared-secret header so the Function URL cannot be invoked directly.
+2. CloudFront forwards the request to an API Gateway HTTP API (proxy integration) that invokes the `brooks-security-contact` Lambda (`python3.12`), injecting a shared-secret header so the public API cannot be invoked directly.
 3. The Lambda creates a reCAPTCHA Enterprise assessment for the token (rejecting an invalid token, a mismatched action, or anything below the score threshold), checks the shared secret and a honeypot field, and publishes the message to an SNS topic that emails the site owner.
 
-reCAPTCHA Enterprise verification uses a Google Cloud API key and the owning project (`var.recaptcha_project_id`); there is no classic secret key. The API key and the public site key live in SSM (`/brooks-security.com/recaptcha/*`): the site key is also injected into the Hugo build from SSM at build time, and the Lambda reads both at runtime, neither entering Terraform state. The whole feature is effectively free, costing a handful of Lambda invocations and SNS emails a month (Enterprise assessments are free up to a generous monthly tier).
+reCAPTCHA Enterprise verification uses a Google Cloud API key and the owning project (`var.recaptcha_project_id`); there is no classic secret key. The API key and the public site key live in SSM (`/brooks-security.com/recaptcha/*`): the site key is also injected into the Hugo build from SSM at build time, and the Lambda reads both at runtime, neither entering Terraform state. The whole feature is effectively free, costing a handful of Lambda invocations, API Gateway requests, and SNS emails a month (API Gateway's HTTP API runs about $1 per million requests, and Enterprise assessments are free up to a generous monthly tier).
 
 ## Terraform quick start
 
@@ -122,4 +124,3 @@ Today the workflows authenticate to AWS with a scoped IAM user's access keys, st
 - Do not push directly to `main`. Use PRs.
 - Prefer CI/CD for deploys over a local `terraform apply`.
 - IAM Identity Center must be enabled by hand in the AWS console before `terraform apply` can manage the SSO resources (`Settings → Enable` in the IAM Identity Center console).
-- A separate Proxmox and Tailscale homelab exists and is reachable privately at `pve.brooks-security.com`, but it is not part of this repository's deploy path and not managed by the Terraform here. Homelab design docs live under `specs/`.
