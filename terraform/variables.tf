@@ -59,10 +59,10 @@ variable "contact_email" {
 # project that owns the key (below). There is no classic "secret key".
 
 # GCP project ID (or number) that owns the reCAPTCHA Enterprise key. Not secret;
-# set this to your project before deploying or the assessment call will 404.
+# the assessment call targets .../v1/projects/<this>/assessments.
 variable "recaptcha_project_id" {
   type    = string
-  default = ""
+  default = "brooks-security-website"
 }
 
 # Pre-existing SSM SecureString holding a Google Cloud API key restricted to the
