@@ -107,7 +107,7 @@ Kicking the workflow from EventBridge, rather than a GitHub Actions `schedule:` 
 
 ## Contact form: serverless, same-origin, and basically free
 
-The Services section has a working contact form, and adding it didn't change the cost story or the shape of the architecture. A single CloudFront behavior routes `/api/contact` to an API Gateway HTTP API, so the browser posts to the same origin it loaded from, with no CORS to wrangle, and nothing is always-on — both API Gateway and Lambda are billed purely per request.
+The Services section has a working contact form, and adding it didn't change the cost story or the shape of the architecture. A single CloudFront behavior routes `/api/contact` to an API Gateway HTTP API, so the browser posts to the same origin it loaded from, with no CORS to wrangle. Nothing is always-on; both API Gateway and Lambda are billed purely per request.
 
 ```mermaid
 flowchart TD
@@ -121,7 +121,7 @@ flowchart TD
 
 The Lambda does three things: confirm the request actually came through CloudFront (via a secret header CloudFront injects, so the public API can't be hit directly), create a reCAPTCHA Enterprise assessment for the token and reject invalid tokens or low scores, then publish the message to an SNS topic that emails me. Verification uses a Google Cloud API key and the owning project rather than a classic secret key. The API key and public site key live in SSM; the site key is also baked into the Hugo build at build time, and the Lambda reads both at runtime, neither entering Terraform state.
 
-This is the whole point of well-tailored tooling: a dynamic feature, with bot protection and email delivery, bolted onto a static site for a rounding error. API Gateway's HTTP API is pay-per-request — about $1 per million calls, which for a contact form rounds to zero — so a real backend with bot protection and email delivery adds no always-on infrastructure and no meaningful cost.
+This is the whole point of well-tailored tooling: a dynamic feature, with bot protection and email delivery, bolted onto a static site for a rounding error. API Gateway's HTTP API is pay-per-request, about $1 per million calls, which for a contact form rounds to zero. So a real backend with bot protection and email delivery adds no always-on infrastructure and no meaningful cost.
 
 ## Terraform state & bootstrap
 

@@ -2,7 +2,7 @@
 
 Personal portfolio site built with [Hugo](https://gohugo.io), served as a static site on AWS (S3, CloudFront, Route 53, ACM), and managed end to end with Terraform. The repository is its own deployment system: the same place that holds the content also holds the infrastructure that ships it. Total AWS cost is about $1 per month.
 
-It's all public on purpose — [Kerckhoffs's Principle](https://en.wikipedia.org/wiki/Kerckhoffs%27s_principle) applied to infrastructure: the security is in the keys, not in hiding the design. Read every line of Terraform and stand up your own copy; you still can't break this one without the keys.
+It's all public on purpose. That's [Kerckhoffs's Principle](https://en.wikipedia.org/wiki/Kerckhoffs%27s_principle) applied to infrastructure: the security is in the keys, not in hiding the design. Read every line of Terraform and stand up your own copy; you still can't break this one without the keys.
 
 Everything runs on GitHub-hosted runners against AWS. There is no self-hosted runner and no Ansible.
 
