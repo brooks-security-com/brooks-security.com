@@ -72,9 +72,9 @@ The Services section includes a working contact form, added without an API Gatew
 
 1. The page loads reCAPTCHA Enterprise and, on submit, POSTs the form as JSON to `/api/contact`.
 2. CloudFront forwards the request to the `brooks-security-contact` Lambda (`python3.12`) over a Function URL, injecting a shared-secret header so the Function URL cannot be invoked directly.
-3. The Lambda creates a reCAPTCHA Enterprise assessment for the token (rejecting an invalid token, a mismatched action, or anything below the score threshold), checks the shared secret and a honeypot field, and publishes the message to an SNS topic that emails the site owner.
+3. The Lambda verifies the token via the legacy `siteverify` endpoint using the key's legacy secret (rejecting an invalid token, a mismatched action, or anything below the score threshold), checks the shared secret and a honeypot field, and publishes the message to an SNS topic that emails the site owner.
 
-reCAPTCHA Enterprise verification uses a Google Cloud API key and the owning project (`var.recaptcha_project_id`); there is no classic secret key. The API key and the public site key live in SSM (`/brooks-security.com/recaptcha/*`): the site key is also injected into the Hugo build from SSM at build time, and the Lambda reads both at runtime, neither entering Terraform state. The whole feature is effectively free, costing a handful of Lambda invocations and SNS emails a month (Enterprise assessments are free up to a generous monthly tier).
+The key is a reCAPTCHA Enterprise score-based key, but verification uses its **legacy secret** via the classic `siteverify` endpoint, so no GCP API key or service account is required. The legacy secret and the public site key live in SSM (`/brooks-security.com/recaptcha/*`): the site key is injected into the Hugo build from SSM at build time, and the Lambda reads the secret at runtime, neither entering Terraform state. (The frontend uses `enterprise.js`, since an Enterprise key is rejected by the classic `api.js`.) The whole feature is effectively free, costing a handful of Lambda invocations and SNS emails a month.
 
 ## Terraform quick start
 
