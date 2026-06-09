@@ -1,9 +1,16 @@
 # Contact-form backend.
 #
 # Flow: static page -> CloudFront /api/contact behavior (see cloudfront.tf) ->
-# Lambda Function URL -> Lambda verifies a reCAPTCHA v3 token and a
+# API Gateway HTTP API -> Lambda verifies a reCAPTCHA Enterprise token and a
 # CloudFront-injected shared-secret header, then publishes the message to an SNS
-# topic that emails var.contact_email. No API Gateway, no always-on infra.
+# topic that emails var.contact_email. Both API Gateway and Lambda are
+# request-priced, so there is no always-on infra.
+#
+# Why API Gateway and not a Lambda Function URL: anonymous (authType NONE)
+# Function URLs are blocked account-wide in this account, and CloudFront OAC
+# cannot sign POST requests to an AWS_IAM Function URL (InvalidSignatureException).
+# API Gateway invokes the Lambda as a service principal, so there is no
+# client-side request signing to get wrong.
 #
 # Verification uses reCAPTCHA Enterprise: the Lambda calls the Cloud
 # createAssessment API with a GCP API key and the site key, both read at runtime
@@ -14,7 +21,7 @@
 # --- Shared secret: CloudFront origin header -> Lambda ----------------------
 # Generated here (lives only in the encrypted S3 state backend) and injected by
 # CloudFront as a custom origin header. The Lambda rejects any request that
-# doesn't carry it, so the public Function URL can't be invoked directly.
+# doesn't carry it, so the public API Gateway endpoint can't be invoked directly.
 resource "random_password" "contact_origin" {
   length  = 48
   special = false
@@ -128,20 +135,44 @@ resource "aws_lambda_function" "contact" {
   }
 }
 
-# Public Function URL. authType NONE is acceptable because every request is
-# validated against the shared-secret header inside the handler; the resource
-# policy below is what actually permits unauthenticated invokes.
-resource "aws_lambda_function_url" "contact" {
-  function_name      = aws_lambda_function.contact.function_name
-  authorization_type = "NONE"
+# --- API Gateway HTTP API ---------------------------------------------------
+# CloudFront's /api/contact behavior proxies to this API; API Gateway invokes the
+# Lambda with a proxy integration (payload format 2.0, the same event shape a
+# Function URL delivers, so the handler is unchanged).
+resource "aws_apigatewayv2_api" "contact" {
+  name          = "brooks-security-contact"
+  protocol_type = "HTTP"
 }
 
-resource "aws_lambda_permission" "contact_url" {
-  statement_id           = "AllowFunctionURLInvoke"
-  action                 = "lambda:InvokeFunctionUrl"
-  function_name          = aws_lambda_function.contact.function_name
-  principal              = "*"
-  function_url_auth_type = "NONE"
+resource "aws_apigatewayv2_integration" "contact" {
+  api_id                 = aws_apigatewayv2_api.contact.id
+  integration_type       = "AWS_PROXY"
+  integration_uri        = aws_lambda_function.contact.invoke_arn
+  integration_method     = "POST"
+  payload_format_version = "2.0"
+}
+
+resource "aws_apigatewayv2_route" "contact" {
+  api_id    = aws_apigatewayv2_api.contact.id
+  route_key = "POST /api/contact"
+  target    = "integrations/${aws_apigatewayv2_integration.contact.id}"
+}
+
+# $default stage with auto-deploy: serves at the API root with no stage prefix,
+# so POST /api/contact is reachable directly under the execute-api domain.
+resource "aws_apigatewayv2_stage" "contact" {
+  api_id      = aws_apigatewayv2_api.contact.id
+  name        = "$default"
+  auto_deploy = true
+}
+
+# Let API Gateway invoke the Lambda.
+resource "aws_lambda_permission" "contact_apigw" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.contact.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_apigatewayv2_api.contact.execution_arn}/*/*"
 }
 
 # Explicit log group with retention so logs don't accumulate forever.
