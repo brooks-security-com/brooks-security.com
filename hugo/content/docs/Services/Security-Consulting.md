@@ -24,6 +24,16 @@ I've also done a lot of this work for other practices. For a medical practice, t
 - **Cloud security.** AWS hardening done as code. IAM administration and audit, least-privilege rebuilds, and controls enforced in Terraform and Ansible so they stay enforced instead of quietly drifting.
 - **Vulnerability management.** Standing up real vuln-management workflows for Linux fleets, including regulated shops with tens of thousands of endpoints under management. I've also built vuln-management programs for critical infrastructure and OT environments, where uptime and safety constraints change the whole game.
 
+## AI is a tool, not a practitioner
+
+Right now everyone is racing to hand their security and compliance work to AI and quietly let people go. I get the appeal, and honestly, I use AI constantly. It's a huge part of how I work every day. But here's the part the hype skips: AI is only as good as the person steering it.
+
+If you're not a seasoned practitioner, you don't know what you don't know. You feed it bad assumptions and you get back answers that are confident, professional-looking, and wrong. Garbage in, garbage out, except now the garbage has perfect grammar. Worse, AI can't see around corners. It won't catch the risk that's baked into the practice you're building, because it doesn't have the scars to know where those risks hide. That part only comes from years of doing the work.
+
+That's where I come in. I'm the human in the loop. I use AI to move fast, and I use my experience to make sure what comes out is actually right and actually safe for your business. You get the speed without the blind spots, instead of throwing something into the ether and hoping.
+
+It doesn't have to cost a lot, either. If you want to know what having that kind of guidance looks like, [reach out and I'll put together a quote](/docs/services/contact-me/).
+
 ## How I work
 
 I'll tell you the truth about what lowers your risk versus what's just theater. I automate the controls that can be automated, because a control a human has to remember to run is a control that eventually doesn't get run. And I write everything down, because a security program that only lives in one person's head isn't a program, it's a liability.

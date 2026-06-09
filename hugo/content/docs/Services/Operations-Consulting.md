@@ -21,6 +21,8 @@ This site is a small proof of how I think about it. The content, the AWS infrast
 
 I automate the boring parts and document the rest. Manual processes don't scale, and they don't survive someone quitting. Encoded ones do. I also won't reach for the heaviest tool out of habit. Sometimes the right answer is Caddy instead of an ALB, or a one-shot container instead of a service that runs forever.
 
+And yes, I lean on AI heavily in this work too. But I use it as an experienced set of hands, not a replacement for one. Someone still has to know when the confident answer is quietly wrong, and that's the value of having a practitioner in the loop instead of just trusting the output.
+
 Independent consulting work runs through my company, Brooks Security LLC.
 
 Want to talk through your stack? [Get in touch.](/docs/services/contact-me/)
