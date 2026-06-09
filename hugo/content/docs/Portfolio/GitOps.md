@@ -17,11 +17,11 @@ This site is the artifact of its own pipeline. A single public repository holds 
 | DNS / TLS | Route 53 + ACM (DNS-validated) |
 | AWS access portal | IAM Identity Center, fronted by a CloudFront 301 redirect |
 | Scheduled jobs | EventBridge → Lambda (nightly heatmap refresh) |
-| Contact form | Lambda Function URL behind CloudFront, with reCAPTCHA Enterprise + SNS email |
+| Contact form | API Gateway HTTP API behind CloudFront, with reCAPTCHA Enterprise + SNS email |
 | Secrets | AWS SSM Parameter Store |
 | CI/CD | GitHub Actions on **GitHub-hosted runners** |
 
-A note on what this is **not**: there is no self-hosted runner, no Ansible, and nothing in the deployment path touching a homelab. Everything here runs on ephemeral GitHub-hosted runners against AWS. A separate Proxmox and Tailscale homelab does exist for private experiments, but it sits deliberately outside this repo's deploy path. More on that at the end.
+A note on what this is **not**: there is no self-hosted runner, no Ansible, and no servers to patch. Everything here runs on ephemeral GitHub-hosted runners against AWS.
 
 ## Repository layout
 
@@ -97,20 +97,21 @@ Kicking the workflow from EventBridge, rather than a GitHub Actions `schedule:` 
 
 ## Contact form: serverless, same-origin, and basically free
 
-The Services section has a working contact form, and adding it didn't change the cost story or the shape of the architecture. There is no API Gateway and no always-on backend. A single new CloudFront behavior routes `/api/contact` to a Lambda Function URL, so the browser posts to the same origin it loaded from, with no CORS to wrangle.
+The Services section has a working contact form, and adding it didn't change the cost story or the shape of the architecture. A single CloudFront behavior routes `/api/contact` to an API Gateway HTTP API, so the browser posts to the same origin it loaded from, with no CORS to wrangle, and nothing is always-on — both API Gateway and Lambda are billed purely per request.
 
 ```mermaid
 flowchart TD
     B["Browser<br/>reCAPTCHA Enterprise token"] -->|"POST /api/contact"| CF["CloudFront<br/>/api/contact behavior<br/>injects shared-secret header"]
-    CF --> FU["Lambda Function URL<br/>brooks-security-contact (python3.12)"]
-    FU --> V{"verify"}
+    CF --> AG["API Gateway HTTP API<br/>(proxy integration)"]
+    AG --> L["Lambda<br/>brooks-security-contact (python3.12)"]
+    L --> V{"verify"}
     V -->|"Enterprise createAssessment<br/>+ shared secret + honeypot"| OK["publish to SNS"]
     OK --> EM["email to me"]
 ```
 
-The Lambda does three things: confirm the request actually came through CloudFront (via a secret header CloudFront injects, so the public Function URL can't be hit directly), create a reCAPTCHA Enterprise assessment for the token and reject invalid tokens or low scores, then publish the message to an SNS topic that emails me. Verification uses a Google Cloud API key and the owning project rather than a classic secret key. The API key and public site key live in SSM; the site key is also baked into the Hugo build at build time, and the Lambda reads both at runtime, neither entering Terraform state.
+The Lambda does three things: confirm the request actually came through CloudFront (via a secret header CloudFront injects, so the public API can't be hit directly), create a reCAPTCHA Enterprise assessment for the token and reject invalid tokens or low scores, then publish the message to an SNS topic that emails me. Verification uses a Google Cloud API key and the owning project rather than a classic secret key. The API key and public site key live in SSM; the site key is also baked into the Hugo build at build time, and the Lambda reads both at runtime, neither entering Terraform state.
 
-This is the whole point of well-tailored tooling. A dynamic feature, with bot protection and email delivery, bolted onto a static site for a rounding error. Reaching for API Gateway or a managed form service would have added monthly cost and moving parts; a Function URL behind the CloudFront distribution I already run adds neither.
+This is the whole point of well-tailored tooling: a dynamic feature, with bot protection and email delivery, bolted onto a static site for a rounding error. API Gateway's HTTP API is pay-per-request — about $1 per million calls, which for a contact form rounds to zero — so a real backend with bot protection and email delivery adds no always-on infrastructure and no meaningful cost.
 
 ## Terraform state & bootstrap
 
@@ -128,7 +129,7 @@ State lives in an S3 backend (`brooks-security-tfstate`) with a DynamoDB lock ta
 | **Secrets in SSM** | The GitHub PAT (heatmap job) and the reCAPTCHA Enterprise API key + site key (contact form) live in SSM Parameter Store and are referenced by ARN, never pulled into Terraform state |
 | **Least-privilege IAM** | The deploy credentials and both Lambda roles are each scoped to the minimum actions they need (S3 + CloudFront for deploys; SSM read + scoped KMS decrypt for the heatmap Lambda; SSM read + scoped KMS decrypt + single-topic SNS publish for the contact Lambda) |
 | **Bot protection** | The contact form gates submissions with reCAPTCHA v3 scoring and a honeypot field, dropping bots before they reach the inbox |
-| **CloudFront-only Lambda** | The contact Lambda's Function URL is unauthenticated but rejects any request missing a secret header that only CloudFront injects, so it cannot be invoked directly |
+| **CloudFront-only backend** | The contact API is publicly reachable but the Lambda rejects any request missing a secret header that only CloudFront injects, so the API cannot be invoked directly |
 
 **On deploy credentials:** today the workflows authenticate to AWS with a scoped IAM user's access keys, stored as GitHub Actions secrets and passed through the standard credential chain (no profile in CI). A GitHub OIDC provider and a dedicated deploy role are already defined in `terraform/iam.tf`, staged for a planned cutover to short-lived, keyless credentials. When that lands, the static keys go away.
 
@@ -139,13 +140,9 @@ State lives in an S3 backend (`brooks-security-tfstate`) with a DynamoDB lock ta
 | Route 53 hosted zone | ~$0.50 |
 | S3 storage + requests | ~$0.01 |
 | CloudFront (low traffic, two distributions) | ~$0.01 |
-| Lambda + EventBridge (heatmap + contact form) | ~$0.00 |
+| Lambda + API Gateway + EventBridge (heatmap + contact form) | ~$0.00 |
 | SNS (contact-form emails) | ~$0.00 |
 | ACM, SSM, IAM, Identity Center | $0.00 |
 | **Total** | **~$1/month** |
 
 Adding the contact form didn't move this total. That's the dividend of choosing serverless, pay-per-use building blocks and reusing the infrastructure already in place instead of bolting on a managed service for every new feature.
-
-## The homelab (out of band)
-
-For full transparency: a separate Proxmox and Tailscale homelab exists and is reachable privately at `pve.brooks-security.com` over the Tailscale mesh. It is **not** part of this repository's deployment path and not managed by the Terraform here. The site ships entirely through GitHub-hosted runners and AWS. Homelab work that *is* tracked in this repo lives under `specs/` as design docs, for example an in-design `code-server` LXC, kept separate from the production site pipeline on purpose.
