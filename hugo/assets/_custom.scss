@@ -30,3 +30,92 @@
 .blog-card-link {
   margin-bottom: 0;
 }
+
+/* --- Services CTA button + contact form ----------------------------------- */
+.btn-primary {
+  display: inline-block;
+  background: var(--color-link, #0a66c2);
+  color: #fff;
+  border: 0;
+  border-radius: 8px;
+  padding: 0.6rem 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+.btn-primary:hover {
+  filter: brightness(1.08);
+  text-decoration: none;
+}
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  max-width: 640px;
+  margin-top: 1rem;
+}
+
+.contact-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.contact-field label {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.contact-field input,
+.contact-field textarea {
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 0.6rem 0.7rem;
+  font: inherit;
+  color: inherit;
+  width: 100%;
+}
+.contact-field textarea {
+  resize: vertical;
+}
+.contact-field input:focus,
+.contact-field textarea:focus {
+  outline: 2px solid var(--color-link, #0a66c2);
+  outline-offset: 1px;
+}
+
+/* Honeypot: out of the flow for humans, but not display:none (which some bots skip). */
+.contact-hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.contact-status {
+  margin: 0;
+  min-height: 1.2em;
+  font-size: 0.92rem;
+}
+.contact-status.is-ok {
+  color: #1a7f37;
+}
+.contact-status.is-error {
+  color: #cf222e;
+}
+.contact-status.is-pending {
+  color: var(--gray-500, #6e7781);
+}
+
+.contact-form-dev-notice {
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-left: 4px solid #d29922;
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+}

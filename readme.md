@@ -14,6 +14,7 @@ Everything runs on GitHub-hosted runners against AWS. There is no self-hosted ru
 | DNS and TLS | Route 53 (`brooks-security.com`, `www`, `aws`) with ACM, DNS-validated |
 | AWS access portal | IAM Identity Center, fronted by a CloudFront 301 redirect |
 | Scheduled jobs | EventBridge to Lambda (nightly contribution-heatmap refresh) |
+| Contact form | Lambda Function URL behind CloudFront, with reCAPTCHA v3 and SNS email delivery |
 | Secrets | AWS SSM Parameter Store |
 | CI/CD | GitHub Actions on GitHub-hosted runners |
 
@@ -26,10 +27,10 @@ Everything runs on GitHub-hosted runners against AWS. There is no self-hosted ru
 │   └── hugo-deploy.yml         # hugo build → deploy → CloudFront invalidation
 ├── hugo/                       # site content, config, theme submodule, data/
 ├── terraform/
-│   ├── *.tf                    # s3, cloudfront, route53, acm, iam, sso, lambda
+│   ├── *.tf                    # s3, cloudfront, route53, acm, iam, sso, lambda, contact
 │   ├── imports.tf              # import blocks adopting pre-existing resources
 │   ├── bootstrap/              # one-time: tfstate bucket + lock table
-│   └── files/                  # CloudFront function + Lambda source
+│   └── files/                  # CloudFront function + Lambda sources (heatmap, contact)
 ├── specs/                      # design docs for in-flight work
 └── readme.md
 ```
@@ -64,6 +65,16 @@ The homepage renders a GitHub-style contribution heatmap from `hugo/data/contrib
 3. The build step queries the GitHub GraphQL `contributionsCollection` API, overwrites `hugo/data/contributions.json`, and redeploys to S3 and CloudFront.
 
 EventBridge does the kicking, rather than a GitHub Actions `schedule:` cron, on purpose: GitHub auto-disables scheduled workflows after 60 days of repository inactivity, which a personal site can easily hit. The whole job is one Lambda invocation per day, and the fetch is fail-soft: any error leaves the last-known-good JSON in place so the build still succeeds.
+
+## Contact form
+
+The Services section includes a working contact form, added without an API Gateway or any always-on backend. A new CloudFront behavior routes `/api/contact` to a Lambda Function URL, so the form posts same-origin (no CORS):
+
+1. The page loads reCAPTCHA v3 and, on submit, POSTs the form as JSON to `/api/contact`.
+2. CloudFront forwards the request to the `brooks-security-contact` Lambda (`python3.12`) over a Function URL, injecting a shared-secret header so the Function URL cannot be invoked directly.
+3. The Lambda verifies the reCAPTCHA token against Google's `siteverify` API (rejecting anything below the score threshold), checks the shared secret and a honeypot field, and publishes the message to an SNS topic that emails the site owner.
+
+The reCAPTCHA keys live in SSM (`/brooks-security.com/recaptcha/*`): the public site key is injected into the Hugo build from SSM at build time, and the secret key is read by the Lambda at runtime, never entering Terraform state. The whole feature is effectively free, costing a handful of Lambda invocations and SNS emails a month.
 
 ## Terraform quick start
 

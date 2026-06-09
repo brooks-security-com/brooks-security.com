@@ -46,3 +46,33 @@ variable "contrib_schedule" {
   default = "cron(0 9 * * ? *)"
 }
 
+# --- Contact form -----------------------------------------------------------
+# SNS email-subscription endpoint for contact-form submissions. Requires a
+# one-time confirmation click after the first apply.
+variable "contact_email" {
+  type    = string
+  default = "graham@brooks-security.com"
+}
+
+# Pre-existing SSM SecureString holding the reCAPTCHA v3 *secret* key. Read by
+# the contact Lambda at runtime; referenced by ARN so its value never enters
+# Terraform state.
+variable "recaptcha_secret_ssm_param" {
+  type    = string
+  default = "/brooks-security.com/recaptcha/secret_key"
+}
+
+# Pre-existing SSM SecureString holding the reCAPTCHA v3 *site* key. Read by the
+# Hugo build job (hugo-deploy.yml) and baked into the contact form HTML. Public
+# by design (it ships to every visitor); kept in SSM only to centralize the keys.
+variable "recaptcha_site_key_ssm_param" {
+  type    = string
+  default = "/brooks-security.com/recaptcha/site_key"
+}
+
+# reCAPTCHA v3 minimum score (0.0–1.0) the contact Lambda will accept.
+variable "recaptcha_min_score" {
+  type    = number
+  default = 0.7
+}
+

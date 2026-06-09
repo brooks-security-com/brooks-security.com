@@ -75,6 +75,26 @@ resource "aws_iam_role_policy" "github_deploy" {
         ]
         Resource = aws_cloudfront_distribution.main.arn
       },
+      {
+        # The Hugo build job reads the public reCAPTCHA site key from SSM and
+        # bakes it into the contact form. Granted here so it keeps working after
+        # the cutover from static keys to this OIDC role.
+        Sid      = "ReadRecaptchaSiteKey"
+        Effect   = "Allow"
+        Action   = ["ssm:GetParameter"]
+        Resource = "arn:aws:ssm:us-east-1:${var.aws_account_id}:parameter${var.recaptcha_site_key_ssm_param}"
+      },
+      {
+        Sid      = "DecryptRecaptchaSiteKey"
+        Effect   = "Allow"
+        Action   = ["kms:Decrypt"]
+        Resource = "*"
+        Condition = {
+          StringEquals = {
+            "kms:ViaService" = "ssm.us-east-1.amazonaws.com"
+          }
+        }
+      },
     ]
   })
 }

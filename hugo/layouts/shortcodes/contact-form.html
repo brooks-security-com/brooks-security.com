@@ -1,0 +1,97 @@
+{{- $siteKey := site.Params.recaptchaSiteKey -}}
+{{- if $siteKey -}}
+<form id="contact-form" class="contact-form" novalidate>
+  <div class="contact-field">
+    <label for="cf-name">Name</label>
+    <input type="text" id="cf-name" name="name" required autocomplete="name">
+  </div>
+  <div class="contact-field">
+    <label for="cf-email">Email</label>
+    <input type="email" id="cf-email" name="email" required autocomplete="email">
+  </div>
+  <div class="contact-field">
+    <label for="cf-subject">Subject</label>
+    <input type="text" id="cf-subject" name="subject" autocomplete="off">
+  </div>
+  <div class="contact-field">
+    <label for="cf-message">Message</label>
+    <textarea id="cf-message" name="message" rows="6" required></textarea>
+  </div>
+  {{/* Honeypot: hidden from humans (see .contact-hp in _custom.scss), tempting to bots. */}}
+  <div class="contact-hp" aria-hidden="true">
+    <label for="cf-company">Company</label>
+    <input type="text" id="cf-company" name="company" tabindex="-1" autocomplete="off">
+  </div>
+  <button type="submit" class="contact-submit btn-primary">Send message</button>
+  <p class="contact-status" role="status" aria-live="polite"></p>
+</form>
+
+<script src="https://www.google.com/recaptcha/api.js?render={{ $siteKey }}"></script>
+<script>
+(function () {
+  var form = document.getElementById('contact-form');
+  var statusEl = form.querySelector('.contact-status');
+  var btn = form.querySelector('.contact-submit');
+  var siteKey = {{ $siteKey | jsonify }};
+
+  function val(name) {
+    var el = form.elements[name];
+    return el && el.value ? el.value.trim() : '';
+  }
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = 'contact-status' + (kind ? ' is-' + kind : '');
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    // Honeypot tripped: pretend success, send nothing.
+    if (form.elements['company'] && form.elements['company'].value) {
+      setStatus('Thanks — your message is on its way.', 'ok');
+      form.reset();
+      return;
+    }
+    btn.disabled = true;
+    setStatus('Sending…', 'pending');
+
+    grecaptcha.ready(function () {
+      grecaptcha.execute(siteKey, { action: 'contact' }).then(function (token) {
+        return fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: val('name'),
+            email: val('email'),
+            subject: val('subject'),
+            message: val('message'),
+            company: form.elements['company'] ? form.elements['company'].value : '',
+            token: token
+          })
+        });
+      }).then(function (res) {
+        if (res.ok) {
+          form.reset();
+          setStatus("Thanks — your message is on its way. I'll be in touch.", 'ok');
+        } else {
+          return res.json().catch(function () { return {}; }).then(function (body) {
+            setStatus(body.error || 'Something went wrong. Please email graham@brooks-security.com directly.', 'error');
+          });
+        }
+      }).catch(function () {
+        setStatus('Network error. Please email graham@brooks-security.com directly.', 'error');
+      }).finally(function () {
+        btn.disabled = false;
+      });
+    });
+  });
+})();
+</script>
+{{- else -}}
+<div class="contact-form-dev-notice">
+  <p><strong>Contact form unavailable in this build.</strong> The reCAPTCHA site key
+  (<code>params.recaptchaSiteKey</code>) is not set. It is injected from SSM at deploy
+  time; for local development, export <code>HUGO_PARAMS_RECAPTCHASITEKEY</code> to render
+  the live form. In the meantime, reach me at
+  <a href="mailto:graham@brooks-security.com">graham@brooks-security.com</a>.</p>
+</div>
+{{- end -}}

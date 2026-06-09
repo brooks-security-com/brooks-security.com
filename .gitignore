@@ -3,7 +3,8 @@ book.css*
 *book.scss*
 book.js*
 
-# Terraform: generated Lambda deployment artifact
+# Terraform: generated Lambda deployment artifacts
 terraform/files/contrib-dispatch.zip
+terraform/files/contact.zip
 # Python bytecode (e.g. from local Lambda syntax checks)
 __pycache__/
