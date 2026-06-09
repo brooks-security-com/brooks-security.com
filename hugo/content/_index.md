@@ -12,13 +12,19 @@ Beyond work, I am a husband, father, and community activist. In my free time, I 
 
 I believe it's important to document your work and reflect on what you learn along the way. This site serves as both a portfolio of personal and professional projects and a traditional blog where I share ideas that interest me. Topics range from emerging IT trends and technical tutorials to personal perspectives on the industry and random philosophy thoughts.
 
-## Where to Find Me
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/grahamwbrooks/)
-[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/littleseneca)
-
-## Open Source Activity
-
-{{< github-heatmap >}}
+<div style="display: flex; flex-wrap: wrap; gap: 1rem 2.5rem; align-items: flex-start;">
+  <div style="flex: 0 1 auto;">
+    <h2>Where to Find Me</h2>
+    <p>
+      <a href="https://linkedin.com/in/grahamwbrooks/"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"></a>
+      <a href="https://github.com/littleseneca"><img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"></a>
+    </p>
+  </div>
+  <div style="flex: 1 1 420px;">
+    <h2>GitHub Activity</h2>
+    {{< github-heatmap >}}
+  </div>
+</div>
 
 ## Featured Projects
 
