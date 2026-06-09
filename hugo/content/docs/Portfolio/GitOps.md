@@ -3,13 +3,17 @@
 
 [![GitHub: LittleSeneca/brooks-security.com](https://img.shields.io/badge/GitHub-LittleSeneca%2Fbrooks--security.com-181717?logo=github&logoColor=white)](https://github.com/LittleSeneca/brooks-security.com)
 
-This site is the artifact of its own pipeline. A single public repository holds the Hugo content you are reading *and* the Terraform that provisions the AWS infrastructure serving it. Push to `main`, and GitHub Actions builds the site, syncs it to S3, invalidates CloudFront, and reconciles the cloud infrastructure with `terraform apply`. No servers to babysit, no deploy button to press.
+This site builds and ships itself. One public repository holds both the Hugo content you're reading and the Terraform that runs the AWS infrastructure serving it. I push to `main`, and GitHub Actions takes it from there: build the site, sync it to S3, invalidate CloudFront, and reconcile the cloud with `terraform apply`. No servers to babysit, no deploy button to press.
 
-**Built in the open, on purpose.** This is [Kerckhoffs's Principle](https://en.wikipedia.org/wiki/Kerckhoffs%27s_principle) applied to a whole deployment rather than a single cipher: the security of a system should rest on its keys, not on hiding how it works. So nothing here is hidden. You can read every line of Terraform, review exactly how the site is built, served, and locked down, and stand up an identical copy yourself. What you *can't* do is break this one — not because you can't see how it works, but because you don't hold my keys. Never say never, but there's no obscurity to peel back: the whole attack surface is a short list of secrets in SSM and a couple of tightly scoped IAM principals. If you want the idea explained properly (and delightfully), Moserware's [*A Stick Figure Guide to the Advanced Encryption Standard (AES)*](https://www.moserware.com/2009/09/stick-figure-guide-to-advanced.html) puts it best:
+**I build in the open on purpose.** Most security advice tells you to hide how things work. I do the opposite.
+
+That is [Kerckhoffs's Principle](https://en.wikipedia.org/wiki/Kerckhoffs%27s_principle): a system should stay secure even when everyone can see exactly how it works. The secrecy lives in the keys, not in the design. So I don't hide the design. Read every line of Terraform, trace how the site is built, served, and locked down, and stand up your own copy if you want one. You still can't break mine, because you don't hold my keys. I won't call it unbreakable, because nothing is, but there's no hidden trick to find. The whole attack surface is a short list of secrets in SSM and a few tightly scoped IAM roles.
+
+Jeff Moser makes the point better than I can, in [*A Stick Figure Guide to the Advanced Encryption Standard (AES)*](https://www.moserware.com/2009/09/stick-figure-guide-to-advanced.html):
 
 [![Two-panel stick-figure cartoon titled "Secrecy Only in the Key": in the BAD panel, revealing how the method works lets an attacker decode everything; in the BETTER panel, the method is public but the attacker still can't break it without the secret key.](/images/moserware-aes-secrecy-only-in-the-key.png)](https://www.moserware.com/2009/09/stick-figure-guide-to-advanced.html)
 
-*“Big Idea #3: Secrecy Only in the Key,” from Moserware's [A Stick Figure Guide to the Advanced Encryption Standard (AES)](https://www.moserware.com/2009/09/stick-figure-guide-to-advanced.html).*
+*Image: “Big Idea #3: Secrecy Only in the Key,” by Jeff Moser, from [A Stick Figure Guide to the Advanced Encryption Standard (AES)](https://www.moserware.com/2009/09/stick-figure-guide-to-advanced.html) (Moserware). Used with permission; all rights remain with the author.*
 
 **The whole thing runs for roughly $1 a month in AWS.**
 
@@ -27,7 +31,7 @@ This site is the artifact of its own pipeline. A single public repository holds 
 | Secrets | AWS SSM Parameter Store |
 | CI/CD | GitHub Actions on **GitHub-hosted runners** |
 
-A note on what this is **not**: there is no self-hosted runner, no Ansible, and no servers to patch. Everything here runs on ephemeral GitHub-hosted runners against AWS.
+What this isn't: no self-hosted runner, no Ansible, no servers to patch. It all runs on throwaway GitHub-hosted runners against AWS.
 
 ## Repository layout
 
@@ -48,7 +52,7 @@ A note on what this is **not**: there is no self-hosted runner, no Ansible, and 
 
 ## How a change ships
 
-Two workflows, both triggered on every push and pull request to `main`. Each uses a `paths-filter` so it only does real work when its own files changed. The checks still *report* either way, so branch protection's required status checks are satisfied on every PR.
+Two workflows run on every push and pull request to `main`. Each uses a `paths-filter`, so it only does real work when its own files changed. The checks still report either way, so my required status checks pass on every PR.
 
 ```mermaid
 flowchart TD
@@ -67,7 +71,7 @@ flowchart TD
 
 ## Public site architecture
 
-The site is a pile of static files in a **private** S3 bucket. The bucket blocks all public access; CloudFront is the only thing allowed to read it, via an Origin Access Control and a bucket policy scoped to the distribution's ARN.
+The site is just static files in a **private** S3 bucket. The bucket blocks all public access. CloudFront is the only thing allowed to read it, through an Origin Access Control and a bucket policy scoped to the distribution's ARN.
 
 ```mermaid
 flowchart LR
@@ -82,9 +86,9 @@ flowchart LR
 
 ## AWS access portal: `aws.brooks-security.com`
 
-A second, tiny CloudFront distribution exists purely to give the IAM Identity Center login page a memorable address. Its only origin is a dummy; a CloudFront Function intercepts every request and returns a `301` to the real IAM Identity Center portal URL. No compute, no S3, just a redirect at the edge.
+I run a second, tiny CloudFront distribution for one reason: to give the IAM Identity Center login page a memorable address. Its only origin is a dummy. A CloudFront Function intercepts every request and returns a `301` to the real Identity Center portal URL. No compute, no S3, just a redirect at the edge.
 
-Terraform also manages the identity side of this: the Identity Center user, an `AdministratorAccess` permission set, and the account assignment that binds them. (IAM Identity Center itself must be enabled once by hand in the console before Terraform can manage these resources.)
+Terraform manages the identity side too: the Identity Center user, an `AdministratorAccess` permission set, and the account assignment that binds them. (I have to enable IAM Identity Center by hand in the console once before Terraform can manage these resources.)
 
 ## Nightly contribution-heatmap refresh
 
@@ -99,11 +103,11 @@ flowchart TD
     J --> D["redeploy → S3 + CloudFront"]
 ```
 
-Kicking the workflow from EventBridge, rather than a GitHub Actions `schedule:` cron, is deliberate: GitHub auto-disables scheduled workflows after 60 days of repository inactivity, which a personal site can easily hit. EventBridge never sleeps. The whole job is one Lambda invocation per day, which is effectively free, and the heatmap fetch is fully fail-soft: any error leaves the last-known-good JSON in place so the build still succeeds.
+I kick the workflow from EventBridge instead of a GitHub Actions `schedule:` cron on purpose. GitHub auto-disables scheduled workflows after 60 days of repo inactivity, which a personal site can easily hit. EventBridge never sleeps. The whole job is one Lambda invocation a day, basically free, and the fetch is fail-soft: any error leaves the last good JSON in place so the build still succeeds.
 
-## Contact form: serverless, same-origin, and basically free
+## Contact form
 
-The Services section has a working contact form, and adding it didn't change the cost story or the shape of the architecture. A single CloudFront behavior routes `/api/contact` to an API Gateway HTTP API, so the browser posts to the same origin it loaded from, with no CORS to wrangle, and nothing is always-on — both API Gateway and Lambda are billed purely per request.
+The Services section has a working contact form, and adding it didn't change the cost or the shape of the architecture. One CloudFront behavior routes `/api/contact` to an API Gateway HTTP API, so the browser posts to the same origin it loaded from, with no CORS to wrangle. Nothing is always-on; I pay per request for both API Gateway and Lambda.
 
 ```mermaid
 flowchart TD
@@ -117,11 +121,11 @@ flowchart TD
 
 The Lambda does three things: confirm the request actually came through CloudFront (via a secret header CloudFront injects, so the public API can't be hit directly), create a reCAPTCHA Enterprise assessment for the token and reject invalid tokens or low scores, then publish the message to an SNS topic that emails me. Verification uses a Google Cloud API key and the owning project rather than a classic secret key. The API key and public site key live in SSM; the site key is also baked into the Hugo build at build time, and the Lambda reads both at runtime, neither entering Terraform state.
 
-This is the whole point of well-tailored tooling: a dynamic feature, with bot protection and email delivery, bolted onto a static site for a rounding error. API Gateway's HTTP API is pay-per-request — about $1 per million calls, which for a contact form rounds to zero — so a real backend with bot protection and email delivery adds no always-on infrastructure and no meaningful cost.
+This is the kind of result I want from picking the right building blocks: a dynamic feature, with bot protection and email delivery, bolted onto a static site for a rounding error. API Gateway's HTTP API is pay-per-request, about $1 per million calls, which for a contact form rounds to zero. A real backend that adds no always-on infrastructure and no meaningful cost.
 
 ## Terraform state & bootstrap
 
-State lives in an S3 backend (`brooks-security-tfstate`) with a DynamoDB lock table. Both are created once by the small `terraform/bootstrap/` module, whose own state is local and committed to the repo, which is the usual chicken-and-egg escape hatch. The main configuration adopts the already-existing AWS resources through `terraform/imports.tf`: a set of `import` blocks that pull live Route 53, ACM, S3, and CloudFront resources under management, so the steady-state plan is a clean no-op.
+State lives in an S3 backend (`brooks-security-tfstate`) with a DynamoDB lock table. A small `terraform/bootstrap/` module creates both once; its own state is local and committed to the repo, which is the usual chicken-and-egg escape hatch. The main config adopts the resources that already existed through `terraform/imports.tf`: `import` blocks that pull live Route 53, ACM, S3, and CloudFront under management, so the steady-state plan is a clean no-op.
 
 ## Security model
 
@@ -134,10 +138,10 @@ State lives in an S3 backend (`brooks-security-tfstate`) with a DynamoDB lock ta
 | **Private origin** | The S3 bucket blocks all public access; only CloudFront can read it, via Origin Access Control |
 | **Secrets in SSM** | The GitHub PAT (heatmap job) and the reCAPTCHA Enterprise API key + site key (contact form) live in SSM Parameter Store and are referenced by ARN, never pulled into Terraform state |
 | **Least-privilege IAM** | The deploy credentials and both Lambda roles are each scoped to the minimum actions they need (S3 + CloudFront for deploys; SSM read + scoped KMS decrypt for the heatmap Lambda; SSM read + scoped KMS decrypt + single-topic SNS publish for the contact Lambda) |
-| **Bot protection** | The contact form gates submissions with reCAPTCHA v3 scoring and a honeypot field, dropping bots before they reach the inbox |
+| **Bot protection** | The contact form gates submissions with reCAPTCHA Enterprise scoring and a honeypot field, dropping bots before they reach the inbox |
 | **CloudFront-only backend** | The contact API is publicly reachable but the Lambda rejects any request missing a secret header that only CloudFront injects, so the API cannot be invoked directly |
 
-**On deploy credentials:** today the workflows authenticate to AWS with a scoped IAM user's access keys, stored as GitHub Actions secrets and passed through the standard credential chain (no profile in CI). A GitHub OIDC provider and a dedicated deploy role are already defined in `terraform/iam.tf`, staged for a planned cutover to short-lived, keyless credentials. When that lands, the static keys go away.
+**On deploy credentials:** right now the workflows authenticate to AWS with a scoped IAM user's access keys, stored as GitHub Actions secrets and passed through the standard credential chain (no profile in CI). I've already defined a GitHub OIDC provider and a dedicated deploy role in `terraform/iam.tf`, staged for a cutover to short-lived, keyless credentials. When that lands, the static keys go away.
 
 ## What it costs
 
@@ -151,4 +155,4 @@ State lives in an S3 backend (`brooks-security-tfstate`) with a DynamoDB lock ta
 | ACM, SSM, IAM, Identity Center | $0.00 |
 | **Total** | **~$1/month** |
 
-Adding the contact form didn't move this total. That's the dividend of choosing serverless, pay-per-use building blocks and reusing the infrastructure already in place instead of bolting on a managed service for every new feature.
+Adding the contact form didn't move this total. That's what I get for sticking to serverless, pay-per-use pieces and reusing what I already run, instead of bolting on a managed service for every new feature.
