@@ -31,6 +31,64 @@
   margin-bottom: 0;
 }
 
+/* --- Home: "Where to Find Me" + GitHub Activity --------------------------- */
+/* One card holding the social links beside the contribution heatmap. The two
+   columns wrap to a single column on narrow screens; a container query (not a
+   viewport media query) drives the divider so it appears only when the columns
+   actually sit side by side, regardless of the surrounding theme chrome. */
+.home-connect {
+  container-type: inline-size;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.5rem 1.75rem;
+  background: #fff;
+  border: 1px solid #e1e4e8;
+  border-radius: 12px;
+  padding: 1.25rem 1.4rem;
+  margin-top: 1rem;
+}
+.home-connect h2 {
+  margin-top: 0;
+  margin-bottom: 0.6rem;
+}
+.home-connect__links {
+  flex: 0 0 auto;
+  min-width: 150px;
+}
+.home-connect__links a {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.35rem 0;
+  color: #24292f;
+  text-decoration: none;
+  font-weight: 500;
+}
+.home-connect__links a:hover {
+  text-decoration: underline;
+}
+.home-connect__links .ic {
+  color: #57606a;
+  display: inline-flex;
+}
+.home-connect__links .ic svg {
+  display: block;
+}
+.home-connect__activity {
+  flex: 1 1 360px;
+  min-width: 280px;
+}
+.home-connect__activity .gh-heatmap {
+  margin-top: 0.25rem;
+}
+@container (min-width: 470px) {
+  .home-connect__activity {
+    border-left: 1px solid #e1e4e8;
+    padding-left: 1.5rem;
+  }
+}
+
 /* --- Services CTA button + contact form ----------------------------------- */
 .btn-primary {
   display: inline-block;
@@ -93,6 +151,37 @@
    bot check on real users). reCAPTCHA Enterprise is the primary bot defense. */
 .contact-hp {
   display: none;
+}
+
+.contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+}
+.contact-recaptcha {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.contact-recaptcha img {
+  flex: 0 0 auto;
+  margin: 0;
+}
+.contact-recaptcha-text {
+  font-size: 0.72rem;
+  line-height: 1.25;
+  color: var(--gray-500, #6e7781);
+}
+.contact-recaptcha-text a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+/* The inline badge above carries the required attribution, so hide Google's
+   floating bottom-right badge. */
+.grecaptcha-badge {
+  visibility: hidden;
 }
 
 .contact-status {

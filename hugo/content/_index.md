@@ -6,21 +6,23 @@ bookToc: false
 
 <img src="/grahambrooks.png" alt="Graham Brooks" style="float: left; max-width: min(160px, 32%); height: auto; margin: 0.35rem 1.25rem 0.75rem 0;" />
 
-My name is Graham Brooks. I am a Software Engineer who likes to talk to people and solve hard problems. I am a [CISSP](https://www.isc2.org/certifications/cissp) and hold professional certifications in [Linux Server Automation, Cloud Computing, and Security Administration](https://brooks-security.com/docs/curriculum-vitae/credentials/). Currently, I work as the Site Reliability Engineer and as the Security Officer for [AvatarFleet](https://avatarfleet.com), where we provide HR and logistics support to the largest names in the transportation industry. 
+My name is Graham Brooks. I am a Security and Infrastructure technologist who likes to talk to people and solve hard problems. I am a [CISSP](https://www.isc2.org/certifications/cissp) and hold professional certifications in [Linux Server Automation, Cloud Computing, and Security Administration](https://brooks-security.com/docs/curriculum-vitae/credentials/). Currently, I work as the Site Reliability Engineer and as the Security Officer for [AvatarFleet](https://avatarfleet.com), where we provide HR and logistics support to the largest names in the transportation industry. 
 
-Beyond work, I am a husband, father, and community activist. In my free time, I enjoy painting, powerlifting, hiking, running, and helping run a community tabletop gaming club where we play everything from Magic: The Gathering to Warhammer to One Page Rules to D&D.
+Beyond work, I am a husband, father, and community activist. In my free time, I enjoy running, hiking, powerlifting, and all kinds of analog fun.
 
 I believe it's important to document your work and reflect on what you learn along the way. This site serves as both a portfolio of personal and professional projects and a traditional blog where I share ideas that interest me. Topics range from emerging IT trends and technical tutorials to personal perspectives on the industry and random philosophy thoughts.
 
-<div style="display: flex; flex-wrap: wrap; gap: 1rem 2.5rem; align-items: flex-start;">
-  <div style="flex: 0 1 auto;">
+<div class="home-connect">
+  <div class="home-connect__links">
     <h2>Where to Find Me</h2>
-    <p>
-      <a href="https://linkedin.com/in/grahamwbrooks/"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"></a>
-      <a href="https://github.com/littleseneca"><img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"></a>
-    </p>
+    <a href="https://linkedin.com/in/grahamwbrooks/">
+      <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg></span>LinkedIn</a>
+    <a href="https://github.com/littleseneca">
+      <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.78 0 12.29c0 5.21 3.44 9.63 8.21 11.19.6.11.82-.25.82-.57 0-.28-.01-1.02-.02-2-3.34.71-4.04-1.58-4.04-1.58-.55-1.36-1.33-1.73-1.33-1.73-1.09-.73.08-.72.08-.72 1.2.08 1.84 1.21 1.84 1.21 1.07 1.8 2.81 1.28 3.5.98.11-.76.42-1.28.76-1.58-2.67-.3-5.47-1.31-5.47-5.83 0-1.29.47-2.34 1.24-3.17-.13-.3-.54-1.52.11-3.18 0 0 1.01-.32 3.3 1.21.96-.26 1.98-.39 3-.4 1.02.01 2.04.14 3 .4 2.29-1.53 3.3-1.21 3.3-1.21.65 1.66.24 2.88.12 3.18.77.83 1.23 1.88 1.23 3.17 0 4.53-2.81 5.53-5.49 5.82.43.36.81 1.08.81 2.18 0 1.58-.01 2.85-.01 3.24 0 .32.22.69.83.57A12.02 12.02 0 0 0 24 12.29C24 5.78 18.63.5 12 .5z"/></svg></span>GitHub</a>
+    <a href="mailto:graham@brooks-security.com">
+      <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg></span>Email</a>
   </div>
-  <div style="flex: 1 1 420px;">
+  <div class="home-connect__activity">
     <h2>GitHub Activity</h2>
     {{< github-heatmap >}}
   </div>
