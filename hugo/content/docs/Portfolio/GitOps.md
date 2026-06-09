@@ -17,6 +17,7 @@ This site is the artifact of its own pipeline. A single public repository holds 
 | DNS / TLS | Route 53 + ACM (DNS-validated) |
 | AWS access portal | IAM Identity Center, fronted by a CloudFront 301 redirect |
 | Scheduled jobs | EventBridge → Lambda (nightly heatmap refresh) |
+| Contact form | Lambda Function URL behind CloudFront, with reCAPTCHA v3 + SNS email |
 | Secrets | AWS SSM Parameter Store |
 | CI/CD | GitHub Actions on **GitHub-hosted runners** |
 
@@ -31,7 +32,7 @@ A note on what this is **not**: there is no self-hosted runner, no Ansible, and 
 │   └── hugo-deploy.yml         # hugo build → deploy → CloudFront invalidation
 ├── hugo/                       # site content, config, theme submodule, data/
 ├── terraform/
-│   ├── *.tf                    # s3, cloudfront, route53, acm, iam, sso, lambda
+│   ├── *.tf                    # s3, cloudfront, route53, acm, iam, sso, lambda, contact
 │   ├── imports.tf              # import blocks adopting pre-existing resources
 │   ├── bootstrap/              # one-time: tfstate bucket + lock table
 │   └── files/                  # CloudFront function + Lambda source
@@ -94,6 +95,23 @@ flowchart TD
 
 Kicking the workflow from EventBridge, rather than a GitHub Actions `schedule:` cron, is deliberate: GitHub auto-disables scheduled workflows after 60 days of repository inactivity, which a personal site can easily hit. EventBridge never sleeps. The whole job is one Lambda invocation per day, which is effectively free, and the heatmap fetch is fully fail-soft: any error leaves the last-known-good JSON in place so the build still succeeds.
 
+## Contact form: serverless, same-origin, and basically free
+
+The Services section has a working contact form, and adding it didn't change the cost story or the shape of the architecture. There is no API Gateway and no always-on backend. A single new CloudFront behavior routes `/api/contact` to a Lambda Function URL, so the browser posts to the same origin it loaded from, with no CORS to wrangle.
+
+```mermaid
+flowchart TD
+    B["Browser<br/>reCAPTCHA v3 token"] -->|"POST /api/contact"| CF["CloudFront<br/>/api/contact behavior<br/>injects shared-secret header"]
+    CF --> FU["Lambda Function URL<br/>brooks-security-contact (python3.12)"]
+    FU --> V{"verify"}
+    V -->|"reCAPTCHA siteverify<br/>+ shared secret + honeypot"| OK["publish to SNS"]
+    OK --> EM["email to me"]
+```
+
+The Lambda does three things: confirm the request actually came through CloudFront (via a secret header CloudFront injects, so the public Function URL can't be hit directly), verify the reCAPTCHA v3 token against Google's `siteverify` API and reject low scores, then publish the message to an SNS topic that emails me. The reCAPTCHA keys live in SSM; the public site key is baked into the Hugo build from SSM at build time, and the secret key is read by the Lambda at runtime and never enters Terraform state.
+
+This is the whole point of well-tailored tooling. A dynamic feature, with bot protection and email delivery, bolted onto a static site for a rounding error. Reaching for API Gateway or a managed form service would have added monthly cost and moving parts; a Function URL behind the CloudFront distribution I already run adds neither.
+
 ## Terraform state & bootstrap
 
 State lives in an S3 backend (`brooks-security-tfstate`) with a DynamoDB lock table. Both are created once by the small `terraform/bootstrap/` module, whose own state is local and committed to the repo, which is the usual chicken-and-egg escape hatch. The main configuration adopts the already-existing AWS resources through `terraform/imports.tf`: a set of `import` blocks that pull live Route 53, ACM, S3, and CloudFront resources under management, so the steady-state plan is a clean no-op.
@@ -107,8 +125,10 @@ State lives in an S3 backend (`brooks-security-tfstate`) with a DynamoDB lock ta
 | **Production environment gate** | `apply` and `deploy` jobs target the `production` GitHub Environment, requiring explicit approval before they execute |
 | **First-time contributor approval** | GitHub requires a maintainer to approve workflow runs on PRs from contributors with no prior merged PR |
 | **Private origin** | The S3 bucket blocks all public access; only CloudFront can read it, via Origin Access Control |
-| **Secrets in SSM** | The GitHub PAT used by the heatmap job lives in SSM Parameter Store and is referenced by ARN, never pulled into Terraform state |
-| **Least-privilege IAM** | The deploy credentials and the Lambda role are each scoped to the minimum actions they need (S3 + CloudFront for deploys; SSM read + scoped KMS decrypt for the Lambda) |
+| **Secrets in SSM** | The GitHub PAT (heatmap job) and the reCAPTCHA keys (contact form) live in SSM Parameter Store and are referenced by ARN, never pulled into Terraform state |
+| **Least-privilege IAM** | The deploy credentials and both Lambda roles are each scoped to the minimum actions they need (S3 + CloudFront for deploys; SSM read + scoped KMS decrypt for the heatmap Lambda; SSM read + scoped KMS decrypt + single-topic SNS publish for the contact Lambda) |
+| **Bot protection** | The contact form gates submissions with reCAPTCHA v3 scoring and a honeypot field, dropping bots before they reach the inbox |
+| **CloudFront-only Lambda** | The contact Lambda's Function URL is unauthenticated but rejects any request missing a secret header that only CloudFront injects, so it cannot be invoked directly |
 
 **On deploy credentials:** today the workflows authenticate to AWS with a scoped IAM user's access keys, stored as GitHub Actions secrets and passed through the standard credential chain (no profile in CI). A GitHub OIDC provider and a dedicated deploy role are already defined in `terraform/iam.tf`, staged for a planned cutover to short-lived, keyless credentials. When that lands, the static keys go away.
 
@@ -119,9 +139,12 @@ State lives in an S3 backend (`brooks-security-tfstate`) with a DynamoDB lock ta
 | Route 53 hosted zone | ~$0.50 |
 | S3 storage + requests | ~$0.01 |
 | CloudFront (low traffic, two distributions) | ~$0.01 |
-| Lambda + EventBridge (one invocation/day) | ~$0.00 |
+| Lambda + EventBridge (heatmap + contact form) | ~$0.00 |
+| SNS (contact-form emails) | ~$0.00 |
 | ACM, SSM, IAM, Identity Center | $0.00 |
 | **Total** | **~$1/month** |
+
+Adding the contact form didn't move this total. That's the dividend of choosing serverless, pay-per-use building blocks and reusing the infrastructure already in place instead of bolting on a managed service for every new feature.
 
 ## The homelab (out of band)
 
