@@ -1,33 +1,28 @@
 # Automation Projects
+
+These are the side projects where I work out automation ideas before they ever touch a client. Some are tools I reach for constantly. Others started as a one-off problem I refused to solve by hand twice.
+
 ## Jarvis - Executive Summary Agent
 [![GitHub: LittleSeneca/jarvis-executive-summary](https://img.shields.io/badge/GitHub-LittleSeneca%2Fjarvis--executive--summary-181717?logo=github&logoColor=white)](https://github.com/LittleSeneca/jarvis-executive-summary)
 
-A containerized Python tool that pulls the last 24 hours of activity from a configurable set of data sources, summarizes each through Groq-hosted LLM inference, and posts a single consolidated executive brief to Slack — then exits. One container, one run, one well-formatted morning digest. No daemon, no scheduler, no loop.
+Jarvis is a containerized Python tool that reads the last 24 hours of activity from a set of data sources, summarizes each one through Groq-hosted inference, posts a single executive brief to Slack, and then exits. One container, one run, one clean morning digest. No daemon, no scheduler, no loop to babysit.
 
-On startup, Jarvis runs every enabled plugin concurrently — each plugin fetches its own data (Site24x7, AWS SecurityHub, AWS Billing, Drata, Gmail, GitHub, Weather, News, Stocks, and Truth Social), pipes the payload through a rate-limited Groq inference queue using a plugin-owned prompt and temperature, then assembles all summaries into a single Slack Block Kit message posted to a DM or channel.
+On startup it runs every enabled plugin at once. Each plugin pulls its own data (Site24x7, AWS Security Hub, AWS Billing, Drata, Gmail, GitHub, weather, news, stocks, and a few more), sends the payload through a rate-limited Groq queue with its own prompt and temperature, and the results get assembled into one Slack Block Kit message in a DM or channel.
 
-Each data source is a self-contained plugin folder under `plugins/<name>/` implementing a `DataSourcePlugin` contract. Adding a new source means dropping a folder in, implementing the contract, and adding the plugin name to `ENABLED_PLUGINS` in `.env` — no core changes required. If a plugin fails, the digest still goes out with a note about the failed source; a partial brief beats silence.
-
-The container is a one-shot: start it, it runs, it exits. Scheduling (cron, ECS, EventBridge) is left entirely to the operator.
+The whole thing is built around plugins. Every data source is a self-contained folder under `plugins/<name>/` that implements a single contract. Adding a source means dropping in a folder, implementing the contract, and adding its name to `ENABLED_PLUGINS`. No core changes. And if a plugin fails, the brief still goes out with a note about what broke. A partial brief beats silence.
 
 ## Hard Drive Auditor
 [![GitHub: LittleSeneca/hard-drive-auditor](https://img.shields.io/badge/GitHub-LittleSeneca%2Fhard--drive--auditor-181717?logo=github&logoColor=white)](https://github.com/LittleSeneca/hard-drive-auditor)
 
-Many organizations have stacks of hard drives laying around the office. Many of these hard drives are unlabeled. Thats dangerous! This tool provides a fast process to quickly analyze hard drives for their file contents. No need to manually click through file systems.
+Most offices have a pile of old hard drives in a drawer somewhere, and half of them are unlabeled. That is a real security problem. You cannot protect data you do not know you still have. This tool gives you a fast way to see what is actually on a drive without clicking through the filesystem by hand.
 
-If the drive is a standard un-encrypted windows drive, it will simply crawl through the drive, finding and displaying the hostname from the registry and the user folder contents.
+Point it at a standard unencrypted Windows drive and it crawls the disk, pulls the hostname from the registry, and shows you the user folders. Point it at a BitLocker drive and it asks for the recovery password (pull that from your AD), unlocks the volume, and scans it the same way. Hand it a raw filesystem with no operating system and it prints the root directory. Hand it a Linux disk and it prints the root directory and tells you it is a boot device.
 
-If its a bitlocker encrypted windows drive, it will prompt you for the recovery password (which im assuming can be pulled from your Org's ADUC). Once the password has been accepted, the script will automatically mount the bitlocker drive and scan it like an un-encrypted windows drive.
-
-If the drive is a filesystem without a operating system, it will output the root directory file system of the drive.
-
-If the drive is a linux filesystem, it will output the root directory file system of the drive and state that it is a linux boot device.
+The point is triage. You learn what a mystery drive holds in seconds instead of an afternoon.
 
 ## Clonezilla Image Builder
 [![GitHub: LittleSeneca/clonezilla-builder](https://img.shields.io/badge/GitHub-LittleSeneca%2Fclonezilla--builder-181717?logo=github&logoColor=white)](https://github.com/LittleSeneca/clonezilla-builder)
 
-Clonezilla is awesome! By default it has a huge amount of power. 
+Clonezilla is a great imaging tool, and it does a lot out of the box. But you can push it well past the defaults with a little effort. The catch is that unpacking and repacking a Clonezilla image by hand is tedious and easy to get wrong.
 
-But, with a bit of effort, its existing utility can be greatly expanded. 
-
-Unfortunately, it can be very cumbersome to unpackage and repackage a clonezilla image. That is why I built this tool. It efficiently unpackes and repackes clonezilla images with changes made to the syslinux, live, home, EFI, and Boot folders. Currently, I have added a boot menu entry which pulls a user determined github repo and prompts the user to run a script from the pulled repo.
+So I built a tool that does it for you. It cleanly unpacks and repacks Clonezilla images with changes to the syslinux, live, home, EFI, and boot folders. Right now it adds a boot menu entry that pulls a GitHub repo you choose and offers to run a script from it, which turns a plain imaging disk into something you can tailor for each deployment.
