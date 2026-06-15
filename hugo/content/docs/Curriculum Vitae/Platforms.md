@@ -1,5 +1,9 @@
 # Platforms:
 
+## GitHub Activity
+
+{{< github-heatmap >}}
+
 ## Management Platforms & Cloud Providers
 
 ### Amazon Web Services (AWS)
