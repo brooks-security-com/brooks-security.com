@@ -1,6 +1,6 @@
 +++
 title = "Colemak: An Efficient Keyboard Layout"
-description = ""
+description = "Why I switched from QWERTY to Colemak, what the transition actually felt like, and whether the speed and ergonomics paid off."
 tags = [
     "skills",
     "coding",

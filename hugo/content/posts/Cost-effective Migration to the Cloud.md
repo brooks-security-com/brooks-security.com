@@ -1,6 +1,6 @@
 +++
 title = "Cost-effective Migration to the Cloud"
-description = ""
+description = "Moving from on-prem to the cloud changes both your security model and your bill. Where expert help genuinely lowers cost and risk."
 tags = [
     "coding",
     "sysadmin",

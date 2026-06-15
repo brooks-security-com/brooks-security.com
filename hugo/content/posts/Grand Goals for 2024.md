@@ -1,6 +1,6 @@
 +++
 title = "Grand Goals for 2024"
-description = ""
+description = "My 2024 plan: a deliberate sequence of IT and cloud security certifications, and why I committed to finishing them this year."
 tags = [
     "grand goals",
     "skills",
