@@ -1,6 +1,6 @@
 +++
 title = "Why Patching Servers Manually is not Safer"
-description = ""
+description = "Patching by hand to avoid outages is a common belief and a costly mistake. Why manual patching adds risk to your servers instead of removing it."
 tags = [
     "skills",
     "patching",

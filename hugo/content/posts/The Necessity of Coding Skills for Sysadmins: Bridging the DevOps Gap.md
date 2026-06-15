@@ -1,6 +1,6 @@
 +++
 title = "The Necessity of Coding Skills for Sysadmins: Bridging the DevOps Gap"
-description = ""
+description = "The line between development and operations is gone. Why modern sysadmins have to learn to code, and how DevOps made it non-optional."
 tags = [
     "skills",
     "coding",
@@ -19,7 +19,7 @@ The role of a System Administrator, or SysAdmin, is evolving. The lines between 
 
 ## The Convergence of Development and Operations
 
-The tech world is experiencing a fundamental shift as the walls between development and operations start to crumble. This shift is largely driven by the DevOps movement—a cultural phenomenon that encourages greater collaboration and integration between the traditionally separate developer and IT operations teams.
+The tech world is experiencing a fundamental shift as the walls between development and operations start to crumble. This shift is largely driven by the DevOps movement, a cultural phenomenon that encourages greater collaboration and integration between the traditionally separate developer and IT operations teams.
 
 The goal? Accelerate software delivery, improve product quality, and foster a high degree of operational efficiency.
 

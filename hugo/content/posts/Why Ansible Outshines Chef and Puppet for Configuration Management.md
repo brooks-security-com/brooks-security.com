@@ -1,6 +1,6 @@
 +++
 title = "Why Ansible Outshines Chef and Puppet for Configuration Management"
-description = ""
+description = "Why I pick Ansible over Chef and Puppet for configuration management: an agentless design, Python underneath, and simpler day-to-day operations."
 tags = [
     "python",
     "ruby",
@@ -45,6 +45,6 @@ Ansible follows a push-based approach, meaning changes are pushed from the contr
 
 ## 5. Flexibility and Control
 
-Ansible’s procedural style of defining configurations—specifying 'what' needs to be done and also 'how'—provides a high degree of control. This contrasts with the declarative style of Puppet and Chef, where only the desired end state is defined, and the tool determines how to achieve it. While both methods have their places, Ansible's approach provides a more granular level of control, which can be advantageous in complex scenarios.
+Ansible’s procedural style of defining configurations (specifying 'what' needs to be done and also 'how') provides a high degree of control. This contrasts with the declarative style of Puppet and Chef, where only the desired end state is defined, and the tool determines how to achieve it. While both methods have their places, Ansible's approach provides a more granular level of control, which can be advantageous in complex scenarios.
 
 In summary, Ansible's simplicity derived from Python, broad support, agentless architecture, push-based approach, and procedural style, make it a powerful tool for configuration management, often offering significant advantages over Chef and Puppet. While all tools evolve and each has its unique benefits, Ansible currently stands out in terms of simplicity, adaptability, and ease of use.

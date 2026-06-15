@@ -1,6 +1,6 @@
 +++
 title = "\"The West\" Is Younger and Looser Than It Sounds"
-description = ""
+description = "The West sounds like one ancient, unbroken civilization. Look closely and the overlap is younger, more borrowed, and drawn along lines of power."
 tags = [
     "history",
     "philosophy",

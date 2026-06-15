@@ -30,14 +30,14 @@
   {{- $width := mul $weeksLen $step -}}
   {{- $height := mul 7 $step -}}
   {{- $colors := dict
-        "NONE" "#ebedf0"
+        "NONE" "var(--gray-200, #ebedf0)"
         "FIRST_QUARTILE" "#9be9a8"
         "SECOND_QUARTILE" "#40c463"
         "THIRD_QUARTILE" "#30a14e"
         "FOURTH_QUARTILE" "#216e39" -}}
 
   <div class="gh-heatmap" style="margin: 0.75rem 0 1.25rem;">
-    <div style="font-size: 0.9rem; color: #57606a; margin-bottom: 0.5rem;">
+    <div style="font-size: 0.9rem; color: var(--gray-500, #57606a); margin-bottom: 0.5rem;">
       <strong>{{ $data.total }}</strong> contributions on
       <a href="https://github.com/littleseneca" rel="noopener">GitHub</a> in the last year
     </div>
@@ -52,9 +52,9 @@
           {{- range $week.days -}}
             {{- $y := mul .weekday $step -}}
             {{- $fill := index $colors .level -}}
-            {{- if not $fill }}{{ $fill = "#ebedf0" }}{{ end -}}
+            {{- if not $fill }}{{ $fill = "var(--gray-200, #ebedf0)" }}{{ end -}}
             <rect x="{{ $x }}" y="{{ $y }}" width="{{ $cell }}" height="{{ $cell }}"
-                  rx="2" ry="2" fill="{{ $fill }}">
+                  rx="2" ry="2" style="fill: {{ $fill | safeCSS }}">
               <title>{{ .count }} contribution{{ if ne .count 1 }}s{{ end }} on {{ .date }}</title>
             </rect>
           {{- end -}}
@@ -62,16 +62,16 @@
       </svg>
     </div>
 
-    <div style="display: flex; align-items: center; gap: 4px; font-size: 0.75rem; color: #57606a; margin-top: 0.5rem;">
+    <div style="display: flex; align-items: center; gap: 4px; font-size: 0.75rem; color: var(--gray-500, #57606a); margin-top: 0.5rem;">
       <span>Less</span>
       {{- range slice "NONE" "FIRST_QUARTILE" "SECOND_QUARTILE" "THIRD_QUARTILE" "FOURTH_QUARTILE" -}}
-        <span style="display: inline-block; width: 11px; height: 11px; border-radius: 2px; background: {{ index $colors . }};"></span>
+        <span style="display: inline-block; width: 11px; height: 11px; border-radius: 2px; background: {{ index $colors . | safeCSS }};"></span>
       {{- end -}}
       <span>More</span>
     </div>
   </div>
 {{ else }}
-  <div class="gh-heatmap" style="margin: 0.75rem 0 1.25rem; font-size: 0.9rem; color: #57606a;">
+  <div class="gh-heatmap" style="margin: 0.75rem 0 1.25rem; font-size: 0.9rem; color: var(--gray-500, #57606a);">
     GitHub activity is being generated — check back after the next build.
   </div>
 {{ end }}

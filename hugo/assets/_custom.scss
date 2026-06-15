@@ -42,8 +42,8 @@
   flex-wrap: wrap;
   align-items: flex-start;
   gap: 1.5rem 1.75rem;
-  background: #fff;
-  border: 1px solid #e1e4e8;
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
   border-radius: 12px;
   padding: 1.25rem 1.4rem;
   margin-top: 1rem;
@@ -61,7 +61,7 @@
   align-items: center;
   gap: 0.6rem;
   padding: 0.35rem 0;
-  color: #24292f;
+  color: var(--body-font-color);
   text-decoration: none;
   font-weight: 500;
 }
@@ -69,7 +69,7 @@
   text-decoration: underline;
 }
 .home-connect__links .ic {
-  color: #57606a;
+  color: var(--gray-500, #57606a);
   display: inline-flex;
 }
 .home-connect__links .ic svg {
@@ -84,7 +84,7 @@
 }
 @container (min-width: 470px) {
   .home-connect__activity {
-    border-left: 1px solid #e1e4e8;
+    border-left: 1px solid var(--gray-200);
     padding-left: 1.5rem;
   }
 }

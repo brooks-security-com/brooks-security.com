@@ -1,6 +1,6 @@
 +++ 
 title = "The Profitability of Honesty: A Practical Approach to Ethical Business" 
-description = "" 
+description = "Honesty looks like it costs you sales. In practice it builds the trust that wins long-term contracts. A practical case for ethics in business." 
 tags = [ "ethics", "sales", "projects", ] 
 date = "2022-09-10" 
 categories = [ "Career", ] 

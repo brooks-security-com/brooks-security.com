@@ -1,6 +1,6 @@
 +++
 title = "The Strength of Python for Linux Automation"
-description = ""
+description = "Python and Ruby both handle automation, but Python has real advantages on Linux: its standard library, its ecosystem, and why I reach for it."
 tags = [
     "python",
     "ruby",

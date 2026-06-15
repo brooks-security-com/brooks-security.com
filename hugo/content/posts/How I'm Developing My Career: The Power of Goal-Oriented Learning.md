@@ -1,6 +1,7 @@
 +++
 title = "How I'm Developing My Career: The Power of Goal-Oriented Learning"
-description = ""
+aliases = ["/posts/how-im-developing-my-career-the-power-of-goal-oriented-learning-copy/"]
+description = "How I built an IT security career through goal-oriented certifications, hands-on projects, and roles that matched where I wanted to grow."
 tags = [
     "skills",
     "coding",

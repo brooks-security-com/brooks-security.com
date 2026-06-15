@@ -1,6 +1,6 @@
 +++
 title = "Spec Driven Development"
-description = ""
+description = "Most software fails from unclear expectations, not weak code. How spec-driven development sharpens requirements and makes AI-assisted work reliable."
 tags = [
     "spec-driven development",
     "ai",
