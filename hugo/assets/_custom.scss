@@ -262,7 +262,7 @@
   font-size: 1.05rem;
 }
 .proof-item span {
-  color: var(--body-font-color);
+  color: #57606a;
   font-size: 0.95rem;
 }
 
@@ -283,15 +283,17 @@
 .home-cta p {
   margin: 0 auto 1.1rem;
   max-width: 560px;
-  color: var(--body-font-color);
+  color: #57606a;
 }
 
 /* --- Keep button text stable after visit + full-width social icons ------- */
-/* The theme sets a[href]:visited globally; these match its specificity and
-   win because _custom.scss is imported last in book.scss. */
-a.btn-primary, a.btn-primary:link, a.btn-primary:visited { color: #fff; }
-a.btn-secondary, a.btn-secondary:link, a.btn-secondary:visited { color: var(--color-link, #0a66c2); }
-a.btn-secondary:hover { color: #fff; }
+/* The theme sets `.markdown a[href]:visited` (specificity 0,3,1) inside its
+   content wrapper, which outranks a bare a.btn-* rule (that is why visited
+   buttons went purple). Scope ours under .markdown so it matches and wins on
+   load order, since _custom.scss is imported last in book.scss. */
+.markdown a.btn-primary, .markdown a.btn-primary:link, .markdown a.btn-primary:visited { color: #fff; }
+.markdown a.btn-secondary, .markdown a.btn-secondary:link, .markdown a.btn-secondary:visited { color: var(--color-link, #0a66c2); }
+.markdown a.btn-secondary:hover { color: #fff; }
 
 .social-row {
   display: flex;
@@ -308,7 +310,7 @@ a.btn-secondary:hover { color: #fff; }
   padding: 0.95rem 0.5rem;
   border: 1px solid var(--gray-200);
   border-radius: 10px;
-  color: var(--body-font-color);
+  color: #57606a;
   text-decoration: none;
 }
 .social-row a.social-btn:hover {
