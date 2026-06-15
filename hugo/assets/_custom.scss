@@ -31,64 +31,6 @@
   margin-bottom: 0;
 }
 
-/* --- Home: "Where to Find Me" + GitHub Activity --------------------------- */
-/* One card holding the social links beside the contribution heatmap. The two
-   columns wrap to a single column on narrow screens; a container query (not a
-   viewport media query) drives the divider so it appears only when the columns
-   actually sit side by side, regardless of the surrounding theme chrome. */
-.home-connect {
-  container-type: inline-size;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 1.5rem 1.75rem;
-  background: var(--gray-100);
-  border: 1px solid var(--gray-200);
-  border-radius: 12px;
-  padding: 1.25rem 1.4rem;
-  margin-top: 1rem;
-}
-.home-connect h2 {
-  margin-top: 0;
-  margin-bottom: 0.6rem;
-}
-.home-connect__links {
-  flex: 0 0 auto;
-  min-width: 150px;
-}
-.home-connect__links a {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.35rem 0;
-  color: var(--body-font-color);
-  text-decoration: none;
-  font-weight: 500;
-}
-.home-connect__links a:hover {
-  text-decoration: underline;
-}
-.home-connect__links .ic {
-  color: inherit;
-  display: inline-flex;
-}
-.home-connect__links .ic svg {
-  display: block;
-}
-.home-connect__activity {
-  flex: 1 1 360px;
-  min-width: 280px;
-}
-.home-connect__activity .gh-heatmap {
-  margin-top: 0.25rem;
-}
-@container (min-width: 470px) {
-  .home-connect__activity {
-    border-left: 1px solid var(--gray-200);
-    padding-left: 1.5rem;
-  }
-}
-
 /* --- Services CTA button + contact form ----------------------------------- */
 .btn-primary {
   display: inline-block;
@@ -320,7 +262,7 @@
   font-size: 1.05rem;
 }
 .proof-item span {
-  color: var(--gray-500, #6e7781);
+  color: var(--body-font-color);
   font-size: 0.95rem;
 }
 
@@ -341,5 +283,46 @@
 .home-cta p {
   margin: 0 auto 1.1rem;
   max-width: 560px;
-  color: var(--gray-500, #6e7781);
+  color: var(--body-font-color);
+}
+
+/* --- Keep button text stable after visit + full-width social icons ------- */
+/* The theme sets a[href]:visited globally; these match its specificity and
+   win because _custom.scss is imported last in book.scss. */
+a.btn-primary, a.btn-primary:link, a.btn-primary:visited { color: #fff; }
+a.btn-secondary, a.btn-secondary:link, a.btn-secondary:visited { color: var(--color-link, #0a66c2); }
+a.btn-secondary:hover { color: #fff; }
+
+.social-row {
+  display: flex;
+  gap: 0.6rem;
+  margin: 0.5rem 0 1rem;
+}
+.social-row a.social-btn,
+.social-row a.social-btn:link,
+.social-row a.social-btn:visited {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.95rem 0.5rem;
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  color: var(--body-font-color);
+  text-decoration: none;
+}
+.social-row a.social-btn:hover {
+  border-color: var(--color-link, #0a66c2);
+  color: var(--color-link, #0a66c2);
+  background: var(--gray-100);
+  text-decoration: none;
+}
+.social-row a.social-btn svg {
+  width: 26px;
+  height: 26px;
+  display: block;
+}
+@media (max-width: 480px) {
+  .social-row { flex-wrap: wrap; }
+  .social-row a.social-btn { flex-basis: calc(50% - 0.3rem); }
 }
