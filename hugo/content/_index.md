@@ -35,20 +35,20 @@ bookToc: false
 
 <div class="home-proof">
   <div class="proof-item">
-    <strong>CISSP</strong>
-    <span>Plus Red Hat (RHCE), AWS Solutions Architect, and Security+. The credentials buyers and auditors actually screen for.</span>
+    <strong>Every part of your security, covered</strong>
+    <span>You should not have to stitch together a compliance shop, a cloud team, and a security lead. I cover all three, with the credentials to prove it: CISSP, Red Hat, and AWS.</span>
   </div>
   <div class="proof-item">
-    <strong>SOC 2 battle-tested</strong>
-    <span>Built the program from nothing and passed Type 1, then Type 2 with zero findings, two years running.</span>
+    <strong>Pass your SOC 2</strong>
+    <span>Your SOC 2 should not be a fire drill. I can stand one up from nothing, and I have a proven track record of building compliant security programs that pass the audit every time.</span>
   </div>
   <div class="proof-item">
-    <strong>Six regulated sectors</strong>
-    <span>HIPAA medical, municipal, critical infrastructure and OT, SaaS, government, and banking.</span>
+    <strong>I know your industry's rules</strong>
+    <span>Your industry has its own rulebook, and I have probably worked it. I have built programs under HIPAA, in finance, government, and critical infrastructure, where the rules are strict and the stakes are high.</span>
   </div>
   <div class="proof-item">
-    <strong>A real human in the loop</strong>
-    <span>I use AI heavily and steer it with experience, so you get the speed without the confident, broken answers.</span>
+    <strong>Fast, and built for you</strong>
+    <span>You get the speed of modern tooling without the cut corners. I use AI heavily, then steer it with experience so quality never slips, and what you get is built around your business, not a template.</span>
   </div>
 </div>
 
