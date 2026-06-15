@@ -22,12 +22,16 @@ bookToc: false
     <div class="feature-card">
       <h3><svg class="card-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-link, #0a66c2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Security &amp; Compliance</h3>
       <p>GRC done for real, not for show. Policies and procedures that match how you actually run, SOC 2 and HIPAA readiness, risk management, cloud security, and vulnerability management. I took a startup from loose, ad-hoc practices to SOC 2 Type 2 with zero adverse findings, two years running.</p>
-      <a class="btn-secondary" href="/docs/services/security-consulting/">Security consulting &rarr;</a>
+      <div class="card-action">
+        <a class="btn-secondary" href="/docs/services/security-consulting/">Security consulting &rarr;</a>
+      </div>
     </div>
     <div class="feature-card">
       <h3><svg class="card-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-link, #0a66c2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg> Cloud &amp; Operations</h3>
       <p>I treat infrastructure like software. Terraform-managed, PR-locked changes, Ansible-driven fleets, CI/CD with the right gates, and cloud bills cut without breaking what works. This whole site runs the AWS best-practice way for about a dollar a month.</p>
-      <a class="btn-secondary" href="/docs/services/operations-consulting/">Operations consulting &rarr;</a>
+      <div class="card-action">
+        <a class="btn-secondary" href="/docs/services/operations-consulting/">Operations consulting &rarr;</a>
+      </div>
     </div>
   </div>
 </div>
@@ -76,12 +80,16 @@ bookToc: false
     <div class="feature-card">
       <h3>This Website</h3>
       <p>Anyone can build on AWS. Cost-optimizing what you build without breaking it is the real proof. This whole site, plus the infrastructure and CI/CD that ship it, costs about a dollar a month to run on full AWS best-practice tooling. And it's brutally simple to maintain.</p>
-      <a class="btn-secondary" href="/docs/portfolio/gitops/">View the GitOps project &rarr;</a>
+      <div class="card-action">
+        <a class="btn-secondary" href="/docs/portfolio/gitops/">View the GitOps project &rarr;</a>
+      </div>
     </div>
     <div class="feature-card">
       <h3>Jarvis, an Executive Summary Agent</h3>
       <p>A one-shot containerized agent that delivers a daily AI-generated executive brief to Slack. Jarvis pulls from AWS, GitHub, Gmail, Drata, and more through a drop-in plugin architecture, with per-plugin LLM inference via Groq. The architecture ensures secure, isolated execution of plugins while keeping the operational overhead extremely low.</p>
-      <a class="btn-secondary" href="/docs/portfolio/automation/">View the Jarvis project &rarr;</a>
+      <div class="card-action">
+        <a class="btn-secondary" href="/docs/portfolio/automation/">View the Jarvis project &rarr;</a>
+      </div>
     </div>
   </div>
 </div>
