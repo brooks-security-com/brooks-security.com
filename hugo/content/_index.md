@@ -40,7 +40,7 @@ bookToc: false
   </div>
   <div class="proof-item">
     <strong>SOC 2 battle-tested</strong>
-    <span>Built the program from nothing and passed Type 1, then Type 2 with zero findings, two years running.</span>
+    <span>Rebuilt the program and passed Type 1, then Type 2 with zero findings, two years running.</span>
   </div>
   <div class="proof-item">
     <strong>Six regulated sectors</strong>
