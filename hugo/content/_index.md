@@ -80,7 +80,7 @@ bookToc: false
     </div>
     <div class="feature-card">
       <h3>Jarvis, an Executive Summary Agent</h3>
-      <p>A one-shot containerized agent that delivers a daily AI-generated executive brief to Slack. Jarvis pulls from AWS, GitHub, Gmail, Drata, and more through a drop-in plugin architecture, with per-plugin LLM inference via Groq.</p>
+      <p>A one-shot containerized agent that delivers a daily AI-generated executive brief to Slack. Jarvis pulls from AWS, GitHub, Gmail, Drata, and more through a drop-in plugin architecture, with per-plugin LLM inference via Groq. The architecture ensures secure, isolated execution of plugins while keeping the operational overhead extremely low.</p>
       <a class="btn-secondary" href="/docs/portfolio/automation/">View the Jarvis project &rarr;</a>
     </div>
   </div>

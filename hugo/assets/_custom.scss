@@ -264,7 +264,6 @@ body {
   padding: 1.1rem 1.2rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 .feature-card:hover {
@@ -273,7 +272,7 @@ body {
 }
 .feature-card h3 {
   margin-top: 0;
-  margin-bottom: 0;
+  margin-bottom: 0.5rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -282,11 +281,11 @@ body {
   flex-shrink: 0;
 }
 .feature-card p {
-  margin-bottom: 0;
+  flex-grow: 1;
 }
 .feature-card .btn-secondary {
   align-self: flex-start;
-  margin-top: auto;
+  margin-top: 0.4rem;
 }
 
 /* --- Proof band ----------------------------------------------------------- */
