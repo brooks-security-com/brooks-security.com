@@ -40,7 +40,7 @@ bookToc: false
   </div>
   <div class="proof-item">
     <strong>Pass your SOC 2</strong>
-    <span>Your SOC 2 should not be a fire drill. I can stand one up from nothing, and I have a proven track record of building compliant security programs that pass the audit every time.</span>
+    <span>Your SOC 2 should not be a fire drill. I can stand a program up from nothing, and I have a proven track record of building compliant security programs that pass the audit every time.</span>
   </div>
   <div class="proof-item">
     <strong>I know your industry's rules</strong>
