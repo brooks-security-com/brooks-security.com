@@ -281,11 +281,11 @@ body {
   flex-shrink: 0;
 }
 .feature-card p {
-  flex-grow: 1;
+  margin-bottom: 0;
 }
-.feature-card .btn-secondary {
-  align-self: flex-start;
-  margin-top: 0.4rem;
+.feature-card .card-action {
+  margin-top: auto;
+  padding-top: 1.2rem;
 }
 
 /* --- Proof band ----------------------------------------------------------- */
