@@ -37,7 +37,7 @@
         "FOURTH_QUARTILE" "#216e39" -}}
 
   <div class="gh-heatmap" style="margin: 0.75rem 0 1.25rem;">
-    <div style="font-size: 0.9rem; color: var(--gray-500, #57606a); margin-bottom: 0.5rem;">
+    <div style="font-size: 0.9rem; color: #57606a; margin-bottom: 0.5rem;">
       <strong>{{ $data.total }}</strong> contributions on
       <a href="https://github.com/littleseneca" rel="noopener">GitHub</a> in the last year
     </div>
@@ -62,7 +62,7 @@
       </svg>
     </div>
 
-    <div style="display: flex; align-items: center; gap: 4px; font-size: 0.75rem; color: var(--gray-500, #57606a); margin-top: 0.5rem;">
+    <div style="display: flex; align-items: center; gap: 4px; font-size: 0.75rem; color: #57606a; margin-top: 0.5rem;">
       <span>Less</span>
       {{- range slice "NONE" "FIRST_QUARTILE" "SECOND_QUARTILE" "THIRD_QUARTILE" "FOURTH_QUARTILE" -}}
         <span style="display: inline-block; width: 11px; height: 11px; border-radius: 2px; background: {{ index $colors . | safeCSS }};"></span>
@@ -71,7 +71,7 @@
     </div>
   </div>
 {{ else }}
-  <div class="gh-heatmap" style="margin: 0.75rem 0 1.25rem; font-size: 0.9rem; color: var(--gray-500, #57606a);">
+  <div class="gh-heatmap" style="margin: 0.75rem 0 1.25rem; font-size: 0.9rem; color: #57606a;">
     GitHub activity is being generated — check back after the next build.
   </div>
 {{ end }}
