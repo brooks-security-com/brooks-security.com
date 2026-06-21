@@ -155,7 +155,12 @@ def _assess(token):
 # alone (the one dependency this Lambda is allowed). Imports are lazy so the
 # __main__ self-check runs without google-auth installed.
 def _google_token():
-    import google.auth
+    # Construct the AWS external-account credential directly rather than via
+    # google.auth.load_credentials_from_dict: that high-level loader eagerly
+    # imports the `requests`-based transport to look up a project id, which is
+    # not in this layer (google-auth only). from_info skips that lookup, and
+    # refresh() then runs entirely through the urllib transport below.
+    from google.auth import aws as google_aws
     from google.auth.transport import Request as TransportRequest
     from google.auth.transport import Response as TransportResponse
 
@@ -187,7 +192,7 @@ def _google_token():
                 return _Resp(e.code, dict(e.headers), e.read())
 
     config = json.loads(_ssm_param(os.environ["GOOGLE_CRED_CONFIG_SSM_PARAM"]))
-    creds, _ = google.auth.load_credentials_from_dict(config, scopes=[_SPREADSHEETS_SCOPE])
+    creds = google_aws.Credentials.from_info(config, scopes=[_SPREADSHEETS_SCOPE])
     creds.refresh(_Transport())
     return creds.token
 
