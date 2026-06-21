@@ -212,6 +212,14 @@ body {
 .lead-form .contact-form {
   margin-top: 1.25rem;
 }
+.lead-privacy {
+  margin: 1.25rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--gray-200);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--gray-500, #6e7781);
+}
 @media (max-width: 620px) {
   .lead-form { padding: 1.25rem; }
 }
