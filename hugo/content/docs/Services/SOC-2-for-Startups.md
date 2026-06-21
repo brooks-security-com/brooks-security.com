@@ -16,10 +16,10 @@ I take you from nothing to a defensible report on the fastest honest timeline. T
 
 ## Why trust me with it
 
-I took a startup from loose, ad-hoc practices to SOC 2 Type 1 and then Type 2, two years running, with zero adverse findings. I did not inherit that program. I built it from nothing: the policies, the controls in AWS, the evidence, and the security-aware habits that keep it standing. That is the same work I would do for you.
+I took a startup from loose, ad-hoc practices to SOC 2 Type 1 and then Type 2 with zero adverse findings. I did not inherit that program. I built it from nothing: the policies, the controls in AWS, the evidence, and the security-aware habits that keep it standing. That is the same work I would do for you.
 
 ## How it fits the offer
 
-This is the SaaS path through my [compliance program](/docs/services/compliance-program/): a fixed-fee 90 day project to get you audit ready, then a monthly retainer to carry you through the Type 2 window and the next audit period. The full scope, pricing, and structure are on that page.
+This is the SaaS path through my [compliance program](/docs/services/compliance-program/): a defined upfront engagement to get you audit ready, then a monthly retainer to carry you through the Type 2 window and the next audit period. The full scope and structure are on that page.
 
 <a class="btn-primary btn-lg" href="/docs/services/contact-me/">Get your SOC 2 moving &rarr;</a>

@@ -1,9 +1,13 @@
 ---
 title: "SOC 2 Readiness Checklist"
-bookFlatSection: true
+bookHidden: true
 bookToc: false
 bookComments: false
 weight: 8
+menu:
+  after:
+    name: SOC 2 Readiness Checklist
+    weight: 2
 ---
 
 <div class="home-hero">
@@ -17,7 +21,7 @@ weight: 8
   <span class="lead-trust__item">CISSP</span>
   <span class="lead-trust__item">AWS certified</span>
   <span class="lead-trust__item">SOC 2</span>
-  <span class="lead-trust__item">Two years of audits, zero adverse findings</span>
+  <span class="lead-trust__item">Zero adverse findings</span>
   <span class="lead-trust__item"><a href="https://github.com/littleseneca/brooks-security.com" target="_blank" rel="noopener">This whole site is open source</a></span>
 </div>
 

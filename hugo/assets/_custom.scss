@@ -239,6 +239,7 @@ body {
   gap: 1.5rem 2rem;
   margin: 0.5rem 0 2.25rem;
   position: relative;
+  overflow: hidden;
 }
 .home-hero::before {
   content: "";
@@ -503,7 +504,6 @@ body {
   border-radius: 8px;
   padding: 0.45rem 0.75rem;
   margin: 0.5rem 0;
-  text-align: center;
   font-weight: 600;
   transition: filter 0.2s ease, transform 0.2s ease;
 }
