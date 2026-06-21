@@ -22,12 +22,13 @@ menu:
   <span class="lead-trust__item">AWS certified</span>
   <span class="lead-trust__item">SOC 2</span>
   <span class="lead-trust__item">Zero adverse findings</span>
-  <span class="lead-trust__item"><a href="https://github.com/littleseneca/brooks-security.com" target="_blank" rel="noopener">This whole site is open source</a></span>
 </div>
 
 <div class="lead-form">
   <h2>Send me the checklist</h2>
   <p>Tell me where to send it and it is yours. No sequence, no sales calls you did not ask for. The download link appears right here as soon as you submit.</p>
+  <p>We build in the open, so if you don't trust us, <a href="https://brooks-security.com/docs/portfolio/gitops/#lead-magnet-capture-keyless-into-google-sheets">look at the implementation</a>.</p>
+  <p>If you get an email from us, it will be from us directly (a human) and we will not spam you.</p>
 
 {{< subscribe-form >}}
 
