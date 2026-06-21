@@ -28,10 +28,11 @@ Jeff Moser makes the point better than I can, in [*A Stick Figure Guide to the A
 | AWS access portal | IAM Identity Center, fronted by a CloudFront 301 redirect |
 | Scheduled jobs | EventBridge → Lambda (nightly heatmap refresh) |
 | Contact form | API Gateway HTTP API behind CloudFront, with reCAPTCHA Enterprise + SNS email |
+| Lead capture | Same API Gateway HTTP API (`/api/subscribe`) → Lambda that appends to a Google Sheet, authenticated keyless via Workload Identity Federation |
 | Secrets | AWS SSM Parameter Store |
 | CI/CD | GitHub Actions on **GitHub-hosted runners** |
 
-What this isn't: no self-hosted runner, no Ansible, no servers to patch. It all runs on throwaway GitHub-hosted runners against AWS.
+What this isn't: no self-hosted runner, no Ansible, no servers to patch, and no static Google service-account key anywhere. It all runs on throwaway GitHub-hosted runners against AWS.
 
 ## Repository layout
 
@@ -42,10 +43,10 @@ What this isn't: no self-hosted runner, no Ansible, no servers to patch. It all 
 │   └── hugo-deploy.yml         # hugo build → deploy → CloudFront invalidation
 ├── hugo/                       # site content, config, theme submodule, data/
 ├── terraform/
-│   ├── *.tf                    # s3, cloudfront, route53, acm, iam, sso, lambda, contact
+│   ├── *.tf                    # s3, cloudfront, route53, acm, iam, sso, lambda, contact, subscribe
 │   ├── imports.tf              # import blocks adopting pre-existing resources
 │   ├── bootstrap/              # one-time: tfstate bucket + lock table
-│   └── files/                  # CloudFront function + Lambda source
+│   └── files/                  # CloudFront function, Lambda source, google-auth layer (committed)
 ├── specs/                      # design docs for in-flight work
 └── readme.md
 ```
@@ -123,6 +124,27 @@ The Lambda does three things: confirm the request actually came through CloudFro
 
 This is the kind of result I want from picking the right building blocks: a dynamic feature, with bot protection and email delivery, bolted onto a static site for a rounding error. API Gateway's HTTP API is pay-per-request, about $1 per million calls, which for a contact form rounds to zero. A real backend that adds no always-on infrastructure and no meaningful cost.
 
+## Lead-magnet capture, keyless into Google Sheets
+
+The readiness-checklist landing page captures signups into a live Google Sheet. It reuses the contact form's whole anti-abuse posture, the CloudFront origin secret, reCAPTCHA Enterprise, and a honeypot, on a second route (`/api/subscribe`) on the same API Gateway HTTP API. The interesting part is how it writes to Google, because it does it without a key.
+
+Google's organization policy here blocks service-account key creation outright, which is the right default. So instead of a static key sitting in SSM, the Lambda uses Workload Identity Federation: its AWS execution role federates into GCP and impersonates a keyless service account, and only that service account is shared on the Sheet.
+
+```mermaid
+flowchart TD
+    B["Browser<br/>reCAPTCHA Enterprise token"] -->|"POST /api/subscribe"| CF["CloudFront<br/>/api/subscribe behavior<br/>injects shared-secret header"]
+    CF --> AG["API Gateway HTTP API<br/>(proxy integration)"]
+    AG --> L["Lambda<br/>brooks-security-subscribe (python3.12)"]
+    L --> V{"verify<br/>secret + reCAPTCHA + honeypot"}
+    V -->|"exchange AWS identity"| STS["GCP STS<br/>token exchange"]
+    STS -->|"impersonate"| IAM["IAM Credentials<br/>generateAccessToken"]
+    IAM --> SH["Sheets API<br/>append row"]
+```
+
+The trust chain runs entirely on identity, no shared secret crosses the boundary. GCP's workload identity pool is pinned to the exact assumed-role ARN of the `brooks-security-subscribe` role, so only that Lambda can federate. It exchanges its AWS identity for a short-lived GCP token at Google's STS endpoint, then impersonates the service account to get an access token, then appends the row. The only out-of-band material is the federation config (identifiers, not a secret) and the spreadsheet id, both in SSM and read at runtime. There is no key to leak, rotate, or commit by accident.
+
+The one dependency this adds is `google-auth`, for the token exchange, shipped as a Lambda layer whose build is committed to the repo so it stays visible and reproducible. The rest of the handler is standard library, including a small urllib transport so the federated refresh and the Sheets call never need a heavier HTTP dependency.
+
 ## Terraform state & bootstrap
 
 State lives in an S3 backend (`brooks-security-tfstate`) with a DynamoDB lock table. A small `terraform/bootstrap/` module creates both once; its own state is local and committed to the repo, which is the usual chicken-and-egg escape hatch. The main config adopts the resources that already existed through `terraform/imports.tf`: `import` blocks that pull live Route 53, ACM, S3, and CloudFront under management, so the steady-state plan is a clean no-op.
@@ -136,10 +158,11 @@ State lives in an S3 backend (`brooks-security-tfstate`) with a DynamoDB lock ta
 | **Production environment gate** | `apply` and `deploy` jobs target the `production` GitHub Environment, requiring explicit approval before they execute |
 | **First-time contributor approval** | GitHub requires a maintainer to approve workflow runs on PRs from contributors with no prior merged PR |
 | **Private origin** | The S3 bucket blocks all public access; only CloudFront can read it, via Origin Access Control |
-| **Secrets in SSM** | The GitHub PAT (heatmap job) and the reCAPTCHA Enterprise API key + site key (contact form) live in SSM Parameter Store and are referenced by ARN, never pulled into Terraform state |
-| **Least-privilege IAM** | The deploy credentials and both Lambda roles are each scoped to the minimum actions they need (S3 + CloudFront for deploys; SSM read + scoped KMS decrypt for the heatmap Lambda; SSM read + scoped KMS decrypt + single-topic SNS publish for the contact Lambda) |
-| **Bot protection** | The contact form gates submissions with reCAPTCHA Enterprise scoring and a honeypot field, dropping bots before they reach the inbox |
-| **CloudFront-only backend** | The contact API is publicly reachable but the Lambda rejects any request missing a secret header that only CloudFront injects, so the API cannot be invoked directly |
+| **Secrets in SSM** | The GitHub PAT (heatmap job), the reCAPTCHA Enterprise API key + site key (forms), and the subscribe path's federation config + spreadsheet id all live in SSM Parameter Store and are referenced by ARN, never pulled into Terraform state |
+| **Keyless Google access** | The subscribe Lambda writes to Google with no service-account key. It federates into GCP via Workload Identity Federation and impersonates a keyless service account; the workload identity pool trusts only the `brooks-security-subscribe` role's assumed-role ARN |
+| **Least-privilege IAM** | The deploy credentials and all three Lambda roles are each scoped to the minimum actions they need (S3 + CloudFront for deploys; SSM read + scoped KMS decrypt for the heatmap Lambda; the same plus single-topic SNS publish for the contact Lambda; SSM read + scoped KMS decrypt for the subscribe Lambda, which reaches Google purely through federated identity) |
+| **Bot protection** | Both forms gate submissions with reCAPTCHA Enterprise scoring and a honeypot field, dropping bots before they reach the inbox or the Sheet |
+| **CloudFront-only backend** | The contact and subscribe APIs are publicly reachable but each Lambda rejects any request missing a secret header that only CloudFront injects, so the APIs cannot be invoked directly |
 
 **On deploy credentials:** right now the workflows authenticate to AWS with a scoped IAM user's access keys, stored as GitHub Actions secrets and passed through the standard credential chain (no profile in CI). I've already defined a GitHub OIDC provider and a dedicated deploy role in `terraform/iam.tf`, staged for a cutover to short-lived, keyless credentials. When that lands, the static keys go away.
 
@@ -150,9 +173,10 @@ State lives in an S3 backend (`brooks-security-tfstate`) with a DynamoDB lock ta
 | Route 53 hosted zone | ~$0.50 |
 | S3 storage + requests | ~$0.01 |
 | CloudFront (low traffic, two distributions) | ~$0.01 |
-| Lambda + API Gateway + EventBridge (heatmap + contact form) | ~$0.00 |
+| Lambda + API Gateway + EventBridge (heatmap + contact + subscribe) | ~$0.00 |
 | SNS (contact-form emails) | ~$0.00 |
 | ACM, SSM, IAM, Identity Center | $0.00 |
+| Google Sheets API (lead capture) | $0.00 |
 | **Total** | **~$1/month** |
 
-Adding the contact form didn't move this total. That's what I get for sticking to serverless, pay-per-use pieces and reusing what I already run, instead of bolting on a managed service for every new feature.
+Neither the contact form nor the lead-capture path moved this total. That's what I get for sticking to serverless, pay-per-use pieces and reusing what I already run, instead of bolting on a managed service for every new feature. The subscribe path even reused the contact form's API Gateway and origin secret outright, so the second feature cost a route and a Lambda, nothing more.
