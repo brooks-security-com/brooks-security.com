@@ -1,0 +1,23 @@
+{{/* Override of the theme's posts/single.html. Identical to the theme version
+     except for the lead-cta partial appended after the post content, so every
+     blog post (existing and future) ends with the lead-magnet call to action. */}}
+{{ define "main" }}
+<article class="markdown book-post">
+  <h1>
+    {{ partial "docs/title" . }}
+  </h1>
+  {{ partial "docs/post-meta" . }}
+  <div class="book-post-content markdown-inner">
+    {{- .Content -}}
+  </div>
+  {{ partial "lead-cta" . }}
+</article>
+{{ end }}
+
+{{ define "toc" }}
+  {{ partial "docs/toc" . }}
+{{ end }}
+
+{{ define "footer" }}
+  {{ partial "docs/post-prev-next" . }}
+{{ end }}
