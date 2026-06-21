@@ -8,7 +8,7 @@ bookToc: false
   <img class="home-hero__photo" src="/grahambrooks.png" alt="Graham Brooks" />
   <div class="home-hero__text">
     <h1 class="home-hero__title">SOC 2 compliance, <em>written, implemented, and proven</em>.</h1>
-    <p class="home-hero__lead">I'm Graham Brooks, CISSP. I write policies that actually describe <em>your</em> organization — not a template with your name filled in — and I build the Terraform, Ansible, and operational processes that enforce them. Then I produce the evidence package the auditor signs off on. One practitioner, the whole program, through Brooks Security LLC.</p>
+    <p class="home-hero__lead">I'm Graham Brooks, CISSP. I write policies that describe <em>your</em> organization (not a template with your name filled in) and I build the Terraform, Ansible, and operational processes that enforce them. Then I produce the evidence package the auditor signs off on. One practitioner, the whole program, through Brooks Security LLC.</p>
     <div class="btn-row">
       <a class="btn-primary btn-lg" href="/docs/services/compliance-program/">See the offer &rarr;</a>
       <a class="btn-secondary btn-lg" href="/readiness-check/">Get the readiness checklist</a>
@@ -22,11 +22,11 @@ bookToc: false
   <div class="card-grid">
     <div class="feature-card">
       <h3>The copy-paste trap</h3>
-      <p>There are dozens of policy templates online — some decent, most not. But none of them describe <em>your</em> organization. Your tech stack, your team structure, your actual processes. When the auditor asks "show me where you do this," a borrowed policy has no answer, and the gap only shows up when it matters.</p>
+      <p>There are dozens of policy templates online. Some are decent. Most are not. But none of them describe <em>your</em> organization: your tech stack, your team structure, your actual processes. When the auditor asks "show me where you do this," a borrowed policy has no answer, and the gap only shows up when it matters.</p>
     </div>
     <div class="feature-card">
       <h3>The implementation gap</h3>
-      <p>A policy that says "access is reviewed quarterly" means nothing if you have no mechanism to actually review it, record the evidence, and prove it happened. Writing the policy is the easy part. Building the controls that enforce it — in your cloud, in your workflows, to the standard an auditor will accept — is a different discipline entirely.</p>
+      <p>A policy that says "access is reviewed quarterly" means nothing if you have no mechanism to review it, record the evidence, and prove it happened. Writing the policy is the easy part. Building the controls that enforce it in your cloud, in your workflows, to the standard an auditor will accept. That is a different discipline entirely.</p>
     </div>
   </div>
 </div>
@@ -36,7 +36,7 @@ bookToc: false
 
   <div class="feature-card feature-card--lead">
     <h3><svg class="card-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-link, #0a66c2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> A full-stack SOC 2 program, in 90 days</h3>
-    <p>I sit at the intersection most people miss: the place where a written policy has to turn into a real control, running in your cloud, producing evidence an auditor can verify. I do all of it — the policies that describe your actual organization, the infrastructure-as-code that enforces them, and the evidence package that proves they work — so you are game-day ready.</p>
+    <p>I sit at the intersection most people miss: the place where a written policy has to turn into a real control, running in your cloud, producing evidence an auditor can verify. I do all of it. The policies that describe your actual organization, the infrastructure-as-code that enforces them, and the evidence package that proves they work. So you are game-day ready.</p>
     <p>I took a startup from loose, ad-hoc practices to SOC 2 Type 2 with zero adverse findings, two years running, and I build that same program for you.</p>
     <div class="card-action btn-row">
       <a class="btn-primary" href="/docs/services/compliance-program/">See the offer and pricing &rarr;</a>
@@ -50,26 +50,26 @@ bookToc: false
   <div class="home-proof">
     <div class="proof-item">
       <strong><svg class="card-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-link, #0a66c2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg> Policy + controls, one person</strong>
-      <span>You don't need a policy writer, a cloud engineer, and a security lead. You need someone who does all three. CISSP, Red Hat, and AWS certified — I bridge the gap between what the policy says and what your cloud actually does.</span>
+      <span>You don't need a policy writer, a cloud engineer, and a security lead. You need someone who does all three. CISSP, Red Hat, and AWS certified. I bridge the gap between what the policy says and what your cloud actually does.</span>
     </div>
     <div class="proof-item">
       <strong><svg class="card-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-link, #0a66c2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="m9 15 2 2 4-4"/></svg> Proven track record</strong>
-      <span>SOC 2 Type 2 with zero adverse findings, two years running — from nothing to a defensible program that passes the audit every time. Not a fire drill, a system.</span>
+      <span>SOC 2 Type 2 with zero adverse findings, two years running. From nothing to a defensible program that passes the audit every time. Not a fire drill, a system.</span>
     </div>
     <div class="proof-item">
       <strong><svg class="card-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-link, #0a66c2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> Industry fluency</strong>
-      <span>Healthcare, finance, government, critical infrastructure — I've built programs where the rules and stakes are highest.</span>
+      <span>Healthcare, finance, government, critical infrastructure. I've built programs where the rules and stakes are highest.</span>
     </div>
     <div class="proof-item">
       <strong><svg class="card-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-link, #0a66c2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Fast, built for you</strong>
-      <span>Modern tooling, experienced steering. I use AI heavily, then direct it with real-world judgment — so what you get is built around your business, not a template.</span>
+      <span>Modern tooling, experienced steering. I use AI heavily, then direct it with real-world judgment, so what you get is built around your business. Not a template.</span>
     </div>
   </div>
 </div>
 
 <div class="home-cta">
   <h2>Ready for your SOC 2?</h2>
-  <p>Tell me what you're working on — I read everything and respond within a couple business days. Not ready to talk? Start with the free readiness checklist and find your gaps first.</p>
+  <p>Tell me what you're working on. I read everything and respond within a couple business days. Not ready to talk? Start with the free readiness checklist and find your gaps first.</p>
   <div class="btn-row" style="justify-content:center">
     <a class="btn-primary btn-lg" href="/docs/services/contact-me/">Get in touch &rarr;</a>
     <a class="btn-secondary btn-lg" href="/readiness-check/">Get the checklist</a>
@@ -90,14 +90,14 @@ bookToc: false
   <div class="card-grid">
     <div class="feature-card">
       <h3>This Website</h3>
-      <p>Full AWS best-practice infrastructure, CI/CD, and a production site — all for about a dollar a month. Proof that cost-optimized doesn't mean fragile.</p>
+      <p>Full AWS best-practice infrastructure, CI/CD, and a production site, all for about a dollar a month. Proof that cost-optimized doesn't mean fragile.</p>
       <div class="card-action">
         <a class="btn-secondary" href="/docs/portfolio/gitops/">View the GitOps project &rarr;</a>
       </div>
     </div>
     <div class="feature-card">
       <h3>Jarvis, an Executive Summary Agent</h3>
-      <p>A daily AI-generated executive brief delivered to Slack, pulling from AWS, GitHub, Gmail, Drata, and more. Drop-in plugin architecture with per-plugin LLM inference — secure, isolated, near-zero ops overhead.</p>
+      <p>A daily AI-generated executive brief delivered to Slack, pulling from AWS, GitHub, Gmail, Drata, and more. Drop-in plugin architecture with per-plugin LLM inference. Secure, isolated, near-zero ops overhead.</p>
       <div class="card-action">
         <a class="btn-secondary" href="/docs/portfolio/automation/">View the Jarvis project &rarr;</a>
       </div>

@@ -9,7 +9,7 @@ Most compliance work hands you a binder and walks away. You are left to figure o
 ## Who this is for
 
 - A SaaS company with an enterprise deal stuck behind a SOC 2 requirement.
-- An organization that already knows how to write policy but doesn't know how to implement it — the controls, the infrastructure, the evidence pipeline that makes it auditable.
+- An organization that already knows how to write policy but doesn't know how to implement it: the controls, the infrastructure, the evidence pipeline that makes it auditable.
 - Any team that has bought a compliance automation tool and discovered it tracks controls but does not build them.
 
 ## What you get
