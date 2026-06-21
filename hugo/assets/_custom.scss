@@ -703,6 +703,10 @@ body {
     flex: 1 1 auto;
     min-width: 0;
     overflow: hidden;
+    flex-wrap: nowrap;
+  }
+  .top-nav__brand {
+    white-space: nowrap;
   }
   .top-nav__subtitle {
     white-space: nowrap;
