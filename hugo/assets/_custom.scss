@@ -25,6 +25,39 @@ body {
 
 .blog-card-meta {
   margin-bottom: 0.65rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.blog-meta-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: inherit;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-right: 0.3rem;
+}
+
+.blog-card-category a,
+.blog-card-tags a,
+.blog-card-date span {
+  font-size: 0.78rem;
+  color: inherit;
+  text-decoration: none;
+  margin-right: 0.3rem;
+}
+.blog-card-category a:hover,
+.blog-card-tags a:hover {
+  color: var(--color-link, #0a66c2);
+  text-decoration: underline;
+}
+
+.blog-card-category a {
+  font-weight: 500;
+}
+.blog-card-tags a {
+  font-weight: 400;
 }
 
 .blog-card-summary {
@@ -773,4 +806,44 @@ main,
 .book-article > h1:first-child,
 .markdown > h1:first-child {
   display: none;
+}
+
+/* --- Post meta card (single blog post page) -------------------------------- */
+.post-meta-card {
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.25rem;
+  align-items: center;
+  font-size: 0.82rem;
+}
+
+.post-meta-card__date {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: inherit;
+  font-weight: 500;
+}
+
+.post-meta-card__row {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+}
+
+.post-meta-card__row a {
+  color: inherit;
+  text-decoration: none;
+  font-weight: 400;
+}
+.post-meta-card__row a:hover {
+  color: var(--color-link, #0a66c2);
+  text-decoration: underline;
 }
