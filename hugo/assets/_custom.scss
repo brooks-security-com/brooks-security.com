@@ -696,8 +696,26 @@ body {
 }
 
 @media (max-width: 768px) {
+  .top-nav {
+    flex-wrap: nowrap;
+  }
+  .top-nav__left {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    flex-wrap: nowrap;
+  }
+  .top-nav__brand {
+    white-space: nowrap;
+  }
+  .top-nav__subtitle {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   .top-nav__hamburger {
     display: flex;
+    flex-shrink: 0;
   }
   .top-nav__items {
     display: none;
