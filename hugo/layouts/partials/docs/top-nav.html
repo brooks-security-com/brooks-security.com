@@ -1,0 +1,42 @@
+<nav class="top-nav">
+  <div class="top-nav__left">
+    <a class="top-nav__brand" href="{{ .Site.Home.RelPermalink }}">{{ .Site.Title }}</a>
+    <span class="top-nav__dot">·</span>
+    {{ if .IsHome }}
+      <span class="top-nav__subtitle">vCISO / Sec / Dev / Ops</span>
+    {{ else }}
+      <span class="top-nav__subtitle">{{ partial "docs/title" . }}</span>
+    {{ end }}
+  </div>
+  <input type="checkbox" class="top-nav__toggle" id="top-nav-toggle" />
+  <label class="top-nav__hamburger" for="top-nav-toggle" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </label>
+  <div class="top-nav__items">
+    {{ $docs := .Site.GetPage "docs" }}
+    {{ range $docs.Pages }}
+      {{ if .IsSection }}
+        {{ $section := . }}
+        {{ $children := where $section.Pages "Params.bookHidden" "ne" true }}
+        {{ if $children }}
+        <div class="top-nav__dropdown">
+          <button class="top-nav__trigger" aria-expanded="false">{{ partial "docs/title" $section }}</button>
+          <div class="top-nav__menu">
+            {{ range $children }}
+              {{ if .Content }}
+              <a href="{{ .RelPermalink }}">{{ partial "docs/title" . }}</a>
+              {{ end }}
+            {{ end }}
+          </div>
+        </div>
+        {{ end }}
+      {{ else if and .Content (ne .Params.bookHidden true) }}
+        <a class="top-nav__link" href="{{ .RelPermalink }}">{{ partial "docs/title" . }}</a>
+      {{ end }}
+    {{ end }}
+    {{ $menuAfter := .Site.Menus.after }}
+    {{ range $menuAfter }}
+      <a class="top-nav__link{{ if eq .Name "SOC 2 Readiness Checklist" }} top-nav__link--highlight{{ end }}" href="{{ .URL }}">{{ .Name }}</a>
+    {{ end }}
+  </div>
+</nav>
