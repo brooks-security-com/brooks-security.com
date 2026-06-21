@@ -32,4 +32,6 @@ menu:
 
 {{< subscribe-form >}}
 
+  <p class="lead-privacy">No, seriously, I will not abuse your information. And you do not have to take my word for it. This whole site is open source, including <a href="https://github.com/LittleSeneca/brooks-security.com/blob/main/terraform/files/subscribe/index.py" target="_blank" rel="noopener">the exact code that receives this form</a>. It checks you are human, writes one row to a spreadsheet, and stops there. No tracking pixels, no data brokers, no drip campaign you cannot escape. In security we say the secret should live in the key, not the design. Same rule here: nothing I do with your details is hidden. <a href="/docs/portfolio/gitops/#lead-magnet-capture-keyless-into-google-sheets">Here is the plain-English version.</a></p>
+
 </div>
