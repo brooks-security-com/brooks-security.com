@@ -1,8 +1,9 @@
 ---
 title: "SOC 2 Readiness Checklist"
-layout: landing
+bookFlatSection: true
 bookToc: false
 bookComments: false
+weight: 8
 ---
 
 <div class="home-hero">
