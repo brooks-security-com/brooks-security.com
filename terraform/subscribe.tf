@@ -109,8 +109,13 @@ resource "aws_lambda_function" "subscribe" {
   role          = aws_iam_role.subscribe_lambda.arn
   runtime       = "python3.12"
   handler       = "index.handler"
-  timeout       = 10
-  layers        = [aws_lambda_layer_version.google_auth.arn]
+  # More work than the contact Lambda: reCAPTCHA assessment plus the WIF token
+  # exchange (STS, IAM generateAccessToken) and the Sheets append, several
+  # sequential TLS round trips plus google-auth crypto. 512 MB buys proportional
+  # CPU so TLS/crypto on a cold start finishes well inside the timeout.
+  timeout     = 30
+  memory_size = 512
+  layers      = [aws_lambda_layer_version.google_auth.arn]
 
   filename         = data.archive_file.subscribe.output_path
   source_code_hash = data.archive_file.subscribe.output_base64sha256
