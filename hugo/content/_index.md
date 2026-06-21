@@ -10,8 +10,8 @@ bookToc: false
     <h1 class="home-hero__title">SOC 2 compliance, <em>written, implemented, and proven</em>.</h1>
     <p class="home-hero__lead">I'm Graham Brooks, CISSP. I write policies that describe <em>your</em> organization (not a template with your name filled in) and I build the Terraform, Ansible, and operational processes that enforce them. Then I produce the evidence package the auditor signs off on. One practitioner, the whole program, through Brooks Security LLC.</p>
     <div class="btn-row">
-      <a class="btn-primary btn-lg" href="/docs/services/compliance-program/">See the offer &rarr;</a>
-      <a class="btn-secondary btn-lg" href="/readiness-check/">Get the readiness checklist</a>
+      <a class="btn-primary btn-lg" href="/docs/services/compliance-program/">How it works &rarr;</a>
+      <a class="btn-secondary btn-lg" href="/docs/readiness-check/">Get the readiness checklist</a>
     </div>
   </div>
 </div>
@@ -39,8 +39,8 @@ bookToc: false
     <p>I sit at the intersection most people miss: the place where a written policy has to turn into a real control, running in your cloud, producing evidence an auditor can verify. I do all of it. The policies that describe your actual organization, the infrastructure-as-code that enforces them, and the evidence package that proves they work. So you are game-day ready.</p>
     <p>I took a startup from loose, ad-hoc practices to SOC 2 Type 2 with zero adverse findings, two years running, and I build that same program for you.</p>
     <div class="card-action btn-row">
-      <a class="btn-primary" href="/docs/services/compliance-program/">See the offer and pricing &rarr;</a>
-      <a class="btn-secondary" href="/readiness-check/">Get the readiness checklist</a>
+      <a class="btn-primary" href="/docs/services/compliance-program/">How it works and what it costs &rarr;</a>
+      <a class="btn-secondary" href="/docs/readiness-check/">Get the readiness checklist</a>
     </div>
   </div>
 </div>
@@ -72,7 +72,7 @@ bookToc: false
   <p>Tell me what you're working on. I read everything and respond within a couple business days. Not ready to talk? Start with the free readiness checklist and find your gaps first.</p>
   <div class="btn-row" style="justify-content:center">
     <a class="btn-primary btn-lg" href="/docs/services/contact-me/">Get in touch &rarr;</a>
-    <a class="btn-secondary btn-lg" href="/readiness-check/">Get the checklist</a>
+    <a class="btn-secondary btn-lg" href="/docs/readiness-check/">Get the checklist</a>
   </div>
 </div>
 
