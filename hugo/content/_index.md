@@ -5,13 +5,12 @@ bookToc: false
 ---
 
 <div class="home-hero">
-  <img class="home-hero__photo" src="/grahambrooks.png" alt="Graham Brooks" />
   <div class="home-hero__text">
-    <h1 class="home-hero__title">The hard part of SOC 2 isn't writing rules. <em>It's proving you follow them.</em></h1>
-    <p class="home-hero__lead">Here are your options. You hire an MSSP to run your compliance program. That is tens of thousands a year, and they will operate some controls, but they will not write your policies to your actual business and they will not own the outcome. You hire a security engineer internally. That is a full senior salary plus benefits, plus the six months it takes them to learn your stack. And you are still asking one person to do three different jobs.</p>
+    <h1 class="home-hero__title">Policies don't pass audits. <em>Evidence does.</em></h1>
+    <p class="home-hero__lead">Here are your options. You hire an MSSP. Tens of thousands a year, and they will operate some controls, but they will not write your policies to your actual business and they will not own the outcome. You hire a security engineer internally. Full senior salary plus benefits, plus the six months it takes them to learn your stack. And you are still asking one person to do three different jobs.</p>
     <p class="home-hero__lead">Or you buy a policy template for a few hundred bucks and hope you figure out the rest before the auditor calls. That one ends the same way every time.</p>
     <p class="home-hero__lead">None of those close the gap between the policy and the proof. The policy says one thing. Your cloud does another. The auditor notices.</p>
-    <p class="home-hero__lead">I write policies that describe your actual organization. I build the (cost efficient) controls in your organization that enforce them. I produce the evidence the auditor signs off on. One practitioner, the whole program. You pass the audit. Back to business.</p>
+    <p class="home-hero__lead">I write policies that describe your actual organization. I build the (cost efficient) controls that enforce them. I produce the evidence the auditor signs off on. One practitioner, the whole program. You pass the audit. Back to business.</p>
     <div class="btn-row">
       <a class="btn-primary btn-lg" href="/docs/services/compliance-program/">How it works &rarr;</a>
       <a class="btn-secondary btn-lg" href="/docs/readiness-check/">Get the readiness checklist</a>

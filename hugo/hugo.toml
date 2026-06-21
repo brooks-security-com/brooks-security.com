@@ -1,10 +1,10 @@
 baseURL = 'https://www.brooks-security.com/'
 languageCode = 'en-us'
-title = 'Graham Brooks'
+title = 'Brooks Security'
 theme = 'hugo-book'
 
 [params]
-BookLogo = 'grahambrooks.png'
+BookLogo = ''
 # Public reCAPTCHA v3 site key. Empty here on purpose: injected at build time
 # from SSM (/brooks-security.com/recaptcha/site_key) via the
 # HUGO_PARAMS_RECAPTCHASITEKEY env var (see .github/workflows/hugo-deploy.yml).
