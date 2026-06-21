@@ -6,7 +6,7 @@ bookToc: false
 
 <div class="home-hero">
   <div class="home-hero__text">
-    <h1 class="home-hero__title">Policies don't pass audits. <em>Evidence does.</em></h1>
+    <h1 class="home-hero__title">Policies don't pass audits.<br><span class="home-hero__title-offset"><em>Evidence does.</em></span></h1>
     <p class="home-hero__lead">Here are your options. You hire an MSSP. Tens of thousands a year, and they will operate some controls, but they will not write your policies to your actual business and they will not own the outcome. You hire a security engineer internally. Full senior salary plus benefits, plus the six months it takes them to learn your stack. And you are still asking one person to do three different jobs.</p>
     <p class="home-hero__lead">Or you buy a policy template for a few hundred bucks and hope you figure out the rest before the auditor calls. That one ends the same way every time.</p>
     <p class="home-hero__lead">None of those close the gap between the policy and the proof. The policy says one thing. Your cloud does another. The auditor notices.</p>
