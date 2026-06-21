@@ -264,12 +264,16 @@ body {
   min-width: 280px;
 }
 .home-hero__title {
-  margin: -0.5rem 0 0.6rem;
+  margin: -1.5rem 0 0.6rem;
   font-size: 1.9rem;
   line-height: 1.2;
 }
 .home-hero__title-offset {
-  padding-left: 2.5rem;
+  display: inline-block;
+  padding-left: 4rem;
+  padding-top: 0.35rem;
+  font-size: 120%;
+  font-weight: 700;
 }
 .home-hero__title em {
   font-style: normal;
