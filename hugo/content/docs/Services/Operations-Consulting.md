@@ -1,6 +1,6 @@
 ---
 title: "Operations Consulting"
-weight: 2
+weight: 5
 ---
 # Operations Consulting
 

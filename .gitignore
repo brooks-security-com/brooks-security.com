@@ -6,5 +6,7 @@ book.js*
 # Terraform: generated Lambda deployment artifacts
 terraform/files/contrib-dispatch.zip
 terraform/files/contact.zip
+terraform/files/subscribe.zip
+terraform/files/subscribe-layer.zip
 # Python bytecode (e.g. from local Lambda syntax checks)
 __pycache__/

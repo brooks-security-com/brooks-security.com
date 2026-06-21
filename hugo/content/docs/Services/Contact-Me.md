@@ -1,6 +1,6 @@
 ---
 title: "Contact Me"
-weight: 3
+weight: 6
 ---
 # Contact Me
 

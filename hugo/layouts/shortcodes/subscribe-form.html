@@ -1,0 +1,137 @@
+{{- $siteKey := site.Params.recaptchaSiteKey -}}
+{{- $download := .Get "download" | default "/downloads/soc2-hipaa-readiness-checklist.pdf" -}}
+{{- $downloadLabel := .Get "downloadLabel" | default "Download the SOC 2 and HIPAA readiness checklist" -}}
+{{- if $siteKey -}}
+<form id="subscribe-form" class="contact-form" novalidate>
+  <div class="contact-field">
+    <label for="sf-first">First name</label>
+    <input type="text" id="sf-first" name="first_name" required autocomplete="given-name">
+  </div>
+  <div class="contact-field">
+    <label for="sf-last">Last name</label>
+    <input type="text" id="sf-last" name="last_name" required autocomplete="family-name">
+  </div>
+  <div class="contact-field">
+    <label for="sf-email">Email</label>
+    <input type="email" id="sf-email" name="email" required autocomplete="email">
+  </div>
+  <div class="contact-field">
+    <label for="sf-company">Company <span class="contact-optional">(optional)</span></label>
+    <input type="text" id="sf-company" name="company" autocomplete="organization">
+  </div>
+  {{/* Honeypot: hidden from humans (see .contact-hp in _custom.scss), tempting to bots.
+       Named "website" because "company" is a real field on this form. */}}
+  <div class="contact-hp" aria-hidden="true">
+    <label for="sf-website">Website</label>
+    <input type="text" id="sf-website" name="website" tabindex="-1" autocomplete="off">
+  </div>
+  <div class="contact-actions">
+    <button type="submit" class="contact-submit btn-primary">Send me the checklist</button>
+    <div class="contact-recaptcha">
+      <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" width="32" height="32" alt="reCAPTCHA">
+      <span class="contact-recaptcha-text">Protected by reCAPTCHA &middot;
+        <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy</a> &middot;
+        <a href="https://policies.google.com/terms" target="_blank" rel="noopener">Terms</a>
+      </span>
+    </div>
+  </div>
+  <p class="contact-status" role="status" aria-live="polite"></p>
+  <p class="subscribe-download" hidden>
+    <a class="btn-primary" href="{{ $download }}" download>{{ $downloadLabel }} &darr;</a>
+  </p>
+</form>
+
+<script src="https://www.google.com/recaptcha/enterprise.js?render={{ $siteKey }}"></script>
+<script>
+(function () {
+  var form = document.getElementById('subscribe-form');
+  var statusEl = form.querySelector('.contact-status');
+  var downloadEl = form.querySelector('.subscribe-download');
+  var btn = form.querySelector('.contact-submit');
+  var siteKey = {{ $siteKey | jsonify | safeJS }};
+  var EMAIL = 'graham@brooks-security.com';
+
+  function val(name) {
+    var el = form.elements[name];
+    return el && el.value ? el.value.trim() : '';
+  }
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = 'contact-status' + (kind ? ' is-' + kind : '');
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    // Honeypot tripped: pretend success, send nothing.
+    if (form.elements['website'] && form.elements['website'].value) {
+      form.reset();
+      setStatus('Thanks. Your checklist is ready below.', 'ok');
+      downloadEl.hidden = false;
+      return;
+    }
+
+    btn.disabled = true;
+    setStatus('Sending...', 'pending');
+
+    // Single completion path with a hard timeout, so the form never gets stuck
+    // on "Sending..." if reCAPTCHA fails to load or the request hangs.
+    var done = false;
+    var timer = setTimeout(function () {
+      finish('That took too long. Please email me directly at ' + EMAIL + '.', 'error', false);
+    }, 15000);
+    function finish(msg, kind, reveal) {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      setStatus(msg, kind);
+      btn.disabled = false;
+      if (reveal) {
+        form.reset();
+        downloadEl.hidden = false;
+      }
+    }
+
+    if (typeof grecaptcha === 'undefined' || !grecaptcha.enterprise) {
+      finish('The verification script could not load (an ad blocker may be blocking it). Please email me directly at ' + EMAIL + '.', 'error', false);
+      return;
+    }
+
+    grecaptcha.enterprise.ready(function () {
+      grecaptcha.enterprise.execute(siteKey, { action: 'subscribe' }).then(function (token) {
+        return fetch('/api/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            first_name: val('first_name'),
+            last_name: val('last_name'),
+            email: val('email'),
+            company: val('company'),
+            website: form.elements['website'] ? form.elements['website'].value : '',
+            token: token
+          })
+        });
+      }).then(function (res) {
+        if (res.ok) {
+          finish('Thanks. Your checklist is ready below.', 'ok', true);
+        } else {
+          res.json().catch(function () { return {}; }).then(function (body) {
+            finish(body.error || ('Something went wrong. Please email me directly at ' + EMAIL + '.'), 'error', false);
+          });
+        }
+      }).catch(function () {
+        finish('Network error. Please email me directly at ' + EMAIL + '.', 'error', false);
+      });
+    });
+  });
+})();
+</script>
+{{- else -}}
+<div class="contact-form-dev-notice">
+  <p><strong>Signup form unavailable in this build.</strong> The reCAPTCHA site key
+  (<code>params.recaptchaSiteKey</code>) is not set. It is injected from SSM at deploy
+  time; for local development, export <code>HUGO_PARAMS_RECAPTCHASITEKEY</code> to render
+  the live form. You can still grab the checklist here:
+  <a href="{{ $download }}" download>{{ $downloadLabel }}</a>.</p>
+</div>
+{{- end -}}

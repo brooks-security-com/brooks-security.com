@@ -76,6 +76,21 @@ resource "aws_cloudfront_distribution" "main" {
     origin_request_policy_id = "b689b0a8-53d0-40ab-baf2-68738e2966ac" # AllViewerExceptHostHeader (AWS-managed)
   }
 
+  # Subscribe (lead-magnet capture) API. Same contact-api origin, which already
+  # injects the shared-secret header; the subscribe Lambda checks it too. Mirrors
+  # the /api/contact behavior: POST passthrough, caching disabled, no `hugo`
+  # function association (it would rewrite the path to /api/subscribe/index.html).
+  ordered_cache_behavior {
+    path_pattern             = "/api/subscribe"
+    target_origin_id         = "contact-api"
+    viewer_protocol_policy   = "redirect-to-https"
+    allowed_methods          = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
+    cached_methods           = ["GET", "HEAD"]
+    compress                 = false
+    cache_policy_id          = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" # CachingDisabled (AWS-managed)
+    origin_request_policy_id = "b689b0a8-53d0-40ab-baf2-68738e2966ac" # AllViewerExceptHostHeader (AWS-managed)
+  }
+
   viewer_certificate {
     acm_certificate_arn      = aws_acm_certificate.cert.arn
     ssl_support_method       = "sni-only"

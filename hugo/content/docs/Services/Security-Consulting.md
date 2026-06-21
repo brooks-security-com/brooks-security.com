@@ -1,6 +1,6 @@
 ---
 title: "Security Consulting"
-weight: 1
+weight: 4
 ---
 # Security Consulting
 
@@ -32,7 +32,9 @@ If you're not a seasoned practitioner, you don't know what you don't know. You f
 
 That's where I come in. I'm the human in the loop. I use AI to move fast, and I use my experience to make sure what comes out is actually right and actually safe for your business. You get the speed without the blind spots, instead of throwing something into the ether and hoping.
 
-It doesn't have to cost a lot, either. If you want to know what having that kind of guidance looks like, [reach out and I'll put together a quote](/docs/services/contact-me/).
+## How to engage me
+
+Most of this comes together in one productized engagement: my [compliance program](/docs/services/compliance-program/). SOC 2 or HIPAA, written and implemented in 90 days, with a monthly retainer behind it. The project is fixed-fee and anchored above $30,000, so you know the number before we start. If you have a specific framework or a specific buyer in mind, the two common paths are [SOC 2 for startups](/docs/services/soc-2-for-startups/) and [HIPAA for regulated businesses](/docs/services/hipaa-compliance/).
 
 ## How I work
 

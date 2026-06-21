@@ -88,3 +88,25 @@ variable "recaptcha_min_score" {
   default = 0.7
 }
 
+# --- Subscribe (lead-magnet email capture into a Google Sheet) ---------------
+# Authentication to Google is keyless Workload Identity Federation. The subscribe
+# Lambda's AWS role (brooks-security-subscribe) federates into GCP and
+# impersonates a service account; no service-account key exists. The WIF
+# credential config and the spreadsheet id live in pre-existing SSM
+# SecureStrings, created out of band (see prerequisites). Referenced by name so
+# their values never enter Terraform state.
+
+# Pre-existing SSM SecureString holding the WIF credential config JSON produced
+# by `gcloud iam workload-identity-pools create-cred-config --aws`. Not a secret
+# (it carries identifiers, not a key), but stored encrypted for consistency.
+variable "subscribe_google_cred_config_ssm_param" {
+  type    = string
+  default = "/brooks-security.com/subscribe/google_cred_config"
+}
+
+# Pre-existing SSM SecureString holding the target Google Sheet's spreadsheet id.
+variable "subscribe_sheet_id_ssm_param" {
+  type    = string
+  default = "/brooks-security.com/subscribe/sheet_id"
+}
+

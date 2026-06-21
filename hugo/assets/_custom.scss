@@ -150,6 +150,72 @@ body {
   color: var(--gray-500, #6e7781);
 }
 
+.contact-optional {
+  font-weight: 400;
+  color: var(--gray-500, #6e7781);
+  font-size: 0.82rem;
+}
+
+.subscribe-download {
+  margin: 0;
+}
+
+/* --- Blog lead-magnet CTA ------------------------------------------------- */
+.lead-cta {
+  margin-top: 2.5rem;
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-left: 4px solid var(--color-link, #0a66c2);
+  border-radius: 12px;
+  padding: 1.25rem 1.4rem;
+}
+.lead-cta h3 {
+  margin-top: 0;
+  margin-bottom: 0.4rem;
+}
+.lead-cta p {
+  margin-bottom: 0.9rem;
+  color: #57606a;
+}
+
+/* --- Lead-magnet landing page --------------------------------------------- */
+.lead-trust {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.6rem;
+  margin: 0 0 2rem;
+}
+.lead-trust__item {
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-radius: 999px;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #57606a;
+}
+.lead-trust__item a,
+.lead-trust__item a:visited {
+  color: inherit;
+  text-decoration: underline;
+}
+.lead-form {
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 720px;
+}
+.lead-form h2 {
+  margin-top: 0;
+}
+.lead-form .contact-form {
+  margin-top: 1.25rem;
+}
+@media (max-width: 620px) {
+  .lead-form { padding: 1.25rem; }
+}
+
 .contact-form-dev-notice {
   background: var(--gray-100);
   border: 1px solid var(--gray-200);
@@ -286,6 +352,19 @@ body {
 .feature-card .card-action {
   margin-top: auto;
   padding-top: 1.2rem;
+}
+
+.feature-card--lead {
+  margin-bottom: 1rem;
+  border-color: var(--color-link, #0a66c2);
+}
+.feature-card--lead h3 {
+  font-size: 1.3rem;
+}
+.home-section__aside {
+  margin: 1.25rem 0 0;
+  font-size: 0.95rem;
+  color: #57606a;
 }
 
 /* --- Proof band ----------------------------------------------------------- */
