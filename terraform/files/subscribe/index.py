@@ -189,7 +189,14 @@ def _google_token():
                 with urllib.request.urlopen(req, timeout=timeout or 10) as r:
                     return _Resp(r.status, dict(r.headers), r.read())
             except urllib.error.HTTPError as e:
+                # A real HTTP response (4xx/5xx); hand it back so google-auth
+                # can surface the actual error message.
                 return _Resp(e.code, dict(e.headers), e.read())
+            except Exception as exc:
+                # Connect/read timeout or DNS failure: name the URL so a hang is
+                # diagnosable instead of a silent Lambda timeout.
+                print(f"subscribe: transport error calling {url}: {exc}")
+                raise
 
     config = json.loads(_ssm_param(os.environ["GOOGLE_CRED_CONFIG_SSM_PARAM"]))
     creds = google_aws.Credentials.from_info(config, scopes=[_SPREADSHEETS_SCOPE])
@@ -200,7 +207,9 @@ def _google_token():
 def _append_row(row):
     sheet_id = _ssm_param(os.environ["SHEET_ID_SSM_PARAM"])
     rng = os.environ.get("SHEET_RANGE", "Subscribers!A:E")
+    print("subscribe: requesting federated Google token")
     token = _google_token()
+    print("subscribe: token acquired, appending row to sheet")
     url = (
         f"https://sheets.googleapis.com/v4/spreadsheets/{sheet_id}/values/"
         f"{urllib.request.quote(rng)}:append?valueInputOption=RAW"
@@ -212,7 +221,9 @@ def _append_row(row):
         headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
     )
     with urllib.request.urlopen(req, timeout=10) as resp:
-        return json.loads(resp.read().decode("utf-8", "replace"))
+        result = json.loads(resp.read().decode("utf-8", "replace"))
+    print("subscribe: sheet append complete")
+    return result
 
 
 # --- Self-check: no network, no credentials, no google-auth needed -----------
