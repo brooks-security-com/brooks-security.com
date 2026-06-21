@@ -8,41 +8,44 @@ bookToc: false
   <img class="home-hero__photo" src="/grahambrooks.png" alt="Graham Brooks" />
   <div class="home-hero__text">
     <h1 class="home-hero__title">SOC 2 and HIPAA compliance, <em>written, implemented, and proven</em>.</h1>
-    <p class="home-hero__lead">I'm Graham Brooks, CISSP. I write the policy, write the Terraform that enforces it in your cloud, and produce the evidence the auditor signs off on, so you do not have to stitch together a compliance shop, a cloud team, and a security lead. One practitioner, the whole program, through Brooks Security LLC.</p>
+    <p class="home-hero__lead">I'm Graham Brooks, CISSP. I write the policy, implement the Terraform that enforces it in your cloud, and produce the evidence the auditor signs off on. One practitioner, the whole program, through Brooks Security LLC.</p>
+    <div class="btn-row">
+      <a class="btn-primary btn-lg" href="/docs/services/compliance-program/">See the offer &rarr;</a>
+      <a class="btn-secondary btn-lg" href="/readiness-check/">Get the readiness checklist</a>
     </div>
-  <div class="btn-row home-hero__actions">
-    <a class="btn-primary btn-lg" href="/docs/services/compliance-program/">See the offer &rarr;</a>
-    <a class="btn-secondary btn-lg" href="/readiness-check/">Get the readiness checklist</a>
   </div>
 </div>
 
 <div class="home-section">
   <h2>The offer</h2>
+
   <div class="feature-card feature-card--lead">
     <h3><svg class="card-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-link, #0a66c2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> A full-stack compliance program</h3>
-    <p>SOC 2 or HIPAA, written and implemented, in 90 days. Most compliance work hands you a binder and walks away. I do all three parts: the policies written to how you actually run, the controls implemented in your cloud as Terraform and Ansible, and the evidence package the auditor signs off on. I took a startup from loose, ad-hoc practices to SOC 2 Type 2 with zero adverse findings, two years running, and I build that same program for you.</p>
+    <p>SOC 2 or HIPAA, written and implemented, in <strong>90 days</strong>. Most compliance work hands you a binder and walks away. I handle all three parts: the policies written to how you actually run, the controls built into your cloud as Terraform and Ansible, and the evidence package the auditor signs off on.</p>
+    <p>I took a startup from loose, ad-hoc practices to SOC 2 Type 2 with zero adverse findings — two years running — and I build that same program for you.</p>
     <div class="card-action btn-row">
       <a class="btn-primary" href="/docs/services/compliance-program/">See the offer and pricing &rarr;</a>
       <a class="btn-secondary" href="/readiness-check/">Get the readiness checklist</a>
     </div>
   </div>
+
   <div class="card-grid">
     <div class="feature-card">
       <h3>SOC 2 for startups</h3>
-      <p>Your enterprise deal is blocked on SOC 2. A fast path to a defensible Type 1, then Type 2, with controls built in AWS as code and evidence automated.</p>
+      <p>Enterprise deal blocked on SOC 2? A fast path to a defensible Type 1, then Type 2 — controls built in AWS as code, evidence automated.</p>
       <div class="card-action">
         <a class="btn-secondary" href="/docs/services/soc-2-for-startups/">SOC 2 path &rarr;</a>
       </div>
     </div>
     <div class="feature-card">
       <h3>HIPAA for regulated businesses</h3>
-      <p>Healthcare first. A real security risk analysis, controls that do not drift, and the readiness to answer a regulator. Genuinely compliant, not paperwork compliant.</p>
+      <p>Healthcare-first. A real security risk analysis, controls that don't drift, and readiness to answer a regulator. Genuinely compliant, not paperwork compliant.</p>
       <div class="card-action">
         <a class="btn-secondary" href="/docs/services/hipaa-compliance/">HIPAA path &rarr;</a>
       </div>
     </div>
   </div>
-  <p class="home-section__aside">Need the infrastructure built or cost-optimized alongside the compliance work? I run cloud infrastructure as code too: Terraform, Ansible, CI/CD, and AWS bills cut without breaking what works. <a href="/docs/services/operations-consulting/">Operations consulting &rarr;</a></p>
+  <p class="home-section__aside">Need the infrastructure built or cost-optimized alongside compliance? I run cloud infrastructure as code — Terraform, Ansible, CI/CD, and AWS cost optimization. <a href="/docs/services/operations-consulting/">Operations consulting &rarr;</a></p>
 </div>
 
 <div class="home-section">
@@ -50,26 +53,26 @@ bookToc: false
   <div class="home-proof">
     <div class="proof-item">
       <strong><svg class="card-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-link, #0a66c2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg> Security, Covered</strong>
-      <span>You should not have to stitch together a compliance shop, a cloud team, and a security lead. I cover all three, with the credentials to prove it: CISSP, Red Hat, and AWS.</span>
+      <span>Compliance, cloud, and security leadership in one practitioner. CISSP, Red Hat, and AWS certified — no stitching together three separate hires.</span>
     </div>
     <div class="proof-item">
       <strong><svg class="card-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-link, #0a66c2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="m9 15 2 2 4-4"/></svg> Pass your SOC 2</strong>
-      <span>Your SOC 2 should not be a fire drill. I can stand a program up from nothing, and I have a proven track record of building compliant security programs that pass the audit every time.</span>
+      <span>Proven track record building compliant programs from scratch. SOC 2 Type 2 with zero adverse findings, two years running — not a fire drill, a system.</span>
     </div>
     <div class="proof-item">
       <strong><svg class="card-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-link, #0a66c2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> Industry Fluency</strong>
-      <span>Each industry has its rulebook, and I have probably worked it. I have built programs for Healthcare, finance, government, and critical infrastructure, where the rules and stakes are highest.</span>
+      <span>Healthcare, finance, government, critical infrastructure — I've built programs where the rules and stakes are highest.</span>
     </div>
     <div class="proof-item">
-      <strong><svg class="card-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-link, #0a66c2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Fast, and built for you</strong>
-      <span>You get the speed of modern tooling without the cut corners. I use AI heavily, then steer it with experience so quality never slips, and what you get is built around your business, not a template.</span>
+      <strong><svg class="card-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-link, #0a66c2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Fast, built for you</strong>
+      <span>Modern tooling, experienced steering. I use AI heavily, then direct it with real-world judgment — so what you get is built around your business, not a template.</span>
     </div>
   </div>
 </div>
 
 <div class="home-cta">
   <h2>Facing a SOC 2 or HIPAA audit?</h2>
-  <p>Tell me what you're working on. I read everything and usually get back to you within a couple business days. Not ready to talk yet? Start with the free readiness checklist and find your gaps first.</p>
+  <p>Tell me what you're working on — I read everything and respond within a couple business days. Not ready to talk? Start with the free readiness checklist and find your gaps first.</p>
   <div class="btn-row" style="justify-content:center">
     <a class="btn-primary btn-lg" href="/docs/services/contact-me/">Get in touch &rarr;</a>
     <a class="btn-secondary btn-lg" href="/readiness-check/">Get the checklist</a>
@@ -90,14 +93,14 @@ bookToc: false
   <div class="card-grid">
     <div class="feature-card">
       <h3>This Website</h3>
-      <p>Anyone can build on AWS. Cost-optimizing what you build without breaking it is the real proof. This whole site, plus the infrastructure and CI/CD that ship it, costs about a dollar a month to run on full AWS best-practice tooling. And it's brutally simple to maintain.</p>
+      <p>Full AWS best-practice infrastructure, CI/CD, and a production site — all for about a dollar a month. Proof that cost-optimized doesn't mean fragile.</p>
       <div class="card-action">
         <a class="btn-secondary" href="/docs/portfolio/gitops/">View the GitOps project &rarr;</a>
       </div>
     </div>
     <div class="feature-card">
       <h3>Jarvis, an Executive Summary Agent</h3>
-      <p>A one-shot containerized agent that delivers a daily AI-generated executive brief to Slack. Jarvis pulls from AWS, GitHub, Gmail, Drata, and more through a drop-in plugin architecture, with per-plugin LLM inference via Groq. The architecture ensures secure, isolated execution of plugins while keeping the operational overhead extremely low.</p>
+      <p>A daily AI-generated executive brief delivered to Slack, pulling from AWS, GitHub, Gmail, Drata, and more. Drop-in plugin architecture with per-plugin LLM inference — secure, isolated, near-zero ops overhead.</p>
       <div class="card-action">
         <a class="btn-secondary" href="/docs/portfolio/automation/">View the Jarvis project &rarr;</a>
       </div>
