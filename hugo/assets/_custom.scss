@@ -498,11 +498,10 @@ body {
 /* Target the sidebar link to the readiness-check page and make it a
    colored button so it stands out from the rest of the nav. */
 .book-menu a[href="/docs/readiness-check/"] {
-  display: block;
   background: var(--color-link, #0a66c2);
   color: #fff;
   border-radius: 8px;
-  padding: 0.45rem 0.75rem;
+  padding: 0.45rem 0;
   margin: 0.5rem 0;
   font-weight: 600;
   transition: filter 0.2s ease, transform 0.2s ease;

@@ -8,7 +8,7 @@ bookToc: false
   <img class="home-hero__photo" src="/grahambrooks.png" alt="Graham Brooks" />
   <div class="home-hero__text">
     <h1 class="home-hero__title">SOC 2 compliance, <em>written, implemented, and proven</em>.</h1>
-    <p class="home-hero__lead">I'm Graham Brooks, CISSP. I write policies that describe <em>your</em> organization (not a template with your name filled in) and I build the Terraform, Ansible, and operational processes that enforce them. Then I produce the evidence package the auditor signs off on. One practitioner, the whole program, through Brooks Security LLC.</p>
+    <p class="home-hero__lead">I'm Graham Brooks, CISSP. I write policies that describe <em>your</em> organization (not a template with your name filled in) and I build the controls that enforce them. Log management, disaster recovery testing, network segmentation. The kind of work that takes real infrastructure and networking knowledge to get right. Then I produce the evidence package the auditor signs off on. One practitioner, the whole program, through Brooks Security LLC.</p>
     <div class="btn-row">
       <a class="btn-primary btn-lg" href="/docs/services/compliance-program/">How it works &rarr;</a>
       <a class="btn-secondary btn-lg" href="/docs/readiness-check/">Get the readiness checklist</a>
