@@ -5,21 +5,20 @@
 I am a CISSP and Red Hat Certified Engineer who builds and runs the security programs and cloud infrastructure that keep businesses operating. With nearly a decade of experience across the security lifecycle, my work centers on two things: Governance, Risk, and Compliance, and secure, performant, and cost-efficient cloud infrastructure. On the GRC side, I have led SOC 2 Type 1 and Type 2 programs, written the policies and procedures behind them, and passed rigorous audits with zero findings. On the infrastructure side, I architect and operate AWS environments that are secure by default, fast under real workloads, and economical to run. I have delivered these results for organizations across SaaS, critical infrastructure, government, education, and banking, and my focus is always the same: leave the client secure, compliant, and satisfied.
 
 ## Experience:
-### Senior Security & Systems Engineer, AvatarFleet
-**Mar 2024 – Present** · Full-time · Moscow, Idaho, United States · Remote
-
-- **SOC 2 Type 2 accreditation:** Led AvatarFleet through SOC 2 Type 1 and Type 2 accreditation by establishing comprehensive security policies and procedures, strengthening compliance, and building customer trust. Achieved SOC 2 Type 2 two years in a row with no adverse findings.
-- **Security program initiation:** Developed and implemented AvatarFleet’s initial security program, including foundational policies, procedures, and a security-aware culture, in an early-stage startup environment.
-- **Cloud security enforcement:** Drove AWS security improvements through Terraform and Ansible, standardizing controls and automating compliance for a stronger security posture.
-- **Enterprise infrastructure:** Architected and built the organization’s enterprise infrastructure from the ground up, replacing legacy infrastructure with minimal downtime.
-
 ### Founder & Principal Consultant, Brooks Security LLC
 **April 2024 – Present** · Part-time · Moscow, Idaho, United States · Remote
 
-- **Owner-operated MSP/MSSP:** Run Brooks Security LLC as an independent managed services and managed security services practice.
-- **Cross-sector client delivery:** Supported multiple organizations, including a medical practice and the City of Moscow.
-- **Security and infrastructure execution:** Delivered cybersecurity and IT infrastructure services across both on-premises and cloud environments.
+- **Independent consulting practice:** Run Brooks Security LLC as an independent security and infrastructure consulting practice, serving multiple organizations across regulated industries.
+- **SOC 2 and compliance delivery:** Help clients build and maintain SOC 2 programs that pass the audit with zero findings.
+- **Infrastructure and automation:** Design and operate secure, cost-efficient AWS environments using Terraform and Ansible.
 
+### Senior Security & Systems Engineer, AvatarFleet
+**Mar 2024 – Present** · Full-time · Moscow, Idaho, United States · Remote
+
+- **SOC 2 Type 2 accreditation:** Led AvatarFleet through SOC 2 Type 1 and Type 2 accreditation by establishing comprehensive security policies and procedures, strengthening compliance, and building customer trust. Achieved SOC 2 Type 2 with no adverse findings.
+- **Security program initiation:** Developed and implemented AvatarFleet's initial security program, including foundational policies, procedures, and a security-aware culture, in an early-stage startup environment.
+- **Cloud security enforcement:** Drove AWS security improvements through Terraform and Ansible, standardizing controls and automating compliance for a stronger security posture.
+- **Enterprise infrastructure:** Architected and built the organization's enterprise infrastructure from the ground up, replacing legacy infrastructure with minimal downtime.
 
 ### Lead Solutions Architect, Syxsense Inc.
 **Mar 2023 – Mar 2024** · Full-time · Moscow, Idaho, United States · Remote
@@ -54,7 +53,7 @@ I am a CISSP and Red Hat Certified Engineer who builds and runs the security pro
 ### Information Technology Technician, Schweitzer Engineering Laboratories
 **Aug 2018 – Sep 2020** · Full-time · Pullman, Washington, United States
 
-- **Desktop support and migration:** Provided desktop support and played a key role in the organization’s transition from Windows 7 to Windows 10.
+- **Desktop support and migration:** Provided desktop support and played a key role in the organization's transition from Windows 7 to Windows 10.
 
 ### IT Technician, Washington State University
 **Nov 2016 – Aug 2018** · Part-time · Pullman, Washington, United States · On-site

@@ -10,7 +10,7 @@ Here's what most people get wrong. They treat compliance like a box-checking exe
 
 ## What I've actually done
 
-Over the last two years I wrote, or rewrote, most of AvatarFleet's security policies and procedures. I took a startup's loose, ad-hoc practices and turned them into an enterprise-ready information security program that holds up to real scrutiny. On the back of that work, I led the company through SOC 2 Type 1 and then Type 2, two years running, with zero adverse findings.
+Over the last two years I wrote, or rewrote, most of AvatarFleet's security policies and procedures. I took a startup's loose, ad-hoc practices and turned them into an enterprise-ready information security program that holds up to real scrutiny. On the back of that work, I led the company through SOC 2 Type 1 and then Type 2 with zero adverse findings.
 
 I didn't inherit a program. I built it from nothing: the policies, the procedures, the risk register, and the security-aware culture that makes all of it stick. And I've done this kind of work across medical, municipal, SaaS, critical infrastructure, government, education, and banking. Different rules every time, same core problem: prove you're handling risk like a grown-up.
 
@@ -34,7 +34,7 @@ That's where I come in. I'm the human in the loop. I use AI to move fast, and I 
 
 ## How to engage me
 
-Most of this comes together in one productized engagement: my [compliance program](/docs/services/compliance-program/). SOC 2, written and implemented in 90 days, with a monthly retainer behind it. The project is fixed-fee and anchored above $30,000, so you know the number before we start. The most common path is [SOC 2 for startups](/docs/services/soc-2-for-startups/).
+Most of this comes together in one productized engagement: my [compliance program](/docs/services/compliance-program/). SOC 2, written and implemented in 90 days, with a monthly retainer behind it. Every program is unique, but the shape is consistent: a focused upfront standup followed by long-term support. The most common path is [SOC 2 for startups](/docs/services/soc-2-for-startups/).
 
 ## How I work
 

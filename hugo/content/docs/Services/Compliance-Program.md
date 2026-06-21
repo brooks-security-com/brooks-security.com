@@ -21,8 +21,10 @@ Most compliance work hands you a binder and walks away. You are left to figure o
 
 ## How it is structured
 
-- **Fixed-fee project, the front door.** A defined 90 day engagement that takes you from where you are to audit ready. Project fees start above $30,000 and scale with the size of your environment and the framework. You know the number before we start.
-- **Monthly retainer, behind it.** Compliance is not a one-time event. Controls need to keep running, evidence needs to keep accumulating, and the program needs an owner as you grow and as the next audit period opens. The retainer keeps the program alive between audits.
+Every organization is different, so no two programs look exactly alike. But the shape is consistent: a focused upfront engagement to stand the program up, followed by long-term support to keep it running and carry you through successive audit periods.
+
+- **The upfront standup.** A defined, time-boxed engagement that takes you from where you are to audit ready. This is where most of the work lives: building the policies, implementing the controls, and standing up the evidence pipeline. For most organizations, this first phase is the heavy lift.
+- **Long-term support, behind it.** Compliance is not a one-time event. Controls need to keep running, evidence needs to keep accumulating, and the program needs an owner as you grow. Once the program is standing, maintaining it should be straightforward. The retainer keeps the program alive between audits. Usually this is the affordable part.
 
 ## FAQ
 
