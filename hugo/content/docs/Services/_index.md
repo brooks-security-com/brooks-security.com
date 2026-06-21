@@ -5,11 +5,10 @@ title: "Services"
 ---
 # Services
 
-I take on a small number of consulting clients through my company, Brooks Security LLC. The work is built around one thing I do end to end: a full-stack compliance program. I write the policy, write the Terraform and Ansible that enforce it in your cloud, and produce the evidence the auditor signs off on.
+I take on a small number of consulting clients through my company, Brooks Security LLC. The work is built around one thing I do end to end: a full-stack SOC 2 compliance program. I write the policy, write the Terraform and Ansible that enforce it in your cloud, and produce the evidence the auditor signs off on.
 
-- **[Compliance Program](/docs/services/compliance-program/):** SOC 2 or HIPAA, written and implemented, in 90 days. A fixed-fee project to get you audit ready, with a monthly retainer behind it to keep the program running. This is the offer.
+- **[Compliance Program](/docs/services/compliance-program/):** SOC 2, written and implemented, in 90 days. A fixed-fee project to get you audit ready, with a monthly retainer behind it to keep the program running. This is the offer.
 - **[SOC 2 for Startups](/docs/services/soc-2-for-startups/):** Your enterprise deal is blocked on SOC 2. The fast, defensible path through Type 1 and Type 2, with controls built in AWS as code.
-- **[HIPAA Compliance](/docs/services/hipaa-compliance/):** For regulated businesses, healthcare first. A real security risk analysis, controls that do not drift, and genuine readiness.
 - **[Security Consulting](/docs/services/security-consulting/):** The full picture of the security and GRC work behind the program: policies and procedures, risk management, cloud security, and vulnerability management.
 - **[Operations Consulting](/docs/services/operations-consulting/):** The supporting capability. Infrastructure and configuration as code, CI/CD, cloud cost optimization, and reliability engineering.
 

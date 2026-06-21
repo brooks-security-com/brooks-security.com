@@ -7,8 +7,8 @@ bookToc: false
 <div class="home-hero">
   <img class="home-hero__photo" src="/grahambrooks.png" alt="Graham Brooks" />
   <div class="home-hero__text">
-    <h1 class="home-hero__title">SOC 2 and HIPAA compliance, <em>written, implemented, and proven</em>.</h1>
-    <p class="home-hero__lead">I'm Graham Brooks, CISSP. I write the policy, implement the Terraform that enforces it in your cloud, and produce the evidence the auditor signs off on. One practitioner, the whole program, through Brooks Security LLC.</p>
+    <h1 class="home-hero__title">SOC 2 compliance, <em>written, implemented, and proven</em>.</h1>
+    <p class="home-hero__lead">I'm Graham Brooks, CISSP. I write policies that actually describe <em>your</em> organization — not a template with your name filled in — and I build the Terraform, Ansible, and operational processes that enforce them. Then I produce the evidence package the auditor signs off on. One practitioner, the whole program, through Brooks Security LLC.</p>
     <div class="btn-row">
       <a class="btn-primary btn-lg" href="/docs/services/compliance-program/">See the offer &rarr;</a>
       <a class="btn-secondary btn-lg" href="/readiness-check/">Get the readiness checklist</a>
@@ -17,50 +17,47 @@ bookToc: false
 </div>
 
 <div class="home-section">
+  <h2>The problem with SOC 2 the way most people do it</h2>
+
+  <div class="card-grid">
+    <div class="feature-card">
+      <h3>The copy-paste trap</h3>
+      <p>There are dozens of policy templates online — some decent, most not. But none of them describe <em>your</em> organization. Your tech stack, your team structure, your actual processes. When the auditor asks "show me where you do this," a borrowed policy has no answer, and the gap only shows up when it matters.</p>
+    </div>
+    <div class="feature-card">
+      <h3>The implementation gap</h3>
+      <p>A policy that says "access is reviewed quarterly" means nothing if you have no mechanism to actually review it, record the evidence, and prove it happened. Writing the policy is the easy part. Building the controls that enforce it — in your cloud, in your workflows, to the standard an auditor will accept — is a different discipline entirely.</p>
+    </div>
+  </div>
+</div>
+
+<div class="home-section">
   <h2>The offer</h2>
 
   <div class="feature-card feature-card--lead">
-    <h3><svg class="card-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-link, #0a66c2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> A full-stack compliance program</h3>
-    <p>SOC 2 or HIPAA, written and implemented, in <strong>90 days</strong>. Most compliance work hands you a binder and walks away. I handle all three parts: the policies written to how you actually run, the controls built into your cloud as Terraform and Ansible, and the evidence package the auditor signs off on.</p>
-    <p>I took a startup from loose, ad-hoc practices to SOC 2 Type 2 with zero adverse findings — two years running — and I build that same program for you.</p>
+    <h3><svg class="card-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-link, #0a66c2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> A full-stack SOC 2 program, in 90 days</h3>
+    <p>I sit at the intersection most people miss: the place where a written policy has to turn into a real control, running in your cloud, producing evidence an auditor can verify. I do all of it — the policies that describe your actual organization, the infrastructure-as-code that enforces them, and the evidence package that proves they work — so you are game-day ready.</p>
+    <p>I took a startup from loose, ad-hoc practices to SOC 2 Type 2 with zero adverse findings, two years running, and I build that same program for you.</p>
     <div class="card-action btn-row">
       <a class="btn-primary" href="/docs/services/compliance-program/">See the offer and pricing &rarr;</a>
       <a class="btn-secondary" href="/readiness-check/">Get the readiness checklist</a>
     </div>
   </div>
-
-  <div class="card-grid">
-    <div class="feature-card">
-      <h3>SOC 2 for startups</h3>
-      <p>Enterprise deal blocked on SOC 2? A fast path to a defensible Type 1, then Type 2 — controls built in AWS as code, evidence automated.</p>
-      <div class="card-action">
-        <a class="btn-secondary" href="/docs/services/soc-2-for-startups/">SOC 2 path &rarr;</a>
-      </div>
-    </div>
-    <div class="feature-card">
-      <h3>HIPAA for regulated businesses</h3>
-      <p>Healthcare-first. A real security risk analysis, controls that don't drift, and readiness to answer a regulator. Genuinely compliant, not paperwork compliant.</p>
-      <div class="card-action">
-        <a class="btn-secondary" href="/docs/services/hipaa-compliance/">HIPAA path &rarr;</a>
-      </div>
-    </div>
-  </div>
-  <p class="home-section__aside">Need the infrastructure built or cost-optimized alongside compliance? I run cloud infrastructure as code — Terraform, Ansible, CI/CD, and AWS cost optimization. <a href="/docs/services/operations-consulting/">Operations consulting &rarr;</a></p>
 </div>
 
 <div class="home-section">
   <h2>Why work with me</h2>
   <div class="home-proof">
     <div class="proof-item">
-      <strong><svg class="card-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-link, #0a66c2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg> Security, Covered</strong>
-      <span>Compliance, cloud, and security leadership in one practitioner. CISSP, Red Hat, and AWS certified — no stitching together three separate hires.</span>
+      <strong><svg class="card-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-link, #0a66c2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg> Policy + controls, one person</strong>
+      <span>You don't need a policy writer, a cloud engineer, and a security lead. You need someone who does all three. CISSP, Red Hat, and AWS certified — I bridge the gap between what the policy says and what your cloud actually does.</span>
     </div>
     <div class="proof-item">
-      <strong><svg class="card-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-link, #0a66c2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="m9 15 2 2 4-4"/></svg> Pass your SOC 2</strong>
-      <span>Proven track record building compliant programs from scratch. SOC 2 Type 2 with zero adverse findings, two years running — not a fire drill, a system.</span>
+      <strong><svg class="card-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-link, #0a66c2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="m9 15 2 2 4-4"/></svg> Proven track record</strong>
+      <span>SOC 2 Type 2 with zero adverse findings, two years running — from nothing to a defensible program that passes the audit every time. Not a fire drill, a system.</span>
     </div>
     <div class="proof-item">
-      <strong><svg class="card-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-link, #0a66c2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> Industry Fluency</strong>
+      <strong><svg class="card-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-link, #0a66c2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> Industry fluency</strong>
       <span>Healthcare, finance, government, critical infrastructure — I've built programs where the rules and stakes are highest.</span>
     </div>
     <div class="proof-item">
@@ -71,7 +68,7 @@ bookToc: false
 </div>
 
 <div class="home-cta">
-  <h2>Facing a SOC 2 or HIPAA audit?</h2>
+  <h2>Ready for your SOC 2?</h2>
   <p>Tell me what you're working on — I read everything and respond within a couple business days. Not ready to talk? Start with the free readiness checklist and find your gaps first.</p>
   <div class="btn-row" style="justify-content:center">
     <a class="btn-primary btn-lg" href="/docs/services/contact-me/">Get in touch &rarr;</a>

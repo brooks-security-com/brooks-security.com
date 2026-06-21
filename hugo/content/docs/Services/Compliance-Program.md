@@ -2,14 +2,14 @@
 title: "Compliance Program"
 weight: 1
 ---
-# SOC 2 or HIPAA, written and implemented, in 90 days
+# SOC 2, written and implemented, in 90 days
 
-Most compliance work hands you a binder and walks away. You are left to figure out how the policy turns into a real control in your cloud, and how you prove it to an auditor. I do all three parts: I write the policy, I write the Terraform and Ansible that enforce it in your environment, and I produce the evidence package the auditor signs off on. You do not have to stitch together a compliance shop, a cloud team, and a security lead. That is the whole offer.
+Most compliance work hands you a binder and walks away. You are left to figure out how the policy turns into a real control in your cloud, and how you prove it to an auditor. I do all three parts: I write the policy, I write the Terraform and Ansible that enforce it in your environment, and I produce the evidence package the auditor signs off on. That is the whole offer.
 
 ## Who this is for
 
 - A SaaS company with an enterprise deal stuck behind a SOC 2 requirement.
-- A regulated small business, healthcare first, that needs to be genuinely HIPAA compliant and not just paperwork compliant.
+- An organization that already knows how to write policy but doesn't know how to implement it — the controls, the infrastructure, the evidence pipeline that makes it auditable.
 - Any team that has bought a compliance automation tool and discovered it tracks controls but does not build them.
 
 ## What you get
@@ -34,4 +34,4 @@ Most compliance work hands you a binder and walks away. You are left to figure o
 
 **What about a framework you have not named here?** The same approach applies to most frameworks. Tell me what you are up against.
 
-<a class="btn-primary btn-lg" href="/docs/services/contact-me/">Talk through your compliance project &rarr;</a>
+<a class="btn-primary btn-lg" href="/docs/services/contact-me/">Talk through your SOC 2 project &rarr;</a>
