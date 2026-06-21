@@ -6,7 +6,28 @@
   <h1>
     {{ partial "docs/title" . }}
   </h1>
-  {{ partial "docs/post-meta" . }}
+  <div class="post-meta-card">
+    <div class="post-meta-card__date">
+      <img src="{{ partial "docs/icon" "calendar" }}" class="book-icon" alt="Calendar" />
+      <span>{{ partial "docs/date" (dict "Date" .Date "Format" .Site.Params.BookDateFormat) }}</span>
+    </div>
+    {{ with .Params.categories }}
+    <div class="post-meta-card__row">
+      <span class="blog-meta-label">Category</span>
+      {{ range . }}
+        <a href="{{ "categories" | relLangURL }}/{{ . | urlize }}">{{ . }}</a>
+      {{ end }}
+    </div>
+    {{ end }}
+    {{ with .Params.tags }}
+    <div class="post-meta-card__row">
+      <span class="blog-meta-label">Tags</span>
+      {{ range . }}
+        <a href="{{ "tags" | relLangURL }}/{{ . | urlize }}">#{{ . }}</a>
+      {{ end }}
+    </div>
+    {{ end }}
+  </div>
   <div class="book-post-content markdown-inner">
     {{- .Content -}}
   </div>
