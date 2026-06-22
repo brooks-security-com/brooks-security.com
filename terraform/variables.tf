@@ -117,10 +117,11 @@ variable "subscribe_notion_key_ssm_param" {
 }
 
 # Notion Clients database id. New Prospect rows are created here on each form
-# submission. The id is a UUID, not a secret — it is the same id shown in the
-# Notion URL when the database is open.
+# submission. This is the database_id (parent.database_id of the Clients data
+# source), not the data_source_id. These are distinct UUIDs in the Notion API.
+# The data_source_id (b650d9f2-...) is for queries; this id is for page creation.
 variable "subscribe_notion_database_id" {
   type    = string
-  default = "b650d9f2-2d5f-432a-8492-ccfa6b12e71d"
+  default = "eb487cb9-8d2b-4fd9-831f-e09099aee25d"
 }
 
