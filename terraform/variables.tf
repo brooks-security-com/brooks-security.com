@@ -110,3 +110,17 @@ variable "subscribe_sheet_id_ssm_param" {
   default = "/brooks-security.com/subscribe/sheet_id"
 }
 
+# Pre-existing SSM SecureString holding the Notion integration API key.
+variable "subscribe_notion_key_ssm_param" {
+  type    = string
+  default = "/brooks-security.com/subscribe/notion_key"
+}
+
+# Notion Clients database id. New Prospect rows are created here on each form
+# submission. The id is a UUID, not a secret — it is the same id shown in the
+# Notion URL when the database is open.
+variable "subscribe_notion_database_id" {
+  type    = string
+  default = "b650d9f2-2d5f-432a-8492-ccfa6b12e71d"
+}
+
