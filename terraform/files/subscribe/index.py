@@ -11,6 +11,8 @@ behavior. The handler:
      token is valid, the action matches "subscribe", and the score clears the
      floor.
   5. Appends a row to a Google Sheet via the Sheets API.
+  6. Creates a page in Notion under the configured parent page (fail-soft:
+     a Notion outage never blocks the form).
 
 Auth to Google is keyless Workload Identity Federation. The Lambda's AWS
 execution role (brooks-security-subscribe) federates into GCP and impersonates a
@@ -126,6 +128,12 @@ def handler(event, context):
         print(f"Sheets append error: {exc}")
         return _resp(502, {"error": "Could not save your details. Please email graham@brooks-security.com."})
 
+    # 7. Log to Notion (fail-soft: a Notion outage never blocks the form).
+    try:
+        _notion_page(fields, ts)
+    except Exception as exc:
+        print(f"Notion log error: {exc}")
+
     return _resp(200, {"ok": True})
 
 
@@ -226,6 +234,45 @@ def _append_row(row):
     return result
 
 
+# --- Notion: fail-soft subscriber logging -----------------------------------
+# Creates a child page under the configured Notion parent page for each valid
+# subscriber. Uses the Notion API directly via urllib (no extra deps). The API
+# key and parent page id are read at runtime from env vars so they never enter
+# Terraform state or Lambda code. This is a best-effort log: failures are
+# printed and swallowed so an outage or rate limit on the Notion side never
+# blocks the subscribe form or the Google Sheet append.
+def _notion_page(fields, ts):
+    key = _ssm_param(os.environ["NOTION_KEY_SSM_PARAM"])
+    parent_id = os.environ["NOTION_PARENT_PAGE_ID"]
+    title = f"Subscriber: {fields['first']} {fields['last']}"
+    markdown = (
+        f"# {title}\n\n"
+        f"- **First name:** {fields['first']}\n"
+        f"- **Last name:** {fields['last']}\n"
+        f"- **Email:** {fields['email']}\n"
+        f"- **Company:** {fields['company'] or '—'}\n"
+        f"- **Timestamp:** {ts}\n"
+    )
+    body = json.dumps({
+        "parent": {"page_id": parent_id},
+        "properties": {"title": [{"text": {"content": title}}]},
+        "markdown": markdown,
+    })
+    url = "https://api.notion.com/v1/pages"
+    req = urllib.request.Request(
+        url, data=body.encode(),
+        method="POST",
+        headers={
+            "Authorization": f"Bearer {key}",
+            "Notion-Version": "2025-09-03",
+            "Content-Type": "application/json",
+        },
+    )
+    with urllib.request.urlopen(req, timeout=10) as resp:
+        data = json.loads(resp.read().decode("utf-8", "replace"))
+    print(f"subscribe: notion page created ({data.get('id', '?')})")
+
+
 # --- Self-check: no network, no credentials, no google-auth needed -----------
 if __name__ == "__main__":
     os.environ["ORIGIN_SECRET"] = "test-secret"
@@ -251,12 +298,15 @@ if __name__ == "__main__":
     # Invalid email rejected before any network call
     assert handler(_event({"first_name": "A", "last_name": "B", "email": "nope", "token": "t"}), None)["statusCode"] == 400
 
-    # Happy path with reCAPTCHA mocked and Sheets append stubbed
+    # Happy path with reCAPTCHA mocked and Sheets/Notion stubbed
     _captured = []
     _assess = lambda token: {"tokenProperties": {"valid": True, "action": "subscribe"}, "riskAnalysis": {"score": 0.9}}
     _append_row = _captured.append
+    _notion_page = lambda fields, ts: _captured.append(("notion", fields, ts))
     good = handler(_event({"first_name": "Ada", "last_name": "Lovelace", "email": "ada@example.com", "token": "t"}), None)
     assert good["statusCode"] == 200, good
-    assert len(_captured) == 1 and _captured[0][1] == "Ada" and _captured[0][3] == "ada@example.com", _captured
+    assert len(_captured) == 2 and _captured[0][1] == "Ada" and _captured[0][3] == "ada@example.com", _captured
+    assert _captured[1] == ("notion", {"first": "Ada", "last": "Lovelace", "email": "ada@example.com", "company": ""}, _captured[1][2]), "notion not called"
+
 
     print("subscribe self-check passed")

@@ -50,13 +50,14 @@ resource "aws_iam_role_policy" "subscribe_lambda" {
         Resource = "arn:aws:logs:*:${var.aws_account_id}:*"
       },
       {
-        # The two new subscribe params plus the existing reCAPTCHA params.
+        # The two new subscribe params plus the existing reCAPTCHA and Notion params.
         Sid    = "ReadParams"
         Effect = "Allow"
         Action = ["ssm:GetParameter"]
         Resource = [
           "arn:aws:ssm:us-east-1:${var.aws_account_id}:parameter${var.subscribe_google_cred_config_ssm_param}",
           "arn:aws:ssm:us-east-1:${var.aws_account_id}:parameter${var.subscribe_sheet_id_ssm_param}",
+          "arn:aws:ssm:us-east-1:${var.aws_account_id}:parameter${var.subscribe_notion_key_ssm_param}",
           "arn:aws:ssm:us-east-1:${var.aws_account_id}:parameter${var.recaptcha_api_key_ssm_param}",
           "arn:aws:ssm:us-east-1:${var.aws_account_id}:parameter${var.recaptcha_site_key_ssm_param}",
         ]
@@ -105,7 +106,7 @@ data "archive_file" "subscribe" {
 
 resource "aws_lambda_function" "subscribe" {
   function_name = "brooks-security-subscribe"
-  description   = "Subscribe form: reCAPTCHA Enterprise + shared secret, append row to a Google Sheet via WIF."
+  description   = "Subscribe form: reCAPTCHA Enterprise + shared secret, append row to Google Sheet via WIF, log to Notion (fail-soft)."
   role          = aws_iam_role.subscribe_lambda.arn
   runtime       = "python3.12"
   handler       = "index.handler"
@@ -130,6 +131,8 @@ resource "aws_lambda_function" "subscribe" {
       GOOGLE_CRED_CONFIG_SSM_PARAM = var.subscribe_google_cred_config_ssm_param
       SHEET_ID_SSM_PARAM           = var.subscribe_sheet_id_ssm_param
       SHEET_RANGE                  = "Subscribers!A:E"
+      NOTION_KEY_SSM_PARAM         = var.subscribe_notion_key_ssm_param
+      NOTION_PARENT_PAGE_ID        = var.subscribe_notion_parent_page_id
     }
   }
 }

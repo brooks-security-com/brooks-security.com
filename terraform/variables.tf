@@ -110,3 +110,16 @@ variable "subscribe_sheet_id_ssm_param" {
   default = "/brooks-security.com/subscribe/sheet_id"
 }
 
+# Pre-existing SSM SecureString holding the Notion integration API key.
+variable "subscribe_notion_key_ssm_param" {
+  type    = string
+  default = "/brooks-security.com/subscribe/notion_key"
+}
+
+# Notion page id under which subscriber pages are created. Not a secret —
+# page ids are public UUIDs. Set to the "Subscribers" page under Operations.
+variable "subscribe_notion_parent_page_id" {
+  type    = string
+  default = "387d84ee-5fd0-81f2-aacd-fdf79f343979"
+}
+
