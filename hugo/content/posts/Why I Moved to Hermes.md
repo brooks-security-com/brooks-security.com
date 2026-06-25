@@ -35,7 +35,7 @@ ChatGPT was the on-ramp. I used it for everything. Scripts, Ansible, Terraform e
 
 Cursor fixed the loop. Inline completions. Chat in the editor. The part where it actually knew your codebase. I moved fast and I paid for it. Top tier plan. I do not remember whether it was a hundred a month or two hundred. Either way I handed them my card and did not think about it, because the velocity was unreal (once I learned to build in useful directions).
 
-But Cursor was still a copilot. It suggested. It autocompleted. It did not go do the thing.
+But Cursor was still a copilot. It suggested. It autocompleted. It did not go execute.
 
 ### Claude Code
 
@@ -43,7 +43,7 @@ Claude Code changed that. I could say "fix the failing Ansible lint" or "add thi
 
 I used both heavily. Real money every month. Not hobby money.
 
-Two problems emerged. One is well known. Rate limiting. Even on the paid tiers I would hit the wall mid-session. Momentum would build, the thing was working, and then, you have exceeded your rate limit, try again in however many hours. Nothing kills flow faster than being told to come back later by the tool you are paying to use right now.
+Two problems emerged. One is well known. Rate limiting. Even on the paid tiers I would hit the wall mid-session. Momentum would build, the session was working, and then, you have exceeded your rate limit, try again in however many hours. Nothing kills flow faster than being told to come back later by the tool you are paying to use right now.
 
 The second problem is less discussed but worse. The guardrails.
 
@@ -77,7 +77,7 @@ For AI inference, that moment is now. You can assemble the whole stack yourself.
 
 Here is the part that matters beyond the tech. With Claude, if it does not respect your skill definitions, and it often does not if the task looks risky to the safety layer, you just live with it. With Hermes, the skills are your own files. You write them. You patch them when they are wrong. The agent follows them because the system prompt tells it to. No corporate safety layer overriding your instructions. You are responsible for what it does, so you have control over what it does.
 
-That tradeoff is the whole thing. I would rather be responsible than babysat.
+That tradeoff is the entire argument. I would rather be responsible than babysat.
 
 ## 3. The numbers
 
@@ -94,7 +94,7 @@ Here is what it cost.
 
 Five hundred sixty one million tokens. A latte and a half. The same volume through Anthropic would have been roughly three hundred forty times that.
 
-Let me be fair about model quality. DeepSeek V4 Pro is not as good as Claude Opus. On broad intelligence benchmarks, like Artificial Analysis's Intelligence Index, Opus's successor Claude Fable 5 scores about 60 while DeepSeek V4 Pro scores about 44. That is a real gap. But for day to day engineering work, the scripts, the Ansible, the Terraform, the practical difference is much narrower. Maybe five percent. Sometimes I have to ask it again because it did not do the thing right.
+Let me be fair about model quality. DeepSeek V4 Pro is not as good as Claude Opus. On broad intelligence benchmarks, like Artificial Analysis's Intelligence Index, Opus's successor Claude Fable 5 scores about 60 while DeepSeek V4 Pro scores about 44. That is a real gap. But for day to day engineering work, the scripts, the Ansible, the Terraform, the practical difference is much narrower. Maybe five percent. Sometimes I have to ask it again because it did not get it right.
 
 But here is the tradeoff. Opus gets the call right maybe ninety percent of the time, but it takes two to five times longer to run through its loop. DeepSeek gets the call wrong maybe twice as often, but it is five times faster. The math still favors the faster model. I would rather ask twice and move on than wait once and wonder when the rate limit will hit.
 
@@ -114,7 +114,7 @@ Obsidian is a note taking app built on plain markdown files. Every note lives on
 
 And Hermes has skills for it. When I finish a session the agent writes structured notes into my vault. What we worked on. What decisions were made. What broke. What worked. Every deliverable gets an artifact note. Every project gets a living note that grows over time.
 
-I did not invent this. I got it from Mete Polat's writeup of his Hermes and Obsidian setup, and it is the single highest leverage thing I have added to my workflow this year. Mete describes voice noting ideas on dog walks and having his agent transcribe, tag, and enrich them into structured Obsidian notes by the time he sits down. Mine is more engineering focused. Session records. PR retrospectives. Infrastructure decisions. But the principle is the same. The agent does the documentation as part of doing the work.
+I did not invent this. I got it from Mete Polat's writeup of his Hermes and Obsidian setup, and it is the single highest leverage addition I have made to my workflow this year. Mete describes voice noting ideas on dog walks and having his agent transcribe, tag, and enrich them into structured Obsidian notes by the time he sits down. Mine is more engineering focused. Session records. PR retrospectives. Infrastructure decisions. But the principle is the same. The agent does the documentation as part of doing the work.
 
 ![Obsidian graph view showing my vault. Green nodes are notes. Grey lines are links between them. The large central hub is where the most connections converge, usually the project notes that tie everything together.](/obsidian-graph.png)
 
@@ -122,7 +122,7 @@ I did not invent this. I got it from Mete Polat's writeup of his Hermes and Obsi
 
 This pays off in ways that are not obvious until you live with it. When I hit a problem I know I have hit before, I do not search through chat logs or dig through old PRs. I search my vault. The session notes are there with the exact error message, the fix, and the context of what else was happening. Mistakes become reference material. Successes become patterns that get reused.
 
-It also cuts token usage. When the agent can load a skill that already knows how to do the thing, it does not need to figure it out again. When it can pull up a past session note instead of asking me what happened last time, it saves both of us the round trip. Over hundreds of sessions the savings compound.
+It also cuts token usage. When the agent can load a skill that already knows how to do the task, it does not need to figure it out again. When it can pull up a past session note instead of asking me what happened last time, it saves both of us the round trip. Over hundreds of sessions the savings compound.
 
 ## 5. The voice loop
 
@@ -138,13 +138,13 @@ Combine Wispr Flow on the input side with the Obsidian vault on the output side 
 
 ## In Summary
 
-I believe knowledge should be free. Not the kind of free where nobody gets paid. The kind where the information is out in the open and what you pay for is the expertise. Someone who has already done the thing. Someone who knows which pieces fit together and which ones do not. Anyone should be able to acquire the knowledge. People should be paid well for the hard work required to acquire it. Those two things are not in conflict. This stack has given me substantial cheat codes, and that is the whole point of writing it down.
+I believe knowledge should be free. Not the kind of free where nobody gets paid. The kind where the information is out in the open and what you pay for is the expertise. Someone who has already done the work. Someone who knows which pieces fit together and which ones do not. Anyone should be able to acquire the knowledge. People should be paid well for the hard work required to acquire it. Those two things are not in conflict. This stack has given me substantial cheat codes, and that is the whole point of writing it down.
 
 Pull on the threads and the story comes apart.
 
 I ran through the commercial tools. They got me far. But they all had the same ceiling. A company deciding how fast I could work. A company deciding how many times I had to click approve. A company deciding what my agent was allowed to do with my own filesystem.
 
-I built a different thing. Open source agent harness. Open weight models. Inference provider with real caching. A voice layer on the input side. A knowledge graph on the output side. The whole stack runs for fifty dollars a month and I stop when I am done, not when someone else's rate limiter says I am done.
+I built something different. Open source agent harness. Open weight models. Inference provider with real caching. A voice layer on the input side. A knowledge graph on the output side. The whole stack runs for fifty dollars a month and I stop when I am done, not when someone else's rate limiter says I am done.
 
 The cost is nice. The speed is better. The control is essential. But the thing that actually matters is that I am not waiting.
 
