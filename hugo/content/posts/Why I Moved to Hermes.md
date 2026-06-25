@@ -85,6 +85,14 @@ Here is the part that matters beyond the tech. With Claude, if it does not respe
 
 That tradeoff is the entire argument. I would rather be responsible than babysat.
 
+### What I share and what I do not
+
+Here is a frustration. I have built some genuinely useful things on top of Hermes. Skills that automate real workflows, save real time, produce real deliverables. But I do not feel comfortable dropping them into a public GitHub repo. Not because I want to hoard them. Because they are built around my specific use case, my specific toolchain, my specific way of working. If I handed you my Jira skill, you would not just see a script. You would see layers of structure that reveal exactly how I organize my work, how I scope my API keys, how I think about projects. Some of that is useful. Some of it is frankly inappropriate to broadcast.
+
+I think a lot of people hit this wall. The open source impulse says share everything. The reality is that not everything is meant to be a library. Some tools are just your tools.
+
+That said, I am not keeping it all to myself. I have posted quite a few of my agentic skills in a public repo at [github.com/LittleSeneca/agentic-skills](https://github.com/LittleSeneca/agentic-skills). The ones that are safe to share, the ones that are general enough to be useful to someone else, they go up. The ones that are too specific, too revealing, too much my own scaffolding, they stay local. That feels like the right line.
+
 ## 3. The numbers
 
 <p class="pull-quote">Five hundred sixty one million tokens. A latte and a half.</p>
