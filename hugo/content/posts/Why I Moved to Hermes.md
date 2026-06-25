@@ -47,7 +47,7 @@ I understand why. Most users are not developers. Most users should not have an a
 
 But there are better ways to solve it than making every user click through a consent form forty times a day until the end of time. You scope the API keys. You give the agent access to specific directories, not the whole filesystem. You run it in a container where the blast radius is contained. You put mechanical blocks in place. File system boundaries. Network restrictions. Command allowlists. Safety in the architecture, not in a popup.
 
-These are not theoretical. I scope my Hermes API keys to exactly what they need. I give it specific project directories. The tool definitions carry their own scope. The terminal tool runs in a defined working directory. The file tools operate on known paths.
+These are not theoretical. I scope my Hermes API keys to exactly what they need. I give it specific project directories. The tool definitions carry their own scope. The terminal tool runs in a defined working directory. The file tools operate on known paths. And Hermes itself runs in a container, so even if it wanted to break my environment it physically cannot.
 
 Maybe Anthropic fixes both problems. Their models are excellent. I could not wait.
 
