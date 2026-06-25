@@ -1,0 +1,44 @@
+{{/* Override of the theme's posts/single.html. Identical to the theme version
+     except for the lead-cta partial appended after the post content, so every
+     blog post (existing and future) ends with the lead-magnet call to action. */}}
+{{ define "main" }}
+<article class="markdown book-post">
+  <h1>
+    {{ partial "docs/title" . }}
+  </h1>
+  <div class="post-meta-card">
+    <div class="post-meta-card__date">
+      <img src="{{ partial "docs/icon" "calendar" }}" class="book-icon" alt="Calendar" />
+      <span>{{ partial "docs/date" (dict "Date" .Date "Format" .Site.Params.BookDateFormat) }}</span>
+    </div>
+    {{ with .Params.categories }}
+    <div class="post-meta-card__row">
+      <span class="blog-meta-label">Category</span>
+      {{ range . }}
+        <a href="{{ "categories" | relLangURL }}/{{ . | urlize }}">{{ . }}</a>
+      {{ end }}
+    </div>
+    {{ end }}
+    {{ with .Params.tags }}
+    <div class="post-meta-card__row">
+      <span class="blog-meta-label">Tags</span>
+      {{ range . }}
+        <a href="{{ "tags" | relLangURL }}/{{ . | urlize }}">#{{ . }}</a>
+      {{ end }}
+    </div>
+    {{ end }}
+  </div>
+  <div class="book-post-content markdown-inner">
+    {{- .Content -}}
+  </div>
+  {{ partial "lead-cta" . }}
+</article>
+{{ end }}
+
+{{ define "toc" }}
+  {{ partial "docs/toc" . }}
+{{ end }}
+
+{{ define "footer" }}
+  {{ partial "docs/post-prev-next" . }}
+{{ end }}

@@ -6,7 +6,26 @@
           <a href="{{ .RelPermalink }}">{{ partial "docs/title" . }}</a>
         </h2>
         <div class="blog-card-meta">
-          {{ partial "docs/post-meta" . }}
+          <div class="blog-card-date">
+            <span class="blog-meta-label">Date</span>
+            <span>{{ partial "docs/date" (dict "Date" .Date "Format" .Site.Params.BookDateFormat) }}</span>
+          </div>
+          {{ with .Params.categories }}
+          <div class="blog-card-category">
+            <span class="blog-meta-label">Category</span>
+            {{ range . }}
+              <a href="{{ "categories" | relLangURL }}/{{ . | urlize }}">{{ . }}</a>
+            {{ end }}
+          </div>
+          {{ end }}
+          {{ with .Params.tags }}
+          <div class="blog-card-tags">
+            <span class="blog-meta-label">Tags</span>
+            {{ range . }}
+              <a href="{{ "tags" | relLangURL }}/{{ . | urlize }}">#{{ . }}</a>
+            {{ end }}
+          </div>
+          {{ end }}
         </div>
         <div class="blog-card-summary">
           {{- .Summary | plainify | truncate 256 -}}

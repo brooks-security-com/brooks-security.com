@@ -88,3 +88,40 @@ variable "recaptcha_min_score" {
   default = 0.7
 }
 
+# --- Subscribe (lead-magnet email capture into a Google Sheet) ---------------
+# Authentication to Google is keyless Workload Identity Federation. The subscribe
+# Lambda's AWS role (brooks-security-subscribe) federates into GCP and
+# impersonates a service account; no service-account key exists. The WIF
+# credential config and the spreadsheet id live in pre-existing SSM
+# SecureStrings, created out of band (see prerequisites). Referenced by name so
+# their values never enter Terraform state.
+
+# Pre-existing SSM SecureString holding the WIF credential config JSON produced
+# by `gcloud iam workload-identity-pools create-cred-config --aws`. Not a secret
+# (it carries identifiers, not a key), but stored encrypted for consistency.
+variable "subscribe_google_cred_config_ssm_param" {
+  type    = string
+  default = "/brooks-security.com/subscribe/google_cred_config"
+}
+
+# Pre-existing SSM SecureString holding the target Google Sheet's spreadsheet id.
+variable "subscribe_sheet_id_ssm_param" {
+  type    = string
+  default = "/brooks-security.com/subscribe/sheet_id"
+}
+
+# Pre-existing SSM SecureString holding the Notion integration API key.
+variable "subscribe_notion_key_ssm_param" {
+  type    = string
+  default = "/brooks-security.com/subscribe/notion_key"
+}
+
+# Notion Clients database id. New Prospect rows are created here on each form
+# submission. This is the database_id (parent.database_id of the Clients data
+# source), not the data_source_id. These are distinct UUIDs in the Notion API.
+# The data_source_id (b650d9f2-...) is for queries; this id is for page creation.
+variable "subscribe_notion_database_id" {
+  type    = string
+  default = "eb487cb9-8d2b-4fd9-831f-e09099aee25d"
+}
+
