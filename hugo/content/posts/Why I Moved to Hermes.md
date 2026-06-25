@@ -172,11 +172,7 @@ Now my sprints have real detail. Every activity, every fix, every decision is tr
 
 I believe knowledge should be free. Not the kind of free where nobody gets paid. The kind where the information is out in the open and what you pay for is the expertise. Someone who has already done the work. Someone who knows which pieces fit together and which ones do not. Anyone should be able to acquire the knowledge. People should be paid well for the hard work required to acquire it. Those two things are not in conflict. This stack has given me substantial cheat codes, and that is the whole point of writing it down.
 
-Pull on the threads and the story comes apart.
-
-I ran through the commercial tools. They got me far. But they all had the same ceiling. A company deciding how fast I could work. A company deciding how many times I had to click approve. A company deciding what my agent was allowed to do with my own filesystem.
-
-I built something different. Open source agent harness. Open weight models. Open Router with context caching. A voice layer on the input side. A knowledge graph on the output side. The whole stack runs for fifty dollars a month and I stop when I am done, not when someone else's rate limiter says I am done.
+I ran through the commercial tools. ChatGPT. Cursor. Claude Code. Claude Co-Work. They got me far. But they all had the same ceiling. A company deciding how fast I could work. A company deciding how many times I had to click approve. A company deciding what my agent was allowed to do with my own filesystem. I could not fix that ceiling, so I stopped trying. I built a different stack instead. Open source agent harness. Open weight models. Open Router with context caching. Wispr Flow on the input side. Obsidian on the output side. Fifty dollars a month. I stop when I am done, not when someone else's rate limiter says I am done.
 
 The cost is nice. The speed is better. The control is essential. But the thing that actually matters is that I am not waiting.
 
