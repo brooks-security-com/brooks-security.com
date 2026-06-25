@@ -33,7 +33,7 @@ ChatGPT was the on-ramp. I used it for everything. Scripts, Ansible, Terraform e
 
 ### Cursor
 
-Cursor fixed the loop. Inline completions. Chat in the editor. The thing where it actually knew your codebase. I moved fast and I paid for it. Top tier plan. I do not remember whether it was a hundred a month or two hundred. Either way I handed them my card and did not think about it, because the velocity was unreal (once I learned to build in useful directions).
+Cursor fixed the loop. Inline completions. Chat in the editor. The part where it actually knew your codebase. I moved fast and I paid for it. Top tier plan. I do not remember whether it was a hundred a month or two hundred. Either way I handed them my card and did not think about it, because the velocity was unreal (once I learned to build in useful directions).
 
 But Cursor was still a copilot. It suggested. It autocompleted. It did not go do the thing.
 
