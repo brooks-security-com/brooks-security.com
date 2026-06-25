@@ -413,3 +413,33 @@ body {
   .home-section { padding: 1.5rem 1rem; margin: 2rem 0; }
   .home-section > h2 { font-size: 1.5rem; }
 }
+
+/* --- Testimonials --------------------------------------------------------- */
+.testimonial {
+  background: var(--body-background);
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  padding: 1.5rem 1.6rem;
+  margin: 1.5rem 0 2rem;
+}
+.testimonial blockquote {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.testimonial blockquote p {
+  font-size: 1.1rem;
+  line-height: 1.65;
+  font-style: italic;
+  color: var(--body-font-color);
+  margin: 0;
+  position: relative;
+  padding-left: 1.2rem;
+  border-left: 3px solid var(--color-link, #0a66c2);
+}
+.testimonial-attribution {
+  margin: 1rem 0 0;
+  font-size: 0.95rem;
+  color: #57606a;
+  text-align: right;
+}

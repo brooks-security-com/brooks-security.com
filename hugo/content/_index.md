@@ -16,6 +16,13 @@ bookToc: false
   </div>
 </div>
 
+<div class="testimonial">
+  <blockquote>
+    <p>Graham successfully guided our practice through a major IT overhaul. He helped ensure our network and software systems were secure, up-to-date, and compliant. He is a highly responsive problem-solver who always goes the extra mile to find the right answers for our specific needs. We trust him completely with our IT and highly recommend his services.</p>
+  </blockquote>
+  <p class="testimonial-attribution">&mdash; Amy, Northwest Metabolic Medicine</p>
+</div>
+
 <div class="home-section">
   <h2>How I can help</h2>
   <div class="card-grid">
