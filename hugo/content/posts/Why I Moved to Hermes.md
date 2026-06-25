@@ -27,11 +27,17 @@ This is the story of that stack. What it cost. What it replaced. And why I am pu
 
 ## 1. The tools I burned through
 
+### ChatGPT
+
 ChatGPT was the on-ramp. I used it for everything. Scripts, Ansible, Terraform errors. But the loop was awful. Copy from terminal. Paste into browser. Copy back. You spend more time moving text around than thinking.
+
+### Cursor
 
 Cursor fixed the loop. Inline completions. Chat in the editor. The thing where it actually knew your codebase. I moved fast and I paid for it. Top tier plan. I do not remember whether it was a hundred a month or two hundred. Either way I handed them my card and did not think about it, because the velocity was unreal (once I learned to build in useful directions).
 
 But Cursor was still a copilot. It suggested. It autocompleted. It did not go do the thing.
+
+### Claude Code
 
 Claude Code changed that. I could say "fix the failing Ansible lint" or "add this endpoint with tests" and it would read the codebase, figure out what to change, make the edits, run the tests. Claude Co-Work went further. Long sessions. Project context. Persistence across days.
 
@@ -59,13 +65,15 @@ You hear a lot about AI slop. All the garbage flooding into production. Some of 
 
 For AI inference, that moment is now. You can assemble the whole stack yourself. No single vendor owns the pipeline. No single rate limit blocks your day. And no single company decides how much you have to ask permission.
 
-The pieces.
+### The stack
 
-Hermes. Open-source agent harness from Nous Research. The orchestrator. It manages tools, skills, memory, and sessions. You point it at any model from any provider and it works. Skill system. Cron jobs. Delegation. It does not care whose model is on the other end, and it does not pester you with approval dialogs because the safety model assumes you are a competent adult who knows how to scope credentials.
+**Hermes.** Open-source agent harness from Nous Research. The orchestrator. It manages tools, skills, memory, and sessions. You point it at any model from any provider and it works. Skill system. Cron jobs. Delegation. It does not care whose model is on the other end, and it does not pester you with approval dialogs because the safety model assumes you are a competent adult who knows how to scope credentials.
 
-DeepSeek V4. The model. Pro for hard reasoning. Flash for fast turnaround. I run both.
+**DeepSeek V4.** The model. Pro for hard reasoning. Flash for fast turnaround. I run both.
 
-Fireworks AI. The inference provider. Their context caching is the secret weapon. When you work in the same workloads for long stretches, same codebase, same tool definitions, same system prompt, you are not hitting new tokens on every turn. You are hitting cached tokens. Cached tokens basically cost nothing.
+**Fireworks AI.** The inference provider. Their context caching is the secret weapon. When you work in the same workloads for long stretches, same codebase, same tool definitions, same system prompt, you are not hitting new tokens on every turn. You are hitting cached tokens. Cached tokens basically cost nothing.
+
+### The tradeoff
 
 Here is the part that matters beyond the tech. With Claude, if it does not respect your skill definitions, and it often does not if the task looks risky to the safety layer, you just live with it. With Hermes, the skills are your own files. You write them. You patch them when they are wrong. The agent follows them because the system prompt tells it to. No corporate safety layer overriding your instructions. You are responsible for what it does, so you have control over what it does.
 
@@ -101,6 +109,8 @@ So here are the rest of the pieces.
 
 ## 5. Obsidian, the graph that remembers
 
+### How it works
+
 One of the quiet advantages of running your own agent harness is that it integrates with whatever tools you want, not whatever tools the platform decided to support. For me the most valuable of those is Obsidian.
 
 Obsidian is a note taking app built on plain markdown files. Every note lives on your disk, in folders you control. This matters because your agent can read, write, and search your notes directly. No API key. No cloud sync. No permissions model. It is just a filesystem.
@@ -111,11 +121,15 @@ I did not invent this. I got it from Mete Polat's writeup of his Hermes and Obsi
 
 ![Obsidian graph view showing my vault. Green nodes are notes. Grey lines are links between them. The large central hub is where the most connections converge, usually the project notes that tie everything together.](/obsidian-graph.png)
 
+### The payoff
+
 This pays off in ways that are not obvious until you live with it. When I hit a problem I know I have hit before, I do not search through chat logs or dig through old PRs. I search my vault. The session notes are there with the exact error message, the fix, and the context of what else was happening. Mistakes become reference material. Successes become patterns that get reused.
 
 It also cuts token usage. When the agent can load a skill that already knows how to do the thing, it does not need to figure it out again. When it can pull up a past session note instead of asking me what happened last time, it saves both of us the round trip. Over hundreds of sessions the savings compound.
 
 ## 6. The voice loop
+
+### How it works
 
 There is one more piece, and it is on the input side. I can talk a lot faster than I can type. Most people can. The built-in dictation on macOS and Linux is fine for a sentence but falls apart on anything longer. Words get mangled. Punctuation is a fight. After two paragraphs you are correcting more than you are saying.
 
