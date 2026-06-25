@@ -93,7 +93,9 @@ Here is what it cost.
 
 Five hundred sixty one million tokens. A latte and a half.
 
-If I had run that volume through Anthropic's API at their per-token rates, a rough estimate puts it well into the hundreds of dollars. I would have burned through more than my monthly budget in a week. Assuming I did not hit rate limits first. Assuming the approval dialogs did not slow me down enough to not get that far.
+If I had run that volume through Anthropic's API, the math gets stupid fast. Claude Opus costs $5 per million input tokens. Even with their caching, which at $12.50 per 5 million cache reads works out to $2.50 per million, it barely helps. Anthropic's caching is not really there yet, and Fireworks caches far more aggressively. Give Anthropic the benefit of the doubt and say a third of those 561 million tokens were cached reads. A third at $2.50 per million, two thirds at $5 per million. That is roughly $467 plus $1,870. Call it $2,300. For the same tokens that cost me $6.78.
+
+And that assumes I did not hit rate limits first. Which I would have.
 
 My total inference spend runs about fifty dollars a month across everything. Hermes harness. DeepSeek models. Fireworks caching. Less than what I was paying for Claude alone. And I am producing more.
 
