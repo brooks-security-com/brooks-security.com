@@ -18,13 +18,6 @@ bookToc: false
   </div>
 </div>
 
-<div class="testimonial">
-  <blockquote>
-    <p>Graham successfully guided our practice through a major IT overhaul. He helped ensure our network and software systems were secure, up-to-date, and compliant. He is a highly responsive problem-solver who always goes the extra mile to find the right answers for our specific needs. We trust him completely with our IT and highly recommend his services.</p>
-  </blockquote>
-  <p class="testimonial-attribution">&mdash; Amy, Northwest Metabolic Medicine</p>
-</div>
-
 <div class="home-section">
   <h2>The problem with SOC 2 the way most people do it</h2>
 
@@ -38,6 +31,13 @@ bookToc: false
       <p>A policy that says "access is reviewed quarterly" means nothing if you have no mechanism to review it, record the evidence, and prove it happened. Writing the policy is the easy part. Building the controls that enforce it in your cloud, in your workflows, to the standard an auditor will accept. That is a different discipline entirely.</p>
     </div>
   </div>
+</div>
+
+<div class="testimonial">
+  <blockquote>
+    <p>Graham successfully guided our practice through a major IT overhaul. He helped ensure our network and software systems were secure, up-to-date, and compliant. He is a highly responsive problem-solver who always goes the extra mile to find the right answers for our specific needs. We trust him completely with our IT and highly recommend his services.</p>
+  </blockquote>
+  <p class="testimonial-attribution">&mdash; Amy, Northwest Metabolic Medicine</p>
 </div>
 
 <div class="home-section">
