@@ -102,6 +102,8 @@ If I had run that volume through Anthropic's API, the math gets stupid fast. Cla
 
 And that assumes I did not hit rate limits first. Which I would have.
 
+I am not interested in token maxing. Spending money just to spend money benefits the shovel sellers, AWS, NVIDIA, the companies that profit when you burn through compute without thinking. These are tools. They should optimize your workload and help you handle edge cases better. If you are spending more than you need to, you are not being strategic. You are just feeding the machine.
+
 My total inference spend runs about fifty dollars a month across everything. Hermes harness. DeepSeek models. Fireworks caching. Less than what I was paying for Claude alone. And I am producing more.
 
 ## 4. Obsidian, the graph that remembers
