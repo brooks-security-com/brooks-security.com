@@ -114,7 +114,7 @@ Obsidian is a note taking app built on plain markdown files. Every note lives on
 
 And Hermes has skills for it. When I finish a session the agent writes structured notes into my vault. What we worked on. What decisions were made. What broke. What worked. Every deliverable gets an artifact note. Every project gets a living note that grows over time.
 
-I did not invent this. I got it from Mete Polat's writeup of his Hermes and Obsidian setup, and it is the single highest leverage addition I have made to my workflow this year. Mete describes voice noting ideas on dog walks and having his agent transcribe, tag, and enrich them into structured Obsidian notes by the time he sits down. Mine is more engineering focused. Session records. PR retrospectives. Infrastructure decisions. But the principle is the same. The agent does the documentation as part of doing the work.
+I did not invent this. I got it from [Mete Polat's writeup](https://metedata.substack.com/p/013-my-hermes-and-obsidian-set-up) of his Hermes and Obsidian setup, and it is the single highest leverage addition I have made to my workflow this year. Mete describes voice noting ideas on dog walks and having his agent transcribe, tag, and enrich them into structured Obsidian notes by the time he sits down. Mine is more engineering focused. Session records. PR retrospectives. Infrastructure decisions. But the principle is the same. The agent does the documentation as part of doing the work.
 
 ![Obsidian graph view showing my vault. Green nodes are notes. Grey lines are links between them. The large central hub is where the most connections converge, usually the project notes that tie everything together.](/obsidian-graph.png)
 
