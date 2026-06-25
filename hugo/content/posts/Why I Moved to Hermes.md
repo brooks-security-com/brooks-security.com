@@ -110,7 +110,7 @@ Here is what it cost.
 
 Five hundred sixty one million tokens. A latte and a half. The same volume through Anthropic would have been roughly three hundred forty times that.
 
-Let me be fair about model quality. DeepSeek V4 Pro is not as good as Claude Opus. On broad intelligence benchmarks, like Artificial Analysis's Intelligence Index, Opus's successor Claude Fable 5 scores about 60 while DeepSeek V4 Pro scores about 44. That is a real gap. But for day to day engineering work, the scripts, the Ansible, the Terraform, the practical difference is much narrower. Maybe five percent. Sometimes I have to ask it again because it did not get it right.
+Let me be fair about model quality. DeepSeek V4 Pro is not as good as Claude Opus. On broad intelligence benchmarks like Artificial Analysis's Intelligence Index, Opus consistently scores higher. That is a real gap. But for day to day engineering work, the scripts, the Ansible, the Terraform, the practical difference is much narrower. Maybe five percent. Sometimes I have to ask it again because it did not get it right.
 
 But here is the tradeoff. Opus gets the call right maybe ninety percent of the time, but it takes two to five times longer to run through its loop. DeepSeek gets the call wrong maybe twice as often, but it is five times faster. The math still favors the faster model. I would rather ask twice and move on than wait once and wonder when the rate limit will hit.
 
