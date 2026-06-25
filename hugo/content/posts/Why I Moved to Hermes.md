@@ -140,6 +140,16 @@ It is cost efficient. Way better than the built in dictation on either macOS or 
 
 Combine Wispr Flow on the input side with the Obsidian vault on the output side and you have a loop. Voice your ideas in detail. The agent does the work. The work gets documented. The documentation trains the skills that make the next session faster. Rinse. Repeat. Ship more.
 
+But there is a second loop that is just as valuable, and it closes around the things that used to fall through the cracks.
+
+The two minute fix. Every engineer knows this one. You spot a small issue, you resolve it, and you never log it anywhere because creating the ticket would take longer than the fix itself. Something got done but nothing got recorded. Over weeks and sprints those invisible fixes add up and nobody can see what you actually shipped.
+
+I have a Jira skill in Hermes. It costs almost nothing in tokens and lets me create, move, and close issues on my board in seconds. Now when I finish something, I talk to Hermes for twenty seconds and it creates a Jira issue with the context of what we just did and marks it closed. No approval dialogs. No are you sure. My Atlassian API key is scoped to exactly the actions the skill needs, so Hermes cannot wander off the reservation.
+
+The same skill exists for Claude Co-Work. But Claude takes two to five minutes for the same task and asks for approval at least once. Multiply that across a sprint and the friction adds up to real time lost. More importantly, it adds up to tickets that just do not get filed because the overhead is not worth it.
+
+Now my sprints have real detail. Every activity, every fix, every decision is tracked. It is easier to track billable hours across clients. It is easier to see what was actually accomplished. The small stuff stops being invisible.
+
 ## In Summary
 
 I believe knowledge should be free. Not the kind of free where nobody gets paid. The kind where the information is out in the open and what you pay for is the expertise. Someone who has already done the work. Someone who knows which pieces fit together and which ones do not. Anyone should be able to acquire the knowledge. People should be paid well for the hard work required to acquire it. Those two things are not in conflict. This stack has given me substantial cheat codes, and that is the whole point of writing it down.
