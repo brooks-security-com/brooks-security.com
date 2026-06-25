@@ -104,17 +104,7 @@ And that assumes I did not hit rate limits first. Which I would have.
 
 My total inference spend runs about fifty dollars a month across everything. Hermes harness. DeepSeek models. Fireworks caching. Less than what I was paying for Claude alone. And I am producing more.
 
-## 4. Why I am telling you this
-
-I believe knowledge should be free. Not the kind of free where nobody gets paid. The kind where the information is out in the open and what you pay for is the expertise. Someone who has already done the thing. Someone who knows which pieces fit together and which ones do not.
-
-Anyone should be able to acquire the knowledge. People should be paid well for the hard work required to acquire it. Those two things are not in conflict.
-
-This stack has given me substantial cheat codes. It has dramatically increased my productivity, both in my personal work and for my clients. Some of this stuff is incredibly valuable and I want it available for anyone who wants to replicate it. That is the whole point of writing it down.
-
-So here are the rest of the pieces.
-
-## 5. Obsidian, the graph that remembers
+## 4. Obsidian, the graph that remembers
 
 ### How it works
 
@@ -134,7 +124,7 @@ This pays off in ways that are not obvious until you live with it. When I hit a 
 
 It also cuts token usage. When the agent can load a skill that already knows how to do the thing, it does not need to figure it out again. When it can pull up a past session note instead of asking me what happened last time, it saves both of us the round trip. Over hundreds of sessions the savings compound.
 
-## 6. The voice loop
+## 5. The voice loop
 
 ### How it works
 
@@ -147,6 +137,8 @@ It is cost efficient. Way better than the built in dictation on either macOS or 
 Combine Wispr Flow on the input side with the Obsidian vault on the output side and you have a loop. Voice your ideas in detail. The agent does the work. The work gets documented. The documentation trains the skills that make the next session faster. Rinse. Repeat. Ship more.
 
 ## In Summary
+
+I believe knowledge should be free. Not the kind of free where nobody gets paid. The kind where the information is out in the open and what you pay for is the expertise. Someone who has already done the thing. Someone who knows which pieces fit together and which ones do not. Anyone should be able to acquire the knowledge. People should be paid well for the hard work required to acquire it. Those two things are not in conflict. This stack has given me substantial cheat codes, and that is the whole point of writing it down.
 
 Pull on the threads and the story comes apart.
 
