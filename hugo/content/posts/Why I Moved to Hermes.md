@@ -71,7 +71,7 @@ For AI inference, that moment is now. You can assemble the whole stack yourself.
 
 **DeepSeek V4.** The model. Pro for hard reasoning. Flash for fast turnaround. I run both.
 
-**Fireworks AI.** The inference provider. Their context caching is the secret weapon. When you work in the same workloads for long stretches, same codebase, same tool definitions, same system prompt, you are not hitting new tokens on every turn. You are hitting cached tokens. Cached tokens basically cost nothing.
+**Fireworks AI.** The inference provider. Their context caching is the secret weapon. When you work in the same workloads for long stretches, same codebase, same tool definitions, same system prompt, you are not hitting new tokens on every turn. You are hitting cached tokens. Cached tokens basically cost nothing. There is a tradeoff here. Fireworks costs a bit more than hitting the DeepSeek API directly. But I am still not entirely comfortable sharing my personal details with a Chinese API endpoint, and the price difference is worth that peace of mind.
 
 ### The tradeoff
 
