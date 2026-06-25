@@ -43,11 +43,11 @@ Claude Code changed that. I could say "fix the failing Ansible lint" or "add thi
 
 I used both heavily. Real money every month. Not hobby money.
 
-Two problems emerged. One is well known. Rate limiting. Even on the paid tiers I would hit the wall mid-session. Momentum would build, the session was working, and then, you have exceeded your rate limit, try again in however many hours. Nothing kills flow faster than being told to come back later by the tool you are paying to use right now.
+Two problems emerged. One is well known. Rate limiting. Even on the paid tiers I would hit the wall mid-session. Momentum would build, the session was working, and then, "you have exceeded your rate limit," "try again" in however many hours. Nothing kills flow faster than being told to come back later by the tool you are paying to use right now.
 
 The second problem is less discussed but worse. The guardrails.
 
-Claude has an extremely cautious posture around what it will do without approval. If you are building a React todo app this is fine. If you are a senior engineer trying to work fast it is suffocating. Every file write. Every shell command. Every API call. Another pause. Another dialog. Another are you sure. The model treats you like you might hurt yourself.
+Claude has an extremely cautious posture around what it will do without approval. If you are building a React todo app this is fine. If you are a senior engineer trying to work fast it is suffocating. Every file write. Every shell command. Every API call. Another pause. Another dialog. Another "are you sure?" The model treats you like you might hurt yourself.
 
 I understand why. Most users are not developers. Most users should not have an agent running arbitrary shell commands. The safety problem is real.
 
@@ -144,7 +144,7 @@ But there is a second loop that is just as valuable, and it closes around the th
 
 The two minute fix. Every engineer knows this one. You spot a small issue, you resolve it, and you never log it anywhere because creating the ticket would take longer than the fix itself. Something got done but nothing got recorded. Over weeks and sprints those invisible fixes add up and nobody can see what you actually shipped.
 
-I have a Jira skill in Hermes. It costs almost nothing in tokens and lets me create, move, and close issues on my board in seconds. Now when I finish something, I talk to Hermes for twenty seconds and it creates a Jira issue with the context of what we just did and marks it closed. No approval dialogs. No are you sure. My Atlassian API key is scoped to exactly the actions the skill needs, so Hermes cannot wander off the reservation.
+I have a Jira skill in Hermes. It costs almost nothing in tokens and lets me create, move, and close issues on my board in seconds. Now when I finish something, I talk to Hermes for twenty seconds and it creates a Jira issue with the context of what we just did and marks it closed. No approval dialogs. No "are you sure?" My Atlassian API key is scoped to exactly the actions the skill needs, so Hermes cannot wander off the reservation.
 
 The same skill exists for Claude Co-Work. But Claude takes two to five minutes for the same task and asks for approval at least once. Multiply that across a sprint and the friction adds up to real time lost. More importantly, it adds up to tickets that just do not get filed because the overhead is not worth it.
 
@@ -162,7 +162,7 @@ I built something different. Open source agent harness. Open weight models. Infe
 
 The cost is nice. The speed is better. The control is essential. But the thing that actually matters is that I am not waiting.
 
-No rate limit banner. No try again later. No approval popup asking me to confirm the command I just told it to run. I type. Or I talk. It works. I keep working.
+No rate limit banner. No "try again later." No approval popup asking me to "confirm" the command I just told it to run. I type. Or I talk. It works. I keep working.
 
 That is worth more than six dollars and seventy eight cents.
 
