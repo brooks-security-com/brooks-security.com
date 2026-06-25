@@ -118,7 +118,7 @@ I did not invent this. I got it from [Mete Polat's writeup](https://metedata.sub
 
 ![Obsidian graph view showing my vault. Green nodes are notes. Grey lines are links between them. The large central hub is where the most connections converge, usually the project notes that tie everything together.](/obsidian-graph.png)
 
-<p style="text-align:center; font-size:0.92rem; color:#57606a; max-width:600px; margin:0.75rem auto 0;">This is my Obsidian graph view after just a couple weeks of use — notes across projects, documentation, skills, and session records. Look online at other people's implementations and it can get pretty ridiculous, with hundreds of thousands of interlocking references. This is what the start of that looks like.</p>
+<p style="text-align:center; font-size:0.92rem; color:#57606a; max-width:600px; margin:0.75rem auto 0;">This is my Obsidian graph view after just a couple weeks of use, notes across projects, documentation, skills, and session records. Look online at other people's implementations and it can get pretty ridiculous, with hundreds of thousands of interlocking references. This is what the start of that looks like.</p>
 
 ### The payoff
 
