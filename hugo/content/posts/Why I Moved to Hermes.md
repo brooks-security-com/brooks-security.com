@@ -21,9 +21,7 @@ categories = [
 menu = "main"
 +++
 
-I have been using AI aggressively since late 2022. ChatGPT. The thing where you type something and it types back and you think, okay, this is different.
-
-I have not stopped since. I have burned through platforms. I have handed my credit card to multiple companies and told myself the bill was worth it because the velocity was real. And I have hit the same walls over and over until I stopped trying to fix the platforms and started assembling my own.
+I have been using AI aggressively since the day ChatGPT launched. GPT-3.5. I signed up the first week and I have not stopped since. I have burned through platforms. I have handed my credit card to multiple companies and told myself the bill was worth it because the velocity was real. And I have hit the same walls over and over until I stopped trying to fix the platforms and started assembling my own.
 
 This is the story of that stack. What it cost. What it replaced. And why I am putting the whole thing out in the open so anyone can copy it.
 
