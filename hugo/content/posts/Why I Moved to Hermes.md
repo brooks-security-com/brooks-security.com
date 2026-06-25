@@ -94,7 +94,9 @@ Here is what it cost.
 
 Five hundred sixty one million tokens. A latte and a half. The same volume through Anthropic would have been roughly three hundred forty times that.
 
-Let me be fair about model quality. DeepSeek V4 Pro is not as good as Opus. It is marginally worse. Maybe five percent. Sometimes I have to ask it again because it did not do the thing right. But here is the tradeoff. Opus gets every call right maybe ninety percent of the time, but it takes two to five times longer to run through its loop. DeepSeek gets it wrong maybe twice as often, but it is five times faster. The math still favors the faster model. I would rather ask twice and move on than wait once and wonder when the rate limit will hit.
+Let me be fair about model quality. DeepSeek V4 Pro is not as good as Claude Opus. On broad intelligence benchmarks, like Artificial Analysis's Intelligence Index, Opus's successor Claude Fable 5 scores about 60 while DeepSeek V4 Pro scores about 44. That is a real gap. But for day to day engineering work, the scripts, the Ansible, the Terraform, the practical difference is much narrower. Maybe five percent. Sometimes I have to ask it again because it did not do the thing right.
+
+But here is the tradeoff. Opus gets every call right maybe ninety percent of the time, but it takes two to five times longer to run through its loop. DeepSeek gets it wrong maybe twice as often, but it is five times faster. The math still favors the faster model. I would rather ask twice and move on than wait once and wonder when the rate limit will hit.
 
 If I had run that volume through Anthropic's API, the math gets stupid fast. Claude Opus costs $5 per million input tokens. Even with their caching, which at $12.50 per 5 million cache reads works out to $2.50 per million, it barely helps. Anthropic's caching is not really there yet, and Fireworks caches far more aggressively. Give Anthropic the benefit of the doubt and say a third of those 561 million tokens were cached reads. A third at $2.50 per million, two thirds at $5 per million. That is roughly $467 plus $1,870. Call it $2,300. For the same tokens that cost me $6.78.
 
