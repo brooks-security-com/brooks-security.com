@@ -53,6 +53,8 @@ I understand why. Most users are not developers. Most users should not have an a
 
 But there are better ways to solve it than making every user click through a consent form forty times a day until the end of time. You scope the API keys. You give the agent access to specific directories, not the whole filesystem. You run it in a container where the blast radius is contained. You put mechanical blocks in place. File system boundaries. Network restrictions. Command allowlists. Safety in the architecture, not in a popup.
 
+<p class="pull-quote">Safety in the architecture, not in a popup.</p>
+
 These are not theoretical. I scope my Hermes API keys to exactly what they need. I give it specific project directories. The tool definitions carry their own scope. The terminal tool runs in a defined working directory. The file tools operate on known paths. And Hermes itself runs in a container, so even if it wanted to break my environment it physically cannot.
 
 Anthropic's models are excellent. Maybe they fix the rate limiting and rethink the guardrails eventually. But I got tired of waiting for a company to decide when I was allowed to work at full speed.
@@ -73,11 +75,15 @@ For AI inference, that moment is now. You can assemble the whole stack yourself.
 
 **Open Router.** The inference layer. I use Open Router and a few distinct endpoints to minimize rate limiting and keep infrastructure bills reasonable. I make sure to use providers that respect data sovereignty laws, and I stick with providers that have context caching enabled. When you work in the same workloads for long stretches, same codebase, same tool definitions, same system prompt, you are not hitting new tokens on every turn. You are hitting cached tokens. Cached tokens basically cost nothing.
 
+<p class="pull-quote">Cached tokens basically cost nothing.</p>
+
 ### The tradeoff
 
 Here is the part that matters beyond the tech. With Claude, if it does not respect your skill definitions, and it often does not if the task looks risky to the safety layer, you just live with it. With Hermes, the skills are your own files. You write them. You patch them when they are wrong. The agent follows them because the system prompt tells it to. No corporate safety layer overriding your instructions. You are responsible for what it does, so you have control over what it does.
 
 That tradeoff is the entire argument. I would rather be responsible than babysat.
+
+<p class="pull-quote">I would rather be responsible than babysat.</p>
 
 ## 3. The numbers
 
@@ -93,6 +99,8 @@ Here is what it cost.
 | *Anthropic Claude Opus (est.)* | *561 million* | *~$2,300* |
 
 Five hundred sixty one million tokens. A latte and a half. The same volume through Anthropic would have been roughly three hundred forty times that.
+
+<p class="pull-quote">Five hundred sixty one million tokens. A latte and a half.</p>
 
 Let me be fair about model quality. DeepSeek V4 Pro is not as good as Claude Opus. On broad intelligence benchmarks, like Artificial Analysis's Intelligence Index, Opus's successor Claude Fable 5 scores about 60 while DeepSeek V4 Pro scores about 44. That is a real gap. But for day to day engineering work, the scripts, the Ansible, the Terraform, the practical difference is much narrower. Maybe five percent. Sometimes I have to ask it again because it did not get it right.
 
@@ -163,6 +171,8 @@ I built something different. Open source agent harness. Open weight models. Open
 The cost is nice. The speed is better. The control is essential. But the thing that actually matters is that I am not waiting.
 
 No rate limit banner. No "try again later." No approval popup asking me to "confirm" the command I just told it to run. I type. Or I talk. It works. I keep working.
+
+<p class="pull-quote">I type. Or I talk. It works. I keep working.</p>
 
 That is worth more than six dollars and seventy eight cents.
 

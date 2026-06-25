@@ -572,6 +572,18 @@ body {
   text-align: right;
 }
 
+/* --- Pull quotes ----------------------------------------------------------- */
+.pull-quote {
+  text-align: center;
+  font-style: italic;
+  font-size: 1.35rem;
+  line-height: 1.4;
+  color: var(--color-link, #0a66c2);
+  max-width: 640px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
 /* --- Sidebar highlight: readiness checklist callout ----------------------- */
 /* Target the sidebar link to the readiness-check page and make it a
    colored button so it stands out from the rest of the nav. */
