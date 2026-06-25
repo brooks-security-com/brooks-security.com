@@ -53,7 +53,7 @@ Anthropic's models are excellent. Maybe they fix the rate limiting and rethink t
 
 ## 2. The open-source turn
 
-I have been doing infrastructure for two decades. Here is the one thing I know for certain. Open source solves the problem eventually. Every time. It just takes a year or two longer than you want it to.
+I have been using open source platforms my whole life, as have we all, but I have been using them intentionally for the better part of two decades, starting with Linux and then expanding into infrastructure operations and security. Here is the one thing I know for certain. Open source solves the problem eventually. Every time. It just takes a year or two longer than you want it to.
 
 For AI inference, that moment is now. You can assemble the whole stack yourself. No single vendor owns the pipeline. No single rate limit blocks your day. And no single company decides how much you have to ask permission.
 
