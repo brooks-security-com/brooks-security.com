@@ -49,7 +49,7 @@ But there are better ways to solve it than making every user click through a con
 
 These are not theoretical. I scope my Hermes API keys to exactly what they need. I give it specific project directories. The tool definitions carry their own scope. The terminal tool runs in a defined working directory. The file tools operate on known paths. And Hermes itself runs in a container, so even if it wanted to break my environment it physically cannot.
 
-Maybe Anthropic fixes both problems. Their models are excellent. I could not wait.
+Anthropic's models are excellent. Maybe they fix the rate limiting and rethink the guardrails eventually. But I got tired of waiting for a company to decide when I was allowed to work at full speed.
 
 ## 2. The open-source turn
 
