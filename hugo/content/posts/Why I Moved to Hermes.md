@@ -53,7 +53,9 @@ Anthropic's models are excellent. Maybe they fix the rate limiting and rethink t
 
 ## 2. The open-source turn
 
-I have been using open source platforms my whole life, as have we all, but I have been using them intentionally for the better part of two decades, starting with Linux and then expanding into infrastructure operations and security. Here is the one thing I know for certain. Open source solves the problem eventually. Every time. It just takes a year or two longer than you want it to.
+I have been using open source platforms my whole life, as have we all, but I have been using them intentionally for the better part of two decades, starting with Linux and then expanding into infrastructure operations and security. Here is the one thing I know for certain. Open source solves the problem. And right now, with the AI revolution, it is getting there first. Often in ways the big companies cannot keep up with.
+
+You hear a lot about AI slop. All the garbage flooding into production. Some of that is true. But it is also true that some of the best tooling we are finding for managing AI, for running large language models, for orchestrating agents, is coming from the open source community. Coming fast. The tools do not always have the most polish. Nobody is putting a marketing site behind them. But they are excellent in a way we have not really seen before.
 
 For AI inference, that moment is now. You can assemble the whole stack yourself. No single vendor owns the pipeline. No single rate limit blocks your day. And no single company decides how much you have to ask permission.
 
