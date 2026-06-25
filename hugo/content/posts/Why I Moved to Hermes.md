@@ -136,7 +136,7 @@ There is one more piece, and it is on the input side. I can talk a lot faster th
 
 Wispr Flow fixed this. Instead of a one line instruction, fix the CI pipeline, I can dictate three paragraphs of exactly what broke, what I already tried, which environment it is in, and what the expected output should be. All in about thirty seconds. The agent gets a fully loaded brief instead of a vague request, and the quality of the output follows.
 
-It is cost efficient. Way better than the built in dictation on either macOS or Linux. It handles technical vocabulary without flinching. Ansible. Terraform. Semaphore. All of it comes through clean. When you are talking to an agent that can consume unlimited context, the bottleneck should not be your typing speed.
+It is cost efficient. Way better than the built in dictation on either macOS or Linux. It handles technical vocabulary without flinching. All of it comes through clean. When you are talking to an agent that can consume unlimited context, the bottleneck should not be your typing speed.
 
 Combine Wispr Flow on the input side with the Obsidian vault on the output side and you have a loop. Voice your ideas in detail. The agent does the work. The work gets documented. The documentation trains the skills that make the next session faster. Rinse. Repeat. Ship more.
 
