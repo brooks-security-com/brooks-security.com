@@ -5,11 +5,13 @@ tags = [
     "ai",
     "ai agents",
     "hermes",
+    "obsidian",
     "open source",
     "deepseek",
     "cursor",
     "claude",
-    "obsidian",
+    "wispr",
+    "voice",
     "productivity",
 ]
 date = "2026-06-25"
@@ -98,6 +100,16 @@ I did not invent this pattern. I got it from [Mete Polat's writeup](https://mete
 This pays off in ways that are not obvious until you live with it for a while. When I hit a problem I know I have hit before, I do not search through chat logs or dig through old PRs. I search my vault. The session notes are there with the exact error message, the fix, and the context of what else was happening at the time. Mistakes become reference material. Successes become patterns that get reused.
 
 It also cuts token usage. When the agent can load a skill that already knows how to do the thing, it does not need to figure it out again. When it can pull up a past session note instead of asking me what happened last time, it saves both of us the round trip. Over hundreds of sessions, the savings compound.
+
+## Wispr Flow: voice at the speed of thought
+
+There is one more piece to this workflow, and it is on the input side. I can talk a lot faster than I can type. Most people can. If you have ever dictated a long prompt, you know the problem: the built-in dictation on macOS and Linux is fine for a sentence, but it falls apart on anything longer. Words get mangled. Punctuation is a fight. After two paragraphs you are correcting more than you are saying.
+
+I started using [Wispr Flow](https://wisprflow.ai) a while back and it changed how much context I can put into a prompt. Instead of a one-line instruction — "fix the CI pipeline" — I can dictate three paragraphs of exactly what broke, what I already tried, which environment it is in, and what the expected output should be. All in about thirty seconds. The agent gets a fully-loaded brief instead of a vague request, and the quality of the output goes up accordingly.
+
+It is also surprisingly cost-efficient. Way better than the built-in dictation on either macOS or Linux, and it handles technical vocabulary without flinching — Ansible, Terraform, Semaphore, all of it comes through clean. When you are talking to an agent that can consume unlimited context, the bottleneck should not be your typing speed.
+
+Combine Wispr Flow on the input side with the Obsidian vault on the output side, and you have a loop. Voice your ideas in detail. The agent does the work. The work gets documented. The documentation trains the skills that make the next session faster. Rinse, repeat, ship more.
 
 ## The thing that matters
 
