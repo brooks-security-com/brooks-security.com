@@ -545,7 +545,7 @@ body {
 /* --- Testimonials --------------------------------------------------------- */
 .testimonial {
   background: var(--body-background);
-  border: 1px solid var(--gray-200);
+  border: 1px solid var(--color-link, #0a66c2);
   border-radius: 12px;
   padding: 1.5rem 1.6rem;
   margin: 1.5rem 0 2rem;
@@ -570,6 +570,18 @@ body {
   font-size: 0.95rem;
   color: #57606a;
   text-align: right;
+}
+
+/* --- Pull quotes ----------------------------------------------------------- */
+.pull-quote {
+  text-align: center;
+  font-style: italic;
+  font-size: 1.35rem;
+  line-height: 1.4;
+  color: var(--color-link, #0a66c2);
+  max-width: 640px;
+  margin: 2rem auto;
+  padding: 0 1rem;
 }
 
 /* --- Sidebar highlight: readiness checklist callout ----------------------- */
