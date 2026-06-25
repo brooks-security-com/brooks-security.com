@@ -71,7 +71,7 @@ For AI inference, that moment is now. You can assemble the whole stack yourself.
 
 **DeepSeek V4.** The model. Pro for hard reasoning. Flash for fast turnaround. I run both.
 
-**Fireworks AI.** The inference provider. Their context caching is the secret weapon. When you work in the same workloads for long stretches, same codebase, same tool definitions, same system prompt, you are not hitting new tokens on every turn. You are hitting cached tokens. Cached tokens basically cost nothing. There is a tradeoff here. Fireworks costs a bit more than hitting the DeepSeek API directly. But I am still not entirely comfortable sharing my personal details with a Chinese API endpoint, and the price difference is worth that peace of mind.
+**Open Router.** The inference layer. I use Open Router and a few distinct endpoints to minimize rate limiting and keep infrastructure bills reasonable. I make sure to use providers that respect data sovereignty laws, and I stick with providers that have context caching enabled. When you work in the same workloads for long stretches, same codebase, same tool definitions, same system prompt, you are not hitting new tokens on every turn. You are hitting cached tokens. Cached tokens basically cost nothing.
 
 ### The tradeoff
 
@@ -98,13 +98,13 @@ Let me be fair about model quality. DeepSeek V4 Pro is not as good as Claude Opu
 
 But here is the tradeoff. Opus gets the call right maybe ninety percent of the time, but it takes two to five times longer to run through its loop. DeepSeek gets the call wrong maybe twice as often, but it is five times faster. The math still favors the faster model. I would rather ask twice and move on than wait once and wonder when the rate limit will hit.
 
-If I had run that volume through Anthropic's API, the math gets stupid fast. Claude Opus costs $5 per million input tokens. Even with their caching, which at $12.50 per 5 million cache reads works out to $2.50 per million, it barely helps. Anthropic's caching is not really there yet, and Fireworks caches far more aggressively. Give Anthropic the benefit of the doubt and say a third of those 561 million tokens were cached reads. A third at $2.50 per million, two thirds at $5 per million. That is roughly $467 plus $1,870. Call it $2,300. For the same tokens that cost me $6.78.
+If I had run that volume through Anthropic's API, the math gets stupid fast. Claude Opus costs $5 per million input tokens. Even with their caching, which at $12.50 per 5 million cache reads works out to $2.50 per million, it barely helps. Anthropic's caching is not really there yet, and Open Router with the right endpoints caches far more aggressively. Give Anthropic the benefit of the doubt and say a third of those 561 million tokens were cached reads. A third at $2.50 per million, two thirds at $5 per million. That is roughly $467 plus $1,870. Call it $2,300. For the same tokens that cost me $6.78.
 
 And that assumes I did not hit rate limits first. Which I would have.
 
 I am not interested in token maxing. Spending money just to spend money benefits the shovel sellers, AWS, NVIDIA, the companies that profit when you burn through compute without thinking. These are tools. They should optimize your workload and help you handle edge cases better. If you are spending more than you need to, you are not being strategic. You are just feeding the machine.
 
-My total inference spend runs about fifty dollars a month across everything. Hermes harness. DeepSeek models. Fireworks caching. Less than what I was paying for Claude alone. And I am producing more.
+My total inference spend runs about fifty dollars a month across everything. Hermes harness. DeepSeek models. Open Router. Less than what I was paying for Claude alone. And I am producing more.
 
 ## 4. Obsidian, the graph that remembers
 
@@ -158,7 +158,7 @@ Pull on the threads and the story comes apart.
 
 I ran through the commercial tools. They got me far. But they all had the same ceiling. A company deciding how fast I could work. A company deciding how many times I had to click approve. A company deciding what my agent was allowed to do with my own filesystem.
 
-I built something different. Open source agent harness. Open weight models. Inference provider with real caching. A voice layer on the input side. A knowledge graph on the output side. The whole stack runs for fifty dollars a month and I stop when I am done, not when someone else's rate limiter says I am done.
+I built something different. Open source agent harness. Open weight models. Open Router with context caching. A voice layer on the input side. A knowledge graph on the output side. The whole stack runs for fifty dollars a month and I stop when I am done, not when someone else's rate limiter says I am done.
 
 The cost is nice. The speed is better. The control is essential. But the thing that actually matters is that I am not waiting.
 
