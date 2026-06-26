@@ -2,16 +2,8 @@
 grc-tools Lambda handler — policy builder backend.
 
 Route dispatch for all /api/grc-tools/* endpoints.
-Deployed as a Lambda container image (needs weasyprint system deps for PDF).
+Deployed as a standard zip-based Lambda (pure Python deps only).
 
-Environment variables (set by Terraform):
-  SESSIONS_TABLE  - DynamoDB table for wizard state
-  POLICIES_TABLE  - DynamoDB table for generated policy metadata
-  S3_BUCKET       - S3 bucket for generated policies
-  S3_PREFIX       - S3 key prefix (e.g., "grc-tools/users")
-  USER_POOL_ID    - Cognito user pool ID
-  CLIENT_ID       - Cognito app client ID
-  ORIGIN_SECRET   - Shared secret (X-Origin-Secret header validation)
 """
 
 import json
@@ -26,8 +18,9 @@ import jwt
 import markdown
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound
 
-# PDF generation (weasyprint needs system deps: cairo, pango, gdk-pixbuf)
-from weasyprint import HTML
+# PDF generation (xhtml2pdf -- pure Python, no system deps)
+from xhtml2pdf import pisa
+from io import BytesIO
 
 # DOCX generation
 from docx import Document
@@ -219,12 +212,14 @@ strong { color: #24292f; }
 
 
 def render_pdf(md_content: str) -> bytes:
-    """Render markdown to PDF via weasyprint."""
-    html = markdown.markdown(md_content, extensions=["tables", "fenced_code", "codehilite"])
+    """Render markdown to PDF via xhtml2pdf (pure Python)."""
+    html = markdown.markdown(md_content, extensions=["tables", "fenced_code"])
     full_html = f"""<!DOCTYPE html>
 <html><head><meta charset="utf-8"><style>{PDF_CSS}</style></head>
 <body>{html}</body></html>"""
-    return HTML(string=full_html).write_pdf()
+    buf = BytesIO()
+    pisa.CreatePDF(full_html, dest=buf)
+    return buf.getvalue()
 
 
 def render_docx(md_content: str) -> bytes:

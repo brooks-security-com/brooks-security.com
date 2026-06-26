@@ -1,30 +1,18 @@
 # =============================================================================
-# grc-tools policy builder — phase 1 infrastructure
+# grc-tools policy builder backend
 #
-# Resources that can be created BEFORE the Docker image is pushed to ECR.
-# Apply this first, then docker build/push, then apply grc-tools-lambda.tf.
+# DynamoDB (session state + policy metadata) + IAM role + Lambda (zip) +
+# API Gateway routes. The Lambda is deployed as a standard zip package
+# with pure Python dependencies — no Docker or ECR needed.
 #
-# Phase 1: ECR, DynamoDB, IAM, CloudWatch
-# Phase 2: Lambda + API Gateway (grc-tools-lambda.tf — needs image in ECR)
+# API Gateway routes are added to the existing brooks-security-contact
+# HTTP API (contact.tf) to avoid creating a second API Gateway.
 # =============================================================================
 
 locals {
   grc_tags = {
     Project = "grc-tools"
   }
-}
-
-# --- ECR repository for Lambda container image -------------------------------
-
-resource "aws_ecr_repository" "grc_tools" {
-  name = "grc-tools"
-  tags = local.grc_tags
-
-  image_scanning_configuration {
-    scan_on_push = true
-  }
-
-  force_delete = true
 }
 
 # --- DynamoDB tables ---------------------------------------------------------
@@ -143,4 +131,105 @@ resource "aws_iam_role_policy" "grc_tools" {
       },
     ]
   })
+}
+
+# --- Lambda function (zip package — no Docker, no ECR) ----------------------
+
+data "archive_file" "grc_tools" {
+  type        = "zip"
+  source_dir  = "${path.module}/files/grc-tools"
+  output_path = "${path.module}/.terraform/tmp/grc-tools.zip"
+  excludes    = ["__pycache__", "*.pyc"]
+}
+
+resource "aws_lambda_function" "grc_tools" {
+  function_name = "grc-tools"
+  role          = aws_iam_role.grc_tools.arn
+  runtime       = "python3.12"
+  handler       = "handler.handler"
+  timeout       = 30
+  memory_size   = 512
+  tags          = local.grc_tags
+
+  filename         = data.archive_file.grc_tools.output_path
+  source_code_hash = data.archive_file.grc_tools.output_base64sha256
+
+  environment {
+    variables = {
+      SESSIONS_TABLE = aws_dynamodb_table.grc_sessions.name
+      POLICIES_TABLE = aws_dynamodb_table.grc_policies.name
+      S3_BUCKET      = var.domain
+      S3_PREFIX      = "grc-tools/users"
+      USER_POOL_ID   = aws_cognito_user_pool.grc_tools.id
+      CLIENT_ID      = aws_cognito_user_pool_client.grc_tools.id
+      ORIGIN_SECRET=random...lt
+    }
+  }
+}
+
+resource "aws_cloudwatch_log_group" "grc_tools" {
+  name              = "/aws/lambda/${aws_lambda_function.grc_tools.function_name}"
+  retention_in_days = 14
+  tags              = local.grc_tags
+}
+
+# --- API Gateway routes (added to the existing contact API) ------------------
+
+resource "aws_apigatewayv2_integration" "grc_tools" {
+  api_id                 = aws_apigatewayv2_api.contact.id
+  integration_type       = "AWS_PROXY"
+  integration_uri        = aws_lambda_function.grc_tools.invoke_arn
+  integration_method     = "POST"
+  payload_format_version = "2.0"
+}
+
+resource "aws_apigatewayv2_route" "grc_whoami" {
+  api_id    = aws_apigatewayv2_api.contact.id
+  route_key = "GET /api/grc-tools/whoami"
+  target    = "integrations/${aws_apigatewayv2_integration.grc_tools.id}"
+}
+
+resource "aws_apigatewayv2_route" "grc_session_get" {
+  api_id    = aws_apigatewayv2_api.contact.id
+  route_key = "GET /api/grc-tools/session"
+  target    = "integrations/${aws_apigatewayv2_integration.grc_tools.id}"
+}
+
+resource "aws_apigatewayv2_route" "grc_session_put" {
+  api_id    = aws_apigatewayv2_api.contact.id
+  route_key = "PUT /api/grc-tools/session"
+  target    = "integrations/${aws_apigatewayv2_integration.grc_tools.id}"
+}
+
+resource "aws_apigatewayv2_route" "grc_templates" {
+  api_id    = aws_apigatewayv2_api.contact.id
+  route_key = "GET /api/grc-tools/templates"
+  target    = "integrations/${aws_apigatewayv2_integration.grc_tools.id}"
+}
+
+resource "aws_apigatewayv2_route" "grc_generate" {
+  api_id    = aws_apigatewayv2_api.contact.id
+  route_key = "POST /api/grc-tools/generate"
+  target    = "integrations/${aws_apigatewayv2_integration.grc_tools.id}"
+}
+
+resource "aws_apigatewayv2_route" "grc_bundle" {
+  api_id    = aws_apigatewayv2_api.contact.id
+  route_key = "POST /api/grc-tools/bundle"
+  target    = "integrations/${aws_apigatewayv2_integration.grc_tools.id}"
+}
+
+resource "aws_apigatewayv2_route" "grc_policies" {
+  api_id    = aws_apigatewayv2_api.contact.id
+  route_key = "GET /api/grc-tools/policies"
+  target    = "integrations/${aws_apigatewayv2_integration.grc_tools.id}"
+}
+
+# Let API Gateway invoke the Lambda
+resource "aws_lambda_permission" "grc_tools_apigw" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.grc_tools.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_apigatewayv2_api.contact.execution_arn}/*/*"
 }
