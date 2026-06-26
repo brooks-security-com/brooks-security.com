@@ -39,3 +39,11 @@ provider "aws" {
   # AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY env vars in CI.
   profile = var.aws_profile != "" ? var.aws_profile : null
 }
+
+# Alias required to destroy orphaned resources from the failed initial deploy
+# (aws_acm_certificate_validation.auth). Remove after the next successful apply.
+provider "aws" {
+  alias   = "us_east_1"
+  region  = "us-east-1"
+  profile = var.aws_profile != "" ? var.aws_profile : null
+}
