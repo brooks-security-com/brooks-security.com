@@ -6,11 +6,11 @@ bookToc: false
 
 <div class="home-hero">
   <div class="home-hero__text">
-    <h1 class="home-hero__title">Policies don't pass audits.<br><span class="home-hero__title-offset"><em>Evidence does.</em></span></h1>
+    <h1 class="home-hero__title">Policies don't pass audits.<br><span class="home-hero__title-offset"><em>People do.</em></span></h1>
     <p class="home-hero__lead">Here are your options. You hire an MSSP. Tens of thousands a year, and they will operate some controls, but they will not write your policies to your actual business and they will not own the outcome. You hire a security engineer internally. Full senior salary plus benefits, plus the six months it takes them to learn your stack. And you are still asking one person to do three different jobs.</p>
     <p class="home-hero__lead">Or you buy a policy template for a few hundred bucks and hope you figure out the rest before the auditor calls. That one ends the same way every time.</p>
-    <p class="home-hero__lead">None of those close the gap between the policy and the proof. The policy says one thing. Your cloud does another. The auditor notices.</p>
-    <p class="home-hero__lead">I write policies that describe your actual organization. I build the (cost efficient) controls that enforce them. I produce the evidence the auditor signs off on. One practitioner, the whole program. You pass the audit. Back to business.</p>
+    <p class="home-hero__lead">But the real gap is not the evidence. It is the judgment. A SOC 2 audit does not hand you a build spec. It asks you to decide which controls matter for your business, what reasonable looks like for a team your size, and how far to push back when an auditor wants more than the standard requires. None of those calls come from a template. They come from someone who has done this enough times to know the difference between a real finding and a misunderstanding.</p>
+    <p class="home-hero__lead">I write policies that describe your actual organization. I build the (cost efficient) controls that enforce them. I produce the evidence the auditor signs off on. But the work that matters most is the judgment: knowing where to focus, when a control is good enough, and how to steer the audit to a conclusion. One practitioner, the whole program. You pass the audit. Back to business.</p>
     <div class="btn-row">
       <a class="btn-primary btn-lg" href="/docs/services/compliance-program/">How it works &rarr;</a>
       <a class="btn-secondary btn-lg" href="/docs/readiness-check/">Get the readiness checklist</a>
