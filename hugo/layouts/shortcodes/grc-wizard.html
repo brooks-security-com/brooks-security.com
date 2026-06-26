@@ -1,0 +1,1652 @@
+<style>
+/* ===== GRC Wizard — TurboTax-style ===== */
+.grc-wizard {
+  --wizard-blue: #0a66c2;
+  --wizard-blue-light: #ddf4ff;
+  --wizard-green: #1a7f37;
+  --wizard-green-light: #dafbe1;
+  --wizard-purple: #8250df;
+  --wizard-purple-light: #f5e6ff;
+  --wizard-gray-100: #f6f8fa;
+  --wizard-gray-200: #d0d7de;
+  --wizard-gray-300: #afb8c1;
+  --wizard-gray-500: #57606a;
+  --wizard-gray-800: #24292f;
+  --wizard-white: #ffffff;
+  --wizard-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+  --wizard-shadow-lg: 0 8px 24px rgba(0,0,0,0.1);
+  --wizard-radius: 12px;
+  --wizard-sidebar-width: 240px;
+
+  display: flex;
+  gap: 0;
+  width: 100%;
+  height: calc(100vh - 60px);
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+.wizard-sidebar {
+  width: var(--wizard-sidebar-width);
+  flex-shrink: 0;
+  background: var(--wizard-gray-100);
+  border-radius: var(--wizard-radius) 0 0 var(--wizard-radius);
+  padding: 1.75rem 1.25rem;
+  border: 1px solid var(--wizard-gray-200);
+  border-right: none;
+  display: flex;
+  flex-direction: column;
+}
+.wizard-sidebar-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--wizard-gray-500);
+  margin-bottom: 1.25rem;
+}
+.wizard-sidebar-steps {
+  flex: 1;
+}
+.wizard-step-indicator {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  position: relative;
+}
+.wizard-step-indicator + .wizard-step-indicator {
+  border-top: 1px solid var(--wizard-gray-200);
+}
+.wizard-step-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  margin-top: 1px;
+}
+.wizard-step-badge.inactive {
+  background: transparent;
+  border: 2px solid var(--wizard-gray-200);
+  color: var(--wizard-gray-300);
+}
+.wizard-step-badge.active {
+  background: var(--wizard-blue);
+  border: 2px solid var(--wizard-blue);
+  color: #fff;
+}
+.wizard-step-badge.done {
+  background: var(--wizard-green);
+  border: 2px solid var(--wizard-green);
+  color: #fff;
+}
+.wizard-step-label {
+  font-size: 0.82rem;
+  color: var(--wizard-gray-300);
+  transition: color 0.3s ease;
+  line-height: 1.3;
+}
+.wizard-step-label.active {
+  color: var(--wizard-gray-800);
+  font-weight: 600;
+}
+.wizard-step-label.done {
+  color: var(--wizard-gray-500);
+}
+/* Sidebar footer */
+.wizard-sidebar-footer {
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid var(--wizard-gray-200);
+}
+.wizard-sidebar-help-link {
+  font-size: 0.8rem;
+  color: var(--wizard-blue);
+  text-decoration: none;
+  font-weight: 500;
+}
+.wizard-sidebar-help-link:hover {
+  text-decoration: underline;
+}
+.wizard-save-indicator {
+  font-size: 0.72rem;
+  color: var(--wizard-green);
+  margin-top: 0.5rem;
+  display: none;
+  align-items: center;
+  gap: 0.3rem;
+}
+.wizard-save-indicator.visible {
+  display: flex;
+}
+.wizard-welcome-back {
+  background: var(--wizard-blue-light);
+  border: 1px solid #b6d9f7;
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.88rem;
+  color: #0856a3;
+}
+/* Main area */
+.wizard-main {
+  flex: 1;
+  background: var(--wizard-white);
+  border: 1px solid var(--wizard-gray-200);
+  border-radius: 0 var(--wizard-radius) var(--wizard-radius) 0;
+  padding: 2rem 2.25rem;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.wizard-step {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+}
+.wizard-step.active {
+  display: flex;
+}
+.wizard-step-heading {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--wizard-gray-800);
+  margin: 0 0 0.5rem;
+}
+.wizard-step-subtitle {
+  font-size: 0.95rem;
+  color: var(--wizard-gray-500);
+  margin: 0 0 1.75rem;
+  line-height: 1.5;
+}
+.wizard-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-bottom: 1.5rem;
+}
+.wizard-option {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1.1rem;
+  border: 2px solid var(--wizard-gray-200);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  background: var(--wizard-white);
+  color: var(--wizard-gray-800);
+}
+.wizard-option:hover {
+  border-color: var(--wizard-blue);
+  background: #f0f7ff;
+}
+.wizard-option.selected {
+  border-color: var(--wizard-blue);
+  background: var(--wizard-blue-light);
+}
+.wizard-option input[type="radio"],
+.wizard-option input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--wizard-blue);
+  flex-shrink: 0;
+}
+.wizard-option .option-content {
+  display: flex;
+  flex-direction: column;
+}
+.wizard-option .option-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.wizard-option .option-desc {
+  font-size: 0.8rem;
+  color: var(--wizard-gray-500);
+  margin-top: 0.15rem;
+}
+.wizard-checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+.wizard-checkbox-grid .wizard-option {
+  padding: 0.7rem 0.9rem;
+}
+/* Company name input */
+.wizard-company-input {
+  width: 100%;
+  max-width: 420px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 2px solid var(--wizard-gray-200);
+  border-radius: 10px;
+  outline: none;
+  transition: border-color 0.15s ease;
+  font-family: inherit;
+  color: var(--wizard-gray-800);
+  background: var(--wizard-white);
+}
+.wizard-company-input:focus {
+  border-color: var(--wizard-blue);
+  box-shadow: 0 0 0 3px rgba(10,102,194,0.12);
+}
+.wizard-company-input::placeholder {
+  color: var(--wizard-gray-300);
+}
+/* Help icons */
+.wizard-help-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--wizard-gray-200);
+  color: var(--wizard-gray-500);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-decoration: none;
+  margin-left: 0.4rem;
+  transition: all 0.15s;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+.wizard-help-icon:hover {
+  background: var(--wizard-blue);
+  color: #fff;
+}
+/* Policy selection */
+.wizard-policy-recommended {
+  background: var(--wizard-blue-light);
+  border: 1px solid #b6d9f7;
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  color: #0856a3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.wizard-policy-recommended .rec-label {
+  font-weight: 600;
+}
+.wizard-policy-counter {
+  font-size: 0.85rem;
+  color: var(--wizard-gray-500);
+  margin-bottom: 0.75rem;
+}
+.wizard-policy-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1.5rem;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+.wizard-policy-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--wizard-gray-200);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  background: var(--wizard-white);
+}
+.wizard-policy-item:hover {
+  border-color: var(--wizard-blue);
+  background: #f8fbff;
+}
+.wizard-policy-item.selected {
+  border-color: var(--wizard-blue);
+  background: var(--wizard-blue-light);
+}
+.wizard-policy-item input[type="checkbox"] {
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+.wizard-policy-item .policy-info {
+  flex: 1;
+  min-width: 0;
+}
+.wizard-policy-item .policy-name {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--wizard-gray-800);
+}
+.wizard-policy-item .policy-desc {
+  font-size: 0.78rem;
+  color: var(--wizard-gray-500);
+  margin-top: 0.1rem;
+}
+/* Welcome */
+.wizard-welcome {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-bottom: 1rem;
+}
+.wizard-welcome-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+.wizard-welcome-heading {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--wizard-gray-800);
+  margin-bottom: 0.75rem;
+  line-height: 1.3;
+}
+.wizard-welcome-text {
+  font-size: 1rem;
+  color: var(--wizard-gray-500);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  max-width: 500px;
+}
+/* Review */
+.wizard-review-card {
+  background: var(--wizard-gray-100);
+  border: 1px solid var(--wizard-gray-200);
+  border-radius: 10px;
+  padding: 1.25rem 1.4rem;
+  margin-bottom: 1rem;
+}
+.wizard-review-card h4 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  color: var(--wizard-gray-800);
+}
+.wizard-review-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.4rem 0;
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--wizard-gray-200);
+}
+.wizard-review-row:last-child {
+  border-bottom: none;
+}
+.wizard-review-row .label {
+  color: var(--wizard-gray-500);
+}
+.wizard-review-row .value {
+  font-weight: 600;
+  color: var(--wizard-gray-800);
+  text-align: right;
+}
+.wizard-recommendations {
+  margin-bottom: 1.5rem;
+}
+.wizard-recommendations h4 {
+  font-size: 1rem;
+  margin: 0 0 0.75rem;
+  color: var(--wizard-gray-800);
+}
+.wizard-rec-badges {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+.wizard-rec-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 99px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.wizard-rec-badge.blue {
+  background: var(--wizard-blue-light);
+  color: var(--wizard-blue);
+}
+.wizard-rec-badge.green {
+  background: var(--wizard-green-light);
+  color: var(--wizard-green);
+}
+.wizard-rec-badge.purple {
+  background: var(--wizard-purple-light);
+  color: var(--wizard-purple);
+}
+.wizard-rec-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.4rem;
+}
+.wizard-rec-list li {
+  font-size: 0.85rem;
+  color: var(--wizard-gray-500);
+  padding: 0.3rem 0;
+}
+.wizard-rec-list li::before {
+  content: "✓ ";
+  color: var(--wizard-green);
+  font-weight: 700;
+}
+/* Actions */
+.wizard-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 1.5rem;
+}
+.wizard-btn {
+  padding: 0.65rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+.wizard-btn-primary {
+  background: var(--wizard-blue);
+  color: #fff;
+}
+.wizard-btn-primary:hover {
+  background: #0856a3;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(10,102,194,0.3);
+}
+.wizard-btn-primary:disabled {
+  background: var(--wizard-gray-200);
+  color: var(--wizard-gray-300);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+.wizard-btn-secondary {
+  background: transparent;
+  color: var(--wizard-gray-500);
+  border: 1px solid var(--wizard-gray-200);
+}
+.wizard-btn-secondary:hover {
+  background: var(--wizard-gray-100);
+  color: var(--wizard-gray-800);
+}
+.wizard-btn-link {
+  background: transparent;
+  color: var(--wizard-blue);
+  padding: 0.65rem 0.5rem;
+  font-weight: 500;
+}
+.wizard-btn-link:hover {
+  color: #0856a3;
+  text-decoration: underline;
+}
+.wizard-btn-small {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.78rem;
+  border-radius: 6px;
+}
+/* Download buttons */
+.wizard-download-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.wizard-download-card {
+  background: var(--wizard-gray-100);
+  border: 1px solid var(--wizard-gray-200);
+  border-radius: 10px;
+  padding: 1.25rem;
+  text-align: center;
+}
+.wizard-download-card h4 {
+  margin: 0 0 0.75rem;
+  font-size: 0.95rem;
+  color: var(--wizard-gray-800);
+}
+.wizard-download-card .dl-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.wizard-download-card .dl-btn {
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid var(--wizard-gray-200);
+  background: var(--wizard-white);
+  color: var(--wizard-gray-800);
+  transition: all 0.15s ease;
+  text-decoration: none;
+}
+.wizard-download-card .dl-btn:hover {
+  border-color: var(--wizard-blue);
+  color: var(--wizard-blue);
+  background: #f0f7ff;
+}
+/* Generation progress */
+.wizard-progress-container {
+  margin: 1.5rem 0;
+}
+.wizard-progress-bar-outer {
+  width: 100%;
+  height: 10px;
+  background: var(--wizard-gray-200);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+.wizard-progress-bar-inner {
+  height: 100%;
+  background: var(--wizard-blue);
+  border-radius: 99px;
+  transition: width 0.3s ease;
+  width: 0%;
+}
+.wizard-progress-text {
+  font-size: 0.85rem;
+  color: var(--wizard-gray-500);
+  text-align: center;
+}
+/* Notices */
+.wizard-notice {
+  background: var(--wizard-blue-light);
+  border: 1px solid #b6d9f7;
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.88rem;
+  color: #0856a3;
+  line-height: 1.5;
+}
+.wizard-notice.green {
+  background: var(--wizard-green-light);
+  border-color: #a3d9b1;
+  color: #116329;
+}
+/* Results */
+.wizard-results-summary {
+  background: var(--wizard-blue-light);
+  border: 2px solid var(--wizard-blue);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+.wizard-results-summary h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+  color: var(--wizard-gray-800);
+}
+.wizard-results-summary p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--wizard-gray-500);
+}
+.wizard-tier-badge {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.3rem 0.8rem;
+  border-radius: 99px;
+  margin: 0.75rem 0;
+}
+.wizard-tier-badge.startup { background: #ddf4ff; color: #0a66c2; }
+.wizard-tier-badge.growth { background: #dafbe1; color: #1a7f37; }
+.wizard-tier-badge.enterprise { background: #f5e6ff; color: #8250df; }
+
+@media (max-width: 768px) {
+  .grc-wizard { flex-direction: column; margin: 1rem 0; }
+  .wizard-sidebar {
+    width: 100%; border-radius: var(--wizard-radius) var(--wizard-radius) 0 0;
+    border-right: 1px solid var(--wizard-gray-200); border-bottom: none; padding: 1rem;
+  }
+  .wizard-sidebar-title { display: none; }
+  .wizard-sidebar-steps { display: flex; gap: 0; overflow-x: auto; }
+  .wizard-step-indicator {
+    flex-direction: column; align-items: center; gap: 0.3rem;
+    padding: 0 0.5rem; flex-shrink: 0;
+  }
+  .wizard-step-indicator + .wizard-step-indicator { border-top: none; }
+  .wizard-step-label { font-size: 0.65rem; text-align: center; max-width: 60px; }
+  .wizard-step-badge { width: 24px; height: 24px; font-size: 0.7rem; }
+  .wizard-main {
+    border-radius: 0 0 var(--wizard-radius) var(--wizard-radius); padding: 1.25rem;
+  }
+  .wizard-step-heading { font-size: 1.3rem; }
+  .wizard-checkbox-grid { grid-template-columns: 1fr; }
+  .wizard-rec-list { grid-template-columns: 1fr; }
+  .wizard-actions { flex-wrap: wrap; }
+  .wizard-download-grid { grid-template-columns: 1fr; }
+}
+</style>
+
+<div class="grc-wizard" id="grc-wizard">
+  <div class="wizard-sidebar">
+    <div class="wizard-sidebar-title">Your progress</div>
+    <div class="wizard-sidebar-steps" id="wizard-sidebar-steps">
+      <div class="wizard-step-indicator" data-for="1">
+        <div class="wizard-step-badge inactive" id="badge-1">1</div>
+        <div class="wizard-step-label inactive" id="label-1">Organization size</div>
+      </div>
+      <div class="wizard-step-indicator" data-for="2">
+        <div class="wizard-step-badge inactive" id="badge-2">2</div>
+        <div class="wizard-step-label inactive" id="label-2">Framework</div>
+      </div>
+      <div class="wizard-step-indicator" data-for="3">
+        <div class="wizard-step-badge inactive" id="badge-3">3</div>
+        <div class="wizard-step-label inactive" id="label-3">Company name</div>
+      </div>
+      <div class="wizard-step-indicator" data-for="4">
+        <div class="wizard-step-badge inactive" id="badge-4">4</div>
+        <div class="wizard-step-label inactive" id="label-4">Software &amp; tools</div>
+      </div>
+      <div class="wizard-step-indicator" data-for="5">
+        <div class="wizard-step-badge inactive" id="badge-5">5</div>
+        <div class="wizard-step-label inactive" id="label-5">Identity provider</div>
+      </div>
+      <div class="wizard-step-indicator" data-for="6">
+        <div class="wizard-step-badge inactive" id="badge-6">6</div>
+        <div class="wizard-step-label inactive" id="label-6">Review</div>
+      </div>
+      <div class="wizard-step-indicator" data-for="7">
+        <div class="wizard-step-badge inactive" id="badge-7">7</div>
+        <div class="wizard-step-label inactive" id="label-7">Select policies</div>
+      </div>
+    </div>
+    <div class="wizard-sidebar-footer">
+      <a href="/grc-tools/help/" target="_blank" class="wizard-sidebar-help-link">Need help? &#x2192;</a>
+      <div class="wizard-save-indicator" id="sidebar-save-indicator">&#x2713; Automatically saved</div>
+    </div>
+  </div>
+
+  <div class="wizard-main">
+    <!-- Step 0: Welcome -->
+    <div class="wizard-step active" data-step="0" id="step-0">
+      <div class="wizard-welcome">
+        <div class="wizard-welcome-icon">&#x1f6e1;&#xfe0f;</div>
+        <h1 class="wizard-welcome-heading">Hey, we'd love to help you build out a GRC process.</h1>
+        <p class="wizard-welcome-text">Takes about 2 minutes. We'll ask a few questions about your organization and recommend the exact policies, tools, and guides you need — no fluff, just what fits your setup.</p>
+        <div id="welcome-back-msg"></div>
+        <div><button class="wizard-btn wizard-btn-primary" onclick="goToStep(1)" style="padding: 0.8rem 2rem; font-size: 1rem;">Get started &#x2192;</button></div>
+      </div>
+    </div>
+
+    <!-- Step 1: Organization size -->
+    <div class="wizard-step" data-step="1" id="step-1">
+      <h2 class="wizard-step-heading">How large is your organization? <a href="/grc-tools/help/#organization-size" target="_blank" class="wizard-help-icon" title="Help">?</a></h2>
+      <p class="wizard-step-subtitle">This helps us recommend the right set of policies and tooling for your scale.</p>
+      <div class="wizard-options" id="options-size">
+        <label class="wizard-option" onclick="selectRadio('size','startup',this)">
+          <input type="radio" name="size" value="startup">
+          <div class="option-content"><span class="option-title">1–20 people</span><span class="option-desc">Startup or small team. Core essentials, lightweight process.</span></div>
+        </label>
+        <label class="wizard-option" onclick="selectRadio('size','growth',this)">
+          <input type="radio" name="size" value="growth">
+          <div class="option-content"><span class="option-title">20–200 people</span><span class="option-desc">Growing organization. Full policy suite, moderate tooling.</span></div>
+        </label>
+        <label class="wizard-option" onclick="selectRadio('size','enterprise',this)">
+          <input type="radio" name="size" value="enterprise">
+          <div class="option-content"><span class="option-title">200+ people</span><span class="option-desc">Enterprise. Complete compliance program, advanced monitoring.</span></div>
+        </label>
+      </div>
+      <div class="wizard-actions">
+        <button class="wizard-btn wizard-btn-secondary" onclick="goToStep(0)">&#x2190; Back</button>
+        <button class="wizard-btn wizard-btn-primary" id="btn-size-continue" disabled onclick="goToStep(2)">Continue &#x2192;</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Framework -->
+    <div class="wizard-step" data-step="2" id="step-2">
+      <h2 class="wizard-step-heading">Which compliance framework are you working toward? <a href="/grc-tools/help/#framework" target="_blank" class="wizard-help-icon" title="Help">?</a></h2>
+      <p class="wizard-step-subtitle">We cross-reference every policy against these frameworks. Pick the one that matters most right now.</p>
+      <div class="wizard-options" id="options-framework">
+        <label class="wizard-option" onclick="selectRadio('framework','soc2',this)">
+          <input type="radio" name="framework" value="soc2">
+          <div class="option-content"><span class="option-title">SOC 2</span><span class="option-desc">Service organization controls — trust, security, availability.</span></div>
+        </label>
+        <label class="wizard-option" onclick="selectRadio('framework','nist80053',this)">
+          <input type="radio" name="framework" value="nist80053">
+          <div class="option-content"><span class="option-title">NIST 800-53</span><span class="option-desc">Federal / defense contractor standard. The comprehensive option.</span></div>
+        </label>
+        <label class="wizard-option" onclick="selectRadio('framework','iso27001',this)">
+          <input type="radio" name="framework" value="iso27001">
+          <div class="option-content"><span class="option-title">ISO 27001</span><span class="option-desc">International information security management standard.</span></div>
+        </label>
+        <label class="wizard-option" onclick="selectRadio('framework','multiple',this)">
+          <input type="radio" name="framework" value="multiple">
+          <div class="option-content"><span class="option-title">Not sure yet / Multiple</span><span class="option-desc">We'll recommend policies that cover the common ground across standards.</span></div>
+        </label>
+      </div>
+      <div class="wizard-actions">
+        <button class="wizard-btn wizard-btn-secondary" onclick="goToStep(1)">&#x2190; Back</button>
+        <button class="wizard-btn wizard-btn-primary" id="btn-framework-continue" disabled onclick="goToStep(3)">Continue &#x2192;</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Company Name (NEW) -->
+    <div class="wizard-step" data-step="3" id="step-3">
+      <h2 class="wizard-step-heading">What's your organization called? <a href="/grc-tools/help/#company-name" target="_blank" class="wizard-help-icon" title="Help">?</a></h2>
+      <p class="wizard-step-subtitle">We'll personalize your policy templates and recommendations with your company name.</p>
+      <div style="margin-bottom: 1.5rem;">
+        <input type="text" class="wizard-company-input" id="company-name-input" placeholder="e.g. Acme Corp" maxlength="120" oninput="onCompanyNameInput()">
+      </div>
+      <div class="wizard-actions">
+        <button class="wizard-btn wizard-btn-secondary" onclick="goToStep(2)">&#x2190; Back</button>
+        <button class="wizard-btn wizard-btn-primary" id="btn-company-continue" disabled onclick="goToStep(4)">Continue &#x2192;</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Software & tools (was step 3) -->
+    <div class="wizard-step" data-step="4" id="step-4">
+      <h2 class="wizard-step-heading">What software and tools does your team use? <a href="/grc-tools/help/#software-tools" target="_blank" class="wizard-help-icon" title="Help">?</a></h2>
+      <p class="wizard-step-subtitle">Select everything that applies. We'll use this to tailor recommendations and detect your identity provider.</p>
+      <div class="wizard-checkbox-grid" id="options-software">
+        <label class="wizard-option" onclick="toggleCheckbox('software','google-workspace',this)"><input type="checkbox" name="software" value="google-workspace"><span>Google Workspace</span></label>
+        <label class="wizard-option" onclick="toggleCheckbox('software','microsoft365',this)"><input type="checkbox" name="software" value="microsoft365"><span>Microsoft 365</span></label>
+        <label class="wizard-option" onclick="toggleCheckbox('software','slack',this)"><input type="checkbox" name="software" value="slack"><span>Slack</span></label>
+        <label class="wizard-option" onclick="toggleCheckbox('software','jira',this)"><input type="checkbox" name="software" value="jira"><span>Jira</span></label>
+        <label class="wizard-option" onclick="toggleCheckbox('software','github',this)"><input type="checkbox" name="software" value="github"><span>GitHub</span></label>
+        <label class="wizard-option" onclick="toggleCheckbox('software','gitlab',this)"><input type="checkbox" name="software" value="gitlab"><span>GitLab</span></label>
+        <label class="wizard-option" onclick="toggleCheckbox('software','aws',this)"><input type="checkbox" name="software" value="aws"><span>AWS</span></label>
+        <label class="wizard-option" onclick="toggleCheckbox('software','azure',this)"><input type="checkbox" name="software" value="azure"><span>Microsoft Azure</span></label>
+        <label class="wizard-option" onclick="toggleCheckbox('software','gcp',this)"><input type="checkbox" name="software" value="gcp"><span>Google Cloud</span></label>
+        <label class="wizard-option" onclick="toggleCheckbox('software','okta',this)"><input type="checkbox" name="software" value="okta"><span>Okta</span></label>
+        <label class="wizard-option" onclick="toggleCheckbox('software','notion',this)"><input type="checkbox" name="software" value="notion"><span>Notion</span></label>
+        <label class="wizard-option" onclick="toggleCheckbox('software','zoom',this)"><input type="checkbox" name="software" value="zoom"><span>Zoom</span></label>
+        <label class="wizard-option" onclick="toggleCheckbox('software','salesforce',this)"><input type="checkbox" name="software" value="salesforce"><span>Salesforce</span></label>
+        <label class="wizard-option" onclick="toggleCheckbox('software','other',this)"><input type="checkbox" name="software" value="other"><span>Other</span></label>
+      </div>
+      <div class="wizard-actions">
+        <button class="wizard-btn wizard-btn-secondary" onclick="goToStep(3)">&#x2190; Back</button>
+        <button class="wizard-btn wizard-btn-primary" id="btn-software-continue" onclick="goToStep(5)">Continue &#x2192;</button>
+      </div>
+    </div>
+
+    <!-- Step 5: Identity provider (was step 4) -->
+    <div class="wizard-step" data-step="5" id="step-5">
+      <h2 class="wizard-step-heading">Which identity provider does your organization use? <a href="/grc-tools/help/#identity-provider" target="_blank" class="wizard-help-icon" title="Help">?</a></h2>
+      <p class="wizard-step-subtitle" id="idp-subtitle">We'll recommend the policies that align with your identity stack.</p>
+      <div id="idp-notice"></div>
+      <div class="wizard-options" id="options-idp">
+        <label class="wizard-option" onclick="selectRadio('idp','google',this)">
+          <input type="radio" name="idp" value="google">
+          <div class="option-content"><span class="option-title">Google</span><span class="option-desc">Google Workspace / Cloud Identity.</span></div>
+        </label>
+        <label class="wizard-option" onclick="selectRadio('idp','microsoft',this)">
+          <input type="radio" name="idp" value="microsoft">
+          <div class="option-content"><span class="option-title">Microsoft (Entra ID)</span><span class="option-desc">Microsoft 365 / Azure AD / Entra ID.</span></div>
+        </label>
+        <label class="wizard-option" onclick="selectRadio('idp','okta',this)">
+          <input type="radio" name="idp" value="okta">
+          <div class="option-content"><span class="option-title">Okta</span><span class="option-desc">Standalone identity platform.</span></div>
+        </label>
+        <label class="wizard-option" onclick="selectRadio('idp','other',this)">
+          <input type="radio" name="idp" value="other">
+          <div class="option-content"><span class="option-title">Other / On-prem AD</span><span class="option-desc">Ping, OneLogin, Active Directory, or custom.</span></div>
+        </label>
+      </div>
+      <div class="wizard-actions">
+        <button class="wizard-btn wizard-btn-secondary" onclick="goToStep(4)">&#x2190; Back</button>
+        <button class="wizard-btn wizard-btn-primary" id="btn-idp-continue" disabled onclick="goToStep(6)">Continue &#x2192;</button>
+      </div>
+    </div>
+
+    <!-- Step 6: Review (was step 5) -->
+    <div class="wizard-step" data-step="6" id="step-6">
+      <h2 class="wizard-step-heading">Here's what we'll set up for you <a href="/grc-tools/help/#review" target="_blank" class="wizard-help-icon" title="Help">?</a></h2>
+      <p class="wizard-step-subtitle">Double-check your selections, then choose which policies you'd like.</p>
+      <div class="wizard-review-card" id="review-summary"></div>
+      <div class="wizard-recommendations" id="review-recommendations"></div>
+      <div class="wizard-notice green" style="margin-bottom:0;"><strong>No account required.</strong> Everything here is open-source and free to use. Just download the policies and guides you need.</div>
+      <div class="wizard-actions">
+        <button class="wizard-btn wizard-btn-secondary" onclick="goToStep(5)">&#x2190; Back</button>
+        <button class="wizard-btn wizard-btn-link" onclick="resetWizard()">Start over</button>
+        <button class="wizard-btn wizard-btn-primary" onclick="goToStep(7)" style="margin-left: auto;">Select policies &#x2192;</button>
+      </div>
+    </div>
+
+    <!-- Step 7: Select Policies (NEW) -->
+    <div class="wizard-step" data-step="7" id="step-7">
+      <h2 class="wizard-step-heading">Which policies would you like to generate? <a href="/grc-tools/help/#select-policies" target="_blank" class="wizard-help-icon" title="Help">?</a></h2>
+      <p class="wizard-step-subtitle">We've pre-selected our recommended set. Customize as needed.</p>
+      <div id="policy-recommended-banner"></div>
+      <div class="wizard-policy-counter" id="policy-counter">0 policies selected</div>
+      <div class="wizard-policy-list" id="policy-list"></div>
+      <div class="wizard-actions">
+        <button class="wizard-btn wizard-btn-secondary" onclick="goToStep(6)">&#x2190; Back</button>
+        <button class="wizard-btn wizard-btn-secondary" onclick="useRecommendedPolicies()">Use recommended</button>
+        <button class="wizard-btn wizard-btn-primary" id="btn-policies-continue" onclick="goToStep(8)" style="margin-left: auto;">Continue &#x2192;</button>
+      </div>
+    </div>
+
+    <!-- Step 8: Results (was step 6) -->
+    <div class="wizard-step" data-step="8" id="step-8">
+      <h2 class="wizard-step-heading">&#x1f389; Your GRC program is ready</h2>
+      <p class="wizard-step-subtitle">Based on your selections, here's exactly what we recommend.</p>
+      <div class="wizard-results-summary" id="results-banner"></div>
+      <div style="display: flex; flex-direction: column; gap: 1rem;" id="results-detail"></div>
+      <div id="results-downloads"></div>
+      <div class="wizard-actions">
+        <button class="wizard-btn wizard-btn-secondary" onclick="goToStep(7)">&#x2190; Back</button>
+        <button class="wizard-btn wizard-btn-link" onclick="resetWizard()">Start over</button>
+        <button class="wizard-btn wizard-btn-primary" onclick="goToStep(9)" style="margin-left: auto;">Generate my policies &#x2192;</button>
+      </div>
+    </div>
+
+    <!-- Step 9: Generate (NEW) -->
+    <div class="wizard-step" data-step="9" id="step-9">
+      <h2 class="wizard-step-heading">Generate your policies</h2>
+      <p class="wizard-step-subtitle" id="generate-subtitle">Ready to create <span id="generate-policy-count">0</span> policy templates tailored to your organization.</p>
+      <div id="generate-status"></div>
+      <div class="wizard-progress-container" id="generate-progress" style="display:none;">
+        <div class="wizard-progress-bar-outer">
+          <div class="wizard-progress-bar-inner" id="progress-bar-inner"></div>
+        </div>
+        <div class="wizard-progress-text" id="progress-text"></div>
+      </div>
+      <div id="generate-downloads" style="margin-top: 1.5rem;"></div>
+      <div class="wizard-actions">
+        <button class="wizard-btn wizard-btn-secondary" onclick="goToStep(8)">&#x2190; Back</button>
+        <button class="wizard-btn wizard-btn-link" onclick="resetWizard()">Start over</button>
+        <button class="wizard-btn wizard-btn-primary" id="btn-generate" onclick="generatePolicies()">Generate my policies</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== Policy Manifest (hardcoded fallback) =====
+var POLICY_MANIFEST = [
+  // --- Startup tier (8 policies) ---
+  { id:'infosec-policy', name:'Information Security Policy', tier:'startup', desc:'Core policy establishing the information security program, roles, and responsibilities.' },
+  { id:'aup', name:'Acceptable Use Policy', tier:'startup', desc:'Defines acceptable use of company systems, networks, and data.' },
+  { id:'password-policy', name:'Password Policy', tier:'startup', desc:'Password complexity, rotation, and management requirements.' },
+  { id:'access-control', name:'Access Control Policy', tier:'startup', desc:'User access provisioning, review, and revocation procedures.' },
+  { id:'data-protection', name:'Data Protection Policy', tier:'startup', desc:'Data classification, handling, retention, and disposal requirements.' },
+  { id:'encryption-policy', name:'Encryption Policy', tier:'startup', desc:'Encryption standards for data at rest and in transit.' },
+  { id:'ir-policy', name:'Incident Response Policy', tier:'startup', desc:'Incident detection, response, reporting, and post-mortem procedures.' },
+  { id:'vendor-mgmt', name:'Vendor Management Policy', tier:'startup', desc:'Third-party risk assessment, due diligence, and vendor oversight.' },
+  // --- Growth tier additions (14 policies) ---
+  { id:'risk-assessment', name:'Risk Assessment Policy', tier:'growth', desc:'Risk identification, analysis, evaluation, and treatment methodology.' },
+  { id:'change-mgmt', name:'Change Management Policy', tier:'growth', desc:'Change control, approval workflows, and change review board procedures.' },
+  { id:'bcp', name:'Business Continuity Plan', tier:'growth', desc:'Business impact analysis and continuity strategies for critical functions.' },
+  { id:'drp', name:'Disaster Recovery Plan', tier:'growth', desc:'IT disaster recovery procedures, RTO/RPO targets, and testing schedule.' },
+  { id:'logging-monitoring', name:'Logging & Monitoring Policy', tier:'growth', desc:'Log collection, retention, monitoring, and alerting requirements.' },
+  { id:'network-firewall', name:'Network Firewall Policy', tier:'growth', desc:'Network segmentation, firewall rules, and perimeter defense standards.' },
+  { id:'sdlc-policy', name:'SDLC Policy', tier:'growth', desc:'Secure development lifecycle, code review, and security testing requirements.' },
+  { id:'asset-mgmt', name:'Asset Management Policy', tier:'growth', desc:'Hardware and software asset inventory, classification, and lifecycle.' },
+  { id:'data-classification', name:'Data Classification Policy', tier:'growth', desc:'Data sensitivity levels, labeling, handling, and protection standards.' },
+  { id:'physical-security', name:'Physical Security Policy', tier:'growth', desc:'Physical access controls, visitor management, and facility security.' },
+  { id:'config-mgmt', name:'Configuration Management Plan', tier:'growth', desc:'Secure baseline configurations, hardening standards, and drift detection.' },
+  { id:'removable-media', name:'Removable Media Policy', tier:'growth', desc:'Controls for USB drives, external storage, and portable media.' },
+  { id:'code-of-conduct', name:'Code of Conduct', tier:'growth', desc:'Employee conduct expectations, ethics, and compliance obligations.' },
+  { id:'backup-policy', name:'Backup Policy', tier:'growth', desc:'Backup schedules, retention periods, and restoration testing.' },
+  // --- Enterprise tier additions (10 policies) ---
+  { id:'ai-usage', name:'AI Usage Policy', tier:'enterprise', desc:'Governance for AI/ML tools, data input restrictions, and model review.' },
+  { id:'backup-integrity', name:'Backup Integrity Testing', tier:'enterprise', desc:'Automated backup verification, checksum validation, and audit trail.' },
+  { id:'charter-oversight', name:'Charter & Oversight', tier:'enterprise', desc:'Security committee charter, governance structure, and oversight responsibilities.' },
+  { id:'contractor-access', name:'Contractor Access Agreement', tier:'enterprise', desc:'Non-employee access terms, NDAs, and contractor security requirements.' },
+  { id:'control-self-assessment', name:'Control Self-Assessment', tier:'enterprise', desc:'Control owner self-assessment methodology and control effectiveness scoring.' },
+  { id:'db-password', name:'Database Password Management', tier:'enterprise', desc:'Database credential rotation, vaulting, and privileged access management.' },
+  { id:'remediation-plan', name:'Remediation Plan', tier:'enterprise', desc:'Finding remediation tracking, SLA-based resolution, and verification.' },
+  { id:'responsible-disclosure', name:'Responsible Disclosure Policy', tier:'enterprise', desc:'Bug bounty program, vulnerability disclosure, and researcher safe harbor.' },
+  { id:'vuln-mgmt', name:'Vulnerability Management Policy', tier:'enterprise', desc:'Vulnerability scanning cadence, risk-based prioritization, and patch SLAs.' },
+  { id:'third-party-audit', name:'Third-Party Audit Policy', tier:'enterprise', desc:'External audit engagement, evidence collection, and audit response.' },
+  // --- Framework-specific policies ---
+  { id:'soc2-tsc-map', name:'SOC 2 Trust Services Criteria Mapping', tier:'growth', frameworks:['soc2'], desc:'Policy-to-TSC cross-reference matrix for SOC 2 auditors.' },
+  { id:'soc2-readiness', name:'SOC 2 Readiness Assessment', tier:'startup', frameworks:['soc2'], desc:'Self-assessment questionnaire to gauge SOC 2 readiness.' },
+  { id:'nist-control-map', name:'NIST 800-53 Control Families Mapping', tier:'growth', frameworks:['nist80053'], desc:'Policy-to-NIST-800-53 control mapping for compliance evidence.' },
+  { id:'ssp', name:'System Security Plan', tier:'growth', frameworks:['nist80053'], desc:'NIST 800-53 System Security Plan template with control implementation statements.' },
+  { id:'iso-annex-a', name:'ISO 27001 Annex A Mapping', tier:'growth', frameworks:['iso27001'], desc:'Policy-to-ISO-27001-Annex-A control mapping for certification.' },
+  { id:'soa', name:'Statement of Applicability', tier:'startup', frameworks:['iso27001'], desc:'ISO 27001 Statement of Applicability with control inclusion/exclusion justification.' },
+  { id:'cross-framework', name:'Cross-Framework Mapping Guide', tier:'growth', frameworks:['multiple'], desc:'Unified mapping across SOC 2, NIST 800-53, and ISO 27001.' }
+];
+
+// ===== Wizard State =====
+window.wizardState = {
+  currentStep: 0,
+  completedSteps: new Set(),
+  answers: {
+    size: null,
+    framework: null,
+    companyName: '',
+    software: [],
+    idp: null,
+    selectedPolicies: []
+  },
+  sessionUser: null,
+  sessionId: null,
+  policyList: POLICY_MANIFEST,
+  generationComplete: false,
+  generatedPolicies: []
+};
+var S = window.wizardState;
+
+// ===== API Helpers =====
+var API_BASE = '';
+function apiUrl(path) { return API_BASE + '/api/grc-tools' + path; }
+
+async function apiFetch(path, opts) {
+  try {
+    var res = await fetch(apiUrl(path), opts);
+    if (!res.ok) throw new Error('API ' + res.status);
+    return await res.json();
+  } catch(e) {
+    console.log('API not available (' + path + '): ' + e.message);
+    return null;
+  }
+}
+
+// ===== Session Persistence =====
+async function restoreSession() {
+  var whoami = await apiFetch('/whoami', { method:'GET' });
+  if (whoami && whoami.name) {
+    S.sessionUser = whoami;
+    var session = await apiFetch('/session', { method:'GET' });
+    if (session && session.state) {
+      S.sessionId = session.sessionId;
+      var st = session.state;
+      if (st.answers) {
+        S.answers.size = st.answers.size || null;
+        S.answers.framework = st.answers.framework || null;
+        S.answers.companyName = st.answers.companyName || '';
+        S.answers.software = st.answers.software || [];
+        S.answers.idp = st.answers.idp || null;
+        S.answers.selectedPolicies = st.answers.selectedPolicies || [];
+      }
+      if (st.completedSteps) {
+        S.completedSteps = new Set(st.completedSteps);
+      }
+      if (st.generationComplete) S.generationComplete = true;
+      if (st.generatedPolicies) S.generatedPolicies = st.generatedPolicies;
+      var restoreStep = (typeof st.currentStep === 'number') ? st.currentStep : 0;
+      if (restoreStep > 0) {
+        restoreUI(restoreStep);
+        return restoreStep;
+      }
+    }
+  }
+  return 0;
+}
+
+function restoreUI(toStep) {
+  // Restore company name input
+  if (S.answers.companyName) {
+    var inp = document.getElementById('company-name-input');
+    if (inp) inp.value = S.answers.companyName;
+    var btn = document.getElementById('btn-company-continue');
+    if (btn) btn.disabled = false;
+  }
+  // Restore radio selections
+  if (S.answers.size) restoreRadio('size', S.answers.size, 'options-size');
+  if (S.answers.framework) restoreRadio('framework', S.answers.framework, 'options-framework');
+  if (S.answers.idp) restoreRadio('idp', S.answers.idp, 'options-idp');
+  // Restore software checkboxes
+  S.answers.software.forEach(function(v) {
+    restoreCheckbox('software', v, 'options-software');
+  });
+  // Enable continue buttons
+  if (S.answers.size) { var b = document.getElementById('btn-size-continue'); if(b) b.disabled = false; }
+  if (S.answers.framework) { var b = document.getElementById('btn-framework-continue'); if(b) b.disabled = false; }
+  if (S.answers.idp) { var b = document.getElementById('btn-idp-continue'); if(b) b.disabled = false; }
+
+  // Show welcome back message
+  if (S.sessionUser && S.sessionUser.name) {
+    var welcomeDiv = document.getElementById('welcome-back-msg');
+    if (welcomeDiv) {
+      welcomeDiv.innerHTML = '<div class="wizard-welcome-back">Welcome back, <strong>' + escHtml(S.sessionUser.name) + '</strong>. We\'ve restored your progress — pick up where you left off.</div>';
+    }
+  }
+
+  // If restoring past step 6, load policies and restore selections
+  if (toStep >= 7 && S.answers.selectedPolicies.length > 0) {
+    restorePolicySelections();
+  }
+
+  goToStep(toStep);
+}
+
+function restoreRadio(group, value, containerId) {
+  var container = document.getElementById(containerId);
+  if (!container) return;
+  var labels = container.querySelectorAll('.wizard-option');
+  labels.forEach(function(l) { l.classList.remove('selected'); });
+  var matching = container.querySelector('input[value="' + value + '"]');
+  if (matching) {
+    matching.checked = true;
+    matching.closest('.wizard-option').classList.add('selected');
+  }
+}
+
+function restoreCheckbox(group, value, containerId) {
+  var container = document.getElementById(containerId);
+  if (!container) return;
+  var cb = container.querySelector('input[value="' + value + '"]');
+  if (cb) {
+    cb.checked = true;
+    cb.closest('.wizard-option').classList.add('selected');
+  }
+}
+
+function restorePolicySelections() {
+  S.answers.selectedPolicies.forEach(function(pid) {
+    var item = document.querySelector('#policy-list .wizard-policy-item[data-policy-id="' + pid + '"]');
+    if (item) {
+      item.classList.add('selected');
+      var cb = item.querySelector('input[type="checkbox"]');
+      if (cb) cb.checked = true;
+    }
+  });
+  updatePolicyCounter();
+}
+
+async function saveSession() {
+  var state = {
+    currentStep: S.currentStep,
+    completedSteps: Array.from(S.completedSteps),
+    answers: {
+      size: S.answers.size,
+      framework: S.answers.framework,
+      companyName: S.answers.companyName,
+      software: S.answers.software,
+      idp: S.answers.idp,
+      selectedPolicies: S.answers.selectedPolicies
+    },
+    generationComplete: S.generationComplete,
+    generatedPolicies: S.generatedPolicies
+  };
+  var result = await apiFetch('/session', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ state: state })
+  });
+  if (result) {
+    S.sessionId = result.sessionId;
+    showSaveIndicator();
+  }
+}
+
+function showSaveIndicator() {
+  var el = document.getElementById('sidebar-save-indicator');
+  if (el) {
+    el.classList.add('visible');
+    clearTimeout(window._saveTimeout);
+    window._saveTimeout = setTimeout(function() {
+      el.classList.remove('visible');
+    }, 2500);
+  }
+}
+
+// ===== Policy List =====
+async function loadPolicyList() {
+  var data = await apiFetch('/templates', { method:'GET' });
+  if (data && data.policies && data.policies.length > 0) {
+    S.policyList = data.policies;
+  } else {
+    S.policyList = POLICY_MANIFEST;
+  }
+}
+
+function getPoliciesForTier(tier) {
+  var tierOrder = { startup:0, growth:1, enterprise:2 };
+  var userLevel = tierOrder[tier] || 0;
+  return S.policyList.filter(function(p) {
+    if (p.frameworks && p.frameworks.length > 0) {
+      // Framework-specific: only include if framework matches
+      if (S.answers.framework && p.frameworks.indexOf(S.answers.framework) === -1) return false;
+    }
+    var policyLevel = tierOrder[p.tier] || 0;
+    return policyLevel <= userLevel;
+  });
+}
+
+function getRecommendedPolicies(tier) {
+  var all = getPoliciesForTier(tier);
+  return all.map(function(p) { return p.id; });
+}
+
+function buildPolicySelection() {
+  var tier = getTierFromSize(S.answers.size);
+  var recommended = getRecommendedPolicies(tier.name.toLowerCase());
+
+  // Banner
+  var banner = document.getElementById('policy-recommended-banner');
+  banner.innerHTML = '<div class="wizard-policy-recommended">' +
+    '<span class="rec-label">&#x1f4cb; Recommended: <strong>' + recommended.length + ' policies</strong> for ' + tier.name + ' organizations</span>' +
+    '</div>';
+
+  // Policy list
+  var allPolicies = getPoliciesForTier(tier.name.toLowerCase());
+  var listHtml = '';
+  allPolicies.forEach(function(p) {
+    var isPreSelected = recommended.indexOf(p.id) !== -1;
+    listHtml += '<label class="wizard-policy-item' + (isPreSelected ? ' selected' : '') + '" data-policy-id="' + p.id + '" onclick="togglePolicyItem(this)">' +
+      '<input type="checkbox" value="' + p.id + '"' + (isPreSelected ? ' checked' : '') + '>' +
+      '<div class="policy-info"><div class="policy-name">' + escHtml(p.name) + '</div><div class="policy-desc">' + escHtml(p.desc) + '</div></div>' +
+      '</label>';
+  });
+  document.getElementById('policy-list').innerHTML = listHtml;
+
+  // Set initial selections to recommended
+  S.answers.selectedPolicies = recommended.slice();
+  updatePolicyCounter();
+}
+
+function togglePolicyItem(el) {
+  el.classList.toggle('selected');
+  var cb = el.querySelector('input[type="checkbox"]');
+  cb.checked = el.classList.contains('selected');
+  var pid = el.getAttribute('data-policy-id');
+  if (cb.checked) {
+    if (S.answers.selectedPolicies.indexOf(pid) === -1) S.answers.selectedPolicies.push(pid);
+  } else {
+    var idx = S.answers.selectedPolicies.indexOf(pid);
+    if (idx !== -1) S.answers.selectedPolicies.splice(idx, 1);
+  }
+  updatePolicyCounter();
+}
+
+function useRecommendedPolicies() {
+  var tier = getTierFromSize(S.answers.size);
+  var recommended = getRecommendedPolicies(tier.name.toLowerCase());
+  S.answers.selectedPolicies = recommended.slice();
+
+  var items = document.querySelectorAll('#policy-list .wizard-policy-item');
+  items.forEach(function(item) {
+    var pid = item.getAttribute('data-policy-id');
+    var cb = item.querySelector('input[type="checkbox"]');
+    if (recommended.indexOf(pid) !== -1) {
+      item.classList.add('selected');
+      if (cb) cb.checked = true;
+    } else {
+      item.classList.remove('selected');
+      if (cb) cb.checked = false;
+    }
+  });
+  updatePolicyCounter();
+}
+
+function updatePolicyCounter() {
+  var allPolicies = getPoliciesForTier(getTierFromSize(S.answers.size).name.toLowerCase());
+  var selected = S.answers.selectedPolicies.length;
+  var total = allPolicies.length;
+  var counter = document.getElementById('policy-counter');
+  if (counter) {
+    counter.textContent = selected + ' of ' + total + ' policies selected';
+  }
+}
+
+// ===== Generation =====
+async function generatePolicies() {
+  var btn = document.getElementById('btn-generate');
+  if (btn) { btn.disabled = true; btn.textContent = 'Generating...'; }
+
+  var progressDiv = document.getElementById('generate-progress');
+  var statusDiv = document.getElementById('generate-status');
+  var progressBar = document.getElementById('progress-bar-inner');
+  var progressText = document.getElementById('progress-text');
+  var total = S.answers.selectedPolicies.length;
+
+  if (total === 0) {
+    if (statusDiv) statusDiv.innerHTML = '<div class="wizard-notice">No policies selected. Please go back and select at least one policy.</div>';
+    if (btn) { btn.disabled = false; btn.textContent = 'Generate my policies'; }
+    return;
+  }
+
+  if (progressDiv) progressDiv.style.display = 'block';
+  if (progressText) progressText.textContent = 'Generating 0 of ' + total + ' policies...';
+
+  // Try API
+  var result = await apiFetch('/generate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      policies: S.answers.selectedPolicies,
+      companyName: S.answers.companyName || 'Your Organization',
+      framework: S.answers.framework,
+      size: S.answers.size,
+      idp: S.answers.idp
+    })
+  });
+
+  if (result && result.policies) {
+    S.generatedPolicies = result.policies;
+    S.generationComplete = true;
+    // Animate progress to 100%
+    if (progressBar) progressBar.style.width = '100%';
+    if (progressText) progressText.textContent = 'Generation complete! ' + total + ' policies ready.';
+  } else {
+    // Simulate progress for demo
+    S.generatedPolicies = S.answers.selectedPolicies.map(function(pid) {
+      var pol = S.policyList.find(function(p) { return p.id === pid; });
+      return { id: pid, name: pol ? pol.name : pid, downloadUrl: null };
+    });
+    S.generationComplete = true;
+
+    var current = 0;
+    function stepProgress() {
+      current++;
+      var pct = Math.round((current / total) * 100);
+      if (progressBar) progressBar.style.width = pct + '%';
+      if (progressText) progressText.textContent = 'Generating ' + Math.min(current, total) + ' of ' + total + ' policies...';
+      if (current < total) {
+        setTimeout(stepProgress, 120);
+      } else {
+        if (progressText) progressText.textContent = 'Generation complete! ' + total + ' policies ready. (Demo mode — API not available)';
+      }
+    }
+    setTimeout(stepProgress, 100);
+  }
+
+  if (btn) { btn.textContent = 'Done'; }
+  buildGenerateDownloads();
+  await saveSession();
+}
+
+function buildGenerateDownloads() {
+  var container = document.getElementById('generate-downloads');
+  if (!container) return;
+  if (!S.generationComplete || S.generatedPolicies.length === 0) {
+    container.innerHTML = '';
+    return;
+  }
+
+  var html = '<h4 style="font-size:1rem;color:var(--wizard-gray-800);margin-bottom:0.75rem;">&#x1f4e5; Download your policies</h4>';
+  html += '<div class="wizard-download-grid">';
+
+  // Per-policy download cards (show first 6, then "all" bundles)
+  var displayPolicies = S.generatedPolicies.slice(0, 6);
+  displayPolicies.forEach(function(pol) {
+    html += '<div class="wizard-download-card">' +
+      '<h4>' + escHtml(pol.name) + '</h4>' +
+      '<div class="dl-buttons">' +
+        '<button class="dl-btn" onclick="downloadPolicy(\'' + pol.id + '\',\'pdf\')">PDF</button>' +
+        '<button class="dl-btn" onclick="downloadPolicy(\'' + pol.id + '\',\'docx\')">DOCX</button>' +
+      '</div>' +
+    '</div>';
+  });
+
+  if (S.generatedPolicies.length > 6) {
+    html += '<div class="wizard-download-card" style="grid-column:1/-1;">' +
+      '<h4>All ' + S.generatedPolicies.length + ' policies</h4>' +
+      '<div class="dl-buttons">' +
+        '<button class="dl-btn" style="font-weight:700;" onclick="downloadAllZip(\'pdf\')">&#x1f4e6; Download all as PDF ZIP</button>' +
+        '<button class="dl-btn" style="font-weight:700;" onclick="downloadAllZip(\'docx\')">&#x1f4e6; Download all as DOCX ZIP</button>' +
+      '</div>' +
+    '</div>';
+  } else {
+    html += '<div class="wizard-download-card" style="grid-column:1/-1;">' +
+      '<h4>Bundle download</h4>' +
+      '<div class="dl-buttons">' +
+        '<button class="dl-btn" style="font-weight:700;" onclick="downloadAllZip(\'pdf\')">&#x1f4e6; Download all as PDF ZIP</button>' +
+        '<button class="dl-btn" style="font-weight:700;" onclick="downloadAllZip(\'docx\')">&#x1f4e6; Download all as DOCX ZIP</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function downloadPolicy(policyId, format) {
+  console.log('Download ' + format.toUpperCase() + ' for policy: ' + policyId + ' — API not available');
+  // In production: window.open(apiUrl('/generate/' + policyId + '?format=' + format), '_blank');
+  alert('Download API not available yet. Policy: ' + policyId + ' (' + format.toUpperCase() + ')');
+}
+
+function downloadAllZip(format) {
+  console.log('Download all as ' + format.toUpperCase() + ' ZIP — API not available');
+  // In production: POST /api/grc-tools/bundle
+  alert('Bundle download API not available yet. Format: ' + format.toUpperCase() + ' ZIP');
+}
+
+// ===== Utility =====
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function getTierFromSize(size) {
+  if (size === 'startup') return { name: 'Startup', cssClass: 'startup', policies: 8, range: '1–20' };
+  if (size === 'growth') return { name: 'Growth', cssClass: 'growth', policies: 22, range: '20–200' };
+  return { name: 'Enterprise', cssClass: 'enterprise', policies: 32, range: '200+' };
+}
+function getFrameworkLabel(fw) {
+  var map = { soc2: 'SOC 2', nist80053: 'NIST 800-53', iso27001: 'ISO 27001', multiple: 'Multiple / Not sure' };
+  return map[fw] || fw;
+}
+function getSoftwareLabels(items) {
+  var map = {
+    'google-workspace': 'Google Workspace', 'microsoft365': 'Microsoft 365',
+    'slack': 'Slack', 'jira': 'Jira', 'github': 'GitHub', 'gitlab': 'GitLab',
+    'aws': 'AWS', 'azure': 'Azure', 'gcp': 'Google Cloud',
+    'okta': 'Okta', 'notion': 'Notion', 'zoom': 'Zoom', 'salesforce': 'Salesforce', 'other': 'Other'
+  };
+  return items.map(function(v) { return map[v] || v; });
+}
+function getIdpLabel(idp) {
+  var map = { google: 'Google', microsoft: 'Microsoft (Entra ID)', okta: 'Okta', other: 'Other' };
+  return map[idp] || idp;
+}
+function detectIdpFromSoftware(software) {
+  var hasGoogle = software.indexOf('google-workspace') !== -1 || software.indexOf('gcp') !== -1;
+  var hasMicrosoft = software.indexOf('microsoft365') !== -1 || software.indexOf('azure') !== -1;
+  var hasOkta = software.indexOf('okta') !== -1;
+  if (hasGoogle && !hasMicrosoft) return 'google';
+  if (hasMicrosoft && !hasGoogle) return 'microsoft';
+  if (hasOkta) return 'okta';
+  return null;
+}
+
+// ===== Selection handlers =====
+function selectRadio(group, value, el) {
+  S.answers[group] = value;
+  var idMap = { size:'options-size', framework:'options-framework', idp:'options-idp' };
+  var container = document.getElementById(idMap[group]);
+  if (container) {
+    var labels = container.querySelectorAll('.wizard-option');
+    labels.forEach(function(l) { l.classList.remove('selected'); });
+  }
+  el.classList.add('selected');
+  el.querySelector('input').checked = true;
+  var btnMap = { size: 'btn-size-continue', framework: 'btn-framework-continue', idp: 'btn-idp-continue' };
+  var btnId = btnMap[group];
+  if (btnId) { var btn = document.getElementById(btnId); if (btn) btn.disabled = false; }
+}
+
+function toggleCheckbox(group, value, el) {
+  var cb = el.querySelector('input');
+  cb.checked = !cb.checked;
+  if (cb.checked) {
+    el.classList.add('selected');
+    if (S.answers[group].indexOf(value) === -1) S.answers[group].push(value);
+  } else {
+    el.classList.remove('selected');
+    var idx = S.answers[group].indexOf(value);
+    if (idx !== -1) S.answers[group].splice(idx, 1);
+  }
+}
+
+function onCompanyNameInput() {
+  var inp = document.getElementById('company-name-input');
+  var btn = document.getElementById('btn-company-continue');
+  S.answers.companyName = inp ? inp.value.trim() : '';
+  if (btn) btn.disabled = S.answers.companyName.length === 0;
+}
+
+// ===== Sidebar =====
+function updateSidebar(activeStepIndex) {
+  for (var i = 1; i <= 7; i++) {
+    var badge = document.getElementById('badge-' + i);
+    var label = document.getElementById('label-' + i);
+    if (!badge || !label) continue;
+    badge.className = 'wizard-step-badge';
+    label.className = 'wizard-step-label';
+    if (S.completedSteps.has(i)) {
+      badge.classList.add('done'); badge.textContent = '\u2713'; label.classList.add('done');
+    } else if (activeStepIndex === i) {
+      badge.classList.add('active'); badge.textContent = i; label.classList.add('active');
+    } else {
+      badge.classList.add('inactive'); badge.textContent = i; label.classList.add('inactive');
+    }
+  }
+}
+
+// ===== Navigation =====
+function goToStep(stepIndex) {
+  var prevStep = S.currentStep;
+
+  // Mark completed steps (sidebar-mapped steps 1-7)
+  if (prevStep >= 1 && prevStep <= 7) {
+    var hasAnswer = false;
+    if (prevStep === 1 && S.answers.size) hasAnswer = true;
+    if (prevStep === 2 && S.answers.framework) hasAnswer = true;
+    if (prevStep === 3 && S.answers.companyName) hasAnswer = true;
+    if (prevStep === 4) hasAnswer = true; // software — always can progress
+    if (prevStep === 5 && S.answers.idp) hasAnswer = true;
+    if (prevStep === 6) hasAnswer = true; // review
+    if (prevStep === 7 && S.answers.selectedPolicies.length > 0) hasAnswer = true;
+    if (hasAnswer) S.completedSteps.add(prevStep);
+  }
+
+  // Prep steps
+  if (stepIndex === 5) prepIdpStep();
+  if (stepIndex === 6) buildReview();
+  if (stepIndex === 7) buildPolicySelection();
+  if (stepIndex === 8) buildResults();
+  if (stepIndex === 9) prepGenerateStep();
+
+  S.currentStep = stepIndex;
+  var allSteps = document.querySelectorAll('.wizard-step');
+  allSteps.forEach(function(s) { s.classList.remove('active'); });
+  var target = document.getElementById('step-' + stepIndex);
+  if (target) target.classList.add('active');
+
+  var sidebarStep = (stepIndex >= 1 && stepIndex <= 7) ? stepIndex : (stepIndex === 0 ? 0 : 7);
+  updateSidebar(sidebarStep);
+
+  // Auto-save on step transition (skip step 0)
+  if (stepIndex > 0) {
+    saveSession().catch(function(e) { console.log('Auto-save failed: ' + e.message); });
+  }
+}
+
+function prepIdpStep() {
+  var detected = detectIdpFromSoftware(S.answers.software);
+  var noticeDiv = document.getElementById('idp-notice');
+  var subtitle = document.getElementById('idp-subtitle');
+  var btn = document.getElementById('btn-idp-continue');
+  if (detected) {
+    S.answers.idp = detected;
+    var idpLabels = { google: 'Google', microsoft: 'Microsoft (Entra ID)' };
+    var displayName = idpLabels[detected] || detected;
+    noticeDiv.innerHTML = '<div class="wizard-notice">&#x1f50d; It looks like your team uses <strong>' +
+      (detected === 'google' ? 'Google Workspace' : 'Microsoft 365') +
+      '</strong>. We\'ve pre-selected <strong>' + displayName +
+      '</strong> as your identity provider. Double-check and confirm below.</div>';
+    subtitle.textContent = 'We detected your identity provider from your software selections. Does this look right?';
+    document.querySelectorAll('#options-idp .wizard-option').forEach(function(l) { l.classList.remove('selected'); });
+    var matchingOption = document.querySelector('#options-idp input[value="' + detected + '"]');
+    if (matchingOption) {
+      matchingOption.checked = true;
+      matchingOption.closest('.wizard-option').classList.add('selected');
+    }
+    btn.disabled = false;
+  } else {
+    noticeDiv.innerHTML = '';
+    subtitle.textContent = 'We\'ll recommend the policies that align with your identity stack.';
+    S.answers.idp = null;
+    document.querySelectorAll('#options-idp .wizard-option').forEach(function(l) { l.classList.remove('selected'); });
+    document.querySelectorAll('#options-idp input').forEach(function(i) { i.checked = false; });
+    btn.disabled = true;
+  }
+}
+
+function buildReview() {
+  var tier = getTierFromSize(S.answers.size);
+  var swLabels = getSoftwareLabels(S.answers.software);
+  var swDisplay = swLabels.length > 0 ? swLabels.join(', ') : 'None selected';
+  document.getElementById('review-summary').innerHTML =
+    '<h4>Your selections</h4>' +
+    '<div class="wizard-review-row"><span class="label">Organization name</span><span class="value">' + escHtml(S.answers.companyName || '(not set)') + '</span></div>' +
+    '<div class="wizard-review-row"><span class="label">Organization size</span><span class="value">' + tier.name + ' (' + tier.range + ' people)</span></div>' +
+    '<div class="wizard-review-row"><span class="label">Framework</span><span class="value">' + getFrameworkLabel(S.answers.framework) + '</span></div>' +
+    '<div class="wizard-review-row"><span class="label">Software ecosystem</span><span class="value">' + swDisplay + '</span></div>' +
+    '<div class="wizard-review-row"><span class="label">Identity provider</span><span class="value">' + getIdpLabel(S.answers.idp) + '</span></div>';
+
+  var polishedName = S.answers.companyName || 'your organization';
+  var toolsRec = [];
+  if (S.answers.software.indexOf('aws') !== -1) toolsRec.push('AWS security best practices guide');
+  if (S.answers.software.indexOf('azure') !== -1) toolsRec.push('Azure security best practices guide');
+  if (S.answers.software.indexOf('gcp') !== -1) toolsRec.push('GCP security best practices guide');
+  if (S.answers.software.indexOf('github') !== -1 || S.answers.software.indexOf('gitlab') !== -1) toolsRec.push('SDLC policy template');
+  if (toolsRec.length === 0) toolsRec.push('Vendor-neutral tool evaluations');
+
+  document.getElementById('review-recommendations').innerHTML =
+    '<h4>Based on your selections for ' + escHtml(polishedName) + '</h4>' +
+    '<div class="wizard-rec-badges">' +
+      '<span class="wizard-rec-badge blue">' + tier.name + ' tier</span>' +
+      '<span class="wizard-rec-badge green">' + getFrameworkLabel(S.answers.framework) + '</span>' +
+      '<span class="wizard-rec-badge purple">' + tier.policies + '+ policies</span>' +
+    '</div>' +
+    '<ul class="wizard-rec-list">' +
+      (toolsRec.map(function(t) { return '<li>' + t + '</li>'; }).join('')) +
+      '<li>Framework mapping guide</li>' +
+      '<li>Risk register template</li>' +
+      '<li>Vendor questionnaire</li>' +
+    '</ul>';
+}
+
+function buildResults() {
+  var tier = getTierFromSize(S.answers.size);
+  var sizeName = tier.name.toLowerCase();
+  var company = S.answers.companyName || 'your organization';
+  var allPolicies = getPoliciesForTier(sizeName);
+  var selectedCount = S.answers.selectedPolicies.length;
+  var banner = document.getElementById('results-banner');
+  banner.innerHTML =
+    '<span class="wizard-tier-badge ' + tier.cssClass + '">' + tier.name + '</span>' +
+    '<h3>' + selectedCount + ' policy templates selected for ' + escHtml(company) + '</h3>' +
+    '<p>Aligned to ' + getFrameworkLabel(S.answers.framework) + ' with ' + getIdpLabel(S.answers.idp) + ' as identity provider.</p>';
+
+  // Policy list
+  var tierPolicies = allPolicies.map(function(p) { return p.name; });
+  var cards = [];
+  cards.push(
+    '<div class="wizard-review-card">' +
+      '<h4>&#x1f4cb; Selected policy templates (' + selectedCount + ' of ' + allPolicies.length + ' available)</h4>' +
+      '<ul class="wizard-rec-list">' + tierPolicies.slice(0, 16).map(function(p) { return '<li>' + escHtml(p) + '</li>'; }).join('') + (tierPolicies.length > 16 ? '<li>...and ' + (tierPolicies.length - 16) + ' more</li>' : '') + '</ul>' +
+      '<div style="margin-top: 1rem;"><a href="/grc-tools/policy-templates/" class="wizard-btn wizard-btn-primary" style="text-decoration:none;display:inline-block;">Browse all policy templates &#x2192;</a></div>' +
+    '</div>'
+  );
+  cards.push(
+    '<div class="wizard-review-card">' +
+      '<h4>&#x1f527; Tool evaluation guides</h4>' +
+      '<ul class="wizard-rec-list">' +
+        '<li>Log Management (OpenObserve, Loki, Splunk)</li>' +
+        '<li>SIEM & Security Monitoring</li>' +
+        '<li>Endpoint Protection (EDR)</li>' +
+        '<li>Password Managers</li>' +
+        '<li>Vulnerability Scanning</li>' +
+        '<li>GRC Automation platforms</li>' +
+      '</ul>' +
+      '<div style="margin-top: 1rem;"><a href="/grc-tools/guides/" class="wizard-btn wizard-btn-secondary" style="text-decoration:none;display:inline-block;">Browse all guides &#x2192;</a></div>' +
+    '</div>'
+  );
+  cards.push(
+    '<div class="wizard-review-card">' +
+      '<h4>&#x1f4ca; Operational resources</h4>' +
+      '<ul class="wizard-rec-list">' +
+        '<li>Risk Register Template</li>' +
+        '<li>Vendor Questionnaire</li>' +
+        '<li>Annual Review Checklist</li>' +
+        '<li>Evidence Collection Guide</li>' +
+        '<li>Framework Mapping (NIST 800-53, SOC 2, ISO 27001)</li>' +
+      '</ul>' +
+      '<div style="margin-top: 1rem;"><a href="/grc-tools/resources/" class="wizard-btn wizard-btn-secondary" style="text-decoration:none;display:inline-block;">Browse resources &#x2192;</a></div>' +
+    '</div>'
+  );
+
+  // Download section (if generation already complete)
+  if (S.generationComplete && S.generatedPolicies.length > 0) {
+    cards.push(
+      '<div class="wizard-review-card" style="border:2px solid var(--wizard-green);">' +
+        '<h4>&#x1f4e5; Previously generated downloads</h4>' +
+        '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;">' +
+          '<button class="wizard-btn wizard-btn-primary wizard-btn-small" onclick="downloadAllZip(\'pdf\')">&#x1f4e6; Download all PDF ZIP</button>' +
+          '<button class="wizard-btn wizard-btn-secondary wizard-btn-small" onclick="downloadAllZip(\'docx\')">&#x1f4e6; Download all DOCX ZIP</button>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  document.getElementById('results-detail').innerHTML = cards.join('');
+}
+
+function prepGenerateStep() {
+  var count = S.answers.selectedPolicies.length;
+  var countEl = document.getElementById('generate-policy-count');
+  if (countEl) countEl.textContent = count;
+  var subtitle = document.getElementById('generate-subtitle');
+  var company = S.answers.companyName || 'your organization';
+  if (subtitle) subtitle.innerHTML = 'Ready to create <span id="generate-policy-count">' + count + '</span> policy templates tailored to ' + escHtml(company) + '.';
+
+  // Reset progress UI
+  var progressDiv = document.getElementById('generate-progress');
+  if (progressDiv) progressDiv.style.display = 'none';
+  var progressBar = document.getElementById('progress-bar-inner');
+  if (progressBar) progressBar.style.width = '0%';
+  var progressText = document.getElementById('progress-text');
+  if (progressText) progressText.textContent = '';
+  var statusDiv = document.getElementById('generate-status');
+  if (statusDiv) statusDiv.innerHTML = '';
+
+  // Show previous downloads if available
+  buildGenerateDownloads();
+
+  var btn = document.getElementById('btn-generate');
+  if (btn) {
+    btn.disabled = count === 0;
+    btn.textContent = 'Generate my policies';
+  }
+}
+
+function resetWizard() {
+  S.currentStep = 0;
+  S.completedSteps = new Set();
+  S.answers = { size: null, framework: null, companyName: '', software: [], idp: null, selectedPolicies: [] };
+  S.generationComplete = false;
+  S.generatedPolicies = [];
+  document.querySelectorAll('.wizard-option').forEach(function(l) { l.classList.remove('selected'); });
+  document.querySelectorAll('input[type="radio"]').forEach(function(i) { i.checked = false; });
+  document.querySelectorAll('input[type="checkbox"]').forEach(function(i) { i.checked = false; });
+  document.querySelectorAll('.wizard-btn-primary[id^="btn-"]').forEach(function(b) { b.disabled = true; });
+  var noticeDiv = document.getElementById('idp-notice');
+  if (noticeDiv) noticeDiv.innerHTML = '';
+  var companyInput = document.getElementById('company-name-input');
+  if (companyInput) companyInput.value = '';
+  var generateDownloads = document.getElementById('generate-downloads');
+  if (generateDownloads) generateDownloads.innerHTML = '';
+  var progressDiv = document.getElementById('generate-progress');
+  if (progressDiv) progressDiv.style.display = 'none';
+  var statusDiv = document.getElementById('generate-status');
+  if (statusDiv) statusDiv.innerHTML = '';
+  goToStep(0);
+}
+
+// ===== Init =====
+document.addEventListener('DOMContentLoaded', function() {
+  loadPolicyList().then(function() {
+    return restoreSession();
+  }).then(function(restoredStep) {
+    if (restoredStep && restoredStep > 0) {
+      // Already handled by restoreUI
+    } else {
+      updateSidebar(0);
+    }
+  }).catch(function(e) {
+    console.log('Session restore failed: ' + e.message);
+    updateSidebar(0);
+  });
+});
+</script>

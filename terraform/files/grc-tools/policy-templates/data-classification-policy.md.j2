@@ -1,0 +1,146 @@
+# Data Classification Policy
+
+Policy Title: Data Classification Policy
+Policy Number: DCP-001
+Effective Date: {{ effective_date }}
+Version: 1.0
+Classification: Internal
+Approved By: {{ company_name }} Security Officer
+
+## Purpose
+
+This policy provides Personnel and third parties with a standardized framework for classifying, labeling, and handling organizational information based on its sensitivity and the potential impact of unauthorized disclosure, alteration, or destruction. The classification scheme defined in this policy enables consistent application of security controls appropriate to each level of information sensitivity.
+
+## Scope
+
+This policy applies to all information owned, managed, controlled, or maintained by {{ company_name }}, regardless of the medium on which it resides. Covered information includes, but is not limited to, data that is received, stored, processed, or transmitted via any means - electronic, hardcopy, verbal, or any other form. All Personnel, contractors, and third parties with access to organizational information are subject to this policy.
+
+## Policy
+
+### Classification Levels
+
+All organizational data must be classified into one of the following four tiers based on the potential impact of a confidentiality, integrity, or availability breach:
+
+#### Restricted (Level 4)
+
+**Definition:** Highly sensitive information whose unauthorized disclosure, alteration, or destruction would cause **severe or catastrophic** impact to {{ company_name }}, its customers, or its partners. This classification is typically driven by external legal, regulatory, or contractual requirements.
+
+**Examples:** Personally Identifiable Information (PII), Protected Health Information (PHI), payment card data, authentication secrets, encryption keys, customer data subject to data protection regulations, legally privileged communications.
+
+**Handling Requirements:**
+- Access is limited to specifically authorized individuals with a documented business need.
+- Explicit approval from the Security Officer (or designee) is required for access provisioning.
+- Encryption is mandatory at rest and in transit.
+- Must not be transmitted via unencrypted channels (email, chat, file transfer without encryption).
+- Physical copies must be stored in locked, access-controlled environments.
+- Destruction must use verified secure deletion methods (shredding for physical, cryptographic erasure or secure wipe for digital).
+
+#### Confidential (Level 3)
+
+**Definition:** Sensitive information whose unauthorized disclosure, alteration, or destruction would cause **significant** impact to {{ company_name }}. This classification is typically driven by internal business requirements, contractual obligations, or privacy considerations.
+
+**Examples:** Internal financial data, business strategy documents, customer contracts, employee personnel records, unreleased product information, security architecture documentation, internal audit reports.
+
+**Handling Requirements:**
+- Access is limited to authorized Personnel with a legitimate business need.
+- Encryption is required in transit; encryption at rest is strongly recommended.
+- Physical copies must be stored in secured areas when unattended.
+- Sharing with third parties requires a Non-Disclosure Agreement (NDA).
+
+#### Internal (Level 2)
+
+**Definition:** Non-sensitive information originating within or owned by {{ company_name }}, or entrusted to it by others, whose unauthorized disclosure would cause **moderate** impact. This is the default classification for all organizational information not explicitly classified at another level.
+
+**Examples:** Internal policies and procedures, training materials, general internal communications, project plans, employee directory, operational metrics.
+
+**Handling Requirements:**
+- Access is limited to Personnel and authorized third parties.
+- Encryption is recommended but not required for internal transmission.
+- May not be released to the general public without authorization.
+- Reasonable care must be taken to prevent inadvertent disclosure.
+
+#### Public (Level 1)
+
+**Definition:** Information that has been approved for public release and whose disclosure would cause **no appreciable** impact to {{ company_name }}.
+
+**Examples:** Marketing materials, public website content, press releases, published job postings, publicly filed documents.
+
+**Handling Requirements:**
+- No confidentiality controls required.
+- Integrity controls should be applied to prevent unauthorized modification of public-facing content.
+- Public release must be approved by the designated authority (e.g., Marketing or Communications).
+
+### Data Classification Decision Matrix
+
+When the appropriate classification is not immediately apparent, use the following matrix as a guide:
+
+| Classification | Confidentiality Impact | Integrity Impact | Availability Impact | Regulatory Driver |
+|----------------|----------------------|------------------|---------------------|-------------------|
+| **Restricted** | Severe harm to individuals or organization | Critical to safety or legal compliance | Must be continuously available | GDPR, HIPAA, PCI-DSS, CCPA |
+| **Confidential** | Significant competitive or reputational harm | Important to business operations | Important for business continuity | Contractual obligations, NDAs |
+| **Internal** | Moderate inconvenience or minor reputational impact | Some operational impact | Some operational impact | Internal policy |
+| **Public** | No harm | No harm (integrity still desirable) | No critical dependency | None |
+
+### Handling Controls Matrix
+
+| Control | Restricted | Confidential | Internal | Public |
+|---------|-----------|-------------|----------|--------|
+| **Access Control** | Explicit authorization required; least privilege enforced | Role-based access; business need required | Role-based access for Personnel | Open access |
+| **Encryption at Rest** | Mandatory (AES-256-GCM or equivalent) | Strongly recommended; mandatory on mobile/portable devices | Recommended | Not required |
+| **Encryption in Transit** | Mandatory (TLS 1.3 minimum) | Mandatory (TLS 1.2 minimum) | Recommended | Not required |
+| **Email Transmission** | Prohibited without end-to-end encryption | Encryption required; do not forward | Caution advised; do not forward | No restrictions |
+| **Physical Storage** | Locked, access-controlled environment; separate secure storage | Secured area; locked when unattended | General office security | No restrictions |
+| **Disposal** | Cryptographic erasure or verified physical destruction | Secure deletion or cross-cut shredding | Standard deletion or shredding | Standard deletion |
+| **Third-Party Sharing** | NDA required; written approval required; encryption mandatory | NDA recommended; encryption required | Business justification required | No restrictions |
+| **Mobile Devices** | Encryption mandatory; remote wipe enabled | Encryption mandatory; remote wipe enabled | Encryption recommended | No requirements |
+| **Logging and Monitoring** | Full access logging; real-time alerting | Access logging; periodic review | Basic access logging | Not required |
+
+### Information Aggregation
+
+When information from multiple classification levels is combined in a single document, repository, or system, the entire aggregate must be protected at the level of the most sensitive component. For example, a report containing both Internal and Restricted data must be treated as Restricted.
+
+### De-Identification
+
+Data that has been de-identified through the removal of all direct and indirect identifiers is no longer subject to Restricted or Confidential handling requirements, provided the de-identification process has been validated and re-identification risk is acceptably low. De-identified data must be reviewed periodically to ensure re-identification risks remain managed.
+
+### Labeling Requirements
+
+- **Restricted:** Documents must be clearly marked "RESTRICTED" in the header or footer. Electronic files should include the classification in the filename or metadata.
+- **Confidential:** Documents must be marked "CONFIDENTIAL." Electronic labeling is strongly recommended.
+- **Internal:** Electronic labeling is recommended but not required. Hardcopy labeling is at the discretion of the document owner.
+- **Public:** No labeling required. Documents intended for public release should indicate approval authority.
+
+## Roles and Responsibilities
+
+| Role | Responsibility |
+|------|----------------|
+| {{ ciso_role }} (e.g., CISO / Security Officer) | Policy owner; annual review; classification guidance; approves Restricted data access |
+| Data Owners | Classify information under their stewardship; authorize access; review classifications periodically |
+| Data Custodians | Implement and maintain technical controls per classification requirements |
+| All Personnel | Properly classify, label, and handle information in accordance with this policy; report misclassification |
+| Privacy Officer / Legal | Advise on regulatory classification requirements; review de-identification processes |
+
+## Compliance and Enforcement
+
+Compliance with this policy is verified through periodic audits, automated data discovery tools, and review of access controls. Personnel found to have violated this policy may be subject to disciplinary action, up to and including termination of employment or engagement.
+
+Misclassification of data - particularly under-classification of Restricted data - is a serious policy violation and must be remediated immediately upon discovery.
+
+## Exceptions
+
+Requests for exceptions to any provision of this policy must be submitted in writing to the Security Officer (or designee) and must include a business justification, a risk assessment, and compensating controls. Approved exceptions must be reviewed and revalidated on at least a {{ exception_review_frequency }} (e.g., quarterly) basis.
+
+## Related Documents
+
+- Information Security Policy
+- Data Protection Policy
+- Data Retention Policy
+- Encryption Policy
+- System Access Control Policy
+- Acceptable Use Policy
+
+## Revision History
+
+| Version | Date | Author | Description |
+|---------|------|--------|-------------|
+| 1.0 | {{ effective_date }} | {{ company_name }} Security Officer | Initial version. Four-tier classification (Public, Internal, Confidential, Restricted). |

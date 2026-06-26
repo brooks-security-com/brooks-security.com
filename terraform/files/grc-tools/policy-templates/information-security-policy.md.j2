@@ -1,0 +1,118 @@
+# Information Security Policy
+
+Policy Title: Information Security Policy
+Policy Number: ISP-001
+Effective Date: {{ effective_date }}
+Version: 1.0
+Classification: Internal
+Approved By: {{ company_name }} Security Officer
+
+## Purpose
+
+This Information Security Policy establishes the general framework for protecting information assets, minimizing the risk of information misuse, compromise, or loss, and ensuring compliance with legal, regulatory, and contractual obligations at {{ company_name }}.
+
+## Scope
+
+This policy applies to:
+
+- Information in any form, regardless of the media on which it is stored, as well as any facility, system, or network used to store, process, or transfer information.
+- All employees, temporary staff, contractors, vendors, suppliers, and any other person or entity (collectively "Personnel") that accesses {{ company_name }}'s networks, systems, or information.
+- All activity while using or accessing {{ company_name }}'s information or information processing, storage, or transmission equipment, whether on premises or remotely.
+- Information resources entrusted to {{ company_name }} by external entities (customers, partners, and others).
+- Documents, messages, and other communications created on or communicated via organizational systems, which are considered business records and subject to review in relation to audits, litigation, process improvement, and compliance.
+
+## Background
+
+This policy serves as the overarching policy for the Information Security Program (ISP). The ISP is composed of a series of supporting policies, including but not limited to:
+
+- Acceptable Use Policy
+- Asset Management Policy
+- Backup and Disaster Recovery Policies
+- Code of Conduct
+- Data Classification, Retention, and Protection Policies
+- Encryption and Password Policies
+- Incident Response Plan
+- Physical Security Policy
+- Risk Assessment Policy
+- Software Development Life Cycle Policy
+- System Access Management Policy
+- Vendor Management Policy
+- Vulnerability Management Policy
+
+## Information Security Objectives
+
+It is the policy of {{ company_name }} that information, in all its forms - written, spoken, recorded electronically, or printed - will be protected from accidental or intentional unauthorized modification, destruction, or disclosure throughout its lifecycle. This protection includes an appropriate level of security over the equipment and software used to process, store, and transmit that information.
+
+{{ company_name }}'s information security objectives are:
+
+- **Confidentiality:** Data and information are protected from unauthorized access.
+- **Integrity:** Data is intact, complete, and accurate.
+- **Availability:** IT systems are available when needed.
+
+Additional objectives include:
+
+- Protecting information from all internal, external, deliberate, or accidental threats.
+- Enabling secure information sharing.
+- Encouraging consistent and professional use of information.
+- Ensuring clarity about roles and responsibilities associated with protecting information.
+- Ensuring business continuity and minimizing business damage.
+- Protecting the organization from legal liability and the inappropriate use of information.
+
+## Policy
+
+### 1. Information Security Roles and Responsibilities
+
+All Personnel at {{ company_name }} have a responsibility to understand and operate within the bounds of this policy. Specific roles include:
+
+**Information Security Officer (ISO):** Responsible for development, implementation, and maintenance of the Information Security Program, and for ensuring this policy is reviewed and updated at least annually.
+
+**Management:** Responsible for ensuring that their direct reports understand and comply with this policy, and for providing resources necessary for policy implementation.
+
+**All Personnel:** Responsible for understanding this policy, completing required security awareness training, and reporting suspected security incidents or policy violations to the ISO immediately.
+
+### 2. Risk Management
+
+{{ company_name }} will conduct risk assessments at least annually or upon significant changes to the operating environment. Risk assessments will identify threats, vulnerabilities, likelihood, and impact to information assets. Assessment results will be documented in a Risk Register and reviewed by management.
+
+### 3. Access Control
+
+Access to {{ company_name }} information systems and data will be based on the principle of least privilege and need-to-know. User access will be reviewed at least quarterly. Access will be promptly revoked upon termination of employment or change in role.
+
+{% if idp_name %}
+Identity and access management is provided through {{ idp_name }}. Multi-factor authentication is enforced for all user accounts.
+{% endif %}
+
+### 4. Security Awareness and Training
+
+All Personnel must complete security awareness training within 30 days of hire and annually thereafter. Training content will cover this policy, data protection requirements, phishing awareness, incident reporting procedures, and role-specific security responsibilities.
+
+### 5. Incident Response
+
+All suspected or actual security incidents must be reported to the ISO immediately. {{ company_name }} maintains an Incident Response Plan detailing detection, containment, eradication, recovery, and post-incident review procedures.
+
+### 6. Third-Party Management
+
+Third-party vendors and service providers who access {{ company_name }}'s information systems or data must undergo a security assessment prior to engagement and annually thereafter. Vendor agreements must include security requirements consistent with this policy.
+
+### 7. Compliance and Enforcement
+
+Violations of this policy may result in disciplinary action, up to and including termination of employment or contract. {{ company_name }} reserves the right to monitor, audit, and review system activity to ensure compliance.
+
+## Enforcement
+
+Personnel found to have violated this policy may be subject to disciplinary action, up to and including termination of employment or contract, and may be subject to civil or criminal prosecution.
+
+## Related Documents
+
+- Acceptable Use Policy
+- Access Control Policy
+- Data Classification Policy
+- Incident Response Plan
+- Risk Assessment Policy
+- Vendor Management Policy
+
+## Revision History
+
+| Version | Date | Author | Changes |
+|---------|------|--------|---------|
+| 1.0 | {{ effective_date }} | {{ company_name }} ISO | Initial version |

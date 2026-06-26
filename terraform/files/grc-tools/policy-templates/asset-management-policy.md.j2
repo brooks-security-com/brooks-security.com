@@ -1,0 +1,125 @@
+# Asset Management Policy
+
+Policy Title: Asset Management Policy
+Policy Number: ISP-004
+Effective Date: {{ effective_date }}
+Version: 1.0
+Classification: Internal
+Approved By: {{ company_name }} Security Officer
+
+## Purpose
+
+The purpose of this policy is to define requirements for managing and properly tracking assets owned, managed, and under the control of {{ company_name }} through their lifecycle from initial acquisition to final disposal.
+
+## Scope
+
+This policy applies to all physical and virtual assets owned, leased, or managed by the organization, including but not limited to servers, workstations, laptops, mobile devices, networking equipment, virtual machines, software licenses, and cloud resources.
+
+## Policy
+
+### Physical and Virtual Asset Standard
+
+The organization must ensure proper management of assets to maximize information security. The following procedures must be enforced:
+
+- A detailed asset inventory must be maintained to track and monitor all significant assets.
+- Items may be excluded from the inventory only if they carry very low purchase/replacement costs (including time and labor needed to install and configure) and pose little or no risk to business operations or compliance status.
+- Each significant asset must be associated with an identifier, license, or tag, and proper classification when applicable. Details must include a description of the type, make/model, technical specifications, license details, and software versions.
+- Assets that contain, store, or handle information must be classified per the Data Classification Policy.
+- The disposal or replacement of assets must be tracked, whether due to depreciation, expiring leases, obsolescence, loss, or other reasons.
+- A reporting function must support auditing and monitoring for compliance.
+
+### Asset Inventory Standard
+
+An asset inventory process must be in place to support the management of critical business processes and meet legal and regulatory requirements. The inventory process must also support discovery, management, and replacement or disposal of all assets.
+
+All physical and virtual assets under organizational management or control must include:
+
+- Unique identifier (e.g., serial number) or name of the asset
+- Description of the asset
+- Purpose of the asset and the role it supports in critical business processes and in meeting legal or regulatory requirements
+- Entity responsible for the asset
+- Classification of the asset, as prescribed in the Data Classification Policy
+
+### Physical Asset Inventory
+
+The organization must maintain an inventory of all organization-owned physical computing equipment, including but not limited to:
+
+- Servers
+- Workstations
+- Laptops
+- Printers
+- Networking equipment
+
+All organization-owned devices are subject to a complete data wipe if deemed necessary, such as in the case of device infection or repurposing. This data wipe must be carried out by authorized personnel using approved sanitization methods.
+
+### Digital Asset Inventory
+
+The organization must maintain records of all digital assets, including but not limited to:
+
+- Virtual machines
+- Virtual servers (cloud instances)
+- Virtual repositories
+- Security agents
+- Source code repositories
+- User accounts
+
+Records must be tagged with owner or project and classification when applicable. All records must be kept up to date through automation where possible.
+
+### Asset Retirement Standard
+
+The {{ asset_retirement_authority }} determines when an asset is no longer needed or is obsolete. If the asset to be replaced or retired supports mandatory legal or regulatory requirements of critical business processes, the information resource owner must ensure that any replacement asset can support these processes before the current asset is retired.
+
+Before retiring or replacing any asset that retains data, data retention requirements for all data stored or managed by that asset must be reviewed. Any data subject to data retention requirements must be migrated to an appropriate destination and tested for appropriateness, completeness, accessibility, and retrievability before the original data is deleted.
+
+### System Hardening
+
+System hardening must follow industry-standard benchmarks (CIS or equivalent) and organizational configuration standards.
+
+#### Device Hardening
+
+All endpoint devices must be hardened according to CIS benchmarks or equivalent industry standards. Vendor defaults must be changed. Insecure protocols must be disabled. Local passwords must use the approved secrets manager. Patching must be automated. Malware protection must be enabled. Logging and MFA must be configured.
+
+#### Infrastructure Patching
+
+OS and infrastructure patches must be evaluated and installed based on criticality during off-peak hours. Infrastructure changes must be reviewed and approved via staging. Redundant systems must be patched serially. Network diagrams and config standards must be documented and current.
+
+#### Endpoint Security
+
+Anti-malware/EDR must be deployed on all endpoints with automatic updates, scanning, and alerting.
+
+### Physical Media Transfer
+
+Physical media transfers must follow secure handling procedures. Electronic transfer is preferred. When physical media is required, data must be encrypted. Approved couriers must be used with verification of identification. Packaging must protect against physical damage. Transfers must be logged with content description, protection type, times, and receipt confirmation.
+
+### Return of Assets
+
+Upon termination, all issued assets must be returned. The process includes return of physical and electronic assets. If equipment was purchased by or entrusted to an employee or third party, information must be transferred to the organization and securely erased. Unauthorized copying must be monitored and controlled.
+
+### Media Disposal
+
+Media containing confidential information must be disposed of proportionally to sensitivity. Secure disposal via approved third-party services is required. Sanitization through incineration, shredding, or cryptographic erasure must follow the Encryption Policy. Disposal must be logged for audit trail purposes. Damaged media must be assessed for disposal vs. repair. Sanitization procedures must be tested annually.
+
+## Roles and Responsibilities
+
+| Role | Responsibility |
+|------|----------------|
+| {{ asset_manager_role }} | Inventory maintenance; asset lifecycle management |
+| Information Resource Owners | Data migration; retirement decisions |
+| {{ sanitization_role }} | Sanitization; disposal oversight |
+
+## Compliance and Enforcement
+
+Violation of this policy may result in disciplinary action as outlined in the Information Security Policy.
+
+## Related Documents
+
+- Information Security Policy (ISP-001)
+- Data Classification Policy
+- Encryption Policy
+- Vendor Management Policy
+
+## Revision History
+
+| Version | Date | Author | Description |
+|---------|------|--------|-------------|
+| 1.0 | {{ effective_date }} | {{ company_name }} Security Officer | Initial version |
