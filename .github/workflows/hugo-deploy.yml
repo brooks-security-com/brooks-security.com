@@ -138,14 +138,6 @@ jobs:
             echo "Injected reCAPTCHA site key into Hugo params."
           fi
 
-      - name: Sync grc-tools content
-        if: steps.gate.outputs.run == 'true'
-        run: |
-          git clone --depth 1 https://github.com/LittleSeneca/grc-tools.git /tmp/grc-tools
-          bash hugo/scripts/sync-grc-tools.sh
-        env:
-          GRC_REPO: /tmp/grc-tools
-
       - name: Hugo Build (minified)
         if: steps.gate.outputs.run == 'true'
         working-directory: hugo
