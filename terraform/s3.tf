@@ -54,6 +54,18 @@ resource "aws_s3_bucket_policy" "origin" {
           "AWS:SourceArn" = aws_cloudfront_distribution.main.arn
         }
       }
+      },
+      {
+        Sid    = "AllowGRCToolsLambdaWrite"
+        Effect = "Allow"
+        Principal = {
+          AWS = aws_iam_role.grc_tools.arn
+        }
+        Action = [
+          "s3:PutObject",
+          "s3:GetObject",
+        ]
+        Resource = "arn:aws:s3:::${var.domain}/grc-tools/users/*"
     }]
   })
 }

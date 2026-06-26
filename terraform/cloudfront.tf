@@ -91,6 +91,20 @@ resource "aws_cloudfront_distribution" "main" {
     origin_request_policy_id = "b689b0a8-53d0-40ab-baf2-68738e2966ac" # AllViewerExceptHostHeader (AWS-managed)
   }
 
+  # grc-tools API. Proxies /api/grc-tools/* requests to the API Gateway origin.
+  # MUST appear before the /grc-tools/* behavior — CloudFront matches first
+  # pattern in order, and /api/grc-tools/* is more specific.
+  ordered_cache_behavior {
+    path_pattern             = "/api/grc-tools/*"
+    target_origin_id         = "contact-api"
+    viewer_protocol_policy   = "redirect-to-https"
+    allowed_methods          = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
+    cached_methods           = ["GET", "HEAD"]
+    compress                 = false
+    cache_policy_id          = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" # CachingDisabled
+    origin_request_policy_id = "b689b0a8-53d0-40ab-baf2-68738e2966ac" # AllViewerExceptHostHeader
+  }
+
   # grc-tools auth gate.
   # Single Lambda@Edge on viewer-request handles both auth check and
   # URL rewriting (/ -> /index.html). CloudFront only allows one
