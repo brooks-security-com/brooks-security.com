@@ -162,7 +162,7 @@ resource "aws_lambda_function" "grc_tools" {
       S3_PREFIX      = "grc-tools/users"
       USER_POOL_ID   = aws_cognito_user_pool.grc_tools.id
       CLIENT_ID      = aws_cognito_user_pool_client.grc_tools.id
-      ORIGIN_SECRET = random_password.contact_origin.result
+      ORIGIN_SECRET  = random_password.contact_origin.result
     }
   }
 }
