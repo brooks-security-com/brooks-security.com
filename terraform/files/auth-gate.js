@@ -197,6 +197,11 @@ exports.handler = async (event) => {
       const jwks = await fetchJwks();
       const payload = verifyJwt(sessionToken, jwks);
       if (payload) {
+        // CloudFront only allows one viewer-request trigger per behavior.
+        // This Lambda handles both auth AND URL rewriting (/ -> /index.html).
+        if (request.uri.endsWith('/')) {
+          request.uri = request.uri + 'index.html';
+        }
         return request;
       }
     } catch (e) {
