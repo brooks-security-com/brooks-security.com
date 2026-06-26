@@ -92,9 +92,9 @@ resource "aws_cloudfront_distribution" "main" {
   }
 
   # grc-tools auth gate.
-  # Lambda@Edge on viewer-request (auth check).
-  # CloudFront Function on origin-request (URL rewrite: / -> /index.html).
-  # Separate trigger events avoid the single-function-per-behavior conflict.
+  # Single Lambda@Edge on viewer-request handles both auth check and
+  # URL rewriting (/ -> /index.html). CloudFront only allows one
+  # viewer-request trigger per behavior; the Lambda does both jobs.
   ordered_cache_behavior {
     path_pattern           = "/grc-tools/*"
     target_origin_id       = "${var.domain}.s3.us-east-1.amazonaws.com"
@@ -108,11 +108,6 @@ resource "aws_cloudfront_distribution" "main" {
       event_type   = "viewer-request"
       lambda_arn   = aws_lambda_function.auth_gate.qualified_arn
       include_body = false
-    }
-
-    function_association {
-      event_type   = "origin-request"
-      function_arn = aws_cloudfront_function.hugo.arn
     }
   }
 
