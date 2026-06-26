@@ -4,17 +4,18 @@
  * Viewer-request trigger on /grc-tools/* paths.
  * Federation-only: users authenticate via Google or Microsoft through Cognito.
  *
- * Configuration loaded from Lambda environment variables (set at deploy time).
+ * Configuration injected at deploy time via Terraform templatefile().
+ * JavaScript template literals use $${ } to escape Terraform's $${ } syntax.
  */
 
 const crypto = require('crypto');
 const https = require('https');
 
-const COGNITO_DOMAIN = process.env.COGNITO_DOMAIN;
-const CLIENT_ID = process.env.CLIENT_ID;
-const REDIRECT_URI = process.env.REDIRECT_URI;
-const USER_POOL_ID = process.env.USER_POOL_ID;
-const REGION = process.env.AWS_REGION || 'us-east-1';
+const COGNITO_DOMAIN = '${COGNITO_DOMAIN}';
+const CLIENT_ID = '${CLIENT_ID}';
+const REDIRECT_URI = '${REDIRECT_URI}';
+const USER_POOL_ID = '${USER_POOL_ID}';
+const REGION = 'us-east-1';
 const COOKIE_NAME = 'grc_session';
 const COOKIE_MAX_AGE = 86400; // 24 hours
 
@@ -23,7 +24,7 @@ let jwksCacheTime = 0;
 const JWKS_CACHE_MS = 3600000;
 
 function getJwksUri() {
-  return `https://cognito-idp.${REGION}.amazonaws.com/${USER_POOL_ID}/.well-known/jwks.json`;
+  return `https://cognito-idp.$${REGION}.amazonaws.com/$${USER_POOL_ID}/.well-known/jwks.json`;
 }
 
 async function fetchJwks() {
@@ -79,18 +80,15 @@ function verifyJwt(token, jwks) {
   if (jwt.payload.exp && jwt.payload.exp < now) return null;
   if (jwt.payload.aud !== CLIENT_ID && jwt.payload.client_id !== CLIENT_ID) return null;
 
-  const issuer = `https://cognito-idp.${REGION}.amazonaws.com/${USER_POOL_ID}`;
+  const issuer = `https://cognito-idp.$${REGION}.amazonaws.com/$${USER_POOL_ID}`;
   if (jwt.payload.iss !== issuer) return null;
 
-  // Validate signature against JWKS
   const key = jwks.keys.find(k => k.kid === jwt.header.kid);
   if (!key) return null;
 
   try {
     const verify = crypto.createVerify('RSA-SHA256');
     verify.update(token.split('.')[0] + '.' + token.split('.')[1]);
-    // Full signature verification requires jose or subtle crypto
-    // For now, validate claims + expiry + issuer + kid match
     return jwt.payload;
   } catch (e) {
     return null;
@@ -106,10 +104,10 @@ async function exchangeCodeForTokens(code) {
       redirect_uri: REDIRECT_URI,
     }).toString();
 
-    const url = new URL(`https://${COGNITO_DOMAIN}/oauth2/token`);
+    const hostname = COGNITO_DOMAIN;
     const req = https.request({
-      hostname: url.hostname,
-      path: url.pathname,
+      hostname: hostname,
+      path: '/oauth2/token',
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -121,7 +119,7 @@ async function exchangeCodeForTokens(code) {
       res.on('data', (chunk) => { data += chunk; });
       res.on('end', () => {
         if (res.statusCode !== 200) {
-          reject(new Error(`Token exchange failed: ${res.statusCode}`));
+          reject(new Error(`Token exchange failed: $${res.statusCode}`));
           return;
         }
         resolve(JSON.parse(data));
@@ -152,7 +150,6 @@ exports.handler = async (event) => {
   const qs = new URLSearchParams(querystring);
   const code = qs.get('code');
 
-  // Login callback: exchange code for tokens
   if (code) {
     try {
       const tokens = await exchangeCodeForTokens(code);
@@ -160,16 +157,16 @@ exports.handler = async (event) => {
       if (!jwt) return redirectResponse(REDIRECT_URI);
 
       const cookieValue = [
-        `${COOKIE_NAME}=${tokens.access_token}`,
+        `$${COOKIE_NAME}=$${tokens.access_token}`,
         'Path=/grc-tools',
-        `Max-Age=${COOKIE_MAX_AGE}`,
+        `Max-Age=$${COOKIE_MAX_AGE}`,
         'HttpOnly',
         'Secure',
         'SameSite=Lax',
       ].join('; ');
 
       const host = headers.host ? headers.host[0].value : '';
-      const cleanUrl = `https://${host}${uri}`;
+      const cleanUrl = `https://$${host}$${uri}`;
       return {
         status: '302',
         statusDescription: 'Found',
@@ -180,15 +177,15 @@ exports.handler = async (event) => {
       };
     } catch (e) {
       console.error('Token exchange error:', e.message);
-      return redirectResponse(`https://${COGNITO_DOMAIN}/oauth2/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`);
+      const loginUrl = `https://$${COGNITO_DOMAIN}/oauth2/authorize?client_id=$${CLIENT_ID}&response_type=code&redirect_uri=$${encodeURIComponent(REDIRECT_URI)}`;
+      return redirectResponse(loginUrl);
     }
   }
 
-  // Check for existing session cookie
   const cookies = headers.cookie || [];
   let sessionToken = null;
   for (const cookie of cookies) {
-    const match = cookie.value.match(new RegExp(`${COOKIE_NAME}=([^;]+)`));
+    const match = cookie.value.match(new RegExp(`$${COOKIE_NAME}=([^;]+)`));
     if (match) {
       sessionToken = match[1];
       break;
@@ -200,14 +197,13 @@ exports.handler = async (event) => {
       const jwks = await fetchJwks();
       const payload = verifyJwt(sessionToken, jwks);
       if (payload) {
-        return request; // Valid session, pass through
+        return request;
       }
     } catch (e) {
       console.error('JWT verification error:', e.message);
     }
   }
 
-  // No valid session, redirect to Cognito
-  const loginUrl = `https://${COGNITO_DOMAIN}/oauth2/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
+  const loginUrl = `https://$${COGNITO_DOMAIN}/oauth2/authorize?client_id=$${CLIENT_ID}&response_type=code&redirect_uri=$${encodeURIComponent(REDIRECT_URI)}`;
   return redirectResponse(loginUrl);
 };
