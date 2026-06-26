@@ -49,21 +49,24 @@ resource "aws_lambda_function" "auth_gate" {
   source_code_hash = data.archive_file.auth_gate.output_base64sha256
 
   publish = true # Required for Lambda@Edge — creates a version
+
+  environment {
+    variables = {
+      COGNITO_DOMAIN = aws_cognito_user_pool_domain.grc_tools.domain
+      CLIENT_ID      = aws_cognito_user_pool_client.grc_tools.id
+      REDIRECT_URI   = "https://${var.domain}/grc-tools/"
+      USER_POOL_ID   = aws_cognito_user_pool.grc_tools.id
+    }
+  }
 }
 
-# Zip the function code
+# Zip the function code (plain file, no template processing)
 data "archive_file" "auth_gate" {
   type        = "zip"
   output_path = "${path.module}/.terraform/tmp/auth-gate.zip"
 
   source {
-    content = templatefile("${path.module}/files/auth-gate.js", {
-      COGNITO_DOMAIN = aws_cognito_user_pool_domain.grc_tools.domain
-      CLIENT_ID      = aws_cognito_user_pool_client.grc_tools.id
-      REDIRECT_URI   = "https://${var.domain}/grc-tools/"
-      REGION         = "us-east-1"
-      USER_POOL_ID   = aws_cognito_user_pool.grc_tools.id
-    })
+    content  = file("${path.module}/files/auth-gate.js")
     filename = "auth-gate.js"
   }
 }

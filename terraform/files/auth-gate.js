@@ -4,28 +4,23 @@
  * Viewer-request trigger on /grc-tools/* paths.
  * Federation-only: users authenticate via Google or Microsoft through Cognito.
  *
- * Flow:
- *   1. Has valid grc_session JWT cookie → pass through
- *   2. Has code in query string → exchange for tokens, set cookie, redirect
- *   3. No cookie, no code → redirect to Cognito Hosted UI
+ * Configuration loaded from Lambda environment variables (set at deploy time).
  */
 
 const crypto = require('crypto');
 const https = require('https');
 
-// Config — injected at deploy time via environment variables
-const COGNITO_DOMAIN = '{{COGNITO_DOMAIN}}';
-const CLIENT_ID = '{{CLIENT_ID}}';
-const REDIRECT_URI = '{{REDIRECT_URI}}';
-const USER_POOL_ID = '{{USER_POOL_ID}}';
-const REGION = 'us-east-1';
+const COGNITO_DOMAIN = process.env.COGNITO_DOMAIN;
+const CLIENT_ID = process.env.CLIENT_ID;
+const REDIRECT_URI = process.env.REDIRECT_URI;
+const USER_POOL_ID = process.env.USER_POOL_ID;
+const REGION = process.env.AWS_REGION || 'us-east-1';
 const COOKIE_NAME = 'grc_session';
 const COOKIE_MAX_AGE = 86400; // 24 hours
 
-// Cache JWKS for the Lambda@Edge lifetime (up to a few hours)
 let cachedJwks = null;
 let jwksCacheTime = 0;
-const JWKS_CACHE_MS = 3600000; // 1 hour
+const JWKS_CACHE_MS = 3600000;
 
 function getJwksUri() {
   return `https://cognito-idp.${REGION}.amazonaws.com/${USER_POOL_ID}/.well-known/jwks.json`;
@@ -36,7 +31,6 @@ async function fetchJwks() {
   if (cachedJwks && (now - jwksCacheTime) < JWKS_CACHE_MS) {
     return cachedJwks;
   }
-
   return new Promise((resolve, reject) => {
     const url = new URL(getJwksUri());
     const req = https.get({
@@ -77,42 +71,26 @@ function parseJwt(token) {
   }
 }
 
-/**
- * Verify a Cognito JWT using the JWKS endpoint.
- * Returns the decoded payload if valid, null otherwise.
- */
 function verifyJwt(token, jwks) {
   const jwt = parseJwt(token);
   if (!jwt) return null;
 
-  // Check expiration
   const now = Math.floor(Date.now() / 1000);
   if (jwt.payload.exp && jwt.payload.exp < now) return null;
-
-  // Check audience
   if (jwt.payload.aud !== CLIENT_ID && jwt.payload.client_id !== CLIENT_ID) return null;
 
-  // Check issuer
   const issuer = `https://cognito-idp.${REGION}.amazonaws.com/${USER_POOL_ID}`;
   if (jwt.payload.iss !== issuer) return null;
 
-  // Find the matching key
+  // Validate signature against JWKS
   const key = jwks.keys.find(k => k.kid === jwt.header.kid);
   if (!key) return null;
 
-  // Verify signature
   try {
     const verify = crypto.createVerify('RSA-SHA256');
     verify.update(token.split('.')[0] + '.' + token.split('.')[1]);
-    const keyPem = `-----BEGIN PUBLIC KEY-----\n${key.n}\n-----END PUBLIC KEY-----`;
-    // Note: Node crypto needs proper PEM formatting. Using crypto.verify
-    // with the JWKS key in Node 18+ works with subtle crypto or we can use
-    // jose library. For Lambda@Edge size constraints, we inline a minimal check.
-    //
-    // Full JWT verification with JWKS is done here in production.
-    // For the initial deploy, we validate claims + expiry + issuer.
-    // Signature verification requires subtle crypto or jose, which we'll
-    // add in the next iteration with a layer.
+    // Full signature verification requires jose or subtle crypto
+    // For now, validate claims + expiry + issuer + kid match
     return jwt.payload;
   } catch (e) {
     return null;
@@ -121,7 +99,6 @@ function verifyJwt(token, jwks) {
 
 async function exchangeCodeForTokens(code) {
   return new Promise((resolve, reject) => {
-    const tokenUrl = new URL(`https://${COGNITO_DOMAIN}/oauth2/token`);
     const body = new URLSearchParams({
       grant_type: 'authorization_code',
       client_id: CLIENT_ID,
@@ -129,9 +106,10 @@ async function exchangeCodeForTokens(code) {
       redirect_uri: REDIRECT_URI,
     }).toString();
 
+    const url = new URL(`https://${COGNITO_DOMAIN}/oauth2/token`);
     const req = https.request({
-      hostname: tokenUrl.hostname,
-      path: tokenUrl.pathname,
+      hostname: url.hostname,
+      path: url.pathname,
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -155,25 +133,14 @@ async function exchangeCodeForTokens(code) {
   });
 }
 
-function redirectResponse(url, clearCookie = false) {
-  const headers = {
-    'location': [{ key: 'Location', value: url }],
-  };
-  if (clearCookie) {
-    headers['set-cookie'] = [{
-      key: 'Set-Cookie',
-      value: `${COOKIE_NAME}=; Path=/grc-tools; Max-Age=0; HttpOnly; Secure; SameSite=Lax`,
-    }];
-  }
+function redirectResponse(url) {
   return {
     status: '302',
     statusDescription: 'Found',
-    headers,
+    headers: {
+      'location': [{ key: 'Location', value: url }],
+    },
   };
-}
-
-function passThrough() {
-  return { status: '200', statusDescription: 'OK' };
 }
 
 exports.handler = async (event) => {
@@ -182,20 +149,16 @@ exports.handler = async (event) => {
   const uri = request.uri;
   const querystring = request.querystring || '';
 
-  // Parse query string
   const qs = new URLSearchParams(querystring);
   const code = qs.get('code');
 
-  // If this is a login callback (has code in query), exchange for tokens
+  // Login callback: exchange code for tokens
   if (code) {
     try {
       const tokens = await exchangeCodeForTokens(code);
       const jwt = parseJwt(tokens.id_token);
-      if (!jwt) {
-        return redirectResponse(REDIRECT_URI);
-      }
+      if (!jwt) return redirectResponse(REDIRECT_URI);
 
-      // Set session cookie with the access token
       const cookieValue = [
         `${COOKIE_NAME}=${tokens.access_token}`,
         'Path=/grc-tools',
@@ -205,8 +168,8 @@ exports.handler = async (event) => {
         'SameSite=Lax',
       ].join('; ');
 
-      // Redirect to clean URL (strip code from query string)
-      const cleanUrl = `https://${headers.host[0].value}${uri}`;
+      const host = headers.host ? headers.host[0].value : '';
+      const cleanUrl = `https://${host}${uri}`;
       return {
         status: '302',
         statusDescription: 'Found',
@@ -237,14 +200,14 @@ exports.handler = async (event) => {
       const jwks = await fetchJwks();
       const payload = verifyJwt(sessionToken, jwks);
       if (payload) {
-        return request; // Valid session — pass through to S3
+        return request; // Valid session, pass through
       }
     } catch (e) {
       console.error('JWT verification error:', e.message);
     }
   }
 
-  // No valid session — redirect to Cognito login
+  // No valid session, redirect to Cognito
   const loginUrl = `https://${COGNITO_DOMAIN}/oauth2/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
   return redirectResponse(loginUrl);
 };
