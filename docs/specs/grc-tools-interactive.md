@@ -35,7 +35,7 @@ User → CloudFront → S3 (brooks-security.com)
 - Federation-only: Google (Gmail / Google Workspace) and Microsoft (personal / Entra ID) as the only identity providers. No username/password option. Cognito acts purely as a federation broker — no credentials stored, no password management, no account recovery flows to manage.
 - Hosted UI for signin (Google and Microsoft buttons only, no signup form)
 - App client configured for authorization code grant with PKCE
-- Domain: `auth.brooks-security.com` (custom domain backed by Cognito)
+- Domain: `auth-brooks-security.auth.us-east-1.amazoncognito.com` (custom domain backed by Cognito)
 - User attributes: email (required, mapped from IdP), name (optional, mapped from IdP)
 - Post-authentication: redirect back to `/grc-tools/` with a code; Lambda@Edge exchanges it for tokens and sets a session cookie
 - Federation setup: one-time app registration in Google Cloud Console and Azure Portal. No ongoing operational cost.
@@ -166,7 +166,7 @@ At 1,000+ active users, costs might reach $2-5/month from CloudFront and data tr
 
 ### Phase 1 — Auth Gate (estimated 2-3 days)
 - Deploy Cognito User Pool + Hosted UI
-- Add custom domain `auth.brooks-security.com` with ACM certificate
+- Add custom domain `auth-brooks-security.auth.us-east-1.amazoncognito.com` with ACM certificate
 - Deploy Lambda@Edge for viewer-request auth gating
 - Test full login/logout flow
 - Outcome: visiting `/grc-tools/` redirects to login; authenticated users see the static content
@@ -269,7 +269,7 @@ Session state is the core value of this feature. A user who logs in, completes f
 
 3. **Export format:** JSON (structured, machine-readable) or rendered markdown/PDF (human-readable, deliverable to auditors)? Recommendation: both. JSON for API consumers, rendered markdown for human review.
 
-4. **Custom domain for Cognito:** Use `auth.brooks-security.com` or the default Cognito domain (`brooks-security.auth.us-east-1.amazoncognito.com`)? Recommendation: custom domain for trust and branding. Adds ~$0.50/month for the Route 53 hosted zone.
+4. **Custom domain for Cognito:** Use `auth-brooks-security.auth.us-east-1.amazoncognito.com` or the default Cognito domain (`brooks-security.auth.us-east-1.amazoncognito.com`)? Recommendation: custom domain for trust and branding. Adds ~$0.50/month for the Route 53 hosted zone.
 
 5. **Account linking:** Should a user who logs in via Google and later via Microsoft have their progress merged? Recommendation: yes, enable Cognito account linking. Progress keyed by Cognito sub, so linked accounts share the same progress.
 
