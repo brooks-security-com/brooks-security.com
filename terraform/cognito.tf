@@ -2,6 +2,21 @@
 # Google and Microsoft as the only identity providers.
 # No username/password — Cognito is purely a federation broker.
 
+# SSM parameters for Google and Microsoft OAuth credentials
+# Values stored out-of-band via AWS CLI or console; never in Terraform state
+data "aws_ssm_parameter" "google_client_id" {
+  name = var.google_client_id_ssm_param
+}
+data "aws_ssm_parameter" "google_client_secret" {
+  name = var.google_client_secret_ssm_param
+}
+data "aws_ssm_parameter" "microsoft_client_id" {
+  name = var.microsoft_client_id_ssm_param
+}
+data "aws_ssm_parameter" "microsoft_client_secret" {
+  name = var.microsoft_client_secret_ssm_param
+}
+
 resource "aws_cognito_user_pool" "grc_tools" {
   name = "grc-tools"
 
@@ -49,8 +64,8 @@ resource "aws_cognito_identity_provider" "google" {
 
   provider_details = {
     authorize_scopes              = "openid email profile"
-    client_id                     = var.google_client_id
-    client_secret                 = var.google_client_secret
+    client_id                     = data.aws_ssm_parameter.google_client_id.value
+    client_secret                 = data.aws_ssm_parameter.google_client_secret.value
     attributes_url                = "https://people.googleapis.com/v1/people/me?personFields="
     attributes_url_add_attributes = "true"
     authorize_url                 = "https://accounts.google.com/o/oauth2/v2/auth"
@@ -75,8 +90,8 @@ resource "aws_cognito_identity_provider" "microsoft" {
   provider_details = {
     attributes_request_method = "GET"
     authorize_scopes          = "openid email profile"
-    client_id                 = var.microsoft_client_id
-    client_secret             = var.microsoft_client_secret
+    client_id                 = data.aws_ssm_parameter.microsoft_client_id.value
+    client_secret             = data.aws_ssm_parameter.microsoft_client_secret.value
     oidc_issuer               = "https://login.microsoftonline.com/common/v2.0"
     attributes_url            = "https://graph.microsoft.com/oidc/userinfo"
   }

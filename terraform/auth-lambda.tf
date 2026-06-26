@@ -61,6 +61,7 @@ data "archive_file" "auth_gate" {
       COGNITO_DOMAIN = aws_cognito_user_pool_domain.grc_tools.domain
       CLIENT_ID      = aws_cognito_user_pool_client.grc_tools.id
       REDIRECT_URI   = "https://${var.domain}/grc-tools/"
+      REGION         = "us-east-1"
       USER_POOL_ID   = aws_cognito_user_pool.grc_tools.id
     })
     filename = "auth-gate.js"
