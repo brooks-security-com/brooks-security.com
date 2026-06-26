@@ -58,7 +58,7 @@ data "archive_file" "auth_gate" {
 
   source {
     content = templatefile("${path.module}/files/auth-gate.js", {
-      COGNITO_DOMAIN = aws_cognito_user_pool_domain.grc_tools.domain
+      COGNITO_DOMAIN = "${aws_cognito_user_pool_domain.grc_tools.domain}.auth.us-east-1.amazoncognito.com"
       CLIENT_ID      = aws_cognito_user_pool_client.grc_tools.id
       REDIRECT_URI   = "https://${var.domain}/grc-tools/"
       USER_POOL_ID   = aws_cognito_user_pool.grc_tools.id
