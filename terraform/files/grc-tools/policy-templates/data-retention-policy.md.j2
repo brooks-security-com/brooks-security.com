@@ -1,0 +1,152 @@
+# Data Retention Policy
+
+Policy Title: Data Retention Policy
+Policy Number: DRP-001
+Effective Date: {{ effective_date }}
+Version: 1.0
+Classification: Internal
+Approved By: {{ company_name }} Security Officer
+
+## Purpose
+
+This policy defines the requirements and procedures for retaining, archiving, and securely deleting organizational and customer data. It establishes minimum and maximum retention periods based on data type, legal and regulatory obligations, and business requirements, and ensures that data is not retained longer than necessary.
+
+## Scope
+
+This policy applies to all data created, received, stored, processed, or transmitted by {{ company_name }}, regardless of medium or location. It covers customer data, employee data, financial records, operational data, and all other information assets under the organization's control. All Personnel, contractors, and third-party service providers who manage organizational data are subject to this policy.
+
+## Policy
+
+### General Principles
+
+- Data must be retained only for as long as necessary to fulfill its designated business purpose and to satisfy legal, regulatory, and contractual requirements.
+- Data that has exceeded its retention period must be securely disposed of using methods appropriate to its classification level as defined in the Data Classification Policy.
+- Retention periods must be documented, justified, and reviewed periodically.
+- Legal holds (litigation holds) supersede standard retention periods. When a legal hold is issued by the Legal team, affected data must be preserved until the hold is formally released.
+
+### Customer Data Retention
+
+#### Active Accounts
+
+Customer data associated with active accounts is retained for the duration of the customer relationship. Customers maintain control over their data within the application and may export or delete data through self-service mechanisms where provided.
+
+#### Account Closure
+
+Upon customer account closure or termination:
+
+- Customer data enters a {{ account_closure_grace_days }}-day (e.g., 90) grace period during which the data is retained but the account is inaccessible through normal user interfaces.
+- Customers may request data export or account reactivation during the grace period by contacting support.
+- After the grace period expires, customer data and associated account information are permanently deleted from production systems.
+- A deletion record is maintained, including the date of deletion and the scope of data removed.
+
+#### Account Suspension
+
+If a customer account is suspended (e.g., for non-payment or terms of service violation), the account enters a {{ account_suspension_days }}-day (e.g., 90) suspension period. During suspension:
+
+- The account and data are inaccessible through user interfaces.
+- The customer may restore the account to good standing to regain access.
+- If the suspension is not resolved within the suspension period, the account is treated as closed and the standard account closure retention process is applied.
+
+#### Legal and Regulatory Exceptions
+
+Customer data that is subject to a legal hold, regulatory investigation, or other mandatory preservation requirement must be retained beyond standard retention periods until the Legal team confirms in writing that retention is no longer required.
+
+### Employee Data Retention
+
+Employee and personnel data is retained according to the following schedule:
+
+| Data Category | Retention Period | Rationale |
+|---------------|-----------------|-----------|
+| Employment records (applications, offer letters, contracts) | {{ employment_records_years }} years after termination (e.g., 7) | Regulatory requirements; employment verification |
+| Payroll and compensation records | {{ payroll_records_years }} years (e.g., 7) | Tax and labor law requirements |
+| Performance evaluations and disciplinary records | {{ performance_records_years }} years after termination (e.g., 5) | Business necessity; legal defensibility |
+| Benefits enrollment and administration | {{ benefits_records_years }} years after termination (e.g., 7) | ERISA and related regulatory requirements |
+| Background check records | {{ background_check_years }} years after hiring decision (e.g., 3) | FCRA and similar regulations |
+| Time and attendance records | {{ time_attendance_years }} years (e.g., 3) | Wage and hour law requirements |
+| Training and certification records | {{ training_records_years }} years after termination (e.g., 3) | Business necessity; audit requirements |
+| I-9 forms (or local equivalent) | {{ i9_after_hire_years }} years after hire or {{ i9_after_termination_years }} after termination, whichever is later | Immigration law requirements |
+| Personnel files (general) | {{ personnel_files_years }} years after termination (e.g., 7) | Regulatory and business requirements |
+
+### Financial and Operational Data Retention
+
+| Data Category | Retention Period | Rationale |
+|---------------|-----------------|-----------|
+| Financial statements and audit reports | {{ financial_statements_years }} years (e.g., 7) | Tax and securities law requirements |
+| Tax filings and supporting documentation | {{ tax_filings_years }} years (e.g., 7) | Tax authority requirements |
+| Accounts payable and receivable records | {{ ap_ar_records_years }} years (e.g., 7) | Financial audit requirements |
+| Contracts and agreements | {{ contracts_years }} years after expiration (e.g., 7) | Legal enforceability; dispute resolution |
+| Insurance policies and claims | {{ insurance_years }} years after expiration (e.g., 7) | Insurance and liability requirements |
+| Operational logs and metrics | {{ operational_logs_years }} years (e.g., 3) | Business analysis; troubleshooting |
+| Internal reports and analyses | {{ internal_reports_years }} years (e.g., 3) or until superseded | Business relevance |
+| Correspondence and general communications | {{ correspondence_years }} years (e.g., 3) | Business reference; legal defensibility |
+
+### Security and Compliance Data Retention
+
+| Data Category | Retention Period | Rationale |
+|---------------|-----------------|-----------|
+| Security incident reports and investigations | {{ incident_reports_years }} years (e.g., 7) | Legal and regulatory requirements |
+| Access logs and audit trails | {{ access_logs_months }} months (e.g., 12) | Security monitoring; forensic analysis |
+| Vulnerability scan and penetration test reports | {{ vuln_reports_years }} years (e.g., 3) | Compliance evidence; trend analysis |
+| Risk assessments | {{ risk_assessments_years }} years (e.g., 3) | Compliance evidence |
+| Policy acknowledgments and training records | {{ policy_ack_years }} years after termination (e.g., 3) | Audit and compliance requirements |
+| Third-party security assessments | {{ tpm_assessments_years }} years after relationship ends (e.g., 3) | Vendor risk management |
+
+### Secure Disposal
+
+When data has reached the end of its retention period, it must be securely disposed of using methods appropriate to its classification:
+
+| Classification | Disposal Method |
+|----------------|-----------------|
+| **Restricted** | Cryptographic erasure, verified multi-pass overwrite per NIST SP 800-88, or physical destruction |
+| **Confidential** | Secure deletion utility, cryptographic erasure, or cross-cut shredding for physical media |
+| **Internal** | Standard deletion or single-pass overwrite |
+| **Public** | Standard deletion; no special disposal requirements |
+
+Disposal activities must be documented with a record including:
+- Description of data disposed
+- Disposal method used
+- Date of disposal
+- Individual performing or authorizing the disposal
+
+### Backups and Archives
+
+- Backup media is subject to the same retention periods as the source data.
+- When data is deleted from production systems, it must also be removed from backup systems within the backup rotation cycle (not to exceed {{ backup_retention_days }} days, e.g., 90).
+- Archived data that is past its retention period must be securely disposed of even if storage costs are negligible. Retaining data unnecessarily increases breach impact and discovery burden.
+
+## Roles and Responsibilities
+
+| Role | Responsibility |
+|------|----------------|
+| {{ data_governance_role }} (e.g., CISO / Data Governance Officer) | Policy owner; annual review |
+| Data Owners | Define retention periods for data under their stewardship; authorize disposal |
+| IT / Engineering | Implement automated retention and deletion mechanisms; execute disposal procedures |
+| Legal | Issue and release legal holds; advise on regulatory retention requirements |
+| Human Resources | Manage employee data retention schedules; coordinate offboarding data disposition |
+| Finance | Manage financial record retention; coordinate with auditors on retention requirements |
+| All Personnel | Comply with retention schedules; do not retain data beyond authorized periods |
+
+## Legal Hold Requirements
+
+The organization must maintain a formal legal hold process that supersedes standard retention periods. When a legal hold is issued by the Legal team, all affected data must be preserved, normal deletion schedules must be suspended, and technical measures must be implemented to prevent deletion until the hold is formally released in writing. The process must include documented issuance, custodian acknowledgment, preservation verification, and formal release procedures.
+
+## Compliance and Enforcement
+
+Compliance with this policy is verified through periodic data audits and automated monitoring of data lifecycle management systems. Retention of data beyond authorized periods - particularly Restricted or Confidential data - is a policy violation and must be remediated promptly.
+
+Personnel who willfully violate this policy may be subject to disciplinary action, up to and including termination of employment or engagement.
+
+## Related Documents
+
+- Data Classification Policy
+- Data Protection Policy
+- Encryption Policy
+- Information Security Policy
+- Asset Management Policy
+- Backup Policy
+
+## Revision History
+
+| Version | Date | Author | Description |
+|---------|------|--------|-------------|
+| 1.0 | {{ effective_date }} | {{ company_name }} Security Officer | Initial version |

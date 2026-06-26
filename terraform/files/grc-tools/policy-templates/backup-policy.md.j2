@@ -1,0 +1,97 @@
+# Backup Policy
+
+Policy Title: Backup Policy
+Policy Number: ISP-{{ policy_number_suffix }}
+Effective Date: {{ effective_date }}
+Version: 1.0
+Classification: Internal
+Approved By: {{ company_name }} Security Officer
+
+## Purpose
+
+This policy defines the requirements for backing up and recovering production systems and data to protect the confidentiality, integrity, and availability of information assets. The objective is to ensure that critical data remains available when needed and can be restored in the event of data loss, corruption, or a disaster.
+
+## Scope
+
+This policy applies to:
+
+- All production systems, databases, file stores, and application data owned or managed by {{ company_name }}.
+- All business data stored in cloud services, SaaS platforms, and end-user computing devices.
+- System configuration, infrastructure-as-code, and security documentation.
+- Source code repositories and associated development artifacts.
+- Data entrusted to {{ company_name }} by customers, partners, and other third parties.
+
+## Policy
+
+### Data Classification and Retention
+
+- All data must be classified at the time of creation or acquisition according to the Data Classification Policy.
+- An up-to-date inventory and data flow map of all critical data assets must be maintained.
+- All business data must be stored in or replicated to an organization-controlled repository, including data residing on end-user workstations.
+- Data must be backed up in accordance with its classification level. Higher-sensitivity data requires more frequent backups and shorter recovery objectives.
+- Data retention periods must comply with all applicable regulatory and contractual obligations. By default, security documentation and audit trails must be retained for a minimum of seven years unless a different period is specified by regulation, the Data Classification Policy, or contractual agreement.
+- System documentation, including security and privacy-related documentation, configuration records, and infrastructure-as-code, must be included in backup scope.
+
+### Backup Strategy - The 3-2-1 Rule
+
+{{ company_name }} adopts the industry-standard 3-2-1 backup framework:
+
+1. **Three copies** of all critical data must be maintained (one production copy and two backups).
+2. **Two different media types** must be used for backup storage (e.g., cloud object storage and a separate storage tier or provider).
+3. **One off-site copy** must be stored in a geographically separate location from the primary production environment, in a separate region or facility that would not be affected by the same regional disaster.
+
+### Backup Frequency
+
+- Production databases must be backed up daily at minimum, with transaction log backups occurring at intervals no greater than {{ transaction_log_backup_interval_minutes }} minutes.
+- File stores and object storage must be backed up daily at minimum.
+- Configuration, infrastructure-as-code, and security documentation must be backed up upon each material change and at least weekly.
+- Source code repositories must be backed up daily, and every commit must be preserved in a separate, organization-controlled location independent of the primary source code hosting provider.
+
+### Backup Encryption and Storage
+
+- All backups must be encrypted using the same or stronger encryption standards applied to live production data.
+- Backup storage locations must enforce access controls equivalent to or stricter than those of the production environment.
+- Backup data must be logically separated from production data stores and must be protected by independent access credentials.
+- Backup infrastructure must be monitored for failures. Any backup job failure must generate an alert to the responsible operations team and must trigger a documented incident or ticket in the organization's issue tracking system.
+
+### Restore Testing
+
+- Recovery tests must be performed against backup data on at least a quarterly basis.
+- Restore tests must validate that data can be successfully restored, that restored data is complete and internally consistent, and that restored systems are functional.
+- Test results must be documented and retained as audit evidence. Any failures must be remediated within {{ restore_test_remediation_days }} business days.
+- At least one restore test per year must involve restoring to an isolated environment and running application-level validation against the restored data.
+
+### Backup Monitoring and Alerting
+
+- All backup processes must be instrumented with automated monitoring. Backup job successes and failures must be logged centrally.
+- Backup failures must trigger alerts to the {{ backup_alert_team }} team and create a tracked issue in the organization's ticketing system.
+- Backup storage capacity and retention compliance must be reviewed monthly.
+
+## Roles and Responsibilities
+
+| Role | Responsibility |
+|------|----------------|
+| {{ infrastructure_lead_role }} (e.g., Infrastructure Lead) | Defines backup schedules; ensures backup infrastructure availability; oversees restore testing |
+| {{ security_officer_role }} (e.g., Security Officer) | Reviews backup encryption and access controls; ensures compliance |
+| System Owners | Identify critical data; define RPO and RTO for their systems; validate restore test results |
+| Operations Team | Executes daily backup monitoring; responds to backup failures; performs restore tests |
+
+## Compliance and Enforcement
+
+Violation of this policy may result in disciplinary action as outlined in the Information Security Policy. Failure to perform scheduled backups or restore tests, or failure to remediate backup failures in a timely manner, is a policy violation.
+
+## Related Documents
+
+- Information Security Policy
+- Data Classification Policy
+- Disaster Recovery Plan
+- Disaster Recovery Process
+- Backup Integrity Testing Process
+- Encryption Policy
+- Asset Management Policy
+
+## Revision History
+
+| Version | Date | Author | Description |
+|---------|------|--------|-------------|
+| 1.0 | {{ effective_date }} | {{ company_name }} Security Officer | Initial version |
