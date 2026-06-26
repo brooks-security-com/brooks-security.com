@@ -37,6 +37,8 @@ User → CloudFront → S3 (brooks-security.com)
 - Domain: `auth.brooks-security.com` (custom domain backed by Cognito)
 - User attributes: email (required), name (optional)
 - Post-authentication: redirect back to `/grc-tools/` with a code; Lambda@Edge exchanges it for tokens and sets a session cookie
+- Federation: Google (Gmail / Google Workspace) and Microsoft (personal / Entra ID) as social identity providers. Cognito Hosted UI presents Google and Microsoft buttons alongside the email/password form automatically.
+- Federation setup: one-time app registration in Google Cloud Console and Azure Portal. No ongoing operational cost.
 
 **Lambda@Edge — Auth Gate**
 - Triggers on viewer-request for `/grc-tools/*`
@@ -238,17 +240,37 @@ completionPercent = floor(
 
 // Guides and procedures contribute bonus percentage above 100%
 // (optional — keeps the core metric focused on policies)
-```
+``` 
+
+## Session Persistence
+
+Session state is the core value of this feature. A user who logs in, completes five policies, and returns next week must see their five policies completed.
+
+**How it works:**
+1. User authenticates via Cognito (email, Google, or Microsoft)
+2. Cognito issues JWT tokens (ID, access, refresh)
+3. Access token stored in HttpOnly session cookie (`grc_session`) scoped to `/grc-tools`
+4. Cookie expires after 24 hours; Cognito refresh tokens last 30 days
+5. On return: Lambda@Edge checks cookie. If expired but within Cognito session window, silent re-auth via Cognito token endpoint refreshes the session without user interaction
+6. Progress state loaded from DynamoDB by userId (Cognito sub) — same userId regardless of which identity provider was used
+7. If the same person logs in via Google on one device and Microsoft on another, Cognito account linking merges them into a single profile with consistent progress
+
+**Failure modes:**
+- Expired refresh token: user sees login screen. Progress is intact (keyed by Cognito sub)
+- Network error on save: client retries with exponential backoff; last saved state displayed with "unsaved changes" indicator
+- DynamoDB throttle: PAY_PER_REQUEST auto-scales; at sub-1000 user volume, throttling effectively impossible
 
 ## Decisions to Make
 
 1. **Tier filtering:** Show all policies regardless of tier, with tier recommendations, or filter to only the user's tier? Recommendation: filter to user's tier by default, with a toggle to show all.
 
-2. **Guest access:** Allow unauthenticated browsing of public content (/grc-tools/ overview, maybe the guides), gating only the interactive features? Recommendation: yes. Gate only progress features. The static content remains public for SEO and link sharing.
+2. **Guest access:** Allow unauthenticated browsing of public content (/grc-tools/ overview, guides), gating only the interactive features (progress tracking, policy customization, exports). The landing page and guides should remain open. Federation keeps login friction low: most users already have Google or Microsoft accounts.
 
 3. **Export format:** JSON (structured, machine-readable) or rendered markdown/PDF (human-readable, deliverable to auditors)? Recommendation: both. JSON for API consumers, rendered markdown for human review.
 
 4. **Custom domain for Cognito:** Use `auth.brooks-security.com` or the default Cognito domain (`brooks-security.auth.us-east-1.amazoncognito.com`)? Recommendation: custom domain for trust and branding. Adds ~$0.50/month for the Route 53 hosted zone.
+
+5. **Account linking:** Should a user who logs in via Google and later via Microsoft have their progress merged? Recommendation: yes, enable Cognito account linking. Progress keyed by Cognito sub, so linked accounts share the same progress.
 
 ## Open Questions
 
