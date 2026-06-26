@@ -91,10 +91,10 @@ resource "aws_cloudfront_distribution" "main" {
     origin_request_policy_id = "b689b0a8-53d0-40ab-baf2-68738e2966ac" # AllViewerExceptHostHeader (AWS-managed)
   }
 
-  # grc-tools auth gate — Lambda@Edge on viewer-request
-  # Redirects unauthenticated users to Cognito; passes through authenticated
-  # users to S3. Caching disabled so auth checks run on every request.
-  # Lambda@Edge (auth) runs before CloudFront Function (URL rewrite).
+  # grc-tools auth gate.
+  # Lambda@Edge on viewer-request (auth check).
+  # CloudFront Function on origin-request (URL rewrite: / -> /index.html).
+  # Separate trigger events avoid the single-function-per-behavior conflict.
   ordered_cache_behavior {
     path_pattern           = "/grc-tools/*"
     target_origin_id       = "${var.domain}.s3.us-east-1.amazonaws.com"
@@ -111,7 +111,7 @@ resource "aws_cloudfront_distribution" "main" {
     }
 
     function_association {
-      event_type   = "viewer-request"
+      event_type   = "origin-request"
       function_arn = aws_cloudfront_function.hugo.arn
     }
   }
