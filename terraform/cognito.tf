@@ -20,6 +20,12 @@ data "aws_ssm_parameter" "microsoft_client_secret" {
 resource "aws_cognito_user_pool" "grc_tools" {
   name = "grc-tools"
 
+  # Cognito auto-adds alias attributes (preferred_username, etc.) at creation.
+  # Ignore schema drift to prevent "cannot modify or remove schema items" errors.
+  lifecycle {
+    ignore_changes = [schema]
+  }
+
   # No username/password auth at all
   username_attributes      = []
   auto_verified_attributes = ["email"]
