@@ -36,7 +36,6 @@ resource "aws_iam_role_policy" "auth_gate" {
 
 # Lambda@Edge function (us-east-1 required)
 resource "aws_lambda_function" "auth_gate" {
-  provider = aws.us_east_1
 
   function_name = "grc-tools-auth-gate"
   role          = aws_iam_role.auth_gate.arn

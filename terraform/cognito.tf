@@ -116,56 +116,17 @@ resource "aws_cognito_user_pool_client" "grc_tools" {
 
   # No username/password auth flows
   explicit_auth_flows = []
+
+  depends_on = [
+    aws_cognito_identity_provider.google,
+    aws_cognito_identity_provider.microsoft,
+  ]
 }
 
-# Cognito domain — users see auth.brooks-security.com as the login page
+# Cognito prefix domain. Full URL:
+#   https://auth-brooks-security.auth.us-east-1.amazoncognito.com
+# Cognito domains only allow [a-z0-9] and hyphens — no dots.
 resource "aws_cognito_user_pool_domain" "grc_tools" {
-  domain       = "auth.${var.domain}"
+  domain       = "auth-brooks-security"
   user_pool_id = aws_cognito_user_pool.grc_tools.id
-}
-
-# ACM certificate for auth subdomain (used by Cognito, provisioned in us-east-1)
-resource "aws_acm_certificate" "auth" {
-
-  domain_name       = "auth.${var.domain}"
-  validation_method = "DNS"
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-# Route53 validation record for the auth cert
-resource "aws_route53_record" "auth_acm_validation" {
-  for_each = {
-    for dvo in aws_acm_certificate.auth.domain_validation_options : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      record = dvo.resource_record_value
-      type   = dvo.resource_record_type
-    }
-  }
-
-  zone_id = aws_route53_zone.main.zone_id
-  name    = each.value.name
-  type    = each.value.type
-  ttl     = 60
-  records = [each.value.record]
-}
-
-resource "aws_acm_certificate_validation" "auth" {
-  provider                = aws.us_east_1
-  certificate_arn         = aws_acm_certificate.auth.arn
-  validation_record_fqdns = [for r in aws_route53_record.auth_acm_validation : r.fqdn]
-}
-
-# Route53 A record for Cognito domain (required for custom domain)
-resource "aws_route53_record" "auth_a" {
-  zone_id = aws_route53_zone.main.zone_id
-  name    = "auth.${var.domain}"
-  type    = "A"
-  alias {
-    name                   = aws_cognito_user_pool_domain.grc_tools.cloudfront_distribution
-    zone_id                = "Z2FDTNDATAQYW2" # Cognito CloudFront zone
-    evaluate_target_health = false
-  }
 }

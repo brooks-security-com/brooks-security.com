@@ -40,9 +40,8 @@ provider "aws" {
   profile = var.aws_profile != "" ? var.aws_profile : null
 }
 
-# Lambda@Edge and CloudFront-associated resources must be created in us-east-1,
-# which is the default region. This alias exists for resources that were
-# historically created with an explicit provider reference.
+# Alias required to destroy orphaned resources from the failed initial deploy
+# (aws_acm_certificate_validation.auth). Remove after the next successful apply.
 provider "aws" {
   alias   = "us_east_1"
   region  = "us-east-1"

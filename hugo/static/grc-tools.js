@@ -31,7 +31,7 @@
     banner.appendChild(status);
 
     var logout = document.createElement('a');
-    logout.href = 'https://auth.brooks-security.com/logout?' + [
+    logout.href = 'https://auth-brooks-security.auth.us-east-1.amazoncognito.com/logout?' + [
       'client_id=CLIENT_ID_PLACEHOLDER',
       'logout_uri=' + encodeURIComponent('https://brooks-security.com/')
     ].join('&');
