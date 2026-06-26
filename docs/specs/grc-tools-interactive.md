@@ -32,13 +32,14 @@ User → CloudFront → S3 (brooks-security.com)
 - The Lambda checks for a valid session cookie; if absent, redirects to Cognito Hosted UI
 
 **Cognito User Pool**
-- Hosted UI for signup, signin, password reset
+- Federation-only: Google (Gmail / Google Workspace) and Microsoft (personal / Entra ID) as the only identity providers. No username/password option. Cognito acts purely as a federation broker — no credentials stored, no password management, no account recovery flows to manage.
+- Hosted UI for signin (Google and Microsoft buttons only, no signup form)
 - App client configured for authorization code grant with PKCE
 - Domain: `auth.brooks-security.com` (custom domain backed by Cognito)
-- User attributes: email (required), name (optional)
+- User attributes: email (required, mapped from IdP), name (optional, mapped from IdP)
 - Post-authentication: redirect back to `/grc-tools/` with a code; Lambda@Edge exchanges it for tokens and sets a session cookie
-- Federation: Google (Gmail / Google Workspace) and Microsoft (personal / Entra ID) as social identity providers. Cognito Hosted UI presents Google and Microsoft buttons alongside the email/password form automatically.
 - Federation setup: one-time app registration in Google Cloud Console and Azure Portal. No ongoing operational cost.
+- No password policies to define, no password reset flows to build, no credential breach risk. Users authenticate exclusively through their existing Google or Microsoft accounts.
 
 **Lambda@Edge — Auth Gate**
 - Triggers on viewer-request for `/grc-tools/*`
