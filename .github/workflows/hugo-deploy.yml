@@ -1,5 +1,17 @@
 name: 'Hugo Deploy'
 
+# The workflow fires on every push/PR to main so GitHub branch-protection
+# "required status checks" always see it run. Inside each job, a
+# `dorny/paths-filter@v3` step detects whether anything under `hugo/` (or
+# this workflow file) actually changed; the real work steps only run when it
+# did. Net effect: the checks are always present on every PR, but finish in
+# seconds and pass cleanly when the diff has no Hugo content in it.
+#
+# `workflow_dispatch` is the nightly entry point: an EventBridge Scheduler ->
+# Lambda (see terraform/lambda.tf) POSTs to this workflow's dispatch endpoint
+# once a day. A dispatched run has no diff, so paths-filter reports no Hugo
+# changes; the `gate` step below forces the build+deploy to run anyway so the
+# GitHub contribution heatmap gets re-baked with fresh data.
 on:
   push:
     branches:
@@ -13,11 +25,17 @@ permissions:
   contents: read
 
 env:
+  # Must be >= 0.158.0 for hugo-book (shortcodes under `layouts/_shortcodes/`).
+  # We pull the `extended_withdeploy` edition: extended for the theme's SCSS,
+  # withdeploy for the `hugo deploy` subcommand (split out in 0.159.2).
   HUGO_VERSION: '0.160.1'
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
   AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+  # GitHub contribution heatmap: the login whose calendar is rendered, and the
+  # pre-existing SSM SecureString holding a PAT (read:user + repo scopes) used
+  # to query the GraphQL contributionsCollection API.
   GH_LOGIN: 'littleseneca'
   GH_CONTRIB_SSM_PARAM: '/github/admin_token'
 
@@ -41,6 +59,9 @@ jobs:
               - 'hugo/**'
               - '.github/workflows/hugo-deploy.yml'
 
+      # Build+deploy runs when Hugo content changed OR this is the nightly
+      # workflow_dispatch (which carries no diff). Every downstream step gates
+      # on steps.gate.outputs.run instead of the raw paths-filter output.
       - name: Decide whether to run
         id: gate
         run: |
@@ -54,11 +75,15 @@ jobs:
         if: steps.gate.outputs.run != 'true'
         run: echo "No Hugo changes in this diff - marking check as passed."
 
+      # Re-bake hugo/data/contributions.json from the live GitHub GraphQL API.
+      # Fully fail-soft: any error (missing token, non-200, empty/errored
+      # response) logs a ::warning:: and leaves the committed JSON in place so
+      # the site still builds and deploys with last-known-good data.
       - name: Fetch GitHub contributions
         if: steps.gate.outputs.run == 'true'
         run: |
           set -uo pipefail
-          TOKEN=*** ssm get-parameter --name "$GH_CONTRIB_SSM_PARAM" --with-decryption --query 'Parameter.Value' --output text 2>/dev/null || true)"
+          TOKEN="$(aws ssm get-parameter --name "$GH_CONTRIB_SSM_PARAM" --with-decryption --query 'Parameter.Value' --output text 2>/dev/null || true)"
           if [ -z "$TOKEN" ] || [ "$TOKEN" = "None" ]; then
             echo "::warning::Could not read $GH_CONTRIB_SSM_PARAM from SSM; keeping committed contributions.json"
             exit 0
@@ -66,7 +91,7 @@ jobs:
           QUERY='query($login:String!){user(login:$login){contributionsCollection{contributionCalendar{totalContributions weeks{contributionDays{date contributionCount contributionLevel weekday}}}}}}'
           jq -n --arg q "$QUERY" --arg login "$GH_LOGIN" '{query:$q,variables:{login:$login}}' > /tmp/gql.json
           HTTP="$(curl -sS -w '%{http_code}' -o /tmp/resp.json \
-            -H "Authorization: bearer *** -H "Content-Type: application/json" \
+            -H "Authorization: bearer $TOKEN" -H "Content-Type: application/json" \
             -X POST --data @/tmp/gql.json https://api.github.com/graphql || echo 000)"
           if [ "$HTTP" != "200" ]; then
             echo "::warning::GitHub GraphQL returned HTTP $HTTP; keeping committed contributions.json"
@@ -88,6 +113,8 @@ jobs:
       - name: Install Hugo (extended)
         if: steps.gate.outputs.run == 'true'
         run: |
+          # Extract into /tmp because the repo root already has a hugo/ dir,
+          # and `tar` refuses to overwrite a directory with the hugo binary.
           curl -fsSL "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_withdeploy_${HUGO_VERSION}_linux-amd64.tar.gz" -o /tmp/hugo.tar.gz
           tar -xzf /tmp/hugo.tar.gz -C /tmp hugo
           mkdir -p "$HOME/.local/bin"
@@ -95,6 +122,10 @@ jobs:
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
           "$HOME/.local/bin/hugo" version
 
+      # Bake the public reCAPTCHA site key into the contact form. Hugo maps
+      # HUGO_PARAMS_* env vars onto [params], so this overrides the empty
+      # params.recaptchaSiteKey in hugo.toml. Fail-soft: if the key can't be
+      # read, the form renders a dev-mode notice rather than breaking the build.
       - name: Inject reCAPTCHA site key
         if: steps.gate.outputs.run == 'true'
         run: |
@@ -159,6 +190,8 @@ jobs:
       - name: Install Hugo (extended)
         if: steps.gate.outputs.run == 'true'
         run: |
+          # Extract into /tmp because the repo root already has a hugo/ dir,
+          # and `tar` refuses to overwrite a directory with the hugo binary.
           curl -fsSL "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_withdeploy_${HUGO_VERSION}_linux-amd64.tar.gz" -o /tmp/hugo.tar.gz
           tar -xzf /tmp/hugo.tar.gz -C /tmp hugo
           mkdir -p "$HOME/.local/bin"
@@ -176,6 +209,11 @@ jobs:
       - name: Hugo Deploy (sync S3 + CloudFront invalidation)
         if: steps.gate.outputs.run == 'true'
         working-directory: hugo
+        # `hugo deploy` reads the [deployment] block in hugo.toml:
+        #   target "brooks-security" -> s3://brooks-security.com?region=us-east-1
+        #   cloudFrontDistributionID = "E1QZQDBCV5WT01"
+        # With AWS_* env vars set, gocloud.dev uses the standard AWS credential
+        # chain -- no profile needed.
         run: hugo deploy --target brooks-security --maxDeletes -1 --invalidateCDN
 
   terraform:
@@ -219,18 +257,11 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Build Lambda package (pip install deps)
+      - name: Build Lambda package
         if: steps.gate.outputs.run == 'true'
         working-directory: terraform/files/grc-tools
         run: |
-          pip install \
-            -r requirements.txt \
-            -t . \
-            --platform manylinux2014_x86_64 \
-            --only-binary=:all: \
-            --python-version 3.12 \
-            --no-compile \
-            --quiet
+          pip install -r requirements.txt -t . --platform manylinux2014_x86_64 --only-binary=:all: --python-version 3.12 --no-compile --quiet
           rm -rf *.dist-info __pycache__ bin
 
       - name: Terraform Init
