@@ -125,3 +125,27 @@ variable "subscribe_notion_database_id" {
   default = "eb487cb9-8d2b-4fd9-831f-e09099aee25d"
 }
 
+# --- grc-tools auth ---------------------------------------------------------
+# Google OAuth client credentials for Cognito federation.
+# Stored in SSM; referenced by ARN so values never enter Terraform state.
+variable "google_client_id_ssm_param" {
+  type    = string
+  default = "/brooks-security.com/grc-tools/google_client_id"
+}
+
+variable "google_client_secret_ssm_param" {
+  type    = string
+  default = "/brooks-security.com/grc-tools/google_client_secret"
+}
+
+# Microsoft OAuth client credentials for Cognito federation.
+variable "microsoft_client_id_ssm_param" {
+  type    = string
+  default = "/brooks-security.com/grc-tools/microsoft_client_id"
+}
+
+variable "microsoft_client_secret_ssm_param" {
+  type    = string
+  default = "/brooks-security.com/grc-tools/microsoft_client_secret"
+}
+
