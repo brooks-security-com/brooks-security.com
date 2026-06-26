@@ -1,17 +1,5 @@
 name: 'Hugo Deploy'
 
-# The workflow fires on every push/PR to main so GitHub branch-protection
-# "required status checks" always see it run. Inside each job, a
-# `dorny/paths-filter@v3` step detects whether anything under `hugo/` (or
-# this workflow file) actually changed; the real work steps only run when it
-# did. Net effect: the checks are always present on every PR, but finish in
-# seconds and pass cleanly when the diff has no Hugo content in it.
-#
-# `workflow_dispatch` is the nightly entry point: an EventBridge Scheduler ->
-# Lambda (see terraform/lambda.tf) POSTs to this workflow's dispatch endpoint
-# once a day. A dispatched run has no diff, so paths-filter reports no Hugo
-# changes; the `gate` step below forces the build+deploy to run anyway so the
-# GitHub contribution heatmap gets re-baked with fresh data.
 on:
   push:
     branches:
@@ -25,17 +13,11 @@ permissions:
   contents: read
 
 env:
-  # Must be >= 0.158.0 for hugo-book (shortcodes under `layouts/_shortcodes/`).
-  # We pull the `extended_withdeploy` edition: extended for the theme's SCSS,
-  # withdeploy for the `hugo deploy` subcommand (split out in 0.159.2).
   HUGO_VERSION: '0.160.1'
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
   AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
-  # GitHub contribution heatmap: the login whose calendar is rendered, and the
-  # pre-existing SSM SecureString holding a PAT (read:user + repo scopes) used
-  # to query the GraphQL contributionsCollection API.
   GH_LOGIN: 'littleseneca'
   GH_CONTRIB_SSM_PARAM: '/github/admin_token'
 
@@ -59,9 +41,6 @@ jobs:
               - 'hugo/**'
               - '.github/workflows/hugo-deploy.yml'
 
-      # Build+deploy runs when Hugo content changed OR this is the nightly
-      # workflow_dispatch (which carries no diff). Every downstream step gates
-      # on steps.gate.outputs.run instead of the raw paths-filter output.
       - name: Decide whether to run
         id: gate
         run: |
@@ -75,10 +54,6 @@ jobs:
         if: steps.gate.outputs.run != 'true'
         run: echo "No Hugo changes in this diff - marking check as passed."
 
-      # Re-bake hugo/data/contributions.json from the live GitHub GraphQL API.
-      # Fully fail-soft: any error (missing token, non-200, empty/errored
-      # response) logs a ::warning:: and leaves the committed JSON in place so
-      # the site still builds and deploys with last-known-good data.
       - name: Fetch GitHub contributions
         if: steps.gate.outputs.run == 'true'
         run: |
@@ -113,8 +88,6 @@ jobs:
       - name: Install Hugo (extended)
         if: steps.gate.outputs.run == 'true'
         run: |
-          # Extract into /tmp because the repo root already has a hugo/ dir,
-          # and `tar` refuses to overwrite a directory with the hugo binary.
           curl -fsSL "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_withdeploy_${HUGO_VERSION}_linux-amd64.tar.gz" -o /tmp/hugo.tar.gz
           tar -xzf /tmp/hugo.tar.gz -C /tmp hugo
           mkdir -p "$HOME/.local/bin"
@@ -122,10 +95,6 @@ jobs:
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
           "$HOME/.local/bin/hugo" version
 
-      # Bake the public reCAPTCHA site key into the contact form. Hugo maps
-      # HUGO_PARAMS_* env vars onto [params], so this overrides the empty
-      # params.recaptchaSiteKey in hugo.toml. Fail-soft: if the key can't be
-      # read, the form renders a dev-mode notice rather than breaking the build.
       - name: Inject reCAPTCHA site key
         if: steps.gate.outputs.run == 'true'
         run: |
@@ -190,8 +159,6 @@ jobs:
       - name: Install Hugo (extended)
         if: steps.gate.outputs.run == 'true'
         run: |
-          # Extract into /tmp because the repo root already has a hugo/ dir,
-          # and `tar` refuses to overwrite a directory with the hugo binary.
           curl -fsSL "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_withdeploy_${HUGO_VERSION}_linux-amd64.tar.gz" -o /tmp/hugo.tar.gz
           tar -xzf /tmp/hugo.tar.gz -C /tmp hugo
           mkdir -p "$HOME/.local/bin"
@@ -209,9 +176,76 @@ jobs:
       - name: Hugo Deploy (sync S3 + CloudFront invalidation)
         if: steps.gate.outputs.run == 'true'
         working-directory: hugo
-        # `hugo deploy` reads the [deployment] block in hugo.toml:
-        #   target "brooks-security" -> s3://brooks-security.com?region=us-east-1
-        #   cloudFrontDistributionID = "E1QZQDBCV5WT01"
-        # With AWS_* env vars set, gocloud.dev uses the standard AWS credential
-        # chain -- no profile needed.
         run: hugo deploy --target brooks-security --maxDeletes -1 --invalidateCDN
+
+  terraform:
+    name: 'Terraform Apply'
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect terraform changes
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            terraform:
+              - 'terraform/**'
+              - '.github/workflows/hugo-deploy.yml'
+
+      - name: Decide whether to run
+        id: gate
+        run: |
+          if [ "${{ steps.filter.outputs.terraform }}" = "true" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: No terraform changes
+        if: steps.gate.outputs.run != 'true'
+        run: echo "No terraform changes in this diff."
+
+      - uses: hashicorp/setup-terraform@v3
+        if: steps.gate.outputs.run == 'true'
+        with:
+          terraform_version: '1.9.0'
+
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.run == 'true'
+        with:
+          python-version: '3.12'
+
+      - name: Build Lambda package (pip install deps)
+        if: steps.gate.outputs.run == 'true'
+        working-directory: terraform/files/grc-tools
+        run: |
+          pip install \
+            -r requirements.txt \
+            -t . \
+            --platform manylinux2014_x86_64 \
+            --only-binary=:all: \
+            --python-version 3.12 \
+            --no-compile \
+            --quiet
+          rm -rf *.dist-info __pycache__ bin
+
+      - name: Terraform Init
+        if: steps.gate.outputs.run == 'true'
+        working-directory: terraform
+        run: terraform init -backend=false
+
+      - name: Terraform fmt check
+        if: steps.gate.outputs.run == 'true'
+        working-directory: terraform
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Apply
+        if: steps.gate.outputs.run == 'true'
+        working-directory: terraform
+        run: terraform apply -auto-approve
+        env:
+          TF_VAR_aws_profile: ''
