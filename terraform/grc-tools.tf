@@ -1,29 +1,18 @@
 # =============================================================================
 # grc-tools policy builder backend
 #
-# DynamoDB (session state + policy metadata) + ECR (Lambda container image) +
-# IAM role + API Gateway routes. The Lambda function itself is deployed via
-# docker build/push, not Terraform — the aws_lambda_function resource just
-# points at the latest ECR image.
+# DynamoDB (session state + policy metadata) + IAM role + Lambda (zip) +
+# API Gateway routes. The Lambda is deployed as a standard zip package
+# with pure Python dependencies — no Docker or ECR needed.
 #
-# API Gateway routes for the grc-tools API are added to the existing
-# brooks-security-contact HTTP API (contact.tf) to avoid creating a second
-# API Gateway.
-#
-# S3 bucket policy for Lambda write access is patched into the existing
-# aws_s3_bucket_policy.origin in s3.tf.
+# API Gateway routes are added to the existing brooks-security-contact
+# HTTP API (contact.tf) to avoid creating a second API Gateway.
 # =============================================================================
 
-# --- ECR repository for Lambda container image -------------------------------
-
-resource "aws_ecr_repository" "grc_tools" {
-  name = "grc-tools"
-
-  image_scanning_configuration {
-    scan_on_push = true
+locals {
+  grc_tags = {
+    Project = "grc-tools"
   }
-
-  force_delete = true
 }
 
 # --- DynamoDB tables ---------------------------------------------------------
@@ -32,6 +21,7 @@ resource "aws_dynamodb_table" "grc_sessions" {
   name         = "grc-tools-sessions"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "user_id"
+  tags         = local.grc_tags
 
   attribute {
     name = "user_id"
@@ -48,6 +38,7 @@ resource "aws_dynamodb_table" "grc_policies" {
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "user_id"
   range_key    = "policy_id"
+  tags         = local.grc_tags
 
   attribute {
     name = "user_id"
@@ -79,6 +70,7 @@ data "aws_iam_policy_document" "grc_tools_assume" {
 resource "aws_iam_role" "grc_tools" {
   name               = "grc-tools"
   assume_role_policy = data.aws_iam_policy_document.grc_tools_assume.json
+  tags               = local.grc_tags
 }
 
 resource "aws_iam_role_policy" "grc_tools" {
@@ -141,15 +133,26 @@ resource "aws_iam_role_policy" "grc_tools" {
   })
 }
 
-# --- Lambda function (container image from ECR) -----------------------------
+# --- Lambda function (zip package — no Docker, no ECR) ----------------------
+
+data "archive_file" "grc_tools" {
+  type        = "zip"
+  source_dir  = "${path.module}/files/grc-tools"
+  output_path = "${path.module}/.terraform/tmp/grc-tools.zip"
+  excludes    = ["__pycache__", "*.pyc"]
+}
 
 resource "aws_lambda_function" "grc_tools" {
   function_name = "grc-tools"
   role          = aws_iam_role.grc_tools.arn
-  package_type  = "Image"
-  image_uri     = "${aws_ecr_repository.grc_tools.repository_url}:latest"
+  runtime       = "python3.12"
+  handler       = "handler.handler"
   timeout       = 30
   memory_size   = 512
+  tags          = local.grc_tags
+
+  filename         = data.archive_file.grc_tools.output_path
+  source_code_hash = data.archive_file.grc_tools.output_base64sha256
 
   environment {
     variables = {
@@ -167,6 +170,7 @@ resource "aws_lambda_function" "grc_tools" {
 resource "aws_cloudwatch_log_group" "grc_tools" {
   name              = "/aws/lambda/${aws_lambda_function.grc_tools.function_name}"
   retention_in_days = 14
+  tags              = local.grc_tags
 }
 
 # --- API Gateway routes (added to the existing contact API) ------------------
