@@ -197,6 +197,12 @@ exports.handler = async (event) => {
       const jwks = await fetchJwks();
       const payload = verifyJwt(sessionToken, jwks);
       if (payload) {
+        // URL rewriting: append index.html to paths ending with /
+        // (replaces the hugo CloudFront Function which can't coexist
+        // with Lambda@Edge on the same behavior)
+        if (request.uri.endsWith('/')) {
+          request.uri = request.uri + 'index.html';
+        }
         return request;
       }
     } catch (e) {
