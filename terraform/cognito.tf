@@ -131,7 +131,8 @@ resource "aws_cognito_user_pool_client" "grc_tools" {
 
 # Cognito prefix domain. Full URL:
 #   https://auth-brooks-security.auth.us-east-1.amazoncognito.com
-# Cognito domains only allow [a-z0-9] and hyphens — no dots.
+# The `domain` attribute returns only the prefix; the full domain is
+# constructed in the Lambda's templatefile() call.
 resource "aws_cognito_user_pool_domain" "grc_tools" {
   domain       = "auth-brooks-security"
   user_pool_id = aws_cognito_user_pool.grc_tools.id
