@@ -39,3 +39,12 @@ provider "aws" {
   # AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY env vars in CI.
   profile = var.aws_profile != "" ? var.aws_profile : null
 }
+
+# Lambda@Edge and CloudFront-associated resources must be created in us-east-1,
+# which is the default region. This alias exists for resources that were
+# historically created with an explicit provider reference.
+provider "aws" {
+  alias   = "us_east_1"
+  region  = "us-east-1"
+  profile = var.aws_profile != "" ? var.aws_profile : null
+}

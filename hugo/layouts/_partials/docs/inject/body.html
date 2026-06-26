@@ -1,0 +1,9 @@
+{{ with resources.Get "grc-tools.js" }}
+  {{ with $.Page }}
+    {{ if findRE "^/grc-tools" .RelPermalink }}
+      {{ with resources.Get "grc-tools.js" | resources.Minify }}
+        <script src="{{ .RelPermalink }}"></script>
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
