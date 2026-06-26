@@ -57,7 +57,7 @@ data "archive_file" "auth_gate" {
   output_path = "${path.module}/.terraform/tmp/auth-gate.zip"
 
   source {
-    content  = templatefile("${path.module}/files/auth-gate.js", {
+    content = templatefile("${path.module}/files/auth-gate.js", {
       COGNITO_DOMAIN = aws_cognito_user_pool_domain.grc_tools.domain
       CLIENT_ID      = aws_cognito_user_pool_client.grc_tools.id
       REDIRECT_URI   = "https://${var.domain}/grc-tools/"

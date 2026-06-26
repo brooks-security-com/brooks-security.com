@@ -95,13 +95,13 @@ resource "aws_cloudfront_distribution" "main" {
   # Redirects unauthenticated users to Cognito; passes through authenticated
   # users to S3. Caching disabled so auth checks run on every request.
   ordered_cache_behavior {
-    path_pattern             = "/grc-tools/*"
-    target_origin_id         = "${var.domain}.s3.us-east-1.amazonaws.com"
-    viewer_protocol_policy   = "redirect-to-https"
-    allowed_methods          = ["HEAD", "GET"]
-    cached_methods           = ["HEAD", "GET"]
-    compress                 = true
-    cache_policy_id          = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" # CachingDisabled
+    path_pattern           = "/grc-tools/*"
+    target_origin_id       = "${var.domain}.s3.us-east-1.amazonaws.com"
+    viewer_protocol_policy = "redirect-to-https"
+    allowed_methods        = ["HEAD", "GET"]
+    cached_methods         = ["HEAD", "GET"]
+    compress               = true
+    cache_policy_id        = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" # CachingDisabled
 
     lambda_function_association {
       event_type   = "viewer-request"
