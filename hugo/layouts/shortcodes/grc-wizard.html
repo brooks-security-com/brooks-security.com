@@ -947,6 +947,8 @@ var API_BASE = '';
 function apiUrl(path) { return API_BASE + '/api/grc-tools' + path; }
 
 async function apiFetch(path, opts) {
+  opts = opts || {};
+  opts.credentials = 'include';
   try {
     var res = await fetch(apiUrl(path), opts);
     if (!res.ok) throw new Error('API ' + res.status);
