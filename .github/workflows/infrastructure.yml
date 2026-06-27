@@ -255,7 +255,7 @@ jobs:
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
-      - name: Build Lambda package
+      - name: Setup Python for Lambda build
         if: steps.filter.outputs.terraform == 'true'
         uses: actions/setup-python@v5
         with:
