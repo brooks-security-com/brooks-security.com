@@ -215,3 +215,68 @@ jobs:
         # With AWS_* env vars set, gocloud.dev uses the standard AWS credential
         # chain -- no profile needed.
         run: hugo deploy --target brooks-security --maxDeletes -1 --invalidateCDN
+
+  terraform:
+    name: 'Terraform Apply'
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect terraform changes
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            terraform:
+              - 'terraform/**'
+              - '.github/workflows/hugo-deploy.yml'
+
+      - name: Decide whether to run
+        id: gate
+        run: |
+          if [ "${{ steps.filter.outputs.terraform }}" = "true" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: No terraform changes
+        if: steps.gate.outputs.run != 'true'
+        run: echo "No terraform changes in this diff."
+
+      - uses: hashicorp/setup-terraform@v3
+        if: steps.gate.outputs.run == 'true'
+        with:
+          terraform_version: '1.9.0'
+
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.run == 'true'
+        with:
+          python-version: '3.12'
+
+      - name: Build Lambda package
+        if: steps.gate.outputs.run == 'true'
+        working-directory: terraform/files/grc-tools
+        run: |
+          pip install -r requirements.txt -t . --platform manylinux2014_x86_64 --only-binary=:all: --python-version 3.12 --no-compile --quiet
+          rm -rf *.dist-info __pycache__ bin
+
+      - name: Terraform Init
+        if: steps.gate.outputs.run == 'true'
+        working-directory: terraform
+        run: terraform init -backend=false
+
+      - name: Terraform fmt check
+        if: steps.gate.outputs.run == 'true'
+        working-directory: terraform
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Apply
+        if: steps.gate.outputs.run == 'true'
+        working-directory: terraform
+        run: terraform apply -auto-approve
+        env:
+          TF_VAR_aws_profile: ''
