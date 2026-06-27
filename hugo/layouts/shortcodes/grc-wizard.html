@@ -346,6 +346,54 @@
   max-height: 260px;
   overflow-y: auto;
 }
+/* In-panel selected chips */
+.wizard-cat-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--wizard-gray-100);
+  min-height: 0;
+}
+.wizard-cat-chips:empty {
+  display: none;
+}
+.wizard-cat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.5rem;
+  background: var(--wizard-blue-light);
+  border: 1px solid #b6d9f7;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  color: #0856a3;
+}
+.wizard-cat-chip-remove {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.85rem;
+  line-height: 1;
+}
+.wizard-cat-chip-remove:hover {
+  color: #cf222e;
+}
+/* Select All / Clear All */
+.wizard-cat-selectall {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.4rem 1rem;
+  border-bottom: 1px solid var(--wizard-gray-100);
+  font-size: 0.78rem;
+}
+.wizard-cat-selectall a {
+  color: var(--wizard-blue);
+  cursor: pointer;
+  text-decoration: none;
+}
+.wizard-cat-selectall a:hover {
+  text-decoration: underline;
+}
 .wizard-cat-row {
   display: flex;
   align-items: center;
@@ -1985,6 +2033,11 @@ function buildSoftwareSubstep(gi) {
         '<span class="wizard-cat-arrow">&#9660;</span>' +
       '</div>' +
       '<div class="wizard-cat-body" id="cat-body-' + ci + '">' +
+        '<div class="wizard-cat-chips" id="cat-chips-' + ci + '"></div>' +
+        '<div class="wizard-cat-selectall">' +
+          '<a onclick="selectAllInCategory(' + ci + ')">Select all</a>' +
+          '<a onclick="clearAllInCategory(' + ci + ')">Clear</a>' +
+        '</div>' +
         '<div class="wizard-cat-search"><input type="text" id="cat-search-' + ci + '" placeholder="Filter ' + cat.name.toLowerCase() + '..." oninput="filterCategory(' + ci + ')"></div>' +
         '<div class="wizard-cat-list">' +
           cat.options.map(function(opt) {
@@ -2149,10 +2202,56 @@ function applyCatSelection(ci, value, checked) {
   } else if (!checked && idx !== -1) {
     S.answers.software.splice(idx, 1);
   }
-  // Update row highlight
   var row = document.getElementById('cat-row-' + ci + '-' + value);
   if (row) { row.classList.toggle('selected', checked); }
   updateCatCount(ci);
+  updateCatChips(ci);
+}
+
+function selectAllInCategory(ci) {
+  var cat = SOFTWARE_CATEGORIES[ci];
+  if (!cat) return;
+  cat.options.forEach(function(opt) {
+    if (S.answers.software.indexOf(opt.value) === -1) {
+      S.answers.software.push(opt.value);
+    }
+    var cb = document.getElementById('cat-cb-' + ci + '-' + opt.value);
+    if (cb) cb.checked = true;
+    var row = document.getElementById('cat-row-' + ci + '-' + opt.value);
+    if (row) row.classList.add('selected');
+  });
+  updateCatCount(ci);
+  updateCatChips(ci);
+}
+
+function clearAllInCategory(ci) {
+  var cat = SOFTWARE_CATEGORIES[ci];
+  if (!cat) return;
+  cat.options.forEach(function(opt) {
+    var idx = S.answers.software.indexOf(opt.value);
+    if (idx !== -1) S.answers.software.splice(idx, 1);
+    var cb = document.getElementById('cat-cb-' + ci + '-' + opt.value);
+    if (cb) cb.checked = false;
+    var row = document.getElementById('cat-row-' + ci + '-' + opt.value);
+    if (row) row.classList.remove('selected');
+  });
+  updateCatCount(ci);
+  updateCatChips(ci);
+}
+
+function updateCatChips(ci) {
+  var el = document.getElementById('cat-chips-' + ci);
+  var cat = SOFTWARE_CATEGORIES[ci];
+  if (!el || !cat) return;
+  var selected = cat.options.filter(function(opt) {
+    return S.answers.software.indexOf(opt.value) !== -1;
+  });
+  if (selected.length === 0) { el.innerHTML = ''; return; }
+  el.innerHTML = selected.map(function(opt) {
+    return '<span class="wizard-cat-chip">' + escHtml(opt.label) +
+      '<span class="wizard-cat-chip-remove" onclick="toggleCatOption(' + ci + ',\'' +
+      opt.value + '\'); event.stopPropagation();">&times;</span></span>';
+  }).join('');
 }
 
 function addWritein(ci) {
@@ -2214,6 +2313,7 @@ function refreshSoftwareUI() {
       if (row) row.classList.toggle('selected', checked);
     });
     updateCatCount(ci);
+    updateCatChips(ci);
   });
 }
 
