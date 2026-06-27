@@ -158,7 +158,7 @@ exports.handler = async (event) => {
 
       const cookieValue = [
         `$${COOKIE_NAME}=$${tokens.access_token}`,
-        'Path=/grc-tools',
+        'Path=/',
         `Max-Age=$${COOKIE_MAX_AGE}`,
         'HttpOnly',
         'Secure',
