@@ -2255,14 +2255,13 @@ function sidebarClick(n) {
 }
 
 function sidebarSubClick(n) {
-  S.softwareSubStep = n;
+  S.softwareSubStep = n + 1; // n is sidebar index (0-5), softwareSubStep 0 is intro
   buildSoftwareStep();
 }
 
 function updateSidebarSubsteps() {
   var el = document.getElementById('sidebar-substeps');
   if (!el) return;
-  // Show sub-steps only when on step 4
   el.style.display = S.currentStep === 4 ? '' : 'none';
   if (S.currentStep !== 4) return;
 
@@ -2271,8 +2270,9 @@ function updateSidebarSubsteps() {
   for (var i = 0; i < children.length; i++) {
     var item = children[i];
     item.className = 'wizard-substep-indicator';
-    if (i < sub - 1) item.classList.add('done');
-    else if (i === sub || (sub === 0 && i === 0)) item.classList.add('active');
+    var mapped = i + 1; // sidebar index → softwareSubStep (i=0 → sub=1)
+    if (mapped < sub) item.classList.add('done');
+    else if (mapped === sub) item.classList.add('active');
   }
 }
 
