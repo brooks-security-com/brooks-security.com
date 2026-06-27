@@ -190,10 +190,22 @@ def extract_user_info(token):
         return None
 
 
-def parse_idp(identities_json_str):
-    """Parse the Cognito identities JSON to extract provider name."""
+def parse_idp(identities_val):
+    """Parse the Cognito identities to extract provider name.
+
+    The identities claim in a Cognito ID token is a list of dicts like
+    [{\"providerName\": \"Google\", ...}]. PyJWT decodes it to a native
+    Python list. The access token doesn't have this claim, so we also
+    handle the JSON-string fallback.
+    """
     try:
-        identities = json.loads(identities_json_str)
+        if isinstance(identities_val, list):
+            identities = identities_val
+        elif isinstance(identities_val, str):
+            identities = json.loads(identities_val)
+        else:
+            return "Unknown"
+
         if identities and len(identities) > 0:
             provider = identities[0].get("providerName", "")
             if "Google" in provider:
@@ -201,7 +213,7 @@ def parse_idp(identities_json_str):
             elif "Microsoft" in provider:
                 return "Microsoft"
         return "Unknown"
-    except (json.JSONDecodeError, IndexError):
+    except (json.JSONDecodeError, IndexError, TypeError):
         return "Unknown"
 
 

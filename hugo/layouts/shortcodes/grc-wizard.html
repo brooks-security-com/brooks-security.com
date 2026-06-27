@@ -1231,8 +1231,16 @@ async function generatePolicies() {
     })
   });
 
-  if (result && result.policies) {
-    S.generatedPolicies = result.policies;
+  if (result && result.generated) {
+    S.generatedPolicies = result.generated.map(function(g) {
+      var pol = S.policyList.find(function(p) { return p.id === g.policy_id; });
+      return {
+        id: g.policy_id,
+        name: pol ? pol.name : g.policy_id,
+        pdf_url: g.pdf_url || null,
+        docx_url: g.docx_url || null
+      };
+    });
     S.generationComplete = true;
     // Animate progress to 100%
     if (progressBar) progressBar.style.width = '100%';
@@ -1311,15 +1319,27 @@ function buildGenerateDownloads() {
 }
 
 function downloadPolicy(policyId, format) {
-  console.log('Download ' + format.toUpperCase() + ' for policy: ' + policyId + ' — API not available');
-  // In production: window.open(apiUrl('/generate/' + policyId + '?format=' + format), '_blank');
-  alert('Download API not available yet. Policy: ' + policyId + ' (' + format.toUpperCase() + ')');
+  var pol = S.generatedPolicies.find(function(p) { return p.id === policyId; });
+  if (!pol) { alert('Policy not found.'); return; }
+  var url = format === 'pdf' ? pol.pdf_url : pol.docx_url;
+  if (url) {
+    window.open(url, '_blank');
+  } else {
+    alert(format.toUpperCase() + ' not available for this policy.');
+  }
 }
 
-function downloadAllZip(format) {
-  console.log('Download all as ' + format.toUpperCase() + ' ZIP — API not available');
-  // In production: POST /api/grc-tools/bundle
-  alert('Bundle download API not available yet. Format: ' + format.toUpperCase() + ' ZIP');
+async function downloadAllZip(format) {
+  var result = await apiFetch('/bundle', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ format: format })
+  });
+  if (result && result.zip_url) {
+    window.open(result.zip_url, '_blank');
+  } else {
+    alert('Bundle download failed. Try downloading individual policies instead.');
+  }
 }
 
 // ===== Utility =====
