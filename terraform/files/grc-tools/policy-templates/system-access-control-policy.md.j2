@@ -35,6 +35,16 @@ Access must be provisioned through a formal, documented process that includes: r
 Identity and access management is provided through {{ idp_name }}. All access provisioning, modification, and revocation workflows are managed through the identity provider.
 {% endif %}
 
+{% if software_iam %}
+The following identity and access management tools are in use at {{ company_name }}:
+
+{% for tool in software_iam %}
+- **{{ tool }}**
+{% endfor %}
+
+All IAM tools must enforce multi-factor authentication for administrative access. Integrations between tools must use secure, authenticated APIs. Access reviews must encompass all systems managed through these tools.
+{% endif %}
+
 ### Access Reviews
 
 Formal access reviews must be conducted by system owners and managers on a {{ access_review_frequency }} schedule. Each review must confirm that the individual still requires access, the level of access is appropriate, and no unauthorized escalation has occurred. Unneeded access must be revoked; discrepancies must be remediated and documented. Reviews must be completed within {{ access_review_deadline_days }} days of initiation, and results must be documented and retained.

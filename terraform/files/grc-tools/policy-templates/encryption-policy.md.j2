@@ -145,6 +145,16 @@ When using cloud infrastructure and platform services:
 - Key access policies must follow least privilege - only the specific services and roles that require cryptographic operations should have access to each key.
 - Cloud HSM offerings should be evaluated for protecting high-value keys such as root Certificate Authority keys or master key encryption keys.
 
+{% if software_cloud %}
+## Cloud Provider Encryption Requirements
+
+{{ company_name }} operates on the following cloud platforms. Each has specific encryption requirements:
+
+{% for cloud in software_cloud %}
+- **{{ cloud }}** — all data at rest must be encrypted using the provider's native KMS with customer-managed keys. TLS 1.2+ must be enforced for all data in transit. Default encryption settings must be enabled for all storage, database, and messaging services.
+{% endfor %}
+{% endif %}
+
 ### End-User Device Encryption
 
 - **Apple macOS:** FileVault full-disk encryption must be enabled on all organization-managed macOS devices. Recovery keys must be escrowed to the MDM platform. Employees must not disable FileVault.

@@ -21,8 +21,8 @@
   display: flex;
   gap: 0;
   width: 100%;
-  height: calc(100vh - 60px);
-  margin: 0;
+  height: calc(100vh - 60px - 1.1rem);
+  margin: 1.1rem 0 0 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 .wizard-sidebar {
@@ -30,7 +30,7 @@
   flex-shrink: 0;
   background: var(--wizard-gray-100);
   border-radius: var(--wizard-radius) 0 0 var(--wizard-radius);
-  padding: 1.75rem 1.25rem;
+  padding: 1.3rem 1.25rem;
   border: 1px solid var(--wizard-gray-200);
   border-right: none;
   display: flex;
@@ -60,11 +60,52 @@
 .wizard-step-indicator.clickable {
   cursor: pointer;
 }
+.wizard-step-indicator.clickable:hover {
+  background: var(--wizard-gray-100);
+  border-radius: 6px;
+}
 .wizard-step-indicator.clickable:hover .wizard-step-badge.done {
   background: #0d8a3d;
 }
 .wizard-step-indicator.clickable:hover .wizard-step-label.done {
   color: var(--wizard-gray-800);
+}
+/* Sidebar sub-steps under step 4 */
+.wizard-sidebar-substeps {
+  padding-left: 2rem;
+  margin: -0.25rem 0 0.5rem 0;
+}
+.wizard-substep-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0;
+  font-size: 0.78rem;
+  color: var(--wizard-gray-300);
+  cursor: pointer;
+}
+.wizard-substep-indicator:hover {
+  color: var(--wizard-gray-800);
+}
+.wizard-substep-indicator.active {
+  color: var(--wizard-blue);
+  font-weight: 600;
+}
+.wizard-substep-indicator.done {
+  color: var(--wizard-gray-500);
+}
+.wizard-substep-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--wizard-gray-200);
+  flex-shrink: 0;
+}
+.wizard-substep-indicator.active .wizard-substep-dot {
+  background: var(--wizard-blue);
+}
+.wizard-substep-indicator.done .wizard-substep-dot {
+  background: var(--wizard-green);
 }
 .wizard-step-badge {
   width: 28px;
@@ -158,7 +199,7 @@
   background: var(--wizard-white);
   border: 1px solid var(--wizard-gray-200);
   border-radius: 0 var(--wizard-radius) var(--wizard-radius) 0;
-  padding: 2rem 2.25rem;
+  padding: 1.5rem 2.25rem;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -229,14 +270,251 @@
   color: var(--wizard-gray-500);
   margin-top: 0.15rem;
 }
-.wizard-checkbox-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+/* Expandable categorized software sections */
+.wizard-category {
+  margin-bottom: 0.6rem;
+  border: 1px solid var(--wizard-gray-200);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.wizard-cat-header {
+  display: flex;
+  align-items: center;
   gap: 0.5rem;
+  padding: 0.8rem 1rem;
+  cursor: pointer;
+  background: var(--wizard-white);
+  transition: background 0.1s;
+  user-select: none;
+}
+.wizard-cat-header:hover {
+  background: var(--wizard-gray-100);
+}
+.wizard-cat-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--wizard-gray-800);
+  flex: 1;
+}
+.wizard-cat-count {
+  font-size: 0.8rem;
+  color: var(--wizard-blue);
+  font-weight: 600;
+}
+.wizard-cat-count:empty {
+  display: none;
+}
+.wizard-cat-arrow {
+  font-size: 0.65rem;
+  color: var(--wizard-gray-300);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+.wizard-category.open .wizard-cat-arrow {
+  transform: rotate(180deg);
+}
+.wizard-cat-body {
+  display: none;
+  border-top: 1px solid var(--wizard-gray-200);
+}
+.wizard-category.open .wizard-cat-body {
+  display: block;
+}
+.wizard-cat-search {
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--wizard-gray-100);
+}
+.wizard-cat-search input {
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--wizard-gray-200);
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-family: inherit;
+  outline: none;
+  color: var(--wizard-gray-800);
+  background: var(--wizard-gray-100);
+}
+.wizard-cat-search input:focus {
+  border-color: var(--wizard-blue);
+  background: var(--wizard-white);
+}
+.wizard-cat-search input::placeholder {
+  color: var(--wizard-gray-300);
+}
+.wizard-cat-list {
+  max-height: 260px;
+  overflow-y: auto;
+}
+/* In-panel selected chips */
+.wizard-cat-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--wizard-gray-100);
+  min-height: 0;
+}
+.wizard-cat-chips:empty {
+  display: none;
+}
+.wizard-cat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.5rem;
+  background: var(--wizard-blue-light);
+  border: 1px solid #b6d9f7;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  color: #0856a3;
+}
+.wizard-cat-chip-remove {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.85rem;
+  line-height: 1;
+}
+.wizard-cat-chip-remove:hover {
+  color: #cf222e;
+}
+/* Select All / Clear All */
+.wizard-cat-selectall {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.4rem 1rem;
+  border-bottom: 1px solid var(--wizard-gray-100);
+  font-size: 0.78rem;
+}
+.wizard-cat-selectall a {
+  color: var(--wizard-blue);
+  cursor: pointer;
+  text-decoration: none;
+}
+.wizard-cat-selectall a:hover {
+  text-decoration: underline;
+}
+.wizard-cat-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 1rem;
+  cursor: pointer;
+  font-size: 0.88rem;
+  color: var(--wizard-gray-800);
+  transition: background 0.1s;
+  border-bottom: 1px solid var(--wizard-gray-100);
+}
+.wizard-cat-row:last-child {
+  border-bottom: none;
+}
+.wizard-cat-row:hover {
+  background: var(--wizard-blue-light);
+}
+.wizard-cat-row input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--wizard-blue);
+  flex-shrink: 0;
+}
+.wizard-cat-row.selected {
+  background: #f0f7ff;
+}
+.wizard-cat-writein {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  border-top: 1px solid var(--wizard-gray-200);
+  background: var(--wizard-gray-100);
+}
+.wizard-cat-writein input {
+  flex: 1;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--wizard-gray-200);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  outline: none;
+  color: var(--wizard-gray-800);
+  background: var(--wizard-white);
+}
+.wizard-cat-writein input:focus {
+  border-color: var(--wizard-blue);
+}
+.wizard-cat-writein button {
+  padding: 0.4rem 0.75rem;
+  background: var(--wizard-blue);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.wizard-cat-writein button:hover {
+  background: #0856a3;
+}
+/* Software sub-step progress */
+.wizard-subheader {
+  text-align: center;
   margin-bottom: 1.5rem;
 }
-.wizard-checkbox-grid .wizard-option {
-  padding: 0.7rem 0.9rem;
+.wizard-subheader-intro {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--wizard-gray-800);
+  margin: 0 0 0.25rem;
+}
+.wizard-subheader-subtitle {
+  font-size: 0.9rem;
+  color: var(--wizard-gray-500);
+  margin: 0;
+}
+.wizard-subheader-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+.wizard-subheader-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--wizard-gray-200);
+  transition: background 0.2s;
+}
+.wizard-subheader-dot.done {
+  background: var(--wizard-green);
+}
+.wizard-subheader-dot.active {
+  background: var(--wizard-blue);
+}
+.wizard-subheader-group-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--wizard-gray-800);
+  margin: 0 0 0.25rem;
+}
+/* Intro card within step 4 */
+.wizard-intro-card {
+  background: var(--wizard-blue-light);
+  border: 1px solid #b6d9f7;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  max-width: 500px;
+  margin: 2rem auto;
+}
+.wizard-intro-card h3 {
+  font-size: 1.3rem;
+  color: #0856a3;
+  margin: 0 0 0.75rem;
+}
+.wizard-intro-card p {
+  font-size: 0.95rem;
+  color: var(--wizard-gray-500);
+  line-height: 1.6;
 }
 /* Company name input */
 .wizard-company-input {
@@ -652,7 +930,7 @@
     border-radius: 0 0 var(--wizard-radius) var(--wizard-radius); padding: 1.25rem;
   }
   .wizard-step-heading { font-size: 1.3rem; }
-  .wizard-checkbox-grid { grid-template-columns: 1fr; }
+  .wizard-cat-list { max-height: 200px; }
   .wizard-rec-list { grid-template-columns: 1fr; }
   .wizard-actions { flex-wrap: wrap; }
   .wizard-download-grid { grid-template-columns: 1fr; }
@@ -679,16 +957,20 @@
         <div class="wizard-step-badge inactive" id="badge-4">4</div>
         <div class="wizard-step-label inactive" id="label-4">Software &amp; tools</div>
       </div>
-      <div class="wizard-step-indicator" data-for="5" onclick="sidebarClick(5)">
-        <div class="wizard-step-badge inactive" id="badge-5">5</div>
-        <div class="wizard-step-label inactive" id="label-5">Identity provider</div>
+      <div class="wizard-sidebar-substeps" id="sidebar-substeps" style="display:none;">
+        <div class="wizard-substep-indicator" id="substep-0" onclick="sidebarSubClick(0)"><span class="wizard-substep-dot"></span>Identity</div>
+        <div class="wizard-substep-indicator" id="substep-1" onclick="sidebarSubClick(1)"><span class="wizard-substep-dot"></span>Cloud</div>
+        <div class="wizard-substep-indicator" id="substep-2" onclick="sidebarSubClick(2)"><span class="wizard-substep-dot"></span>Engineering</div>
+        <div class="wizard-substep-indicator" id="substep-3" onclick="sidebarSubClick(3)"><span class="wizard-substep-dot"></span>Customers</div>
+        <div class="wizard-substep-indicator" id="substep-4" onclick="sidebarSubClick(4)"><span class="wizard-substep-dot"></span>Internal</div>
+        <div class="wizard-substep-indicator" id="substep-5" onclick="sidebarSubClick(5)"><span class="wizard-substep-dot"></span>Security</div>
       </div>
       <div class="wizard-step-indicator" data-for="6" onclick="sidebarClick(6)">
-        <div class="wizard-step-badge inactive" id="badge-6">6</div>
+        <div class="wizard-step-badge inactive" id="badge-6">5</div>
         <div class="wizard-step-label inactive" id="label-6">Review</div>
       </div>
       <div class="wizard-step-indicator" data-for="7" onclick="sidebarClick(7)">
-        <div class="wizard-step-badge inactive" id="badge-7">7</div>
+        <div class="wizard-step-badge inactive" id="badge-7">6</div>
         <div class="wizard-step-label inactive" id="label-7">Select policies</div>
       </div>
     </div>
@@ -776,58 +1058,13 @@
       </div>
     </div>
 
-    <!-- Step 4: Software & tools (was step 3) -->
+    <!-- Step 4: Software & tools -->
     <div class="wizard-step" data-step="4" id="step-4">
-      <h2 class="wizard-step-heading">What software and tools does your team use? <a href="/grc-tools/help/#software-tools" target="_blank" class="wizard-help-icon" title="Help">?</a></h2>
-      <p class="wizard-step-subtitle">Select everything that applies. We'll use this to tailor recommendations and detect your identity provider.</p>
-      <div class="wizard-checkbox-grid" id="options-software">
-        <label class="wizard-option" onclick="toggleCheckbox('software','google-workspace',this)"><input type="checkbox" name="software" value="google-workspace"><span>Google Workspace</span></label>
-        <label class="wizard-option" onclick="toggleCheckbox('software','microsoft365',this)"><input type="checkbox" name="software" value="microsoft365"><span>Microsoft 365</span></label>
-        <label class="wizard-option" onclick="toggleCheckbox('software','slack',this)"><input type="checkbox" name="software" value="slack"><span>Slack</span></label>
-        <label class="wizard-option" onclick="toggleCheckbox('software','jira',this)"><input type="checkbox" name="software" value="jira"><span>Jira</span></label>
-        <label class="wizard-option" onclick="toggleCheckbox('software','github',this)"><input type="checkbox" name="software" value="github"><span>GitHub</span></label>
-        <label class="wizard-option" onclick="toggleCheckbox('software','gitlab',this)"><input type="checkbox" name="software" value="gitlab"><span>GitLab</span></label>
-        <label class="wizard-option" onclick="toggleCheckbox('software','aws',this)"><input type="checkbox" name="software" value="aws"><span>AWS</span></label>
-        <label class="wizard-option" onclick="toggleCheckbox('software','azure',this)"><input type="checkbox" name="software" value="azure"><span>Microsoft Azure</span></label>
-        <label class="wizard-option" onclick="toggleCheckbox('software','gcp',this)"><input type="checkbox" name="software" value="gcp"><span>Google Cloud</span></label>
-        <label class="wizard-option" onclick="toggleCheckbox('software','okta',this)"><input type="checkbox" name="software" value="okta"><span>Okta</span></label>
-        <label class="wizard-option" onclick="toggleCheckbox('software','notion',this)"><input type="checkbox" name="software" value="notion"><span>Notion</span></label>
-        <label class="wizard-option" onclick="toggleCheckbox('software','zoom',this)"><input type="checkbox" name="software" value="zoom"><span>Zoom</span></label>
-        <label class="wizard-option" onclick="toggleCheckbox('software','salesforce',this)"><input type="checkbox" name="software" value="salesforce"><span>Salesforce</span></label>
-        <label class="wizard-option" onclick="toggleCheckbox('software','other',this)"><input type="checkbox" name="software" value="other"><span>Other</span></label>
-      </div>
-      <div class="wizard-actions">
-        <button class="wizard-btn wizard-btn-secondary" onclick="goToStep(3)">&#x2190; Back</button>
-        <button class="wizard-btn wizard-btn-primary" id="btn-software-continue" onclick="goToStep(5)">Continue &#x2192;</button>
-      </div>
-    </div>
-
-    <!-- Step 5: Identity provider (was step 4) -->
-    <div class="wizard-step" data-step="5" id="step-5">
-      <h2 class="wizard-step-heading">Which identity provider does your organization use? <a href="/grc-tools/help/#identity-provider" target="_blank" class="wizard-help-icon" title="Help">?</a></h2>
-      <p class="wizard-step-subtitle" id="idp-subtitle">We'll recommend the policies that align with your identity stack.</p>
-      <div id="idp-notice"></div>
-      <div class="wizard-options" id="options-idp">
-        <label class="wizard-option" onclick="selectRadio('idp','google',this)">
-          <input type="radio" name="idp" value="google">
-          <div class="option-content"><span class="option-title">Google</span><span class="option-desc">Google Workspace / Cloud Identity.</span></div>
-        </label>
-        <label class="wizard-option" onclick="selectRadio('idp','microsoft',this)">
-          <input type="radio" name="idp" value="microsoft">
-          <div class="option-content"><span class="option-title">Microsoft (Entra ID)</span><span class="option-desc">Microsoft 365 / Azure AD / Entra ID.</span></div>
-        </label>
-        <label class="wizard-option" onclick="selectRadio('idp','okta',this)">
-          <input type="radio" name="idp" value="okta">
-          <div class="option-content"><span class="option-title">Okta</span><span class="option-desc">Standalone identity platform.</span></div>
-        </label>
-        <label class="wizard-option" onclick="selectRadio('idp','other',this)">
-          <input type="radio" name="idp" value="other">
-          <div class="option-content"><span class="option-title">Other / On-prem AD</span><span class="option-desc">Ping, OneLogin, Active Directory, or custom.</span></div>
-        </label>
-      </div>
-      <div class="wizard-actions">
-        <button class="wizard-btn wizard-btn-secondary" onclick="goToStep(4)">&#x2190; Back</button>
-        <button class="wizard-btn wizard-btn-primary" id="btn-idp-continue" disabled onclick="goToStep(6)">Continue &#x2192;</button>
+      <div id="software-subheader"></div>
+      <div id="options-software"></div>
+      <div class="wizard-actions" id="software-actions">
+        <button class="wizard-btn wizard-btn-secondary" onclick="goToStep(3)">&#x2190; Back to wizard</button>
+        <button class="wizard-btn wizard-btn-primary" id="btn-software-continue" onclick="softwareNext()">Get started &#x2192;</button>
       </div>
     </div>
 
@@ -958,7 +1195,8 @@ window.wizardState = {
   sessionId: null,
   policyList: POLICY_MANIFEST,
   generationComplete: false,
-  generatedPolicies: []
+  generatedPolicies: [],
+  softwareSubStep: 0
 };
 var S = window.wizardState;
 
@@ -1001,6 +1239,7 @@ async function restoreSession() {
       }
       if (st.generationComplete) S.generationComplete = true;
       if (st.generatedPolicies) S.generatedPolicies = st.generatedPolicies;
+      if (typeof st.softwareSubStep === 'number') S.softwareSubStep = st.softwareSubStep;
       var restoreStep = (typeof st.currentStep === 'number') ? st.currentStep : 0;
       if (restoreStep > 0) {
         restoreUI(restoreStep);
@@ -1095,7 +1334,8 @@ async function saveSession() {
       selectedPolicies: S.answers.selectedPolicies
     },
     generationComplete: S.generationComplete,
-    generatedPolicies: S.generatedPolicies
+    generatedPolicies: S.generatedPolicies,
+    softwareSubStep: S.softwareSubStep
   };
   var result = await apiFetch('/session', {
     method: 'PUT',
@@ -1247,7 +1487,8 @@ async function generatePolicies() {
       companyName: S.answers.companyName || 'Your Organization',
       framework: S.answers.framework,
       size: S.answers.size,
-      idp: S.answers.idp
+      idp: S.answers.idp,
+      software: S.answers.software
     })
   });
 
@@ -1379,13 +1620,7 @@ function getFrameworkLabel(fw) {
   return map[fw] || fw;
 }
 function getSoftwareLabels(items) {
-  var map = {
-    'google-workspace': 'Google Workspace', 'microsoft365': 'Microsoft 365',
-    'slack': 'Slack', 'jira': 'Jira', 'github': 'GitHub', 'gitlab': 'GitLab',
-    'aws': 'AWS', 'azure': 'Azure', 'gcp': 'Google Cloud',
-    'okta': 'Okta', 'notion': 'Notion', 'zoom': 'Zoom', 'salesforce': 'Salesforce', 'other': 'Other'
-  };
-  return items.map(function(v) { return map[v] || v; });
+  return items.map(function(v) { return ALL_SOFTWARE_LABELS[v] || v; });
 }
 function getIdpLabel(idp) {
   if (!idp) return 'Not selected';
@@ -1393,8 +1628,8 @@ function getIdpLabel(idp) {
   return map[idp] || idp;
 }
 function detectIdpFromSoftware(software) {
-  var hasGoogle = software.indexOf('google-workspace') !== -1 || software.indexOf('gcp') !== -1;
-  var hasMicrosoft = software.indexOf('microsoft365') !== -1 || software.indexOf('azure') !== -1;
+  var hasGoogle = software.indexOf('google-workspace') !== -1 || software.indexOf('gcp') !== -1 || software.indexOf('google-identity') !== -1;
+  var hasMicrosoft = software.indexOf('microsoft365') !== -1 || software.indexOf('azure') !== -1 || software.indexOf('azure-ad') !== -1 || software.indexOf('teams') !== -1;
   var hasOkta = software.indexOf('okta') !== -1;
   if (hasGoogle && !hasMicrosoft) return 'google';
   if (hasMicrosoft && !hasGoogle) return 'microsoft';
@@ -1425,17 +1660,662 @@ function selectRadio(group, value, el) {
   if (btnId) { var btn = document.getElementById(btnId); if (btn) btn.disabled = false; }
 }
 
-function toggleCheckbox(group, value, el) {
-  var cb = el.querySelector('input');
-  cb.checked = !cb.checked;
-  if (cb.checked) {
-    el.classList.add('selected');
-    if (S.answers[group].indexOf(value) === -1) S.answers[group].push(value);
-  } else {
-    el.classList.remove('selected');
-    var idx = S.answers[group].indexOf(value);
-    if (idx !== -1) S.answers[group].splice(idx, 1);
+// ===== Software Categories & Multi-Select =====
+
+var SOFTWARE_CATEGORIES = [
+  {
+    name: 'Cloud Infrastructure',
+    options: [
+      {value:'aws', label:'AWS'},
+      {value:'azure', label:'Microsoft Azure'},
+      {value:'gcp', label:'Google Cloud'},
+      {value:'alibaba', label:'Alibaba Cloud'},
+      {value:'ibm', label:'IBM Cloud'},
+      {value:'oracle', label:'Oracle Cloud'},
+      {value:'digitalocean', label:'DigitalOcean'},
+      {value:'linode', label:'Linode / Akamai'},
+      {value:'vultr', label:'Vultr'},
+      {value:'heroku', label:'Heroku'},
+      {value:'cloudflare', label:'Cloudflare'},
+      {value:'vercel', label:'Vercel'},
+      {value:'netlify', label:'Netlify'},
+      {value:'hetzner', label:'Hetzner'},
+      {value:'ovh', label:'OVHcloud'},
+      {value:'aws-ec2', label:'AWS EC2 (AWS)'},
+      {value:'aws-lambda', label:'AWS Lambda (AWS)'},
+      {value:'aws-ecs', label:'AWS ECS / EKS (AWS)'},
+      {value:'azure-vm', label:'Azure Virtual Machines (Azure)'},
+      {value:'azure-functions', label:'Azure Functions (Azure)'},
+      {value:'azure-aks', label:'Azure Kubernetes Service (Azure)'},
+      {value:'gcp-compute', label:'Google Compute Engine (GCP)'},
+      {value:'gcp-functions', label:'Google Cloud Functions (GCP)'},
+      {value:'gcp-gke', label:'Google Kubernetes Engine (GCP)'}
+    ]
+  },
+  {
+    name: 'Productivity & Collaboration',
+    options: [
+      {value:'google-workspace', label:'Google Workspace'},
+      {value:'microsoft365', label:'Microsoft 365'},
+      {value:'slack', label:'Slack'},
+      {value:'teams', label:'Microsoft Teams'},
+      {value:'discord', label:'Discord'},
+      {value:'notion', label:'Notion'},
+      {value:'confluence', label:'Confluence'},
+      {value:'zoom', label:'Zoom'},
+      {value:'loom', label:'Loom'},
+      {value:'figma', label:'Figma'},
+      {value:'miro', label:'Miro'},
+      {value:'dropbox', label:'Dropbox'},
+      {value:'box', label:'Box'},
+      {value:'onedrive', label:'OneDrive'},
+      {value:'googledrive', label:'Google Drive'}
+    ]
+  },
+  {
+    name: 'Development & DevOps',
+    options: [
+      {value:'github', label:'GitHub'},
+      {value:'gitlab', label:'GitLab'},
+      {value:'bitbucket', label:'Bitbucket'},
+      {value:'azure-devops', label:'Azure DevOps'},
+      {value:'jira', label:'Jira'},
+      {value:'linear', label:'Linear'},
+      {value:'asana', label:'Asana'},
+      {value:'trello', label:'Trello'},
+      {value:'circleci', label:'CircleCI'},
+      {value:'jenkins', label:'Jenkins'},
+      {value:'github-actions', label:'GitHub Actions'},
+      {value:'aws-codepipeline', label:'AWS CodePipeline (AWS)'},
+      {value:'aws-codebuild', label:'AWS CodeBuild (AWS)'},
+      {value:'gcp-cloudbuild', label:'Google Cloud Build (GCP)'},
+      {value:'docker', label:'Docker'},
+      {value:'kubernetes', label:'Kubernetes'},
+      {value:'terraform', label:'Terraform'},
+      {value:'ansible', label:'Ansible'},
+      {value:'datadog', label:'Datadog'},
+      {value:'grafana', label:'Grafana'},
+      {value:'sentry', label:'Sentry'},
+      {value:'launchdarkly', label:'LaunchDarkly'}
+    ]
+  },
+  {
+    name: 'Identity & Access Management',
+    options: [
+      {value:'okta', label:'Okta'},
+      {value:'auth0', label:'Auth0'},
+      {value:'azure-ad', label:'Microsoft Entra ID (Azure)'},
+      {value:'onelogin', label:'OneLogin'},
+      {value:'ping', label:'Ping Identity'},
+      {value:'jumpcloud', label:'JumpCloud'},
+      {value:'duo', label:'Duo / Cisco'},
+      {value:'google-identity', label:'Google Cloud Identity (GCP)'},
+      {value:'aws-iam', label:'AWS IAM Identity Center (AWS)'},
+      {value:'1password', label:'1Password'},
+      {value:'lastpass', label:'LastPass'},
+      {value:'bitwarden', label:'Bitwarden'},
+      {value:'hashicorp-vault', label:'HashiCorp Vault'}
+    ]
+  },
+  {
+    name: 'Sales & CRM',
+    options: [
+      {value:'salesforce', label:'Salesforce'},
+      {value:'hubspot', label:'HubSpot CRM'},
+      {value:'pipedrive', label:'Pipedrive'},
+      {value:'zoho-crm', label:'Zoho CRM'},
+      {value:'freshsales', label:'Freshsales'},
+      {value:'close', label:'Close'},
+      {value:'salesloft', label:'Salesloft'},
+      {value:'outreach', label:'Outreach'}
+    ]
+  },
+  {
+    name: 'Customer Support',
+    options: [
+      {value:'zendesk', label:'Zendesk'},
+      {value:'intercom', label:'Intercom'},
+      {value:'freshdesk', label:'Freshdesk'},
+      {value:'helpscout', label:'Help Scout'},
+      {value:'service-now', label:'ServiceNow'},
+      {value:'jira-service', label:'Jira Service Management'},
+      {value:'zoho-desk', label:'Zoho Desk'},
+      {value:'kustomer', label:'Kustomer'},
+      {value:'front', label:'Front'}
+    ]
+  },
+  {
+    name: 'Marketing & Communications',
+    options: [
+      {value:'mailchimp', label:'Mailchimp'},
+      {value:'sendgrid', label:'SendGrid / Twilio'},
+      {value:'hubspot-marketing', label:'HubSpot Marketing'},
+      {value:'marketo', label:'Marketo / Adobe'},
+      {value:'activecampaign', label:'ActiveCampaign'},
+      {value:'klaviyo', label:'Klaviyo'},
+      {value:'convertkit', label:'ConvertKit'},
+      {value:'customerio', label:'Customer.io'},
+      {value:'braze', label:'Braze'}
+    ]
+  },
+  {
+    name: 'HR & People Operations',
+    options: [
+      {value:'workday', label:'Workday'},
+      {value:'bamboohr', label:'BambooHR'},
+      {value:'gusto', label:'Gusto'},
+      {value:'rippling', label:'Rippling'},
+      {value:'lever', label:'Lever'},
+      {value:'greenhouse', label:'Greenhouse'},
+      {value:'lattice', label:'Lattice'},
+      {value:'culture-amp', label:'Culture Amp'},
+      {value:'namely', label:'Namely'},
+      {value:'adp', label:'ADP'}
+    ]
+  },
+  {
+    name: 'Finance & Legal',
+    options: [
+      {value:'quickbooks', label:'QuickBooks'},
+      {value:'xero', label:'Xero'},
+      {value:'netsuite', label:'NetSuite'},
+      {value:'sap', label:'SAP'},
+      {value:'stripe', label:'Stripe'},
+      {value:'bill', label:'Bill.com'},
+      {value:'brex', label:'Brex / Ramp'},
+      {value:'docusign', label:'DocuSign'},
+      {value:'ironclad', label:'Ironclad'},
+      {value:'contractbook', label:'Contractbook'}
+    ]
+  },
+  {
+    name: 'Data & Analytics',
+    options: [
+      {value:'snowflake', label:'Snowflake'},
+      {value:'databricks', label:'Databricks'},
+      {value:'looker', label:'Looker / Google'},
+      {value:'tableau', label:'Tableau / Salesforce'},
+      {value:'powerbi', label:'Power BI'},
+      {value:'fivetran', label:'Fivetran'},
+      {value:'dbt', label:'dbt'},
+      {value:'segment', label:'Segment / Twilio'},
+      {value:'mixpanel', label:'Mixpanel'},
+      {value:'amplitude', label:'Amplitude'},
+      {value:'bigquery', label:'BigQuery (GCP)'},
+      {value:'redshift', label:'Amazon Redshift (AWS)'},
+      {value:'aws-athena', label:'Amazon Athena (AWS)'},
+      {value:'aws-glue', label:'AWS Glue (AWS)'},
+      {value:'aws-emr', label:'Amazon EMR (AWS)'},
+      {value:'azure-synapse', label:'Azure Synapse Analytics (Azure)'},
+      {value:'azure-datafactory', label:'Azure Data Factory (Azure)'},
+      {value:'gcp-dataflow', label:'Google Dataflow (GCP)'},
+      {value:'gcp-dataproc', label:'Google Dataproc (GCP)'},
+      {value:'kafka', label:'Apache Kafka / Confluent'},
+      {value:'airbyte', label:'Airbyte'}
+    ]
+  },
+  {
+    name: 'Compliance Automation',
+    options: [
+      {value:'vanta', label:'Vanta'},
+      {value:'drata', label:'Drata'},
+      {value:'secureframe', label:'Secureframe'},
+      {value:'thoropass', label:'Thoropass (Laika)'},
+      {value:'sprinto', label:'Sprinto'},
+      {value:'auditboard', label:'AuditBoard'},
+      {value:'hyperproof', label:'Hyperproof'},
+      {value:'aws-artifact', label:'AWS Artifact (AWS)'},
+      {value:'aws-auditmanager', label:'AWS Audit Manager (AWS)'},
+      {value:'azure-compliance', label:'Microsoft Purview Compliance (Azure)'},
+      {value:'gcp-assured', label:'Google Assured Workloads (GCP)'}
+    ]
+  },
+  {
+    name: 'Vulnerability Management',
+    options: [
+      {value:'snyk', label:'Snyk'},
+      {value:'veracode', label:'Veracode'},
+      {value:'tenable', label:'Tenable / Nessus'},
+      {value:'qualys', label:'Qualys'},
+      {value:'rapid7', label:'Rapid7'},
+      {value:'checkmarx', label:'Checkmarx'},
+      {value:'semgrep', label:'Semgrep'},
+      {value:'invicti', label:'Invicti / Netsparker'},
+      {value:'aws-inspector', label:'Amazon Inspector (AWS)'},
+      {value:'azure-defender-vm', label:'Microsoft Defender Vulnerability (Azure)'},
+      {value:'gcp-scanner', label:'Google Cloud Security Scanner (GCP)'}
+    ]
+  },
+  {
+    name: 'Endpoint & Network Security',
+    options: [
+      {value:'crowdstrike', label:'CrowdStrike'},
+      {value:'sentinelone', label:'SentinelOne'},
+      {value:'palo-alto', label:'Palo Alto Networks'},
+      {value:'fortinet', label:'Fortinet'},
+      {value:'cloudflare-security', label:'Cloudflare (WAF/DDoS)'},
+      {value:'zscaler', label:'Zscaler'},
+      {value:'netskope', label:'Netskope'},
+      {value:'aws-guardduty', label:'Amazon GuardDuty (AWS)'},
+      {value:'aws-shield', label:'AWS Shield (AWS)'},
+      {value:'aws-waf', label:'AWS WAF (AWS)'},
+      {value:'azure-sentinel', label:'Microsoft Sentinel (Azure)'},
+      {value:'azure-defender', label:'Microsoft Defender for Cloud (Azure)'},
+      {value:'gcp-chronicle', label:'Google Chronicle (GCP)'},
+      {value:'gcp-armor', label:'Google Cloud Armor (GCP)'}
+    ]
+  },
+  {
+    name: 'Cloud Security',
+    options: [
+      {value:'wiz', label:'Wiz'},
+      {value:'orca', label:'Orca Security'},
+      {value:'lacework', label:'Lacework'},
+      {value:'prisma', label:'Prisma Cloud / Palo Alto'},
+      {value:'aqua', label:'Aqua Security'},
+      {value:'aws-securityhub', label:'AWS Security Hub (AWS)'},
+      {value:'aws-config', label:'AWS Config (AWS)'},
+      {value:'azure-security-center', label:'Microsoft Defender for Cloud (Azure)'},
+      {value:'gcp-scc', label:'Google Security Command Center (GCP)'}
+    ]
+  },
+  {
+    name: 'Security Testing',
+    options: [
+      {value:'hackerone', label:'HackerOne'},
+      {value:'bugcrowd', label:'Bugcrowd'},
+      {value:'intigriti', label:'Intigriti'},
+      {value:'synack', label:'Synack'},
+      {value:'cobalt', label:'Cobalt'}
+    ]
+  },
+  {
+    name: 'Log Management',
+    options: [
+      {value:'splunk', label:'Splunk'},
+      {value:'elastic', label:'Elastic / ELK'},
+      {value:'sumologic', label:'Sumo Logic'},
+      {value:'datadog', label:'Datadog'},
+      {value:'grafana-loki', label:'Grafana Loki'},
+      {value:'newrelic', label:'New Relic'},
+      {value:'graylog', label:'Graylog'},
+      {value:'papertrail', label:'Papertrail'},
+      {value:'logz', label:'Logz.io'},
+      {value:'mezmo', label:'Mezmo (LogDNA)'},
+      {value:'aws-cloudwatch', label:'Amazon CloudWatch (AWS)'},
+      {value:'azure-monitor', label:'Azure Monitor (Azure)'},
+      {value:'gcp-logging', label:'Google Cloud Logging (GCP)'}
+    ]
   }
+];
+
+// Groups for sub-step navigation within step 4
+var SOFTWARE_GROUPS = [
+  {
+    title: 'Identity Provider',
+    subtitle: 'How does your team sign in?',
+    catIndices: [3],  // IAM category (for pre-fill context)
+    isIdpStep: true
+  },
+  {
+    title: 'Cloud Infrastructure',
+    subtitle: 'Which cloud providers do you use?',
+    catIndices: [0]  // Cloud Infrastructure
+  },
+  {
+    title: 'Infrastructure & Engineering',
+    subtitle: 'Where your code runs and how it gets there',
+    catIndices: [2]  // Dev & DevOps (IAM already in IDP step)
+  },
+  {
+    title: 'Customer-Facing Tools',
+    subtitle: 'How you sell, support, and communicate with customers',
+    catIndices: [4, 5, 6]  // Sales & CRM, Customer Support, Marketing
+  },
+  {
+    title: 'Internal Operations',
+    subtitle: 'HR, finance, and data systems your team relies on',
+    catIndices: [7, 8, 9]  // HR, Finance, Data & Analytics
+  },
+  {
+    title: 'Security & Compliance',
+    subtitle: 'How you protect your infrastructure and prove it',
+    catIndices: [10, 11, 12, 13, 14, 15]  // Compliance, Vuln Mgmt, Endpoint, Cloud Sec, Sec Testing, Log Mgmt
+  }
+];
+
+// Build the full set of known labels
+var ALL_SOFTWARE_LABELS = {};
+SOFTWARE_CATEGORIES.forEach(function(cat) {
+  cat.options.forEach(function(opt) {
+    ALL_SOFTWARE_LABELS[opt.value] = opt.label;
+  });
+});
+
+function buildSoftwareStep() {
+  var sub = S.softwareSubStep;
+  if (sub === 0) {
+    buildSoftwareIntro();
+  } else {
+    buildSoftwareSubstep(sub - 1);
+  }
+  updateSoftwareHeader();
+  updateSoftwareActions();
+  updateSidebarSubsteps();
+}
+
+function buildSoftwareIntro() {
+  document.getElementById('software-subheader').innerHTML = '';
+  document.getElementById('options-software').innerHTML =
+    '<div class="wizard-intro-card">' +
+      '<h3>We have a few questions about your software stack</h3>' +
+      '<p>We\'ll walk through 4 sections — infrastructure, customer tools, internal ops, and security. Select everything that applies to your organization. It takes about 60 seconds.</p>' +
+    '</div>';
+}
+
+function buildSoftwareSubstep(gi) {
+  var group = SOFTWARE_GROUPS[gi];
+  if (!group) return;
+
+  // IDP step is special: radio buttons, not category cards
+  if (group.isIdpStep) {
+    buildIdpSubstep(gi);
+    return;
+  }
+
+  var cats = group.catIndices.map(function(ci) { return SOFTWARE_CATEGORIES[ci]; });
+  var html = '';
+  cats.forEach(function(cat, i) {
+    var ci = group.catIndices[i];
+    html += '<div class="wizard-category' + (cat._open ? ' open' : '') + '" id="cat-' + ci + '">' +
+      '<div class="wizard-cat-header" onclick="toggleCategory(' + ci + ')">' +
+        '<span class="wizard-cat-name">' + escHtml(cat.name) + '</span>' +
+        '<span class="wizard-cat-count" id="cat-count-' + ci + '"></span>' +
+        '<span class="wizard-cat-arrow">&#9660;</span>' +
+      '</div>' +
+      '<div class="wizard-cat-body" id="cat-body-' + ci + '">' +
+        '<div class="wizard-cat-chips" id="cat-chips-' + ci + '"></div>' +
+        '<div class="wizard-cat-selectall">' +
+          '<a onclick="selectAllInCategory(' + ci + ')">Select all</a>' +
+          '<a onclick="clearAllInCategory(' + ci + ')">Clear</a>' +
+        '</div>' +
+        '<div class="wizard-cat-search"><input type="text" id="cat-search-' + ci + '" placeholder="Filter ' + cat.name.toLowerCase() + '..." oninput="filterCategory(' + ci + ')"></div>' +
+        '<div class="wizard-cat-list">' +
+          cat.options.map(function(opt) {
+            return '<label class="wizard-cat-row" onclick="toggleCatOption(' + ci + ',\'' + opt.value + '\'); event.stopPropagation();" id="cat-row-' + ci + '-' + opt.value + '">' +
+              '<input type="checkbox" value="' + opt.value + '" id="cat-cb-' + ci + '-' + opt.value + '">' +
+              escHtml(opt.label) +
+            '</label>';
+          }).join('') +
+        '</div>' +
+        '<div class="wizard-cat-writein">' +
+          '<input type="text" id="cat-writein-' + ci + '" placeholder="Add custom..." onkeydown="if(event.key===\'Enter\'){addWritein(' + ci + ');event.preventDefault();}">' +
+          '<button onclick="addWritein(' + ci + '); event.stopPropagation();">Add</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  });
+  document.getElementById('options-software').innerHTML = html;
+  refreshSoftwareUI();
+}
+
+function buildIdpSubstep(gi) {
+  var idp = S.answers.idp || '';
+  var detected = detectIdpFromSoftware(S.answers.software);
+  var notice = detected ? '<div class="wizard-notice" style="margin-bottom:1rem;">Based on your selections, we detected <strong>' + getIdpLabel(detected) + '</strong> as your likely provider.</div>' : '';
+
+  var html = notice +
+    '<div class="wizard-options" id="options-idp">' +
+      '<label class="wizard-option' + (idp === 'google' ? ' selected' : '') + '" onclick="selectIdpInSoftware(\'google\',this)">' +
+        '<input type="radio" name="idp" value="google"' + (idp === 'google' ? ' checked' : '') + '>' +
+        '<div class="option-content"><span class="option-title">Google</span><span class="option-desc">Google Workspace / Cloud Identity.</span></div>' +
+      '</label>' +
+      '<label class="wizard-option' + (idp === 'microsoft' ? ' selected' : '') + '" onclick="selectIdpInSoftware(\'microsoft\',this)">' +
+        '<input type="radio" name="idp" value="microsoft"' + (idp === 'microsoft' ? ' checked' : '') + '>' +
+        '<div class="option-content"><span class="option-title">Microsoft (Entra ID)</span><span class="option-desc">Microsoft 365 / Azure AD / Entra ID.</span></div>' +
+      '</label>' +
+      '<label class="wizard-option' + (idp === 'okta' ? ' selected' : '') + '" onclick="selectIdpInSoftware(\'okta\',this)">' +
+        '<input type="radio" name="idp" value="okta"' + (idp === 'okta' ? ' checked' : '') + '>' +
+        '<div class="option-content"><span class="option-title">Okta</span><span class="option-desc">Standalone identity platform.</span></div>' +
+      '</label>' +
+      '<label class="wizard-option' + (idp === 'other' ? ' selected' : '') + '" onclick="selectIdpInSoftware(\'other\',this)">' +
+        '<input type="radio" name="idp" value="other"' + (idp === 'other' ? ' checked' : '') + '>' +
+        '<div class="option-content"><span class="option-title">Other / On-prem AD</span><span class="option-desc">Ping, OneLogin, Active Directory, or custom.</span></div>' +
+      '</label>' +
+    '</div>';
+
+  // Pre-fill question for Google/Microsoft
+  if (idp === 'google' || idp === 'microsoft') {
+    var providerName = idp === 'google' ? 'Google' : 'Microsoft';
+    html += '<div class="wizard-policy-recommended" style="margin-top:1.5rem;">' +
+      '<div><strong>Use ' + providerName + ' cloud and security defaults?</strong><br>' +
+      '<span style="font-size:0.82rem;color:var(--wizard-gray-500);">We\'ll pre-fill your cloud, security, and logging selections based on ' + providerName + '\'s platform.</span></div>' +
+      '<div style="display:flex;gap:0.5rem;">' +
+        '<button class="wizard-btn-small wizard-btn-primary" onclick="prefillCloudDefaults(\'' + idp + '\');softwareNext();">Yes, use defaults</button>' +
+        '<button class="wizard-btn-small wizard-btn-secondary" onclick="softwareNext();">No, choose manually</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  document.getElementById('options-software').innerHTML = html;
+
+  // Update the button text
+  document.getElementById('software-subheader').innerHTML = '';
+}
+
+function selectIdpInSoftware(value, el) {
+  S.answers.idp = value;
+  // Re-render to show pre-fill question
+  buildIdpSubstep(0);
+}
+
+function prefillCloudDefaults(idp) {
+  var prefill = idp === 'google' ? ['gcp', 'google-identity', 'google-workspace', 'gcp-logging', 'gcp-scc', 'gcp-chronicle', 'gcp-scanner', 'gcp-compute', 'gcp-gke', 'gcp-cloudbuild', 'bigquery', 'gcp-dataflow', 'gcp-dataproc', 'gcp-assured', 'gcp-armor', 'gcp-functions'] :
+    ['azure', 'azure-ad', 'microsoft365', 'azure-monitor', 'azure-security-center', 'azure-sentinel', 'azure-defender', 'azure-defender-vm', 'azure-compliance', 'azure-vm', 'azure-aks', 'azure-functions', 'teams', 'powerbi', 'azure-synapse', 'azure-datafactory'];
+  prefill.forEach(function(v) {
+    if (S.answers.software.indexOf(v) === -1) S.answers.software.push(v);
+  });
+}
+
+function updateSoftwareHeader() {
+  var el = document.getElementById('software-subheader');
+  if (!el) return;
+  var sub = S.softwareSubStep;
+  if (sub === 0) {
+    el.innerHTML = '<h2 class="wizard-subheader-intro">Software & tools</h2>' +
+      '<p class="wizard-subheader-subtitle">We\'ll tailor recommendations based on your stack.</p>';
+  } else {
+    var group = SOFTWARE_GROUPS[sub - 1];
+    var dots = '';
+    for (var i = 0; i < SOFTWARE_GROUPS.length; i++) {
+      var cls = i < sub - 1 ? 'done' : (i === sub - 1 ? 'active' : '');
+      dots += '<span class="wizard-subheader-dot ' + cls + '"></span>';
+    }
+    el.innerHTML =
+      '<div class="wizard-subheader-dots">' + dots + '</div>' +
+      '<h2 class="wizard-subheader-group-title">' + escHtml(group.title) + '</h2>' +
+      '<p class="wizard-subheader-subtitle">' + escHtml(group.subtitle) + '</p>';
+  }
+}
+
+function updateSoftwareActions() {
+  var el = document.getElementById('software-actions');
+  if (!el) return;
+  var sub = S.softwareSubStep;
+  var total = SOFTWARE_GROUPS.length;
+  var html = '<button class="wizard-btn wizard-btn-secondary" onclick="goToStep(3)">&#x2190; Back to wizard</button>';
+  if (sub > 0) {
+    html += '<button class="wizard-btn wizard-btn-secondary" onclick="softwarePrev()">&#x2190; Previous</button>';
+  }
+  if (sub < total) {
+    html += '<button class="wizard-btn wizard-btn-primary" id="btn-software-continue" onclick="softwareNext()">' +
+      (sub === 0 ? 'Get started &#x2192;' : 'Next section &#x2192;') + '</button>';
+  } else {
+    html += '<button class="wizard-btn wizard-btn-primary" id="btn-software-continue" onclick="goToStep(6)">Continue to review &#x2192;</button>';
+  }
+  if (sub === total) {
+    html += '<button class="wizard-btn wizard-btn-link" onclick="S.softwareSubStep=0;buildSoftwareStep();">Start over</button>';
+  }
+  el.innerHTML = html;
+}
+
+function softwareNext() {
+  if (S.softwareSubStep < SOFTWARE_GROUPS.length) {
+    S.softwareSubStep++;
+    buildSoftwareStep();
+  }
+}
+
+function softwarePrev() {
+  if (S.softwareSubStep > 0) {
+    S.softwareSubStep--;
+    buildSoftwareStep();
+  }
+}
+
+function filterCategory(ci) {
+  var input = document.getElementById('cat-search-' + ci);
+  var query = input ? input.value.toLowerCase().trim() : '';
+  var rows = document.querySelectorAll('#cat-' + ci + ' .wizard-cat-row');
+  rows.forEach(function(row) {
+    var text = (row.textContent || '').toLowerCase();
+    row.style.display = !query || text.indexOf(query) !== -1 ? '' : 'none';
+  });
+}
+
+function toggleCategory(ci) {
+  var cat = document.getElementById('cat-' + ci);
+  if (!cat) return;
+  cat.classList.toggle('open');
+}
+
+function toggleCatOption(ci, value) {
+  var cb = document.getElementById('cat-cb-' + ci + '-' + value);
+  if (!cb) return;
+  cb.checked = !cb.checked;
+  applyCatSelection(ci, value, cb.checked);
+}
+
+function applyCatSelection(ci, value, checked) {
+  var idx = S.answers.software.indexOf(value);
+  if (checked && idx === -1) {
+    S.answers.software.push(value);
+  } else if (!checked && idx !== -1) {
+    S.answers.software.splice(idx, 1);
+  }
+  var row = document.getElementById('cat-row-' + ci + '-' + value);
+  if (row) { row.classList.toggle('selected', checked); }
+  updateCatCount(ci);
+  updateCatChips(ci);
+}
+
+function selectAllInCategory(ci) {
+  var cat = SOFTWARE_CATEGORIES[ci];
+  if (!cat) return;
+  cat.options.forEach(function(opt) {
+    if (S.answers.software.indexOf(opt.value) === -1) {
+      S.answers.software.push(opt.value);
+    }
+    var cb = document.getElementById('cat-cb-' + ci + '-' + opt.value);
+    if (cb) cb.checked = true;
+    var row = document.getElementById('cat-row-' + ci + '-' + opt.value);
+    if (row) row.classList.add('selected');
+  });
+  updateCatCount(ci);
+  updateCatChips(ci);
+}
+
+function clearAllInCategory(ci) {
+  var cat = SOFTWARE_CATEGORIES[ci];
+  if (!cat) return;
+  cat.options.forEach(function(opt) {
+    var idx = S.answers.software.indexOf(opt.value);
+    if (idx !== -1) S.answers.software.splice(idx, 1);
+    var cb = document.getElementById('cat-cb-' + ci + '-' + opt.value);
+    if (cb) cb.checked = false;
+    var row = document.getElementById('cat-row-' + ci + '-' + opt.value);
+    if (row) row.classList.remove('selected');
+  });
+  updateCatCount(ci);
+  updateCatChips(ci);
+}
+
+function updateCatChips(ci) {
+  var el = document.getElementById('cat-chips-' + ci);
+  var cat = SOFTWARE_CATEGORIES[ci];
+  if (!el || !cat) return;
+  var selected = cat.options.filter(function(opt) {
+    return S.answers.software.indexOf(opt.value) !== -1;
+  });
+  if (selected.length === 0) { el.innerHTML = ''; return; }
+  el.innerHTML = selected.map(function(opt) {
+    return '<span class="wizard-cat-chip">' + escHtml(opt.label) +
+      '<span class="wizard-cat-chip-remove" onclick="toggleCatOption(' + ci + ',\'' +
+      opt.value + '\'); event.stopPropagation();">&times;</span></span>';
+  }).join('');
+}
+
+function addWritein(ci) {
+  var input = document.getElementById('cat-writein-' + ci);
+  if (!input) return;
+  var val = input.value.trim();
+  if (!val) return;
+  if (S.answers.software.indexOf(val) === -1) {
+    S.answers.software.push(val);
+  }
+  // Insert a new checked row into the category list
+  var list = document.querySelector('#cat-' + ci + ' .wizard-cat-list');
+  if (list) {
+    var id = 'cat-row-' + ci + '-custom-' + val.replace(/[^a-zA-Z0-9]/g, '_');
+    var row = document.createElement('label');
+    row.className = 'wizard-cat-row selected';
+    row.id = id;
+    row.setAttribute('onclick', 'toggleCatOption(' + ci + ',\'' + val.replace(/'/g, "\\'") + '\'); event.stopPropagation();');
+    row.innerHTML = '<input type="checkbox" value="' + escHtml(val) + '" checked>' + escHtml(val);
+    list.appendChild(row);
+  }
+  input.value = '';
+  updateCatCount(ci);
+}
+
+function removeSoftwareValue(value) {
+  var idx = S.answers.software.indexOf(value);
+  if (idx !== -1) S.answers.software.splice(idx, 1);
+  SOFTWARE_CATEGORIES.forEach(function(cat, ci) {
+    var cb = document.getElementById('cat-cb-' + ci + '-' + value);
+    if (cb) cb.checked = false;
+    var row = document.getElementById('cat-row-' + ci + '-' + value);
+    if (row) row.classList.remove('selected');
+    // Also remove custom write-in rows
+    var customId = 'cat-row-' + ci + '-custom-' + value.replace(/[^a-zA-Z0-9]/g, '_');
+    var customRow = document.getElementById(customId);
+    if (customRow) customRow.remove();
+    updateCatCount(ci);
+  });
+}
+
+function updateCatCount(ci) {
+  var el = document.getElementById('cat-count-' + ci);
+  var cat = SOFTWARE_CATEGORIES[ci];
+  if (!el || !cat) return;
+  var n = cat.options.filter(function(opt) {
+    return S.answers.software.indexOf(opt.value) !== -1;
+  }).length;
+  el.textContent = n > 0 ? n + ' selected' : '';
+}
+
+function refreshSoftwareUI() {
+  SOFTWARE_CATEGORIES.forEach(function(cat, ci) {
+    cat.options.forEach(function(opt) {
+      var checked = S.answers.software.indexOf(opt.value) !== -1;
+      var cb = document.getElementById('cat-cb-' + ci + '-' + opt.value);
+      if (cb) cb.checked = checked;
+      var row = document.getElementById('cat-row-' + ci + '-' + opt.value);
+      if (row) row.classList.toggle('selected', checked);
+    });
+    updateCatCount(ci);
+    updateCatChips(ci);
+  });
 }
 
 function onCompanyNameInput() {
@@ -1447,11 +2327,12 @@ function onCompanyNameInput() {
 
 // ===== Sidebar =====
 function updateSidebar(activeStepIndex) {
-  for (var i = 1; i <= 7; i++) {
+  var steps = [1, 2, 3, 4, 6, 7]; // step 5 (IDP) removed — now inside step 4
+  steps.forEach(function(i) {
     var badge = document.getElementById('badge-' + i);
     var label = document.getElementById('label-' + i);
     var indicator = badge ? badge.parentElement : null;
-    if (!badge || !label) continue;
+    if (!badge || !label) return;
     badge.className = 'wizard-step-badge';
     label.className = 'wizard-step-label';
     if (indicator) indicator.classList.remove('clickable');
@@ -1464,7 +2345,7 @@ function updateSidebar(activeStepIndex) {
     } else {
       badge.classList.add('inactive'); badge.textContent = i; label.classList.add('inactive');
     }
-  }
+  });
 }
 
 function sidebarClick(n) {
@@ -1474,25 +2355,46 @@ function sidebarClick(n) {
   }
 }
 
+function sidebarSubClick(n) {
+  S.softwareSubStep = n + 1; // n is sidebar index (0-5), softwareSubStep 0 is intro
+  buildSoftwareStep();
+}
+
+function updateSidebarSubsteps() {
+  var el = document.getElementById('sidebar-substeps');
+  if (!el) return;
+  el.style.display = S.currentStep === 4 ? '' : 'none';
+  if (S.currentStep !== 4) return;
+
+  var sub = S.softwareSubStep;
+  var children = el.children;
+  for (var i = 0; i < children.length; i++) {
+    var item = children[i];
+    item.className = 'wizard-substep-indicator';
+    var mapped = i + 1; // sidebar index → softwareSubStep (i=0 → sub=1)
+    if (mapped < sub) item.classList.add('done');
+    else if (mapped === sub) item.classList.add('active');
+  }
+}
+
 // ===== Navigation =====
 function goToStep(stepIndex) {
   var prevStep = S.currentStep;
 
-  // Mark completed steps (sidebar-mapped steps 1-7)
-  if (prevStep >= 1 && prevStep <= 7) {
+  // Mark completed steps (sidebar-mapped steps)
+  if (prevStep >= 1 && prevStep <= 7 && prevStep !== 5) {
     var hasAnswer = false;
     if (prevStep === 1 && S.answers.size) hasAnswer = true;
     if (prevStep === 2 && S.answers.framework) hasAnswer = true;
     if (prevStep === 3 && S.answers.companyName) hasAnswer = true;
     if (prevStep === 4) hasAnswer = true; // software — always can progress
-    if (prevStep === 5 && S.answers.idp) hasAnswer = true;
     if (prevStep === 6) hasAnswer = true; // review
     if (prevStep === 7 && S.answers.selectedPolicies.length > 0) hasAnswer = true;
     if (hasAnswer) S.completedSteps.add(prevStep);
   }
 
   // Prep steps
-  if (stepIndex === 5) prepIdpStep();
+  if (stepIndex === 4) buildSoftwareStep();
   if (stepIndex === 6) buildReview();
   if (stepIndex === 7) buildPolicySelection();
   if (stepIndex === 8) buildResults();
@@ -1506,6 +2408,7 @@ function goToStep(stepIndex) {
 
   var sidebarStep = (stepIndex >= 1 && stepIndex <= 7) ? stepIndex : (stepIndex === 0 ? 0 : 7);
   updateSidebar(sidebarStep);
+  updateSidebarSubsteps();
 
   // Auto-save on step transition (skip step 0)
   if (stepIndex > 0) {
