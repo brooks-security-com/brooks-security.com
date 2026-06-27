@@ -280,7 +280,7 @@
   display: block;
 }
 .wizard-cat-list {
-  max-height: 200px;
+  max-height: 260px;
   overflow-y: auto;
 }
 .wizard-cat-row {
@@ -758,7 +758,7 @@
     border-radius: 0 0 var(--wizard-radius) var(--wizard-radius); padding: 1.25rem;
   }
   .wizard-step-heading { font-size: 1.3rem; }
-  .wizard-cat-list { max-height: 150px; }
+  .wizard-cat-list { max-height: 200px; }
   .wizard-rec-list { grid-template-columns: 1fr; }
   .wizard-actions { flex-wrap: wrap; }
   .wizard-download-grid { grid-template-columns: 1fr; }
@@ -1478,8 +1478,8 @@ function getIdpLabel(idp) {
   return map[idp] || idp;
 }
 function detectIdpFromSoftware(software) {
-  var hasGoogle = software.indexOf('google-workspace') !== -1 || software.indexOf('gcp') !== -1;
-  var hasMicrosoft = software.indexOf('microsoft365') !== -1 || software.indexOf('azure') !== -1;
+  var hasGoogle = software.indexOf('google-workspace') !== -1 || software.indexOf('gcp') !== -1 || software.indexOf('google-identity') !== -1;
+  var hasMicrosoft = software.indexOf('microsoft365') !== -1 || software.indexOf('azure') !== -1 || software.indexOf('azure-ad') !== -1 || software.indexOf('teams') !== -1;
   var hasOkta = software.indexOf('okta') !== -1;
   if (hasGoogle && !hasMicrosoft) return 'google';
   if (hasMicrosoft && !hasGoogle) return 'microsoft';
@@ -1522,7 +1522,15 @@ var SOFTWARE_CATEGORIES = [
       {value:'alibaba', label:'Alibaba Cloud'},
       {value:'ibm', label:'IBM Cloud'},
       {value:'oracle', label:'Oracle Cloud'},
-      {value:'digitalocean', label:'DigitalOcean'}
+      {value:'digitalocean', label:'DigitalOcean'},
+      {value:'linode', label:'Linode / Akamai'},
+      {value:'vultr', label:'Vultr'},
+      {value:'heroku', label:'Heroku'},
+      {value:'cloudflare', label:'Cloudflare'},
+      {value:'vercel', label:'Vercel'},
+      {value:'netlify', label:'Netlify'},
+      {value:'hetzner', label:'Hetzner'},
+      {value:'ovh', label:'OVHcloud'}
     ]
   },
   {
@@ -1531,8 +1539,18 @@ var SOFTWARE_CATEGORIES = [
       {value:'google-workspace', label:'Google Workspace'},
       {value:'microsoft365', label:'Microsoft 365'},
       {value:'slack', label:'Slack'},
+      {value:'teams', label:'Microsoft Teams'},
+      {value:'discord', label:'Discord'},
       {value:'notion', label:'Notion'},
-      {value:'zoom', label:'Zoom'}
+      {value:'confluence', label:'Confluence'},
+      {value:'zoom', label:'Zoom'},
+      {value:'loom', label:'Loom'},
+      {value:'figma', label:'Figma'},
+      {value:'miro', label:'Miro'},
+      {value:'dropbox', label:'Dropbox'},
+      {value:'box', label:'Box'},
+      {value:'onedrive', label:'OneDrive'},
+      {value:'googledrive', label:'Google Drive'}
     ]
   },
   {
@@ -1540,14 +1558,149 @@ var SOFTWARE_CATEGORIES = [
     options: [
       {value:'github', label:'GitHub'},
       {value:'gitlab', label:'GitLab'},
-      {value:'jira', label:'Jira'}
+      {value:'bitbucket', label:'Bitbucket'},
+      {value:'azure-devops', label:'Azure DevOps'},
+      {value:'jira', label:'Jira'},
+      {value:'linear', label:'Linear'},
+      {value:'asana', label:'Asana'},
+      {value:'trello', label:'Trello'},
+      {value:'circleci', label:'CircleCI'},
+      {value:'jenkins', label:'Jenkins'},
+      {value:'github-actions', label:'GitHub Actions'},
+      {value:'docker', label:'Docker'},
+      {value:'kubernetes', label:'Kubernetes'},
+      {value:'terraform', label:'Terraform'},
+      {value:'ansible', label:'Ansible'},
+      {value:'datadog', label:'Datadog'},
+      {value:'grafana', label:'Grafana'},
+      {value:'sentry', label:'Sentry'},
+      {value:'launchdarkly', label:'LaunchDarkly'}
     ]
   },
   {
-    name: 'Identity & Security',
+    name: 'Identity & Access Management',
     options: [
       {value:'okta', label:'Okta'},
-      {value:'salesforce', label:'Salesforce'}
+      {value:'auth0', label:'Auth0'},
+      {value:'azure-ad', label:'Microsoft Entra ID'},
+      {value:'onelogin', label:'OneLogin'},
+      {value:'ping', label:'Ping Identity'},
+      {value:'jumpcloud', label:'JumpCloud'},
+      {value:'duo', label:'Duo / Cisco'},
+      {value:'google-identity', label:'Google Cloud Identity'},
+      {value:'1password', label:'1Password'},
+      {value:'lastpass', label:'LastPass'},
+      {value:'bitwarden', label:'Bitwarden'},
+      {value:'hashicorp-vault', label:'HashiCorp Vault'}
+    ]
+  },
+  {
+    name: 'Sales & CRM',
+    options: [
+      {value:'salesforce', label:'Salesforce'},
+      {value:'hubspot', label:'HubSpot CRM'},
+      {value:'pipedrive', label:'Pipedrive'},
+      {value:'zoho-crm', label:'Zoho CRM'},
+      {value:'freshsales', label:'Freshsales'},
+      {value:'close', label:'Close'},
+      {value:'salesloft', label:'Salesloft'},
+      {value:'outreach', label:'Outreach'}
+    ]
+  },
+  {
+    name: 'Customer Support',
+    options: [
+      {value:'zendesk', label:'Zendesk'},
+      {value:'intercom', label:'Intercom'},
+      {value:'freshdesk', label:'Freshdesk'},
+      {value:'helpscout', label:'Help Scout'},
+      {value:'service-now', label:'ServiceNow'},
+      {value:'jira-service', label:'Jira Service Management'},
+      {value:'zoho-desk', label:'Zoho Desk'},
+      {value:'kustomer', label:'Kustomer'},
+      {value:'front', label:'Front'}
+    ]
+  },
+  {
+    name: 'Marketing & Communications',
+    options: [
+      {value:'mailchimp', label:'Mailchimp'},
+      {value:'sendgrid', label:'SendGrid / Twilio'},
+      {value:'hubspot-marketing', label:'HubSpot Marketing'},
+      {value:'marketo', label:'Marketo / Adobe'},
+      {value:'activecampaign', label:'ActiveCampaign'},
+      {value:'klaviyo', label:'Klaviyo'},
+      {value:'convertkit', label:'ConvertKit'},
+      {value:'customerio', label:'Customer.io'},
+      {value:'braze', label:'Braze'}
+    ]
+  },
+  {
+    name: 'HR & People Operations',
+    options: [
+      {value:'workday', label:'Workday'},
+      {value:'bamboohr', label:'BambooHR'},
+      {value:'gusto', label:'Gusto'},
+      {value:'rippling', label:'Rippling'},
+      {value:'lever', label:'Lever'},
+      {value:'greenhouse', label:'Greenhouse'},
+      {value:'lattice', label:'Lattice'},
+      {value:'culture-amp', label:'Culture Amp'},
+      {value:'namely', label:'Namely'},
+      {value:'adp', label:'ADP'}
+    ]
+  },
+  {
+    name: 'Finance & Legal',
+    options: [
+      {value:'quickbooks', label:'QuickBooks'},
+      {value:'xero', label:'Xero'},
+      {value:'netsuite', label:'NetSuite'},
+      {value:'sap', label:'SAP'},
+      {value:'stripe', label:'Stripe'},
+      {value:'bill', label:'Bill.com'},
+      {value:'brex', label:'Brex / Ramp'},
+      {value:'docusign', label:'DocuSign'},
+      {value:'ironclad', label:'Ironclad'},
+      {value:'contractbook', label:'Contractbook'}
+    ]
+  },
+  {
+    name: 'Data & Analytics',
+    options: [
+      {value:'snowflake', label:'Snowflake'},
+      {value:'databricks', label:'Databricks'},
+      {value:'looker', label:'Looker / Google'},
+      {value:'tableau', label:'Tableau / Salesforce'},
+      {value:'powerbi', label:'Power BI'},
+      {value:'fivetran', label:'Fivetran'},
+      {value:'dbt', label:'dbt'},
+      {value:'segment', label:'Segment / Twilio'},
+      {value:'mixpanel', label:'Mixpanel'},
+      {value:'amplitude', label:'Amplitude'},
+      {value:'bigquery', label:'BigQuery'},
+      {value:'redshift', label:'Redshift'},
+      {value:'kafka', label:'Apache Kafka / Confluent'},
+      {value:'airbyte', label:'Airbyte'}
+    ]
+  },
+  {
+    name: 'Security Tools',
+    options: [
+      {value:'crowdstrike', label:'CrowdStrike'},
+      {value:'snyk', label:'Snyk'},
+      {value:'wiz', label:'Wiz'},
+      {value:'palo-alto', label:'Palo Alto'},
+      {value:'cloudflare-security', label:'Cloudflare (WAF/DDoS)'},
+      {value:'veracode', label:'Veracode'},
+      {value:'tenable', label:'Tenable / Nessus'},
+      {value:'qualys', label:'Qualys'},
+      {value:'rapid7', label:'Rapid7'},
+      {value:'hackerone', label:'HackerOne'},
+      {value:'bugcrowd', label:'Bugcrowd'},
+      {value:'vanta', label:'Vanta'},
+      {value:'drata', label:'Drata'},
+      {value:'secureframe', label:'Secureframe'}
     ]
   }
 ];
