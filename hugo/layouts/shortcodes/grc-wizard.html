@@ -1552,7 +1552,16 @@ var SOFTWARE_CATEGORIES = [
       {value:'vercel', label:'Vercel'},
       {value:'netlify', label:'Netlify'},
       {value:'hetzner', label:'Hetzner'},
-      {value:'ovh', label:'OVHcloud'}
+      {value:'ovh', label:'OVHcloud'},
+      {value:'aws-ec2', label:'AWS EC2 (AWS)'},
+      {value:'aws-lambda', label:'AWS Lambda (AWS)'},
+      {value:'aws-ecs', label:'AWS ECS / EKS (AWS)'},
+      {value:'azure-vm', label:'Azure Virtual Machines (Azure)'},
+      {value:'azure-functions', label:'Azure Functions (Azure)'},
+      {value:'azure-aks', label:'Azure Kubernetes Service (Azure)'},
+      {value:'gcp-compute', label:'Google Compute Engine (GCP)'},
+      {value:'gcp-functions', label:'Google Cloud Functions (GCP)'},
+      {value:'gcp-gke', label:'Google Kubernetes Engine (GCP)'}
     ]
   },
   {
@@ -1589,6 +1598,9 @@ var SOFTWARE_CATEGORIES = [
       {value:'circleci', label:'CircleCI'},
       {value:'jenkins', label:'Jenkins'},
       {value:'github-actions', label:'GitHub Actions'},
+      {value:'aws-codepipeline', label:'AWS CodePipeline (AWS)'},
+      {value:'aws-codebuild', label:'AWS CodeBuild (AWS)'},
+      {value:'gcp-cloudbuild', label:'Google Cloud Build (GCP)'},
       {value:'docker', label:'Docker'},
       {value:'kubernetes', label:'Kubernetes'},
       {value:'terraform', label:'Terraform'},
@@ -1604,12 +1616,13 @@ var SOFTWARE_CATEGORIES = [
     options: [
       {value:'okta', label:'Okta'},
       {value:'auth0', label:'Auth0'},
-      {value:'azure-ad', label:'Microsoft Entra ID'},
+      {value:'azure-ad', label:'Microsoft Entra ID (Azure)'},
       {value:'onelogin', label:'OneLogin'},
       {value:'ping', label:'Ping Identity'},
       {value:'jumpcloud', label:'JumpCloud'},
       {value:'duo', label:'Duo / Cisco'},
-      {value:'google-identity', label:'Google Cloud Identity'},
+      {value:'google-identity', label:'Google Cloud Identity (GCP)'},
+      {value:'aws-iam', label:'AWS IAM Identity Center (AWS)'},
       {value:'1password', label:'1Password'},
       {value:'lastpass', label:'LastPass'},
       {value:'bitwarden', label:'Bitwarden'},
@@ -1700,8 +1713,15 @@ var SOFTWARE_CATEGORIES = [
       {value:'segment', label:'Segment / Twilio'},
       {value:'mixpanel', label:'Mixpanel'},
       {value:'amplitude', label:'Amplitude'},
-      {value:'bigquery', label:'BigQuery'},
-      {value:'redshift', label:'Redshift'},
+      {value:'bigquery', label:'BigQuery (GCP)'},
+      {value:'redshift', label:'Amazon Redshift (AWS)'},
+      {value:'aws-athena', label:'Amazon Athena (AWS)'},
+      {value:'aws-glue', label:'AWS Glue (AWS)'},
+      {value:'aws-emr', label:'Amazon EMR (AWS)'},
+      {value:'azure-synapse', label:'Azure Synapse Analytics (Azure)'},
+      {value:'azure-datafactory', label:'Azure Data Factory (Azure)'},
+      {value:'gcp-dataflow', label:'Google Dataflow (GCP)'},
+      {value:'gcp-dataproc', label:'Google Dataproc (GCP)'},
       {value:'kafka', label:'Apache Kafka / Confluent'},
       {value:'airbyte', label:'Airbyte'}
     ]
@@ -1715,7 +1735,11 @@ var SOFTWARE_CATEGORIES = [
       {value:'thoropass', label:'Thoropass (Laika)'},
       {value:'sprinto', label:'Sprinto'},
       {value:'auditboard', label:'AuditBoard'},
-      {value:'hyperproof', label:'Hyperproof'}
+      {value:'hyperproof', label:'Hyperproof'},
+      {value:'aws-artifact', label:'AWS Artifact (AWS)'},
+      {value:'aws-auditmanager', label:'AWS Audit Manager (AWS)'},
+      {value:'azure-compliance', label:'Microsoft Purview Compliance (Azure)'},
+      {value:'gcp-assured', label:'Google Assured Workloads (GCP)'}
     ]
   },
   {
@@ -1728,7 +1752,10 @@ var SOFTWARE_CATEGORIES = [
       {value:'rapid7', label:'Rapid7'},
       {value:'checkmarx', label:'Checkmarx'},
       {value:'semgrep', label:'Semgrep'},
-      {value:'invicti', label:'Invicti / Netsparker'}
+      {value:'invicti', label:'Invicti / Netsparker'},
+      {value:'aws-inspector', label:'Amazon Inspector (AWS)'},
+      {value:'azure-defender-vm', label:'Microsoft Defender Vulnerability (Azure)'},
+      {value:'gcp-scanner', label:'Google Cloud Security Scanner (GCP)'}
     ]
   },
   {
@@ -1740,7 +1767,14 @@ var SOFTWARE_CATEGORIES = [
       {value:'fortinet', label:'Fortinet'},
       {value:'cloudflare-security', label:'Cloudflare (WAF/DDoS)'},
       {value:'zscaler', label:'Zscaler'},
-      {value:'netskope', label:'Netskope'}
+      {value:'netskope', label:'Netskope'},
+      {value:'aws-guardduty', label:'Amazon GuardDuty (AWS)'},
+      {value:'aws-shield', label:'AWS Shield (AWS)'},
+      {value:'aws-waf', label:'AWS WAF (AWS)'},
+      {value:'azure-sentinel', label:'Microsoft Sentinel (Azure)'},
+      {value:'azure-defender', label:'Microsoft Defender for Cloud (Azure)'},
+      {value:'gcp-chronicle', label:'Google Chronicle (GCP)'},
+      {value:'gcp-armor', label:'Google Cloud Armor (GCP)'}
     ]
   },
   {
@@ -1750,7 +1784,11 @@ var SOFTWARE_CATEGORIES = [
       {value:'orca', label:'Orca Security'},
       {value:'lacework', label:'Lacework'},
       {value:'prisma', label:'Prisma Cloud / Palo Alto'},
-      {value:'aqua', label:'Aqua Security'}
+      {value:'aqua', label:'Aqua Security'},
+      {value:'aws-securityhub', label:'AWS Security Hub (AWS)'},
+      {value:'aws-config', label:'AWS Config (AWS)'},
+      {value:'azure-security-center', label:'Microsoft Defender for Cloud (Azure)'},
+      {value:'gcp-scc', label:'Google Security Command Center (GCP)'}
     ]
   },
   {
@@ -1775,7 +1813,10 @@ var SOFTWARE_CATEGORIES = [
       {value:'graylog', label:'Graylog'},
       {value:'papertrail', label:'Papertrail'},
       {value:'logz', label:'Logz.io'},
-      {value:'mezmo', label:'Mezmo (LogDNA)'}
+      {value:'mezmo', label:'Mezmo (LogDNA)'},
+      {value:'aws-cloudwatch', label:'Amazon CloudWatch (AWS)'},
+      {value:'azure-monitor', label:'Azure Monitor (Azure)'},
+      {value:'gcp-logging', label:'Google Cloud Logging (GCP)'}
     ]
   }
 ];
