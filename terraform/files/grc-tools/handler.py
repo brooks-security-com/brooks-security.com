@@ -430,6 +430,21 @@ def handle_generate(event):
             ctx.setdefault("company_name", org_name)
             ctx.setdefault("effective_date", datetime.now(timezone.utc).strftime("%B %d, %Y"))
 
+            # Software selections — categorized for template use
+            software = body.get("software", [])
+            ctx["software"] = software
+            ctx["has_software"] = len(software) > 0
+            # Categorized groups for policy-specific sections
+            ctx["software_cloud"] = [s for s in software if s in ('aws','azure','gcp','alibaba','ibm','oracle','digitalocean','linode','vultr','heroku','cloudflare','vercel','netlify','hetzner','ovh','aws-ec2','aws-lambda','aws-ecs','azure-vm','azure-functions','azure-aks','gcp-compute','gcp-functions','gcp-gke')]
+            ctx["software_devops"] = [s for s in software if s in ('github','gitlab','bitbucket','azure-devops','jira','linear','asana','trello','circleci','jenkins','github-actions','aws-codepipeline','aws-codebuild','gcp-cloudbuild','docker','kubernetes','terraform','ansible','datadog','grafana','sentry','launchdarkly')]
+            ctx["software_iam"] = [s for s in software if s in ('okta','auth0','azure-ad','onelogin','ping','jumpcloud','duo','google-identity','aws-iam','1password','lastpass','bitwarden','hashicorp-vault')]
+            ctx["software_security"] = [s for s in software if s in ('crowdstrike','sentinelone','palo-alto','fortinet','cloudflare-security','zscaler','netskope','aws-guardduty','aws-shield','aws-waf','azure-sentinel','azure-defender','gcp-chronicle','gcp-armor','wiz','orca','lacework','prisma','aqua','aws-securityhub','aws-config','azure-security-center','gcp-scc')]
+            ctx["software_vuln"] = [s for s in software if s in ('snyk','veracode','tenable','qualys','rapid7','checkmarx','semgrep','invicti','aws-inspector','azure-defender-vm','gcp-scanner')]
+            ctx["software_compliance"] = [s for s in software if s in ('vanta','drata','secureframe','thoropass','sprinto','auditboard','hyperproof','aws-artifact','aws-auditmanager','azure-compliance','gcp-assured')]
+            ctx["software_logging"] = [s for s in software if s in ('splunk','elastic','sumologic','datadog','grafana-loki','newrelic','graylog','papertrail','logz','mezmo','aws-cloudwatch','azure-monitor','gcp-logging')]
+            ctx["software_idp"] = body.get("idp", "")
+            ctx["idp_name"] = {"google": "Google Workspace / Cloud Identity", "microsoft": "Microsoft Entra ID", "okta": "Okta"}.get(ctx["software_idp"], "")
+
             md_content = tmpl.render(**ctx)
         except TemplateNotFound:
             generated.append({

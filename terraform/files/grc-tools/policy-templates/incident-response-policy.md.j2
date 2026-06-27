@@ -25,6 +25,18 @@ This policy is aligned with the NIST Incident Response Lifecycle framework: **Pr
 - Information and artifacts associated with security incidents (including but not limited to files, logs, system images, and screen captures) must be preserved appropriately in the event they need to be used as evidence in legal proceedings.
 - All information security incidents must be responded to through the incident management procedures defined in this policy and the Security Incident Response Process.
 
+{% if software_security %}
+## Security Detection & Response Tools
+
+{{ company_name }} uses the following tools for threat detection, incident response, and security operations:
+
+{% for tool in software_security %}
+- **{{ tool }}**
+{% endfor %}
+
+All security tools must be configured to send alerts to the incident response team. Alert routing, escalation paths, and runbook integrations must be documented and tested at least quarterly. Tool access must follow least-privilege principles and be reviewed during access audits.
+{% endif %}
+
 ## Definitions
 
 - **Information Security Vulnerability:** A weakness in an information system, system security procedures, internal controls, or implementation that could be exploited or triggered by a threat source.

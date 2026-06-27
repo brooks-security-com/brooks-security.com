@@ -32,6 +32,28 @@ This policy applies to all {{ company_name }} system components including:
 | Engineering and IT Staff | Ensuring systems under their management are configured for appropriate logging; responding to logging-related alerts |
 | All Personnel | Reporting observed anomalies or suspected security events to the Security team |
 
+{% if software_logging %}
+## Logging Technology
+
+{{ company_name }} uses the following tools for log collection, aggregation, monitoring, and alerting:
+
+{% for tool in software_logging %}
+- **{{ tool }}**
+{% endfor %}
+
+All systems must be configured to forward logs to the designated logging platform(s). Log forwarding must use encrypted transport (TLS 1.2+) and authenticated endpoints. Direct access to raw log storage is restricted to authorized security and infrastructure personnel.
+{% endif %}
+
+{% if software_cloud %}
+## Cloud Provider Integration
+
+{{ company_name }} operates infrastructure on the following cloud platforms, each providing native logging and monitoring capabilities:
+
+{% for cloud in software_cloud %}
+- **{{ cloud }}** — logging and monitoring must follow the provider's security best practices, including CloudTrail/CloudWatch (AWS), Azure Monitor (Azure), or Cloud Logging/Operations Suite (GCP)
+{% endfor %}
+{% endif %}
+
 ## Event Log Requirements
 
 ### Logged Activities
