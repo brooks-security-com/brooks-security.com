@@ -144,6 +144,7 @@ data "archive_file" "grc_tools" {
 
 resource "aws_lambda_function" "grc_tools" {
   function_name = "grc-tools"
+  description   = "GRC policy builder API — generates PDF/DOCX policies from Jinja2 templates"
   role          = aws_iam_role.grc_tools.arn
   runtime       = "python3.12"
   handler       = "handler.handler"
