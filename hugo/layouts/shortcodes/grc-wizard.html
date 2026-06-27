@@ -57,6 +57,15 @@
 .wizard-step-indicator + .wizard-step-indicator {
   border-top: 1px solid var(--wizard-gray-200);
 }
+.wizard-step-indicator.clickable {
+  cursor: pointer;
+}
+.wizard-step-indicator.clickable:hover .wizard-step-badge.done {
+  background: #0d8a3d;
+}
+.wizard-step-indicator.clickable:hover .wizard-step-label.done {
+  color: var(--wizard-gray-800);
+}
 .wizard-step-badge {
   width: 28px;
   height: 28px;
@@ -654,31 +663,31 @@
   <div class="wizard-sidebar">
     <div class="wizard-sidebar-title">Your progress</div>
     <div class="wizard-sidebar-steps" id="wizard-sidebar-steps">
-      <div class="wizard-step-indicator" data-for="1">
+      <div class="wizard-step-indicator" data-for="1" onclick="sidebarClick(1)">
         <div class="wizard-step-badge inactive" id="badge-1">1</div>
         <div class="wizard-step-label inactive" id="label-1">Organization size</div>
       </div>
-      <div class="wizard-step-indicator" data-for="2">
+      <div class="wizard-step-indicator" data-for="2" onclick="sidebarClick(2)">
         <div class="wizard-step-badge inactive" id="badge-2">2</div>
         <div class="wizard-step-label inactive" id="label-2">Framework</div>
       </div>
-      <div class="wizard-step-indicator" data-for="3">
+      <div class="wizard-step-indicator" data-for="3" onclick="sidebarClick(3)">
         <div class="wizard-step-badge inactive" id="badge-3">3</div>
         <div class="wizard-step-label inactive" id="label-3">Company name</div>
       </div>
-      <div class="wizard-step-indicator" data-for="4">
+      <div class="wizard-step-indicator" data-for="4" onclick="sidebarClick(4)">
         <div class="wizard-step-badge inactive" id="badge-4">4</div>
         <div class="wizard-step-label inactive" id="label-4">Software &amp; tools</div>
       </div>
-      <div class="wizard-step-indicator" data-for="5">
+      <div class="wizard-step-indicator" data-for="5" onclick="sidebarClick(5)">
         <div class="wizard-step-badge inactive" id="badge-5">5</div>
         <div class="wizard-step-label inactive" id="label-5">Identity provider</div>
       </div>
-      <div class="wizard-step-indicator" data-for="6">
+      <div class="wizard-step-indicator" data-for="6" onclick="sidebarClick(6)">
         <div class="wizard-step-badge inactive" id="badge-6">6</div>
         <div class="wizard-step-label inactive" id="label-6">Review</div>
       </div>
-      <div class="wizard-step-indicator" data-for="7">
+      <div class="wizard-step-indicator" data-for="7" onclick="sidebarClick(7)">
         <div class="wizard-step-badge inactive" id="badge-7">7</div>
         <div class="wizard-step-label inactive" id="label-7">Select policies</div>
       </div>
@@ -1441,16 +1450,27 @@ function updateSidebar(activeStepIndex) {
   for (var i = 1; i <= 7; i++) {
     var badge = document.getElementById('badge-' + i);
     var label = document.getElementById('label-' + i);
+    var indicator = badge ? badge.parentElement : null;
     if (!badge || !label) continue;
     badge.className = 'wizard-step-badge';
     label.className = 'wizard-step-label';
+    if (indicator) indicator.classList.remove('clickable');
     if (S.completedSteps.has(i)) {
       badge.classList.add('done'); badge.textContent = '\u2713'; label.classList.add('done');
+      if (indicator) indicator.classList.add('clickable');
     } else if (activeStepIndex === i) {
       badge.classList.add('active'); badge.textContent = i; label.classList.add('active');
+      if (indicator) indicator.classList.add('clickable');
     } else {
       badge.classList.add('inactive'); badge.textContent = i; label.classList.add('inactive');
     }
+  }
+}
+
+function sidebarClick(n) {
+  // Allow navigation if step is completed or currently active
+  if (S.completedSteps.has(n) || S.currentStep === n) {
+    goToStep(n);
   }
 }
 
