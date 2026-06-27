@@ -229,14 +229,158 @@
   color: var(--wizard-gray-500);
   margin-top: 0.15rem;
 }
-.wizard-checkbox-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
+/* Multi-select categorized dropdowns */
+.wizard-category {
+  margin-bottom: 1.25rem;
 }
-.wizard-checkbox-grid .wizard-option {
-  padding: 0.7rem 0.9rem;
+.wizard-category-heading {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--wizard-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.5rem;
+}
+.wizard-ms-dropdown {
+  position: relative;
+}
+.wizard-ms-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border: 2px solid var(--wizard-gray-200);
+  border-radius: 10px;
+  background: var(--wizard-white);
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--wizard-gray-800);
+  transition: border-color 0.15s ease;
+  text-align: left;
+  font-family: inherit;
+}
+.wizard-ms-trigger:hover {
+  border-color: var(--wizard-blue);
+}
+.wizard-ms-trigger.open {
+  border-color: var(--wizard-blue);
+  border-radius: 10px 10px 0 0;
+}
+.wizard-ms-trigger-text {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wizard-ms-trigger-text.placeholder {
+  color: var(--wizard-gray-300);
+}
+.wizard-ms-arrow {
+  margin-left: 0.5rem;
+  font-size: 0.7rem;
+  color: var(--wizard-gray-300);
+  transition: transform 0.15s ease;
+  flex-shrink: 0;
+}
+.wizard-ms-trigger.open .wizard-ms-arrow {
+  transform: rotate(180deg);
+}
+.wizard-ms-panel {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--wizard-white);
+  border: 2px solid var(--wizard-blue);
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  max-height: 260px;
+  overflow-y: auto;
+  box-shadow: var(--wizard-shadow-lg);
+}
+.wizard-ms-trigger.open + .wizard-ms-panel {
+  display: block;
+}
+.wizard-ms-option {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  font-size: 0.88rem;
+  color: var(--wizard-gray-800);
+  transition: background 0.1s;
+}
+.wizard-ms-option:hover {
+  background: var(--wizard-blue-light);
+}
+.wizard-ms-option input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--wizard-blue);
+  flex-shrink: 0;
+}
+.wizard-ms-writein {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  border-top: 1px solid var(--wizard-gray-200);
+}
+.wizard-ms-writein input {
+  flex: 1;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--wizard-gray-200);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  outline: none;
+}
+.wizard-ms-writein input:focus {
+  border-color: var(--wizard-blue);
+}
+.wizard-ms-writein button {
+  padding: 0.4rem 0.75rem;
+  background: var(--wizard-blue);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.wizard-ms-writein button:hover {
+  background: #0856a3;
+}
+.wizard-selected-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+}
+.wizard-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.6rem;
+  background: var(--wizard-blue-light);
+  border: 1px solid #b6d9f7;
+  border-radius: 99px;
+  font-size: 0.78rem;
+  color: #0856a3;
+}
+.wizard-chip-remove {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.9rem;
+  line-height: 1;
+}
+.wizard-chip-remove:hover {
+  color: #cf222e;
 }
 /* Company name input */
 .wizard-company-input {
@@ -652,7 +796,7 @@
     border-radius: 0 0 var(--wizard-radius) var(--wizard-radius); padding: 1.25rem;
   }
   .wizard-step-heading { font-size: 1.3rem; }
-  .wizard-checkbox-grid { grid-template-columns: 1fr; }
+  .wizard-ms-panel { max-height: 200px; }
   .wizard-rec-list { grid-template-columns: 1fr; }
   .wizard-actions { flex-wrap: wrap; }
   .wizard-download-grid { grid-template-columns: 1fr; }
@@ -776,26 +920,11 @@
       </div>
     </div>
 
-    <!-- Step 4: Software & tools (was step 3) -->
+    <!-- Step 4: Software & tools -->
     <div class="wizard-step" data-step="4" id="step-4">
       <h2 class="wizard-step-heading">What software and tools does your team use? <a href="/grc-tools/help/#software-tools" target="_blank" class="wizard-help-icon" title="Help">?</a></h2>
       <p class="wizard-step-subtitle">Select everything that applies. We'll use this to tailor recommendations and detect your identity provider.</p>
-      <div class="wizard-checkbox-grid" id="options-software">
-        <label class="wizard-option" onclick="toggleCheckbox('software','google-workspace',this)"><input type="checkbox" name="software" value="google-workspace"><span>Google Workspace</span></label>
-        <label class="wizard-option" onclick="toggleCheckbox('software','microsoft365',this)"><input type="checkbox" name="software" value="microsoft365"><span>Microsoft 365</span></label>
-        <label class="wizard-option" onclick="toggleCheckbox('software','slack',this)"><input type="checkbox" name="software" value="slack"><span>Slack</span></label>
-        <label class="wizard-option" onclick="toggleCheckbox('software','jira',this)"><input type="checkbox" name="software" value="jira"><span>Jira</span></label>
-        <label class="wizard-option" onclick="toggleCheckbox('software','github',this)"><input type="checkbox" name="software" value="github"><span>GitHub</span></label>
-        <label class="wizard-option" onclick="toggleCheckbox('software','gitlab',this)"><input type="checkbox" name="software" value="gitlab"><span>GitLab</span></label>
-        <label class="wizard-option" onclick="toggleCheckbox('software','aws',this)"><input type="checkbox" name="software" value="aws"><span>AWS</span></label>
-        <label class="wizard-option" onclick="toggleCheckbox('software','azure',this)"><input type="checkbox" name="software" value="azure"><span>Microsoft Azure</span></label>
-        <label class="wizard-option" onclick="toggleCheckbox('software','gcp',this)"><input type="checkbox" name="software" value="gcp"><span>Google Cloud</span></label>
-        <label class="wizard-option" onclick="toggleCheckbox('software','okta',this)"><input type="checkbox" name="software" value="okta"><span>Okta</span></label>
-        <label class="wizard-option" onclick="toggleCheckbox('software','notion',this)"><input type="checkbox" name="software" value="notion"><span>Notion</span></label>
-        <label class="wizard-option" onclick="toggleCheckbox('software','zoom',this)"><input type="checkbox" name="software" value="zoom"><span>Zoom</span></label>
-        <label class="wizard-option" onclick="toggleCheckbox('software','salesforce',this)"><input type="checkbox" name="software" value="salesforce"><span>Salesforce</span></label>
-        <label class="wizard-option" onclick="toggleCheckbox('software','other',this)"><input type="checkbox" name="software" value="other"><span>Other</span></label>
-      </div>
+      <div id="options-software"></div>
       <div class="wizard-actions">
         <button class="wizard-btn wizard-btn-secondary" onclick="goToStep(3)">&#x2190; Back</button>
         <button class="wizard-btn wizard-btn-primary" id="btn-software-continue" onclick="goToStep(5)">Continue &#x2192;</button>
@@ -1379,13 +1508,7 @@ function getFrameworkLabel(fw) {
   return map[fw] || fw;
 }
 function getSoftwareLabels(items) {
-  var map = {
-    'google-workspace': 'Google Workspace', 'microsoft365': 'Microsoft 365',
-    'slack': 'Slack', 'jira': 'Jira', 'github': 'GitHub', 'gitlab': 'GitLab',
-    'aws': 'AWS', 'azure': 'Azure', 'gcp': 'Google Cloud',
-    'okta': 'Okta', 'notion': 'Notion', 'zoom': 'Zoom', 'salesforce': 'Salesforce', 'other': 'Other'
-  };
-  return items.map(function(v) { return map[v] || v; });
+  return items.map(function(v) { return ALL_SOFTWARE_LABELS[v] || v; });
 }
 function getIdpLabel(idp) {
   if (!idp) return 'Not selected';
@@ -1425,18 +1548,195 @@ function selectRadio(group, value, el) {
   if (btnId) { var btn = document.getElementById(btnId); if (btn) btn.disabled = false; }
 }
 
-function toggleCheckbox(group, value, el) {
-  var cb = el.querySelector('input');
-  cb.checked = !cb.checked;
-  if (cb.checked) {
-    el.classList.add('selected');
-    if (S.answers[group].indexOf(value) === -1) S.answers[group].push(value);
-  } else {
-    el.classList.remove('selected');
-    var idx = S.answers[group].indexOf(value);
-    if (idx !== -1) S.answers[group].splice(idx, 1);
+// ===== Software Categories & Multi-Select =====
+
+var SOFTWARE_CATEGORIES = [
+  {
+    name: 'Cloud Infrastructure',
+    options: [
+      {value:'aws', label:'AWS'},
+      {value:'azure', label:'Microsoft Azure'},
+      {value:'gcp', label:'Google Cloud'},
+      {value:'alibaba', label:'Alibaba Cloud'},
+      {value:'ibm', label:'IBM Cloud'},
+      {value:'oracle', label:'Oracle Cloud'},
+      {value:'digitalocean', label:'DigitalOcean'}
+    ]
+  },
+  {
+    name: 'Productivity & Collaboration',
+    options: [
+      {value:'google-workspace', label:'Google Workspace'},
+      {value:'microsoft365', label:'Microsoft 365'},
+      {value:'slack', label:'Slack'},
+      {value:'notion', label:'Notion'},
+      {value:'zoom', label:'Zoom'}
+    ]
+  },
+  {
+    name: 'Development & DevOps',
+    options: [
+      {value:'github', label:'GitHub'},
+      {value:'gitlab', label:'GitLab'},
+      {value:'jira', label:'Jira'}
+    ]
+  },
+  {
+    name: 'Identity & Security',
+    options: [
+      {value:'okta', label:'Okta'},
+      {value:'salesforce', label:'Salesforce'}
+    ]
+  }
+];
+
+// Build the full set of known labels
+var ALL_SOFTWARE_LABELS = {};
+SOFTWARE_CATEGORIES.forEach(function(cat) {
+  cat.options.forEach(function(opt) {
+    ALL_SOFTWARE_LABELS[opt.value] = opt.label;
+  });
+});
+
+function buildSoftwareStep() {
+  var container = document.getElementById('options-software');
+  if (!container) return;
+  var html = '';
+  SOFTWARE_CATEGORIES.forEach(function(cat, ci) {
+    html += '<div class="wizard-category">' +
+      '<div class="wizard-category-heading">' + escHtml(cat.name) + '</div>' +
+      '<div class="wizard-ms-dropdown" id="ms-dropdown-' + ci + '">' +
+        '<button class="wizard-ms-trigger" id="ms-trigger-' + ci + '" onclick="toggleMsDropdown(' + ci + '); event.stopPropagation();">' +
+          '<span class="wizard-ms-trigger-text placeholder" id="ms-trigger-text-' + ci + '">Select ' + cat.name.toLowerCase() + '</span>' +
+          '<span class="wizard-ms-arrow">&#9660;</span>' +
+        '</button>' +
+        '<div class="wizard-ms-panel" id="ms-panel-' + ci + '">' +
+          cat.options.map(function(opt) {
+            return '<label class="wizard-ms-option" onclick="toggleMsOption(' + ci + ',\'' + opt.value + '\'); event.stopPropagation();">' +
+              '<input type="checkbox" value="' + opt.value + '" id="ms-cb-' + ci + '-' + opt.value + '">' +
+              escHtml(opt.label) +
+            '</label>';
+          }).join('') +
+          '<div class="wizard-ms-writein">' +
+            '<input type="text" id="ms-writein-' + ci + '" placeholder="Add custom..." onkeydown="if(event.key===\'Enter\'){addWritein(' + ci + ');event.preventDefault();}">' +
+            '<button onclick="addWritein(' + ci + '); event.stopPropagation();">Add</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  });
+  html += '<div class="wizard-selected-chips" id="software-chips"></div>';
+  container.innerHTML = html;
+  refreshSoftwareUI();
+}
+
+function toggleMsDropdown(ci) {
+  var trigger = document.getElementById('ms-trigger-' + ci);
+  var panel = document.getElementById('ms-panel-' + ci);
+  if (!trigger || !panel) return;
+  var isOpen = trigger.classList.contains('open');
+  // Close all dropdowns first
+  document.querySelectorAll('.wizard-ms-trigger.open').forEach(function(t) { t.classList.remove('open'); });
+  if (!isOpen) {
+    trigger.classList.add('open');
   }
 }
+
+function toggleMsOption(ci, value) {
+  var cb = document.getElementById('ms-cb-' + ci + '-' + value);
+  if (!cb) return;
+  cb.checked = !cb.checked;
+  applyMsSelection(ci, value, cb.checked);
+}
+
+function applyMsSelection(ci, value, checked) {
+  var idx = S.answers.software.indexOf(value);
+  if (checked && idx === -1) {
+    S.answers.software.push(value);
+  } else if (!checked && idx !== -1) {
+    S.answers.software.splice(idx, 1);
+  }
+  updateMsTrigger(ci);
+  renderSoftwareChips();
+}
+
+function addWritein(ci) {
+  var input = document.getElementById('ms-writein-' + ci);
+  if (!input) return;
+  var val = input.value.trim();
+  if (!val) return;
+  // Add as a custom value
+  if (S.answers.software.indexOf(val) === -1) {
+    S.answers.software.push(val);
+  }
+  input.value = '';
+  updateMsTrigger(ci);
+  renderSoftwareChips();
+}
+
+function removeSoftwareValue(value) {
+  var idx = S.answers.software.indexOf(value);
+  if (idx !== -1) S.answers.software.splice(idx, 1);
+  // Uncheck corresponding checkbox if it exists
+  SOFTWARE_CATEGORIES.forEach(function(cat, ci) {
+    var cb = document.getElementById('ms-cb-' + ci + '-' + value);
+    if (cb) cb.checked = false;
+    updateMsTrigger(ci);
+  });
+  renderSoftwareChips();
+}
+
+function updateMsTrigger(ci) {
+  var trigger = document.getElementById('ms-trigger-text-' + ci);
+  var cat = SOFTWARE_CATEGORIES[ci];
+  if (!trigger || !cat) return;
+  var selected = cat.options.filter(function(opt) {
+    return S.answers.software.indexOf(opt.value) !== -1;
+  });
+  // Also count write-ins that match labels but aren't predefined
+  if (selected.length === 0) {
+    trigger.textContent = 'Select ' + cat.name.toLowerCase();
+    trigger.classList.add('placeholder');
+  } else {
+    trigger.textContent = selected.length + ' selected';
+    trigger.classList.remove('placeholder');
+  }
+}
+
+function renderSoftwareChips() {
+  var container = document.getElementById('software-chips');
+  if (!container) return;
+  if (S.answers.software.length === 0) {
+    container.innerHTML = '';
+    return;
+  }
+  container.innerHTML = S.answers.software.map(function(v) {
+    var label = ALL_SOFTWARE_LABELS[v] || v;
+    return '<span class="wizard-chip">' + escHtml(label) +
+      '<span class="wizard-chip-remove" onclick="removeSoftwareValue(\'' + v.replace(/'/g, "\\'") + '\'); event.stopPropagation();">&times;</span>' +
+      '</span>';
+  }).join('');
+}
+
+function refreshSoftwareUI() {
+  SOFTWARE_CATEGORIES.forEach(function(cat, ci) {
+    cat.options.forEach(function(opt) {
+      var cb = document.getElementById('ms-cb-' + ci + '-' + opt.value);
+      if (cb) cb.checked = S.answers.software.indexOf(opt.value) !== -1;
+    });
+    updateMsTrigger(ci);
+  });
+  renderSoftwareChips();
+}
+
+// Close dropdowns when clicking outside
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.wizard-ms-dropdown')) {
+    document.querySelectorAll('.wizard-ms-trigger.open').forEach(function(t) { t.classList.remove('open'); });
+  }
+});
+
+// ===== End Software Multi-Select =====
 
 function onCompanyNameInput() {
   var inp = document.getElementById('company-name-input');
@@ -1492,6 +1792,7 @@ function goToStep(stepIndex) {
   }
 
   // Prep steps
+  if (stepIndex === 4) buildSoftwareStep();
   if (stepIndex === 5) prepIdpStep();
   if (stepIndex === 6) buildReview();
   if (stepIndex === 7) buildPolicySelection();
