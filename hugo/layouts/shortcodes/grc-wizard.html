@@ -324,6 +324,7 @@
   font-size: 0.85rem;
   font-family: inherit;
   outline: none;
+  color: var(--wizard-gray-800);
   background: var(--wizard-white);
 }
 .wizard-cat-writein input:focus {
@@ -342,32 +343,6 @@
 }
 .wizard-cat-writein button:hover {
   background: #0856a3;
-}
-.wizard-selected-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  margin-top: 0.5rem;
-}
-.wizard-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0.25rem 0.6rem;
-  background: var(--wizard-blue-light);
-  border: 1px solid #b6d9f7;
-  border-radius: 99px;
-  font-size: 0.78rem;
-  color: #0856a3;
-}
-.wizard-chip-remove {
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 0.9rem;
-  line-height: 1;
-}
-.wizard-chip-remove:hover {
-  color: #cf222e;
 }
 /* Company name input */
 .wizard-company-input {
@@ -1612,7 +1587,6 @@ function buildSoftwareStep() {
       '</div>' +
     '</div>';
   });
-  html += '<div class="wizard-selected-chips" id="software-chips"></div>';
   container.innerHTML = html;
   refreshSoftwareUI();
 }
@@ -1641,7 +1615,6 @@ function applyCatSelection(ci, value, checked) {
   var row = document.getElementById('cat-row-' + ci + '-' + value);
   if (row) { row.classList.toggle('selected', checked); }
   updateCatCount(ci);
-  renderSoftwareChips();
 }
 
 function addWritein(ci) {
@@ -1652,8 +1625,19 @@ function addWritein(ci) {
   if (S.answers.software.indexOf(val) === -1) {
     S.answers.software.push(val);
   }
+  // Insert a new checked row into the category list
+  var list = document.querySelector('#cat-' + ci + ' .wizard-cat-list');
+  if (list) {
+    var id = 'cat-row-' + ci + '-custom-' + val.replace(/[^a-zA-Z0-9]/g, '_');
+    var row = document.createElement('label');
+    row.className = 'wizard-cat-row selected';
+    row.id = id;
+    row.setAttribute('onclick', 'toggleCatOption(' + ci + ',\'' + val.replace(/'/g, "\\'") + '\'); event.stopPropagation();');
+    row.innerHTML = '<input type="checkbox" value="' + escHtml(val) + '" checked>' + escHtml(val);
+    list.appendChild(row);
+  }
   input.value = '';
-  renderSoftwareChips();
+  updateCatCount(ci);
 }
 
 function removeSoftwareValue(value) {
@@ -1664,9 +1648,12 @@ function removeSoftwareValue(value) {
     if (cb) cb.checked = false;
     var row = document.getElementById('cat-row-' + ci + '-' + value);
     if (row) row.classList.remove('selected');
+    // Also remove custom write-in rows
+    var customId = 'cat-row-' + ci + '-custom-' + value.replace(/[^a-zA-Z0-9]/g, '_');
+    var customRow = document.getElementById(customId);
+    if (customRow) customRow.remove();
     updateCatCount(ci);
   });
-  renderSoftwareChips();
 }
 
 function updateCatCount(ci) {
@@ -1677,21 +1664,6 @@ function updateCatCount(ci) {
     return S.answers.software.indexOf(opt.value) !== -1;
   }).length;
   el.textContent = n > 0 ? n + ' selected' : '';
-}
-
-function renderSoftwareChips() {
-  var container = document.getElementById('software-chips');
-  if (!container) return;
-  if (S.answers.software.length === 0) {
-    container.innerHTML = '';
-    return;
-  }
-  container.innerHTML = S.answers.software.map(function(v) {
-    var label = ALL_SOFTWARE_LABELS[v] || v;
-    return '<span class="wizard-chip">' + escHtml(label) +
-      '<span class="wizard-chip-remove" onclick="removeSoftwareValue(\'' + v.replace(/'/g, "\\'") + '\'); event.stopPropagation();">&times;</span>' +
-      '</span>';
-  }).join('');
 }
 
 function refreshSoftwareUI() {
@@ -1705,10 +1677,7 @@ function refreshSoftwareUI() {
     });
     updateCatCount(ci);
   });
-  renderSoftwareChips();
 }
-
-// ===== End Software Multi-Select =====
 
 function onCompanyNameInput() {
   var inp = document.getElementById('company-name-input');
