@@ -279,6 +279,28 @@
 .wizard-category.open .wizard-cat-body {
   display: block;
 }
+.wizard-cat-search {
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--wizard-gray-100);
+}
+.wizard-cat-search input {
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--wizard-gray-200);
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-family: inherit;
+  outline: none;
+  color: var(--wizard-gray-800);
+  background: var(--wizard-gray-100);
+}
+.wizard-cat-search input:focus {
+  border-color: var(--wizard-blue);
+  background: var(--wizard-white);
+}
+.wizard-cat-search input::placeholder {
+  color: var(--wizard-gray-300);
+}
 .wizard-cat-list {
   max-height: 260px;
   overflow-y: auto;
@@ -1725,6 +1747,7 @@ function buildSoftwareStep() {
         '<span class="wizard-cat-arrow">&#9660;</span>' +
       '</div>' +
       '<div class="wizard-cat-body" id="cat-body-' + ci + '">' +
+        '<div class="wizard-cat-search"><input type="text" id="cat-search-' + ci + '" placeholder="Filter ' + cat.name.toLowerCase() + '..." oninput="filterCategory(' + ci + ')"></div>' +
         '<div class="wizard-cat-list">' +
           cat.options.map(function(opt) {
             return '<label class="wizard-cat-row" onclick="toggleCatOption(' + ci + ',\'' + opt.value + '\'); event.stopPropagation();" id="cat-row-' + ci + '-' + opt.value + '">' +
@@ -1742,6 +1765,16 @@ function buildSoftwareStep() {
   });
   container.innerHTML = html;
   refreshSoftwareUI();
+}
+
+function filterCategory(ci) {
+  var input = document.getElementById('cat-search-' + ci);
+  var query = input ? input.value.toLowerCase().trim() : '';
+  var rows = document.querySelectorAll('#cat-' + ci + ' .wizard-cat-row');
+  rows.forEach(function(row) {
+    var text = (row.textContent || '').toLowerCase();
+    row.style.display = !query || text.indexOf(query) !== -1 ? '' : 'none';
+  });
 }
 
 function toggleCategory(ci) {
