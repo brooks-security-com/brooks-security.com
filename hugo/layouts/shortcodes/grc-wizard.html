@@ -124,6 +124,16 @@
 .wizard-save-indicator.visible {
   display: flex;
 }
+.wizard-sidebar-logout {
+  display: block;
+  margin-top: 0.6rem;
+  font-size: 0.78rem;
+  color: var(--wizard-gray-500);
+  text-decoration: none;
+}
+.wizard-sidebar-logout:hover {
+  color: #cf222e;
+}
 .wizard-welcome-back {
   background: var(--wizard-blue-light);
   border: 1px solid #b6d9f7;
@@ -676,6 +686,7 @@
     <div class="wizard-sidebar-footer">
       <a href="/grc-tools/help/" target="_blank" class="wizard-sidebar-help-link">Need help? &#x2192;</a>
       <div class="wizard-save-indicator" id="sidebar-save-indicator">&#x2713; Automatically saved</div>
+      <a href="#" class="wizard-sidebar-logout" onclick="doLogout(); return false;">Log out</a>
     </div>
   </div>
 
@@ -1380,6 +1391,13 @@ function detectIdpFromSoftware(software) {
   if (hasMicrosoft && !hasGoogle) return 'microsoft';
   if (hasOkta) return 'okta';
   return null;
+}
+
+function doLogout() {
+  document.cookie = 'grc_session=; Path=/; Max-Age=0; Secure; SameSite=Lax';
+  window.location.href = 'https://auth-brooks-security.auth.us-east-1.amazoncognito.com/logout?' +
+    'client_id=4ut92jrn3dk50vb4mu2ldo8qub' +
+    '&logout_uri=' + encodeURIComponent('https://brooks-security.com/');
 }
 
 // ===== Selection handlers =====
