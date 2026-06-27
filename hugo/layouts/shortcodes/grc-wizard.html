@@ -872,16 +872,12 @@
         <div class="wizard-step-badge inactive" id="badge-4">4</div>
         <div class="wizard-step-label inactive" id="label-4">Software &amp; tools</div>
       </div>
-      <div class="wizard-step-indicator" data-for="5" onclick="sidebarClick(5)">
-        <div class="wizard-step-badge inactive" id="badge-5">5</div>
-        <div class="wizard-step-label inactive" id="label-5">Identity provider</div>
-      </div>
       <div class="wizard-step-indicator" data-for="6" onclick="sidebarClick(6)">
-        <div class="wizard-step-badge inactive" id="badge-6">6</div>
+        <div class="wizard-step-badge inactive" id="badge-6">5</div>
         <div class="wizard-step-label inactive" id="label-6">Review</div>
       </div>
       <div class="wizard-step-indicator" data-for="7" onclick="sidebarClick(7)">
-        <div class="wizard-step-badge inactive" id="badge-7">7</div>
+        <div class="wizard-step-badge inactive" id="badge-7">6</div>
         <div class="wizard-step-label inactive" id="label-7">Select policies</div>
       </div>
     </div>
@@ -976,35 +972,6 @@
       <div class="wizard-actions" id="software-actions">
         <button class="wizard-btn wizard-btn-secondary" onclick="goToStep(3)">&#x2190; Back to wizard</button>
         <button class="wizard-btn wizard-btn-primary" id="btn-software-continue" onclick="softwareNext()">Get started &#x2192;</button>
-      </div>
-    </div>
-
-    <!-- Step 5: Identity provider (was step 4) -->
-    <div class="wizard-step" data-step="5" id="step-5">
-      <h2 class="wizard-step-heading">Which identity provider does your organization use? <a href="/grc-tools/help/#identity-provider" target="_blank" class="wizard-help-icon" title="Help">?</a></h2>
-      <p class="wizard-step-subtitle" id="idp-subtitle">We'll recommend the policies that align with your identity stack.</p>
-      <div id="idp-notice"></div>
-      <div class="wizard-options" id="options-idp">
-        <label class="wizard-option" onclick="selectRadio('idp','google',this)">
-          <input type="radio" name="idp" value="google">
-          <div class="option-content"><span class="option-title">Google</span><span class="option-desc">Google Workspace / Cloud Identity.</span></div>
-        </label>
-        <label class="wizard-option" onclick="selectRadio('idp','microsoft',this)">
-          <input type="radio" name="idp" value="microsoft">
-          <div class="option-content"><span class="option-title">Microsoft (Entra ID)</span><span class="option-desc">Microsoft 365 / Azure AD / Entra ID.</span></div>
-        </label>
-        <label class="wizard-option" onclick="selectRadio('idp','okta',this)">
-          <input type="radio" name="idp" value="okta">
-          <div class="option-content"><span class="option-title">Okta</span><span class="option-desc">Standalone identity platform.</span></div>
-        </label>
-        <label class="wizard-option" onclick="selectRadio('idp','other',this)">
-          <input type="radio" name="idp" value="other">
-          <div class="option-content"><span class="option-title">Other / On-prem AD</span><span class="option-desc">Ping, OneLogin, Active Directory, or custom.</span></div>
-        </label>
-      </div>
-      <div class="wizard-actions">
-        <button class="wizard-btn wizard-btn-secondary" onclick="goToStep(4)">&#x2190; Back</button>
-        <button class="wizard-btn wizard-btn-primary" id="btn-idp-continue" disabled onclick="goToStep(6)">Continue &#x2192;</button>
       </div>
     </div>
 
@@ -1891,9 +1858,20 @@ var SOFTWARE_CATEGORIES = [
 // Groups for sub-step navigation within step 4
 var SOFTWARE_GROUPS = [
   {
+    title: 'Identity Provider',
+    subtitle: 'How does your team sign in?',
+    catIndices: [3],  // IAM category (for pre-fill context)
+    isIdpStep: true
+  },
+  {
+    title: 'Cloud Infrastructure',
+    subtitle: 'Which cloud providers do you use?',
+    catIndices: [0]  // Cloud Infrastructure
+  },
+  {
     title: 'Infrastructure & Engineering',
     subtitle: 'Where your code runs and how it gets there',
-    catIndices: [0, 2, 3]  // Cloud Infra, Dev & DevOps, IAM
+    catIndices: [2]  // Dev & DevOps (IAM already in IDP step)
   },
   {
     title: 'Customer-Facing Tools',
@@ -1943,6 +1921,13 @@ function buildSoftwareIntro() {
 function buildSoftwareSubstep(gi) {
   var group = SOFTWARE_GROUPS[gi];
   if (!group) return;
+
+  // IDP step is special: radio buttons, not category cards
+  if (group.isIdpStep) {
+    buildIdpSubstep(gi);
+    return;
+  }
+
   var cats = group.catIndices.map(function(ci) { return SOFTWARE_CATEGORIES[ci]; });
   var html = '';
   cats.forEach(function(cat, i) {
@@ -1972,6 +1957,64 @@ function buildSoftwareSubstep(gi) {
   });
   document.getElementById('options-software').innerHTML = html;
   refreshSoftwareUI();
+}
+
+function buildIdpSubstep(gi) {
+  var idp = S.answers.idp || '';
+  var detected = detectIdpFromSoftware(S.answers.software);
+  var notice = detected ? '<div class="wizard-notice" style="margin-bottom:1rem;">Based on your selections, we detected <strong>' + getIdpLabel(detected) + '</strong> as your likely provider.</div>' : '';
+
+  var html = notice +
+    '<div class="wizard-options" id="options-idp">' +
+      '<label class="wizard-option' + (idp === 'google' ? ' selected' : '') + '" onclick="selectIdpInSoftware(\'google\',this)">' +
+        '<input type="radio" name="idp" value="google"' + (idp === 'google' ? ' checked' : '') + '>' +
+        '<div class="option-content"><span class="option-title">Google</span><span class="option-desc">Google Workspace / Cloud Identity.</span></div>' +
+      '</label>' +
+      '<label class="wizard-option' + (idp === 'microsoft' ? ' selected' : '') + '" onclick="selectIdpInSoftware(\'microsoft\',this)">' +
+        '<input type="radio" name="idp" value="microsoft"' + (idp === 'microsoft' ? ' checked' : '') + '>' +
+        '<div class="option-content"><span class="option-title">Microsoft (Entra ID)</span><span class="option-desc">Microsoft 365 / Azure AD / Entra ID.</span></div>' +
+      '</label>' +
+      '<label class="wizard-option' + (idp === 'okta' ? ' selected' : '') + '" onclick="selectIdpInSoftware(\'okta\',this)">' +
+        '<input type="radio" name="idp" value="okta"' + (idp === 'okta' ? ' checked' : '') + '>' +
+        '<div class="option-content"><span class="option-title">Okta</span><span class="option-desc">Standalone identity platform.</span></div>' +
+      '</label>' +
+      '<label class="wizard-option' + (idp === 'other' ? ' selected' : '') + '" onclick="selectIdpInSoftware(\'other\',this)">' +
+        '<input type="radio" name="idp" value="other"' + (idp === 'other' ? ' checked' : '') + '>' +
+        '<div class="option-content"><span class="option-title">Other / On-prem AD</span><span class="option-desc">Ping, OneLogin, Active Directory, or custom.</span></div>' +
+      '</label>' +
+    '</div>';
+
+  // Pre-fill question for Google/Microsoft
+  if (idp === 'google' || idp === 'microsoft') {
+    var providerName = idp === 'google' ? 'Google' : 'Microsoft';
+    html += '<div class="wizard-policy-recommended" style="margin-top:1.5rem;">' +
+      '<div><strong>Use ' + providerName + ' cloud and security defaults?</strong><br>' +
+      '<span style="font-size:0.82rem;color:var(--wizard-gray-500);">We\'ll pre-fill your cloud, security, and logging selections based on ' + providerName + '\'s platform.</span></div>' +
+      '<div style="display:flex;gap:0.5rem;">' +
+        '<button class="wizard-btn-small wizard-btn-primary" onclick="prefillCloudDefaults(\'' + idp + '\');softwareNext();">Yes, use defaults</button>' +
+        '<button class="wizard-btn-small wizard-btn-secondary" onclick="softwareNext();">No, choose manually</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  document.getElementById('options-software').innerHTML = html;
+
+  // Update the button text
+  document.getElementById('software-subheader').innerHTML = '';
+}
+
+function selectIdpInSoftware(value, el) {
+  S.answers.idp = value;
+  // Re-render to show pre-fill question
+  buildIdpSubstep(0);
+}
+
+function prefillCloudDefaults(idp) {
+  var prefill = idp === 'google' ? ['gcp', 'google-identity', 'google-workspace', 'gcp-logging', 'gcp-scc', 'gcp-chronicle', 'gcp-scanner', 'gcp-compute', 'gcp-gke', 'gcp-cloudbuild', 'bigquery', 'gcp-dataflow', 'gcp-dataproc', 'gcp-assured', 'gcp-armor', 'gcp-functions'] :
+    ['azure', 'azure-ad', 'microsoft365', 'azure-monitor', 'azure-security-center', 'azure-sentinel', 'azure-defender', 'azure-defender-vm', 'azure-compliance', 'azure-vm', 'azure-aks', 'azure-functions', 'teams', 'powerbi', 'azure-synapse', 'azure-datafactory'];
+  prefill.forEach(function(v) {
+    if (S.answers.software.indexOf(v) === -1) S.answers.software.push(v);
+  });
 }
 
 function updateSoftwareHeader() {
@@ -2008,7 +2051,7 @@ function updateSoftwareActions() {
     html += '<button class="wizard-btn wizard-btn-primary" id="btn-software-continue" onclick="softwareNext()">' +
       (sub === 0 ? 'Get started &#x2192;' : 'Next section &#x2192;') + '</button>';
   } else {
-    html += '<button class="wizard-btn wizard-btn-primary" id="btn-software-continue" onclick="goToStep(5)">Continue to identity provider &#x2192;</button>';
+    html += '<button class="wizard-btn wizard-btn-primary" id="btn-software-continue" onclick="goToStep(6)">Continue to review &#x2192;</button>';
   }
   if (sub === total) {
     html += '<button class="wizard-btn wizard-btn-link" onclick="S.softwareSubStep=0;buildSoftwareStep();">Start over</button>';
@@ -2137,11 +2180,12 @@ function onCompanyNameInput() {
 
 // ===== Sidebar =====
 function updateSidebar(activeStepIndex) {
-  for (var i = 1; i <= 7; i++) {
+  var steps = [1, 2, 3, 4, 6, 7]; // step 5 (IDP) removed — now inside step 4
+  steps.forEach(function(i) {
     var badge = document.getElementById('badge-' + i);
     var label = document.getElementById('label-' + i);
     var indicator = badge ? badge.parentElement : null;
-    if (!badge || !label) continue;
+    if (!badge || !label) return;
     badge.className = 'wizard-step-badge';
     label.className = 'wizard-step-label';
     if (indicator) indicator.classList.remove('clickable');
@@ -2154,7 +2198,7 @@ function updateSidebar(activeStepIndex) {
     } else {
       badge.classList.add('inactive'); badge.textContent = i; label.classList.add('inactive');
     }
-  }
+  });
 }
 
 function sidebarClick(n) {
@@ -2168,14 +2212,13 @@ function sidebarClick(n) {
 function goToStep(stepIndex) {
   var prevStep = S.currentStep;
 
-  // Mark completed steps (sidebar-mapped steps 1-7)
-  if (prevStep >= 1 && prevStep <= 7) {
+  // Mark completed steps (sidebar-mapped steps)
+  if (prevStep >= 1 && prevStep <= 7 && prevStep !== 5) {
     var hasAnswer = false;
     if (prevStep === 1 && S.answers.size) hasAnswer = true;
     if (prevStep === 2 && S.answers.framework) hasAnswer = true;
     if (prevStep === 3 && S.answers.companyName) hasAnswer = true;
     if (prevStep === 4) hasAnswer = true; // software — always can progress
-    if (prevStep === 5 && S.answers.idp) hasAnswer = true;
     if (prevStep === 6) hasAnswer = true; // review
     if (prevStep === 7 && S.answers.selectedPolicies.length > 0) hasAnswer = true;
     if (hasAnswer) S.completedSteps.add(prevStep);
@@ -2183,7 +2226,6 @@ function goToStep(stepIndex) {
 
   // Prep steps
   if (stepIndex === 4) buildSoftwareStep();
-  if (stepIndex === 5) prepIdpStep();
   if (stepIndex === 6) buildReview();
   if (stepIndex === 7) buildPolicySelection();
   if (stepIndex === 8) buildResults();
