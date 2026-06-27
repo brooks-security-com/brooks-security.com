@@ -1645,7 +1645,8 @@ function toggleMsDropdown(ci) {
 function toggleMsOption(ci, value) {
   var cb = document.getElementById('ms-cb-' + ci + '-' + value);
   if (!cb) return;
-  cb.checked = !cb.checked;
+  // The browser's default label-click already toggled the checkbox.
+  // We just read the final state and apply the selection.
   applyMsSelection(ci, value, cb.checked);
 }
 
