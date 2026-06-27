@@ -370,6 +370,67 @@
 .wizard-cat-writein button:hover {
   background: #0856a3;
 }
+/* Software sub-step progress */
+.wizard-subheader {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.wizard-subheader-intro {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--wizard-gray-800);
+  margin: 0 0 0.25rem;
+}
+.wizard-subheader-subtitle {
+  font-size: 0.9rem;
+  color: var(--wizard-gray-500);
+  margin: 0;
+}
+.wizard-subheader-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+.wizard-subheader-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--wizard-gray-200);
+  transition: background 0.2s;
+}
+.wizard-subheader-dot.done {
+  background: var(--wizard-green);
+}
+.wizard-subheader-dot.active {
+  background: var(--wizard-blue);
+}
+.wizard-subheader-group-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--wizard-gray-800);
+  margin: 0 0 0.25rem;
+}
+/* Intro card within step 4 */
+.wizard-intro-card {
+  background: var(--wizard-blue-light);
+  border: 1px solid #b6d9f7;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  max-width: 500px;
+  margin: 2rem auto;
+}
+.wizard-intro-card h3 {
+  font-size: 1.3rem;
+  color: #0856a3;
+  margin: 0 0 0.75rem;
+}
+.wizard-intro-card p {
+  font-size: 0.95rem;
+  color: var(--wizard-gray-500);
+  line-height: 1.6;
+}
 /* Company name input */
 .wizard-company-input {
   width: 100%;
@@ -910,12 +971,11 @@
 
     <!-- Step 4: Software & tools -->
     <div class="wizard-step" data-step="4" id="step-4">
-      <h2 class="wizard-step-heading">What software and tools does your team use? <a href="/grc-tools/help/#software-tools" target="_blank" class="wizard-help-icon" title="Help">?</a></h2>
-      <p class="wizard-step-subtitle">Select everything that applies. We'll use this to tailor recommendations and detect your identity provider.</p>
+      <div id="software-subheader"></div>
       <div id="options-software"></div>
-      <div class="wizard-actions">
-        <button class="wizard-btn wizard-btn-secondary" onclick="goToStep(3)">&#x2190; Back</button>
-        <button class="wizard-btn wizard-btn-primary" id="btn-software-continue" onclick="goToStep(5)">Continue &#x2192;</button>
+      <div class="wizard-actions" id="software-actions">
+        <button class="wizard-btn wizard-btn-secondary" onclick="goToStep(3)">&#x2190; Back to wizard</button>
+        <button class="wizard-btn wizard-btn-primary" id="btn-software-continue" onclick="softwareNext()">Get started &#x2192;</button>
       </div>
     </div>
 
@@ -1075,7 +1135,8 @@ window.wizardState = {
   sessionId: null,
   policyList: POLICY_MANIFEST,
   generationComplete: false,
-  generatedPolicies: []
+  generatedPolicies: [],
+  softwareSubStep: 0
 };
 var S = window.wizardState;
 
@@ -1118,6 +1179,7 @@ async function restoreSession() {
       }
       if (st.generationComplete) S.generationComplete = true;
       if (st.generatedPolicies) S.generatedPolicies = st.generatedPolicies;
+      if (typeof st.softwareSubStep === 'number') S.softwareSubStep = st.softwareSubStep;
       var restoreStep = (typeof st.currentStep === 'number') ? st.currentStep : 0;
       if (restoreStep > 0) {
         restoreUI(restoreStep);
@@ -1212,7 +1274,8 @@ async function saveSession() {
       selectedPolicies: S.answers.selectedPolicies
     },
     generationComplete: S.generationComplete,
-    generatedPolicies: S.generatedPolicies
+    generatedPolicies: S.generatedPolicies,
+    softwareSubStep: S.softwareSubStep
   };
   var result = await apiFetch('/session', {
     method: 'PUT',
@@ -1825,6 +1888,30 @@ var SOFTWARE_CATEGORIES = [
   }
 ];
 
+// Groups for sub-step navigation within step 4
+var SOFTWARE_GROUPS = [
+  {
+    title: 'Infrastructure & Engineering',
+    subtitle: 'Where your code runs and how it gets there',
+    catIndices: [0, 2, 3]  // Cloud Infra, Dev & DevOps, IAM
+  },
+  {
+    title: 'Customer-Facing Tools',
+    subtitle: 'How you sell, support, and communicate with customers',
+    catIndices: [4, 5, 6]  // Sales & CRM, Customer Support, Marketing
+  },
+  {
+    title: 'Internal Operations',
+    subtitle: 'HR, finance, and data systems your team relies on',
+    catIndices: [7, 8, 9]  // HR, Finance, Data & Analytics
+  },
+  {
+    title: 'Security & Compliance',
+    subtitle: 'How you protect your infrastructure and prove it',
+    catIndices: [10, 11, 12, 13, 14, 15]  // Compliance, Vuln Mgmt, Endpoint, Cloud Sec, Sec Testing, Log Mgmt
+  }
+];
+
 // Build the full set of known labels
 var ALL_SOFTWARE_LABELS = {};
 SOFTWARE_CATEGORIES.forEach(function(cat) {
@@ -1834,10 +1921,32 @@ SOFTWARE_CATEGORIES.forEach(function(cat) {
 });
 
 function buildSoftwareStep() {
-  var container = document.getElementById('options-software');
-  if (!container) return;
+  var sub = S.softwareSubStep;
+  if (sub === 0) {
+    buildSoftwareIntro();
+  } else {
+    buildSoftwareSubstep(sub - 1);
+  }
+  updateSoftwareHeader();
+  updateSoftwareActions();
+}
+
+function buildSoftwareIntro() {
+  document.getElementById('software-subheader').innerHTML = '';
+  document.getElementById('options-software').innerHTML =
+    '<div class="wizard-intro-card">' +
+      '<h3>We have a few questions about your software stack</h3>' +
+      '<p>We\'ll walk through 4 sections — infrastructure, customer tools, internal ops, and security. Select everything that applies to your organization. It takes about 60 seconds.</p>' +
+    '</div>';
+}
+
+function buildSoftwareSubstep(gi) {
+  var group = SOFTWARE_GROUPS[gi];
+  if (!group) return;
+  var cats = group.catIndices.map(function(ci) { return SOFTWARE_CATEGORIES[ci]; });
   var html = '';
-  SOFTWARE_CATEGORIES.forEach(function(cat, ci) {
+  cats.forEach(function(cat, i) {
+    var ci = group.catIndices[i];
     html += '<div class="wizard-category' + (cat._open ? ' open' : '') + '" id="cat-' + ci + '">' +
       '<div class="wizard-cat-header" onclick="toggleCategory(' + ci + ')">' +
         '<span class="wizard-cat-name">' + escHtml(cat.name) + '</span>' +
@@ -1861,8 +1970,64 @@ function buildSoftwareStep() {
       '</div>' +
     '</div>';
   });
-  container.innerHTML = html;
+  document.getElementById('options-software').innerHTML = html;
   refreshSoftwareUI();
+}
+
+function updateSoftwareHeader() {
+  var el = document.getElementById('software-subheader');
+  if (!el) return;
+  var sub = S.softwareSubStep;
+  if (sub === 0) {
+    el.innerHTML = '<h2 class="wizard-subheader-intro">Software & tools</h2>' +
+      '<p class="wizard-subheader-subtitle">We\'ll tailor recommendations based on your stack.</p>';
+  } else {
+    var group = SOFTWARE_GROUPS[sub - 1];
+    var dots = '';
+    for (var i = 0; i < SOFTWARE_GROUPS.length; i++) {
+      var cls = i < sub - 1 ? 'done' : (i === sub - 1 ? 'active' : '');
+      dots += '<span class="wizard-subheader-dot ' + cls + '"></span>';
+    }
+    el.innerHTML =
+      '<div class="wizard-subheader-dots">' + dots + '</div>' +
+      '<h2 class="wizard-subheader-group-title">' + escHtml(group.title) + '</h2>' +
+      '<p class="wizard-subheader-subtitle">' + escHtml(group.subtitle) + '</p>';
+  }
+}
+
+function updateSoftwareActions() {
+  var el = document.getElementById('software-actions');
+  if (!el) return;
+  var sub = S.softwareSubStep;
+  var total = SOFTWARE_GROUPS.length;
+  var html = '<button class="wizard-btn wizard-btn-secondary" onclick="goToStep(3)">&#x2190; Back to wizard</button>';
+  if (sub > 0) {
+    html += '<button class="wizard-btn wizard-btn-secondary" onclick="softwarePrev()">&#x2190; Previous</button>';
+  }
+  if (sub < total) {
+    html += '<button class="wizard-btn wizard-btn-primary" id="btn-software-continue" onclick="softwareNext()">' +
+      (sub === 0 ? 'Get started &#x2192;' : 'Next section &#x2192;') + '</button>';
+  } else {
+    html += '<button class="wizard-btn wizard-btn-primary" id="btn-software-continue" onclick="goToStep(5)">Continue to identity provider &#x2192;</button>';
+  }
+  if (sub === total) {
+    html += '<button class="wizard-btn wizard-btn-link" onclick="S.softwareSubStep=0;buildSoftwareStep();">Start over</button>';
+  }
+  el.innerHTML = html;
+}
+
+function softwareNext() {
+  if (S.softwareSubStep < SOFTWARE_GROUPS.length) {
+    S.softwareSubStep++;
+    buildSoftwareStep();
+  }
+}
+
+function softwarePrev() {
+  if (S.softwareSubStep > 0) {
+    S.softwareSubStep--;
+    buildSoftwareStep();
+  }
 }
 
 function filterCategory(ci) {
