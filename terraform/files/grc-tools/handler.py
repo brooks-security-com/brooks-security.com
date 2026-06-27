@@ -52,10 +52,21 @@ with open(_manifest_path, "r") as f:
 
 # --- Helpers ----------------------------------------------------------------
 
-def parse_cookies(headers):
-    """Extract cookies from API Gateway v2 event headers."""
+def parse_cookies(event):
+    """Extract cookies from API Gateway v2 event.
+
+    API Gateway HTTP API v2 strips the Cookie header from event.headers
+    and places cookies into a dedicated event.cookies array. We read
+    from both locations so direct Lambda invocations (tests) still work.
+    """
     cookies = {}
-    cookie_header = headers.get("cookie", "")
+    # Primary: API Gateway v2 cookies array
+    for cookie_str in event.get("cookies", []):
+        if "=" in cookie_str:
+            k, v = cookie_str.split("=", 1)
+            cookies[k.strip()] = v.strip()
+    # Fallback: standard cookie header (direct Lambda invocations)
+    cookie_header = event.get("headers", {}).get("cookie", "")
     if cookie_header:
         for part in cookie_header.split(";"):
             part = part.strip()
@@ -67,7 +78,7 @@ def parse_cookies(headers):
 
 def get_user_id(event):
     """Extract Cognito user_id from the grc_session JWT cookie."""
-    cookies = parse_cookies(event.get("headers", {}))
+    cookies = parse_cookies(event)
     token = cookies.get("grc_session")
     if not token:
         return None
@@ -303,7 +314,7 @@ def render_docx(md_content: str) -> bytes:
 
 def handle_whoami(event):
     """GET /api/grc-tools/whoami — return user identity from JWT."""
-    cookies = parse_cookies(event.get("headers", {}))
+    cookies = parse_cookies(event)
     token = cookies.get("grc_session")
     if not token:
         return error_response("Not authenticated", 401)
