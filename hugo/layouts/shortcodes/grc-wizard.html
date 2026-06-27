@@ -70,6 +70,43 @@
 .wizard-step-indicator.clickable:hover .wizard-step-label.done {
   color: var(--wizard-gray-800);
 }
+/* Sidebar sub-steps under step 4 */
+.wizard-sidebar-substeps {
+  padding-left: 2rem;
+  margin: -0.25rem 0 0.5rem 0;
+}
+.wizard-substep-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0;
+  font-size: 0.78rem;
+  color: var(--wizard-gray-300);
+  cursor: pointer;
+}
+.wizard-substep-indicator:hover {
+  color: var(--wizard-gray-800);
+}
+.wizard-substep-indicator.active {
+  color: var(--wizard-blue);
+  font-weight: 600;
+}
+.wizard-substep-indicator.done {
+  color: var(--wizard-gray-500);
+}
+.wizard-substep-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--wizard-gray-200);
+  flex-shrink: 0;
+}
+.wizard-substep-indicator.active .wizard-substep-dot {
+  background: var(--wizard-blue);
+}
+.wizard-substep-indicator.done .wizard-substep-dot {
+  background: var(--wizard-green);
+}
 .wizard-step-badge {
   width: 28px;
   height: 28px;
@@ -871,6 +908,14 @@
       <div class="wizard-step-indicator" data-for="4" onclick="sidebarClick(4)">
         <div class="wizard-step-badge inactive" id="badge-4">4</div>
         <div class="wizard-step-label inactive" id="label-4">Software &amp; tools</div>
+      </div>
+      <div class="wizard-sidebar-substeps" id="sidebar-substeps" style="display:none;">
+        <div class="wizard-substep-indicator" id="substep-0" onclick="sidebarSubClick(0)"><span class="wizard-substep-dot"></span>Identity</div>
+        <div class="wizard-substep-indicator" id="substep-1" onclick="sidebarSubClick(1)"><span class="wizard-substep-dot"></span>Cloud</div>
+        <div class="wizard-substep-indicator" id="substep-2" onclick="sidebarSubClick(2)"><span class="wizard-substep-dot"></span>Engineering</div>
+        <div class="wizard-substep-indicator" id="substep-3" onclick="sidebarSubClick(3)"><span class="wizard-substep-dot"></span>Customers</div>
+        <div class="wizard-substep-indicator" id="substep-4" onclick="sidebarSubClick(4)"><span class="wizard-substep-dot"></span>Internal</div>
+        <div class="wizard-substep-indicator" id="substep-5" onclick="sidebarSubClick(5)"><span class="wizard-substep-dot"></span>Security</div>
       </div>
       <div class="wizard-step-indicator" data-for="6" onclick="sidebarClick(6)">
         <div class="wizard-step-badge inactive" id="badge-6">5</div>
@@ -1907,6 +1952,7 @@ function buildSoftwareStep() {
   }
   updateSoftwareHeader();
   updateSoftwareActions();
+  updateSidebarSubsteps();
 }
 
 function buildSoftwareIntro() {
@@ -2208,6 +2254,28 @@ function sidebarClick(n) {
   }
 }
 
+function sidebarSubClick(n) {
+  S.softwareSubStep = n;
+  buildSoftwareStep();
+}
+
+function updateSidebarSubsteps() {
+  var el = document.getElementById('sidebar-substeps');
+  if (!el) return;
+  // Show sub-steps only when on step 4
+  el.style.display = S.currentStep === 4 ? '' : 'none';
+  if (S.currentStep !== 4) return;
+
+  var sub = S.softwareSubStep;
+  var children = el.children;
+  for (var i = 0; i < children.length; i++) {
+    var item = children[i];
+    item.className = 'wizard-substep-indicator';
+    if (i < sub - 1) item.classList.add('done');
+    else if (i === sub || (sub === 0 && i === 0)) item.classList.add('active');
+  }
+}
+
 // ===== Navigation =====
 function goToStep(stepIndex) {
   var prevStep = S.currentStep;
@@ -2239,6 +2307,7 @@ function goToStep(stepIndex) {
 
   var sidebarStep = (stepIndex >= 1 && stepIndex <= 7) ? stepIndex : (stepIndex === 0 ? 0 : 7);
   updateSidebar(sidebarStep);
+  updateSidebarSubsteps();
 
   // Auto-save on step transition (skip step 0)
   if (stepIndex > 0) {
