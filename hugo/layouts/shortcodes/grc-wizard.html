@@ -229,108 +229,94 @@
   color: var(--wizard-gray-500);
   margin-top: 0.15rem;
 }
-/* Multi-select categorized dropdowns */
+/* Expandable categorized software sections */
 .wizard-category {
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.6rem;
+  border: 1px solid var(--wizard-gray-200);
+  border-radius: 10px;
+  overflow: hidden;
 }
-.wizard-category-heading {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--wizard-gray-500);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-bottom: 0.5rem;
-}
-.wizard-ms-dropdown {
-  position: relative;
-}
-.wizard-ms-trigger {
+.wizard-cat-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 0.7rem 1rem;
-  border: 2px solid var(--wizard-gray-200);
-  border-radius: 10px;
-  background: var(--wizard-white);
+  gap: 0.5rem;
+  padding: 0.8rem 1rem;
   cursor: pointer;
+  background: var(--wizard-white);
+  transition: background 0.1s;
+  user-select: none;
+}
+.wizard-cat-header:hover {
+  background: var(--wizard-gray-100);
+}
+.wizard-cat-name {
+  font-weight: 600;
   font-size: 0.9rem;
   color: var(--wizard-gray-800);
-  transition: border-color 0.15s ease;
-  text-align: left;
-  font-family: inherit;
-}
-.wizard-ms-trigger:hover {
-  border-color: var(--wizard-blue);
-}
-.wizard-ms-trigger.open {
-  border-color: var(--wizard-blue);
-  border-radius: 10px 10px 0 0;
-}
-.wizard-ms-trigger-text {
   flex: 1;
-  min-width: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
-.wizard-ms-trigger-text.placeholder {
-  color: var(--wizard-gray-300);
+.wizard-cat-count {
+  font-size: 0.8rem;
+  color: var(--wizard-blue);
+  font-weight: 600;
 }
-.wizard-ms-arrow {
-  margin-left: 0.5rem;
-  font-size: 0.7rem;
+.wizard-cat-count:empty {
+  display: none;
+}
+.wizard-cat-arrow {
+  font-size: 0.65rem;
   color: var(--wizard-gray-300);
-  transition: transform 0.15s ease;
+  transition: transform 0.2s ease;
   flex-shrink: 0;
 }
-.wizard-ms-trigger.open .wizard-ms-arrow {
+.wizard-category.open .wizard-cat-arrow {
   transform: rotate(180deg);
 }
-.wizard-ms-panel {
+.wizard-cat-body {
   display: none;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  background: var(--wizard-white);
-  border: 2px solid var(--wizard-blue);
-  border-top: none;
-  border-radius: 0 0 10px 10px;
-  max-height: 260px;
-  overflow-y: auto;
-  box-shadow: var(--wizard-shadow-lg);
+  border-top: 1px solid var(--wizard-gray-200);
 }
-.wizard-ms-trigger.open + .wizard-ms-panel {
+.wizard-category.open .wizard-cat-body {
   display: block;
 }
-.wizard-ms-option {
+.wizard-cat-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+.wizard-cat-row {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.6rem 1rem;
+  padding: 0.55rem 1rem;
   cursor: pointer;
   font-size: 0.88rem;
   color: var(--wizard-gray-800);
   transition: background 0.1s;
+  border-bottom: 1px solid var(--wizard-gray-100);
 }
-.wizard-ms-option:hover {
+.wizard-cat-row:last-child {
+  border-bottom: none;
+}
+.wizard-cat-row:hover {
   background: var(--wizard-blue-light);
 }
-.wizard-ms-option input[type="checkbox"] {
+.wizard-cat-row input[type="checkbox"] {
   width: 16px;
   height: 16px;
   accent-color: var(--wizard-blue);
   flex-shrink: 0;
 }
-.wizard-ms-writein {
+.wizard-cat-row.selected {
+  background: #f0f7ff;
+}
+.wizard-cat-writein {
   display: flex;
   gap: 0.4rem;
   padding: 0.5rem 1rem;
   border-top: 1px solid var(--wizard-gray-200);
+  background: var(--wizard-gray-100);
 }
-.wizard-ms-writein input {
+.wizard-cat-writein input {
   flex: 1;
   padding: 0.4rem 0.6rem;
   border: 1px solid var(--wizard-gray-200);
@@ -338,11 +324,12 @@
   font-size: 0.85rem;
   font-family: inherit;
   outline: none;
+  background: var(--wizard-white);
 }
-.wizard-ms-writein input:focus {
+.wizard-cat-writein input:focus {
   border-color: var(--wizard-blue);
 }
-.wizard-ms-writein button {
+.wizard-cat-writein button {
   padding: 0.4rem 0.75rem;
   background: var(--wizard-blue);
   color: #fff;
@@ -353,7 +340,7 @@
   font-weight: 600;
   white-space: nowrap;
 }
-.wizard-ms-writein button:hover {
+.wizard-cat-writein button:hover {
   background: #0856a3;
 }
 .wizard-selected-chips {
@@ -796,7 +783,7 @@
     border-radius: 0 0 var(--wizard-radius) var(--wizard-radius); padding: 1.25rem;
   }
   .wizard-step-heading { font-size: 1.3rem; }
-  .wizard-ms-panel { max-height: 200px; }
+  .wizard-cat-list { max-height: 150px; }
   .wizard-rec-list { grid-template-columns: 1fr; }
   .wizard-actions { flex-wrap: wrap; }
   .wizard-download-grid { grid-template-columns: 1fr; }
@@ -1603,24 +1590,24 @@ function buildSoftwareStep() {
   if (!container) return;
   var html = '';
   SOFTWARE_CATEGORIES.forEach(function(cat, ci) {
-    html += '<div class="wizard-category">' +
-      '<div class="wizard-category-heading">' + escHtml(cat.name) + '</div>' +
-      '<div class="wizard-ms-dropdown" id="ms-dropdown-' + ci + '">' +
-        '<button class="wizard-ms-trigger" id="ms-trigger-' + ci + '" onclick="toggleMsDropdown(' + ci + '); event.stopPropagation();">' +
-          '<span class="wizard-ms-trigger-text placeholder" id="ms-trigger-text-' + ci + '">Select ' + cat.name.toLowerCase() + '</span>' +
-          '<span class="wizard-ms-arrow">&#9660;</span>' +
-        '</button>' +
-        '<div class="wizard-ms-panel" id="ms-panel-' + ci + '">' +
+    html += '<div class="wizard-category' + (cat._open ? ' open' : '') + '" id="cat-' + ci + '">' +
+      '<div class="wizard-cat-header" onclick="toggleCategory(' + ci + ')">' +
+        '<span class="wizard-cat-name">' + escHtml(cat.name) + '</span>' +
+        '<span class="wizard-cat-count" id="cat-count-' + ci + '"></span>' +
+        '<span class="wizard-cat-arrow">&#9660;</span>' +
+      '</div>' +
+      '<div class="wizard-cat-body" id="cat-body-' + ci + '">' +
+        '<div class="wizard-cat-list">' +
           cat.options.map(function(opt) {
-            return '<label class="wizard-ms-option" onclick="toggleMsOption(' + ci + ',\'' + opt.value + '\'); event.stopPropagation();">' +
-              '<input type="checkbox" value="' + opt.value + '" id="ms-cb-' + ci + '-' + opt.value + '">' +
+            return '<label class="wizard-cat-row" onclick="toggleCatOption(' + ci + ',\'' + opt.value + '\'); event.stopPropagation();" id="cat-row-' + ci + '-' + opt.value + '">' +
+              '<input type="checkbox" value="' + opt.value + '" id="cat-cb-' + ci + '-' + opt.value + '">' +
               escHtml(opt.label) +
             '</label>';
           }).join('') +
-          '<div class="wizard-ms-writein">' +
-            '<input type="text" id="ms-writein-' + ci + '" placeholder="Add custom..." onkeydown="if(event.key===\'Enter\'){addWritein(' + ci + ');event.preventDefault();}">' +
-            '<button onclick="addWritein(' + ci + '); event.stopPropagation();">Add</button>' +
-          '</div>' +
+        '</div>' +
+        '<div class="wizard-cat-writein">' +
+          '<input type="text" id="cat-writein-' + ci + '" placeholder="Add custom..." onkeydown="if(event.key===\'Enter\'){addWritein(' + ci + ');event.preventDefault();}">' +
+          '<button onclick="addWritein(' + ci + '); event.stopPropagation();">Add</button>' +
         '</div>' +
       '</div>' +
     '</div>';
@@ -1630,78 +1617,66 @@ function buildSoftwareStep() {
   refreshSoftwareUI();
 }
 
-function toggleMsDropdown(ci) {
-  var trigger = document.getElementById('ms-trigger-' + ci);
-  var panel = document.getElementById('ms-panel-' + ci);
-  if (!trigger || !panel) return;
-  var isOpen = trigger.classList.contains('open');
-  // Close all dropdowns first
-  document.querySelectorAll('.wizard-ms-trigger.open').forEach(function(t) { t.classList.remove('open'); });
-  if (!isOpen) {
-    trigger.classList.add('open');
-  }
+function toggleCategory(ci) {
+  var cat = document.getElementById('cat-' + ci);
+  if (!cat) return;
+  cat.classList.toggle('open');
 }
 
-function toggleMsOption(ci, value) {
-  var cb = document.getElementById('ms-cb-' + ci + '-' + value);
+function toggleCatOption(ci, value) {
+  var cb = document.getElementById('cat-cb-' + ci + '-' + value);
   if (!cb) return;
-  // The browser's default label-click already toggled the checkbox.
-  // We just read the final state and apply the selection.
-  applyMsSelection(ci, value, cb.checked);
+  cb.checked = !cb.checked;
+  applyCatSelection(ci, value, cb.checked);
 }
 
-function applyMsSelection(ci, value, checked) {
+function applyCatSelection(ci, value, checked) {
   var idx = S.answers.software.indexOf(value);
   if (checked && idx === -1) {
     S.answers.software.push(value);
   } else if (!checked && idx !== -1) {
     S.answers.software.splice(idx, 1);
   }
-  updateMsTrigger(ci);
+  // Update row highlight
+  var row = document.getElementById('cat-row-' + ci + '-' + value);
+  if (row) { row.classList.toggle('selected', checked); }
+  updateCatCount(ci);
   renderSoftwareChips();
 }
 
 function addWritein(ci) {
-  var input = document.getElementById('ms-writein-' + ci);
+  var input = document.getElementById('cat-writein-' + ci);
   if (!input) return;
   var val = input.value.trim();
   if (!val) return;
-  // Add as a custom value
   if (S.answers.software.indexOf(val) === -1) {
     S.answers.software.push(val);
   }
   input.value = '';
-  updateMsTrigger(ci);
   renderSoftwareChips();
 }
 
 function removeSoftwareValue(value) {
   var idx = S.answers.software.indexOf(value);
   if (idx !== -1) S.answers.software.splice(idx, 1);
-  // Uncheck corresponding checkbox if it exists
   SOFTWARE_CATEGORIES.forEach(function(cat, ci) {
-    var cb = document.getElementById('ms-cb-' + ci + '-' + value);
+    var cb = document.getElementById('cat-cb-' + ci + '-' + value);
     if (cb) cb.checked = false;
-    updateMsTrigger(ci);
+    var row = document.getElementById('cat-row-' + ci + '-' + value);
+    if (row) row.classList.remove('selected');
+    updateCatCount(ci);
   });
   renderSoftwareChips();
 }
 
-function updateMsTrigger(ci) {
-  var trigger = document.getElementById('ms-trigger-text-' + ci);
+function updateCatCount(ci) {
+  var el = document.getElementById('cat-count-' + ci);
   var cat = SOFTWARE_CATEGORIES[ci];
-  if (!trigger || !cat) return;
-  var selected = cat.options.filter(function(opt) {
+  if (!el || !cat) return;
+  var n = cat.options.filter(function(opt) {
     return S.answers.software.indexOf(opt.value) !== -1;
-  });
-  // Also count write-ins that match labels but aren't predefined
-  if (selected.length === 0) {
-    trigger.textContent = 'Select ' + cat.name.toLowerCase();
-    trigger.classList.add('placeholder');
-  } else {
-    trigger.textContent = selected.length + ' selected';
-    trigger.classList.remove('placeholder');
-  }
+  }).length;
+  el.textContent = n > 0 ? n + ' selected' : '';
 }
 
 function renderSoftwareChips() {
@@ -1722,20 +1697,16 @@ function renderSoftwareChips() {
 function refreshSoftwareUI() {
   SOFTWARE_CATEGORIES.forEach(function(cat, ci) {
     cat.options.forEach(function(opt) {
-      var cb = document.getElementById('ms-cb-' + ci + '-' + opt.value);
-      if (cb) cb.checked = S.answers.software.indexOf(opt.value) !== -1;
+      var checked = S.answers.software.indexOf(opt.value) !== -1;
+      var cb = document.getElementById('cat-cb-' + ci + '-' + opt.value);
+      if (cb) cb.checked = checked;
+      var row = document.getElementById('cat-row-' + ci + '-' + opt.value);
+      if (row) row.classList.toggle('selected', checked);
     });
-    updateMsTrigger(ci);
+    updateCatCount(ci);
   });
   renderSoftwareChips();
 }
-
-// Close dropdowns when clicking outside
-document.addEventListener('click', function(e) {
-  if (!e.target.closest('.wizard-ms-dropdown')) {
-    document.querySelectorAll('.wizard-ms-trigger.open').forEach(function(t) { t.classList.remove('open'); });
-  }
-});
 
 // ===== End Software Multi-Select =====
 
