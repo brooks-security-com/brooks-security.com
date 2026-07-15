@@ -1,0 +1,74 @@
+# Remediation Plan
+
+Policy Title: Remediation Plan
+Policy Number: ISP-{{ policy_number_suffix }}
+Effective Date: {{ effective_date }}
+Version: 1.0
+Classification: Internal
+Approved By: {{ company_name }} Security Officer
+
+## Introduction
+
+This Remediation Plan defines the requirements for addressing vulnerabilities and security findings identified within {{ company_name }}'s digital environment. It aligns with the Vulnerability Management Policy and defines the requirements for tracking and managing remediation efforts from discovery through verification and closure.
+
+## Objective
+
+The objective of this plan is to ensure that all identified vulnerabilities, misconfigurations, and security findings are addressed promptly and efficiently, reducing risk to {{ company_name }}'s operations and maintaining the confidentiality, integrity, and availability of organizational and customer data.
+
+## Remediation Requirements
+
+All identified vulnerabilities, misconfigurations, and security findings must be addressed through a structured remediation process that includes: documentation with unique identifiers, severity classification, and affected asset information; prioritization based on CVSS scoring, asset criticality, exploitability, and exposure; assignment to responsible teams based on asset ownership; application of the appropriate risk treatment option (Resolve, Mitigate, Transfer, or Accept); independent verification that remediation was effective before closure; and periodic review of aggregated outcomes by the Security Oversight Committee.
+
+### Risk Treatment Options
+
+Each finding must be addressed using one of four risk treatment options:
+
+**Resolve (Preferred):** Full remediation through patching, configuration updates, code fixes, or decommissioning.
+
+**Mitigate:** Implementation of compensating controls (network segmentation, WAF rules, access restrictions, increased monitoring) when full remediation is not immediately feasible. Every mitigation must have a documented plan and target date for eventual resolution and must be reviewed at least quarterly.
+
+**Transfer:** Shift of risk to a third party through insurance coverage or contractual arrangements. Transfer decisions must be documented with rationale; findings remain tracked internally.
+
+**Accept:** Formal acceptance of risk, permitted only when: (a) the risk level is Low, or (b) remediation cost demonstrably exceeds potential impact, or (c) no practical remediation, mitigation, or transfer option exists. Acceptance requires documented business justification, cost-benefit analysis where applicable, and approval at role-based thresholds: Low/Medium → asset owner and security team; High → Security Officer; Critical → executive leadership. All accepted risks must be reviewed at least quarterly.
+
+### Timelines
+
+Remediation must be completed within defined timelines based on severity:
+
+| Severity | Assignment | Remediation Target |
+|----------|-----------|-------------------|
+| **Critical** | Within 4 hours | Within {{ critical_remediation_days }} days (recommended: 7 days) |
+| **High** | Within 24 hours | Within {{ high_remediation_days }} days (recommended: 30 days) |
+| **Medium** | Within 3 business days | Within {{ medium_remediation_days }} days (recommended: 90 days) |
+| **Low** | Within 5 business days | Within {{ low_remediation_days }} days (recommended: 365 days) |
+
+### Exception Management
+
+Requests for exceptions to remediation timelines must be submitted with written business justification, include compensating controls for the exception period, be approved by the Security Officer (or equivalent), include a revised target remediation date, and be reviewed at each Security Oversight Committee meeting.
+
+## Roles and Responsibilities
+
+| Role | Responsibility |
+|------|----------------|
+| **Security Analysts / Vulnerability Management Team** | Initial identification, documentation, and prioritization of findings; verification of remediation |
+| **IT, Infrastructure, and Development Teams** | Execution of remediation actions as assigned in tickets |
+| **Asset Owners** | Approval of remediation plans for their assets; risk acceptance decisions within their authority |
+| **Security Officer (or equivalent)** | Oversight of remediation SLAs; approval of High risk acceptances; escalation point for overdue findings |
+| **Security Oversight Committee** | Review of aggregated findings; approval of Critical risk acceptances; strategic decisions on systemic issues |
+| **Executive Leadership** | Approval of Critical risk acceptances; resource allocation for remediation programs |
+
+## Related Documents
+
+- Vulnerability Management Policy
+- Vulnerability Management Process
+- Information Security Policy (ISP-001)
+- Risk Assessment Policy
+- Change Management Policy
+- Configuration Management Plan
+- Incident Response Policy
+
+## Revision History
+
+| Version | Date | Author | Description |
+|---------|------|--------|-------------|
+| 1.0 | {{ effective_date }} | {{ company_name }} Security Officer | Initial version |

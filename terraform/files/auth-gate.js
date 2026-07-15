@@ -157,8 +157,8 @@ exports.handler = async (event) => {
       if (!jwt) return redirectResponse(REDIRECT_URI);
 
       const cookieValue = [
-        `$${COOKIE_NAME}=$${tokens.access_token}`,
-        'Path=/grc-tools',
+        `$${COOKIE_NAME}=$${tokens.id_token}`,
+        'Path=/',
         `Max-Age=$${COOKIE_MAX_AGE}`,
         'HttpOnly',
         'Secure',
