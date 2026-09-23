@@ -1,0 +1,33 @@
+{{- /* A blog post in the wide reading panel. */ -}}
+{{- $posts := (where site.RegularPages "Section" "posts").ByDate.Reverse -}}
+{{- $newer := false }}{{ $older := false -}}
+{{- range $i, $p := $posts -}}
+  {{- if eq $p.RelPermalink $.RelPermalink -}}
+    {{- if gt $i 0 }}{{ $newer = index $posts (sub $i 1) }}{{ end -}}
+    {{- if lt (add $i 1) (len $posts) }}{{ $older = index $posts (add $i 1) }}{{ end -}}
+  {{- end -}}
+{{- end -}}
+{{- $toc := partial "toc.html" (dict "page" . "open" true) -}}
+<article class="article{{ if $toc }} has-toc{{ end }}">
+  <div class="meta">
+    {{- range first 1 (.GetTerms "categories") }}<a class="chip c" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>{{ end -}}
+    <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time><span>&middot; {{ .ReadingTime }} min read</span>
+  </div>
+  <h1 tabindex="-1">{{ .Title }}</h1>
+  {{- with .Description }}
+  <p class="desc">{{ . }}</p>
+  {{- end }}
+  {{- with .GetTerms "tags" }}
+  <div class="chips tags">{{ range . }}<a class="chip" href="{{ .RelPermalink }}">#{{ .Data.Term }}</a>{{ end }}</div>
+  {{- end }}
+  {{ $toc }}
+  <div class="body prose">
+    {{ .Content }}
+  </div>
+  {{ partial "related.html" . }}
+  {{ partial "lead-cta.html" . }}
+  <nav class="pn" aria-label="More posts">
+    {{- with $newer }}<a href="{{ .RelPermalink }}"><small>Newer</small>{{ .Title }}</a>{{ else }}<span></span>{{ end -}}
+    {{- with $older }}<a href="{{ .RelPermalink }}"><small>Older</small>{{ .Title }}</a>{{ end -}}
+  </nav>
+</article>

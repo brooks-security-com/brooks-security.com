@@ -1,0 +1,185 @@
+{{- /*
+  The knowledge graph, built from hugo/content and hugo/data/graph.yaml.
+  Call through partialCached: it walks every hub page once per build.
+
+  Returns a dict:
+    nodes    every node, in draw order: me, the hubs, then each hub's children
+    byId     node id -> node
+    pages    page RelPermalink -> id of the node its panel selects
+    related  validated [id, id] pairs
+
+  Everything here comes from content and front matter, never from the build
+  date or hugo/data/contributions.json, so the nightly heatmap rebuild leaves
+  the manifest (and so every page's script tag) unchanged.
+*/ -}}
+{{- $cfg := hugo.Data.graph -}}
+{{- $s := newScratch -}}
+{{- range site.Pages }}{{ $s.SetInMap "url" .RelPermalink . }}{{ end -}}
+{{- $url := $s.Get "url" -}}
+{{- $headRE := `<h([1-6]) id="([^"]+)"[^>]*>([\s\S]*?)</h[1-6]>` -}}
+{{- $months := dict "Jan" 1 "Feb" 2 "Mar" 3 "Apr" 4 "May" 5 "Jun" 6 "Jul" 7 "Aug" 8 "Sep" 9 "Oct" 10 "Nov" 11 "Dec" 12 -}}
+
+{{- $me := dict "id" "me" "kind" "me" "url" "/" "label" site.Title "short" site.Title "meta" site.Home.Title "text" (lower (printf "%s %s about home" site.Title site.Home.Title)) -}}
+{{- $nodes := slice $me -}}
+{{- $s.SetInMap "byId" "me" $me -}}
+{{- $s.SetInMap "pages" "/" "me" -}}
+{{- $kidsAll := slice -}}
+
+{{- range $hub := $cfg.hubs -}}
+  {{- $hp := index $url $hub.page -}}
+  {{- if not $hp }}{{ errorf "graph.yaml: hub %q points at %q, which is not a page" $hub.id $hub.page }}{{ end -}}
+  {{- $items := $hub.items -}}
+  {{- $kids := slice -}}
+  {{- $roles := 0 -}}
+
+  {{- if eq (printf "%T" $items) "string" -}}
+    {{- if eq $items "posts" -}}
+      {{- range (where site.RegularPages "Section" "posts").ByDate.Reverse -}}
+        {{- $slug := path.Base (strings.TrimSuffix "/" .RelPermalink) -}}
+        {{- $cat := "" }}{{ range first 1 (.GetTerms "categories") }}{{ $cat = .LinkTitle }}{{ end -}}
+        {{- $tags := slice }}{{ range .GetTerms "tags" }}{{ $tags = $tags | append .Data.Term }}{{ end -}}
+        {{- $text := lower (delimit (slice .Title .Description $cat (delimit $tags " ")) " ") -}}
+        {{- $meta := printf "%s · %d min read" (.Date.Format "Jan 2006") .ReadingTime -}}
+        {{- with $cat }}{{ $meta = printf "%s · %s" . $meta }}{{ end -}}
+        {{- $kids = $kids | append (dict
+            "id" (printf "writing.%s" $slug) "url" .RelPermalink "label" .Title "short" .Title
+            "meta" $meta
+            "icon" "file" "mins" .ReadingTime "wide" true "text" $text) -}}
+      {{- end -}}
+    {{- else if eq $items "links" -}}
+      {{- range findRESubmatch `(?m)^- \*\*([^:*]+):\*\* \[([^\]]+)\]\(([^)]+)\)` $hp.RawContent -}}
+        {{- $key := lower (index . 1) -}}
+        {{- $kids = $kids | append (dict
+            "id" (printf "%s.%s" $hub.id $key) "url" (printf "%s#%s" $hub.page $key) "match" (index . 3)
+            "label" (index . 1) "short" (index . 1) "meta" (index . 2)
+            "icon" (index ($hub.icons | default dict) $key | default "mail")
+            "text" (lower (printf "%s %s" (index . 1) (index . 2)))) -}}
+      {{- end -}}
+    {{- else -}}
+      {{- errorf "graph.yaml: hub %q has unknown items %q" $hub.id $items -}}
+    {{- end -}}
+
+  {{- else if reflect.IsSlice $items -}}
+    {{- /* Explicit list. A page with one entry is its own node; a page with several gets anchors. */ -}}
+    {{- range $items }}{{ $s.SetInMap "per" .page (add (index ($s.Get "per" | default dict) .page | default 0) 1) }}{{ end -}}
+    {{- range $items -}}
+      {{- $p := index $url .page -}}
+      {{- if not $p }}{{ errorf "graph.yaml: %q item points at %q, which is not a page" $hub.id .page }}{{ end -}}
+      {{- $want := .heading -}}
+      {{- $title := "" -}}
+      {{- range findRESubmatch $headRE $p.Content }}{{ if eq (index . 2) $want }}{{ $title = index . 3 | plainify | htmlUnescape | strings.TrimSpace }}{{ end }}{{ end -}}
+      {{- if not $title }}{{ errorf "graph.yaml: no heading #%s on %s" $want .page }}{{ end -}}
+      {{- $single := eq (index ($s.Get "per") .page) 1 -}}
+      {{- $nodeUrl := cond $single .page (printf "%s#%s" .page $want) -}}
+      {{- if not $single }}{{ $s.SetInMap "pages" .page $hub.id }}{{ end -}}
+      {{- $kids = $kids | append (dict
+          "id" (printf "%s.%s" $hub.id $want) "url" $nodeUrl "label" $title
+          "short" (index (split $title " - ") 0) "meta" (printf "%s · public repo" $p.Title)
+          "icon" (.icon | default "code") "featured" (.featured | default false)
+          "text" (lower (printf "%s %s %s %s" $title $p.Title $p.Description (cond $single ($p.Summary | plainify | truncate 240) "")))) -}}
+    {{- end -}}
+
+  {{- else if reflect.IsMap $items -}}
+    {{- /* Every heading of one level on the hub page, in page order. */ -}}
+    {{- $lvl := int $items.level -}}
+    {{- $raw := $hp.RawContent -}}
+    {{- $dates := dict -}}
+    {{- range findRESubmatch `(?m)^#{3}\s+(.+?)\s*\n\*\*([A-Z][a-z]{2}) (\d{4}) – (Present|([A-Z][a-z]{2}) (\d{4}))\*\*` $raw -}}
+      {{- $dates = merge $dates (dict (anchorize (index . 1)) (dict
+          "start" (printf "%s-%02d" (index . 3) (index $months (index . 2)))
+          "end" (cond (eq (index . 4) "Present") "" (printf "%s-%02d" (index . 6) (index $months (index . 5 | default "Jan"))))
+          "meta" (printf "%s %s to %s" (index . 2) (index . 3) (index . 4)))) -}}
+    {{- end -}}
+    {{- $earned := dict -}}
+    {{- range findRESubmatch `(?m)^#{3}\s+(.+?)\s*\n {4}((?:Earned|Awarded)\s.+?)\s*$` $raw -}}
+      {{- $earned = merge $earned (dict (anchorize (index . 1)) (index . 2)) -}}
+    {{- end -}}
+    {{- $order := slice -}}
+    {{- $parent := "" -}}
+    {{- $cur := "" -}}
+    {{- range findRESubmatch $headRE $hp.Content -}}
+      {{- $l := int (index . 1) -}}
+      {{- $id := index . 2 -}}
+      {{- if eq $l $lvl -}}
+        {{- if in ($items.skip | default slice) $id -}}
+          {{- $cur = "" -}}
+        {{- else -}}
+          {{- $cur = $id -}}
+          {{- $order = $order | append $id -}}
+          {{- $s.SetInMap "h" $id (dict "title" (index . 3 | plainify | htmlUnescape | strings.TrimSpace) "parent" $parent "count" 0 "sub" "") -}}
+        {{- end -}}
+      {{- else if lt $l $lvl -}}
+        {{- $parent = $id -}}
+        {{- $cur = "" -}}
+      {{- else if and $cur (eq $l (add $lvl 1)) -}}
+        {{- $h := index ($s.Get "h") $cur -}}
+        {{- $s.SetInMap "h" $cur (merge $h (dict "count" (add $h.count 1) "sub" (printf "%s %s" $h.sub (index . 3 | plainify | htmlUnescape)))) -}}
+      {{- end -}}
+    {{- end -}}
+    {{- range $i, $id := $order -}}
+      {{- $h := index ($s.Get "h") $id -}}
+      {{- $n := dict
+          "id" (printf "%s.%s" $hub.id $id) "url" (printf "%s#%s" $hub.page $id) "label" $h.title
+          "short" (index ($items.short | default dict) $id | default $h.title)
+          "icon" (index ($items.icons | default dict) $id | default $items.icon | default "file") -}}
+      {{- $meta := index ($items.meta | default dict) $id | default "" -}}
+      {{- with index $dates $id -}}
+        {{- $n = merge $n (dict "start" .start "end" .end) -}}
+        {{- $meta = .meta -}}
+        {{- $n = merge $n (dict "short" (index (split $h.title ", ") 0)) -}}
+      {{- end -}}
+      {{- with index $earned $id -}}
+        {{- $meta = . -}}
+        {{- $abbr := findRESubmatch `\(([^)]+)\)$` $h.title 1 -}}
+        {{- $n = merge $n (dict "short" (cond (gt (len $abbr) 0) (index (index $abbr 0) 1) (index (split $h.title " - ") 0))) -}}
+      {{- end -}}
+      {{- if and $items.degreeIcon (eq $h.parent "degrees") }}{{ $n = merge $n (dict "icon" $items.degreeIcon) }}{{ end -}}
+      {{- if eq $hub.id "stack" -}}
+        {{- $meta = printf "%d %s" $h.count (cond (eq $h.count 1) "platform" "platforms") -}}
+        {{- $n = merge $n (dict "count" $h.count) -}}
+      {{- end -}}
+      {{- if $items.numbered -}}
+        {{- $meta = printf "Step %d of %d" (add $i 1) (len $order) -}}
+        {{- $n = merge $n (dict "glyph" (string (add $i 1))) -}}
+      {{- end -}}
+      {{- if and (eq $hub.id "experience") (not (index $dates $id)) }}{{ errorf "Work experience heading #%s has no **Mon YYYY – Mon YYYY** line under it" $id }}{{ end -}}
+      {{- if and (eq $hub.id "credentials") (not (index $earned $id)) }}{{ errorf "Credential heading #%s has no indented Earned or Awarded line under it" $id }}{{ end -}}
+      {{- /* Search also finds a group by what is under it, such as a platform name. */ -}}
+      {{- $kids = $kids | append (merge $n (dict "meta" $meta "text" (lower (printf "%s %s %s" $h.title $meta $h.sub)))) -}}
+    {{- end -}}
+    {{- $roles = len $order -}}
+  {{- end -}}
+
+  {{- if eq $roles 0 }}{{ $roles = len $kids }}{{ end -}}
+  {{- range $hub.extra -}}
+    {{- $p := index $url .page -}}
+    {{- if not $p }}{{ errorf "graph.yaml: %q extra points at %q, which is not a page" $hub.id .page }}{{ end -}}
+    {{- $kids = $kids | append (dict
+        "id" (printf "%s.%s" $hub.id (path.Base (strings.TrimSuffix "/" .page))) "url" .page
+        "label" $p.Title "short" $p.Title "meta" (.meta | default "") "icon" (.icon | default "file")
+        "wide" true "text" (lower (printf "%s %s %s" $p.Title (.meta | default "") $p.Description))) -}}
+  {{- end -}}
+
+  {{- $hubNode := dict
+      "id" $hub.id "kind" "cat" "url" $hub.page "label" $hub.label "short" $hub.label
+      "meta" (printf "%d %s" $roles (index $hub.noun (cond (eq $roles 1) 0 1)))
+      "icon" $hub.icon "slot" $hub.slot "cut" ($hub.cut | default 26) "count" (len $kids)
+      "text" (lower (printf "%s %s %s" $hub.label $hp.Title $hp.Description)) -}}
+  {{- $nodes = $nodes | append $hubNode -}}
+  {{- $s.SetInMap "byId" $hub.id $hubNode -}}
+  {{- $s.SetInMap "pages" $hub.page $hub.id -}}
+  {{- range $hub.also }}{{ $s.SetInMap "pages" . $hub.id }}{{ end -}}
+  {{- range $kids -}}
+    {{- $k := merge . (dict "kind" "child" "hub" $hub.id) -}}
+    {{- $kidsAll = $kidsAll | append $k -}}
+    {{- $s.SetInMap "byId" $k.id $k -}}
+    {{- if and (not (strings.Contains $k.url "#")) (not (index ($s.Get "pages") $k.url)) }}{{ $s.SetInMap "pages" $k.url $k.id }}{{ end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $byId := $s.Get "byId" -}}
+{{- range $cfg.related -}}
+  {{- range . }}{{ if not (index $byId .) }}{{ errorf "graph.yaml: related id %q is not a node" . }}{{ end }}{{ end -}}
+{{- end -}}
+
+{{- return dict "nodes" ($nodes | append $kidsAll) "byId" $byId "pages" ($s.Get "pages") "related" $cfg.related -}}

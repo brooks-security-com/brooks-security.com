@@ -1,0 +1,21 @@
+{{- /* Every processed asset, built once per build (call through partialCached). All
+       of them are fingerprinted, so the one-year Cache-Control that hugo deploy
+       puts on css, js, and images is safe. */ -}}
+{{- $g := partialCached "graph.html" . "graph" -}}
+{{- $photo := resources.Get "images/graham.jpg" | fingerprint -}}
+{{- /* The recording's poster keeps its old URL (content links it), and pages get a smaller copy. */ -}}
+{{- $poster := resources.Get "images/presentation-poster.jpg" -}}
+{{- $_ := $poster.RelPermalink -}}
+{{- $css := resources.Get "css/site.css" | minify | fingerprint -}}
+{{- $app := slice (resources.Get "js/vendor/d3.min.js") (resources.Get "js/app.js") | resources.Concat "js/site.js" | minify | fingerprint -}}
+{{- $graph := resources.FromString "js/graph.js" (printf "window.GRAPH=%s;" (jsonify (dict "nodes" $g.nodes))) | fingerprint -}}
+{{- return dict
+  "css" $css "app" $app "graph" $graph
+  "build" (substr (sha256 (printf "%s %s %s" $css.Data.Integrity $app.Data.Integrity $graph.Data.Integrity)) 0 16)
+  "mermaid" (resources.Get "js/vendor/mermaid.min.js" | fingerprint)
+  "photo" $photo
+  "poster" ($poster.Resize "800x webp q75")
+  "avatar" ($photo.Fill "192x192 Center webp q82")
+  "icon32" ($photo.Fill "32x32 Center png")
+  "icon180" ($photo.Fill "180x180 Center png")
+-}}

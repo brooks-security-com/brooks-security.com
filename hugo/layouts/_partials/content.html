@@ -1,0 +1,5 @@
+{{- /* A page's content, with the two images the content links at full size swapped
+       for small copies: the 4.2 MB hero photo and the 1280 px video poster. */ -}}
+{{- $a := partialCached "assets.html" . "assets" -}}
+{{- $c := replace .Content `src="/grahambrooks.png"` (printf `src="%s" width="64" height="64"` $a.avatar.RelPermalink) -}}
+{{- replace $c `poster="/images/presentation-poster.jpg"` (printf `poster="%s"` $a.poster.RelPermalink) | safeHTML -}}

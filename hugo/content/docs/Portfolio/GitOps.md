@@ -26,7 +26,7 @@ Jeff Moser makes the point better than I can, in [*A Stick Figure Guide to the A
 
 | Layer | Technology |
 |---|---|
-| Content | Hugo with the `hugo-book` theme (git submodule) |
+| Content | Hugo with custom layouts |
 | Infrastructure as code | Terraform (`terraform/`) |
 | Hosting | Private S3 origin bucket behind CloudFront |
 | DNS / TLS | Route 53 + ACM (DNS-validated) |
@@ -46,7 +46,7 @@ What this isn't: no self-hosted runner, no Ansible, no servers to patch, and no 
 ├── .github/workflows/
 │   ├── infrastructure.yml      # terraform fmt → validate → plan/apply
 │   └── hugo-deploy.yml         # hugo build → deploy → CloudFront invalidation
-├── hugo/                       # site content, config, theme submodule, data/
+├── hugo/                       # site content, layouts, config, data/
 ├── terraform/
 │   ├── *.tf                    # s3, cloudfront, route53, acm, iam, sso, lambda, contact, subscribe
 │   ├── imports.tf              # import blocks adopting pre-existing resources

@@ -1,10 +1,13 @@
 baseURL = 'https://www.brooks-security.com/'
 languageCode = 'en-us'
 title = 'Graham Brooks'
-theme = 'hugo-book'
+
+# The layouts in hugo/layouts are the whole theme. Pinned to the version the
+# deploy workflow installs (HUGO_VERSION in .github/workflows/hugo-deploy.yml).
+[module.hugoVersion]
+  min = '0.160.1'
 
 [params]
-BookLogo = ''
 # Public reCAPTCHA v3 site key. Empty here on purpose: injected at build time
 # from SSM (/brooks-security.com/recaptcha/site_key) via the
 # HUGO_PARAMS_RECAPTCHASITEKEY env var (see .github/workflows/hugo-deploy.yml).
@@ -13,6 +16,10 @@ recaptchaSiteKey = ''
 
 [markup.goldmark.renderer]
 unsafe = true
+
+# Plain <pre> blocks, styled by assets/css/site.css in both themes.
+[markup.highlight]
+noClasses = false
 
 [deployment] # Deployment settings start here
   # Target configuration for S3
@@ -28,7 +35,26 @@ unsafe = true
     # are not deleted, so this glob is what keeps them alive.
     exclude = "**.mp4"
 
-  # Matchers for deployment
+  # Matchers for deployment. The first match wins, so the specific ones lead.
+  [[deployment.matchers]]
+    # hugo deploy would otherwise take the first .xml media type Hugo knows,
+    # application/rss+xml.
+    pattern = "^sitemap\\.xml$"
+    contentType = "application/xml"
+    cacheControl = "no-cache"
+
+  [[deployment.matchers]]
+    # Pages, feeds, and the plain text resume revalidate on every load (S3 ETags
+    # make that a 304), so a deploy reaches returning visitors right away. The
+    # in-place panel navigation fetches pages through the same cache.
+    pattern = "^.+\\.(html|xml|txt)$"
+    cacheControl = "no-cache"
+
+  [[deployment.matchers]]
+    # Self-hosted fonts. Versioned file names, so they can cache for a year.
+    pattern = "^.+\\.woff2$"
+    cacheControl = "max-age=31536000, no-transform, public"
+
   [[deployment.matchers]]
     # Example: Cache-Control headers for images
     pattern = "^.+\\.(jpg|jpeg|png|gif|webp|svg)$"

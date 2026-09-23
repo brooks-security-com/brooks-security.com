@@ -10,7 +10,7 @@ Everything runs on GitHub-hosted runners against AWS. There is no self-hosted ru
 
 | Layer | Technology |
 |---|---|
-| Content | Hugo with the `hugo-book` theme (git submodule) |
+| Content | Hugo with custom layouts (`hugo/layouts`), drawn as a D3 knowledge graph |
 | Infrastructure as code | Terraform (`terraform/`) |
 | Hosting | Private S3 origin bucket behind CloudFront |
 | DNS and TLS | Route 53 (`brooks-security.com`, `www`, `aws`) with ACM, DNS-validated |
@@ -27,7 +27,7 @@ Everything runs on GitHub-hosted runners against AWS. There is no self-hosted ru
 ├── .github/workflows/
 │   ├── infrastructure.yml      # terraform fmt → validate → plan/apply
 │   └── hugo-deploy.yml         # hugo build → deploy → CloudFront invalidation
-├── hugo/                       # site content, config, theme submodule, data/
+├── hugo/                       # site content, layouts, config, data/
 ├── terraform/
 │   ├── *.tf                    # s3, cloudfront, route53, acm, iam, sso, lambda, contact
 │   ├── imports.tf              # import blocks adopting pre-existing resources
@@ -101,19 +101,18 @@ Notes:
 ## Local development
 
 ```bash
-# first clone
-git clone --recurse-submodules git@github.com:LittleSeneca/brooks-security.com.git
-cd brooks-security.com
-
-# if already cloned without submodules
-git submodule update --init --recursive
-
-# run the site locally
-cd hugo
+git clone git@github.com:LittleSeneca/brooks-security.com.git
+cd brooks-security.com/hugo
 hugo server -D
 ```
 
-The `hugo-book` theme is a git submodule, so it must be initialized before the site will build locally or in CI.
+The site has no theme dependency: `hugo/layouts` is the whole presentation. Every page is a real, server-rendered page that reads fine without JavaScript. On top of that, `hugo/assets/js/app.js` draws the site as a knowledge graph with a trimmed D3 bundle and swaps pages into the side panel in place. The graph's hubs and the rules that turn content into nodes live in `hugo/data/graph.yaml`. The build fails if a heading or page it names goes missing.
+
+After a build, check that every URL the site promises still resolves:
+
+```bash
+cd hugo && hugo --minify && python3 ../scripts/check-urls.py public
+```
 
 ## Deploy credentials
 

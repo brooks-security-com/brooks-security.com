@@ -1,0 +1,11 @@
+{{ define "main" }}
+{{- $n := len .Pages }}
+<p class="eyebrow">{{ $n }} {{ cond (eq $n 1) .Data.Singular .Data.Plural }}</p>
+<h1 tabindex="-1">{{ .Title }}</h1>
+<div class="rows">
+  {{- range .Pages.ByTitle }}
+  {{- $c := len .Pages }}
+  <a class="row" href="{{ .RelPermalink }}"><b>{{ if eq $.Data.Plural "tags" }}#{{ .Data.Term }}{{ else }}{{ .LinkTitle }}{{ end }}</b><span class="end">{{ $c }} {{ cond (eq $c 1) "post" "posts" }}</span></a>
+  {{- end }}
+</div>
+{{ end }}

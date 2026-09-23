@@ -1,0 +1,4 @@
+{{ define "main" }}
+{{- $n := len .Pages }}
+{{ partial "writing.html" (dict "page" . "pages" .Pages.ByDate.Reverse "active" . "eyebrow" (printf "%s · %d %s" (.Data.Singular | strings.FirstUpper) $n (cond (eq $n 1) "post" "posts"))) }}
+{{ end }}

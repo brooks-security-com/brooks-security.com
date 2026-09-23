@@ -1,89 +1,74 @@
-<!DOCTYPE html>
-<html lang="{{ default .Site.Language.Name .Site.Language.Locale }}" dir="{{ default "ltr" .Site.Language.Direction }}">
+{{- $g := partialCached "graph.html" . "graph" -}}
+{{- $a := partialCached "assets.html" . "assets" -}}
+{{- $nid := index $g.pages .RelPermalink | default "" -}}
+{{- if in (slice "taxonomy" "term") .Kind }}{{ $nid = "writing" }}{{ end -}}
+{{- $node := index $g.byId $nid -}}
+{{- $hub := dict -}}
+{{- with $node }}{{ $hub = . }}{{ with .hub }}{{ $hub = index $g.byId . }}{{ end }}{{ end -}}
+{{- $wide := or (and .IsPage (eq .Section "posts")) (and $node $node.wide) -}}
+{{- /* Posts with a table of contents get a wider panel on big screens; decided here, on the panel's own tag, so it never resizes mid-load. */ -}}
+{{- $toc := and .IsPage (eq .Section "posts") (ge (len (findRE `<li>` .TableOfContents)) 3) -}}
+{{- $color := cond (isset $hub "slot") (printf "var(--c%v)" $hub.slot) "var(--accent)" -}}
+{{- $hubs := where $g.nodes "kind" "cat" -}}
+{{- /* Term pages fade the posts outside the term, the way the category filter does. */ -}}
+{{- $filter := slice -}}
+{{- if eq .Kind "term" }}{{ range .Pages }}{{ $filter = $filter | append (printf "writing.%s" (path.Base (strings.TrimSuffix "/" .RelPermalink))) }}{{ end }}{{ end -}}
+<!doctype html>
+<html lang="{{ site.Language.LanguageCode | default "en-us" }}" data-build="{{ $a.build }}" data-mermaid="{{ $a.mermaid.RelPermalink }}" data-photo="{{ $a.avatar.RelPermalink }}">
 <head>
-  {{ partial "docs/html-head" . }}
-  {{ partial "docs/inject/head" . }}
+{{ partial "head.html" . }}
 </head>
-<body dir="{{ default "ltr" .Site.Language.Direction }}" class="book-kind-{{ .Kind }} book-type-{{ .Type }}{{ with .Layout }} book-layout-{{ . }}{{ end }}">
-  <input type="checkbox" class="hidden toggle" id="toc-control" />
-  {{ partial "docs/top-nav" . }}
-  <main class="container flex">
-    <div class="book-page">
-      <header class="book-header hidden">
-        {{ template "header" . }}
-      </header>
-
-      {{ partial "docs/inject/content-before" . }}
-      {{ template "main" . }}
-      {{ partial "docs/inject/content-after" . }}
-
-      <footer class="book-footer">
-        {{ template "footer" . }}
-        {{ template "comments" . }}
-        {{ partial "docs/inject/footer" . }}
-        {{ template "copyright" . }}
-        {{ template "clipboard" . }}
-      </footer>
+<body class="panel-open">
+<a class="skip" href="#pane">Skip to content</a>
+<svg class="graph" id="graph" role="group" aria-label="Graph of the site: eight categories around Graham's photo, with every post, build, role, and credential as a node">
+  <defs><clipPath id="me-clip"><circle r="42"/></clipPath>
+    {{- range $k, $v := partialCached "icons.html" "icons" }}<symbol id="i-{{ $k }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{{ $v | safeHTML }}</symbol>{{ end -}}
+  </defs>
+  <g id="vp"><g id="orbits"></g><g id="links"></g><g id="nodes"></g></g>
+</svg>
+<header class="brand"><b><a href="/">{{ site.Title }}</a></b><span>{{ site.Home.Title }}</span><span class="status"><i></i>Open to SE and SA roles</span></header>
+<div class="tools">
+  <button class="tb" type="button" data-search aria-label="Search" aria-keyshortcuts="Meta+K Control+K /">{{ partial "icon.html" "search" }}<span class="t">Search</span><kbd data-kbd>⌘K</kbd></button>
+  <button class="tb" type="button" id="fit" aria-label="Fit the whole graph">{{ partial "icon.html" "fit" }}<span class="t">Fit</span></button>
+  <button class="tb theme" type="button" id="theme" aria-label="Switch theme">{{ partial "icon.html" (dict "name" "moon" "class" "i moon") }}{{ partial "icon.html" (dict "name" "sun" "class" "i sun") }}</button>
+</div>
+<section class="intro gone" id="intro" aria-label="Introduction" inert>
+  <p class="intro-h">Your hardest technical buyer <em>used to be me.</em></p>
+  <p>This is the whole site as a graph. Every node opens a part of my work. Start with my face, or pick a category.</p>
+  <div class="acts"><a class="btn primary" href="/">About me</a><a class="btn" href="/docs/contact/">Get in touch</a><a class="btn" href="/resume/">Resume</a></div>
+</section>
+<nav class="legend" id="legend" aria-label="Categories">
+  {{- range $hubs }}<a href="{{ .url }}" data-id="{{ .id }}" style="--c:var(--c{{ .slot }})"{{ if eq $hub.id .id }} aria-current="true"{{ end }}><i></i>{{ .label }}<span>{{ .count }}</span></a>{{ end -}}
+</nav>
+<p class="hint" aria-hidden="true">Scroll to zoom &middot; drag to rearrange &middot; <kbd data-kbd>⌘K</kbd> to search</p>
+<main class="panel open{{ if $wide }} wide{{ end }}{{ if $toc }} toc{{ end }}" id="panel">
+  <button class="x" id="close" type="button" aria-label="Close">{{ partial "icon.html" "x" }}</button>
+  <div class="pbody" id="pbody">
+    <div class="pane" id="pane" tabindex="-1" data-node="{{ $nid }}" data-path="{{ .RelPermalink }}"{{ if $wide }} data-wide{{ end }}{{ if $toc }} data-toc{{ end }} style="--c:{{ $color | safeCSS }}"{{ if eq $nid "writing" }} data-view="writing"{{ end }}{{ with $filter }} data-filter="{{ delimit . " " }}"{{ end }}>
+      {{ partial "pane-head.html" (dict "page" . "node" $node "hub" $hub "color" $color) }}
+      {{ block "main" . }}{{ end }}
     </div>
-
-    {{ template "toc-container" . }}
-  </main>
-
-  {{ partial "docs/inject/body" . }}
+  </div>
+</main>
+<div class="tip" id="tip" aria-hidden="true"></div>
+<nav class="sitemap" id="sitemap" aria-label="Every page on the graph">
+  <h2>Every page on the graph</h2>
+  <ul>
+    <li><a href="/">About {{ site.Title }}</a></li>
+    {{- range $h := $hubs }}
+    <li><a href="{{ $h.url }}">{{ $h.label }}</a><ul>
+      {{- range where $g.nodes "hub" $h.id }}<li><a href="{{ .match | default .url }}">{{ .label }}</a></li>{{ end -}}
+    </ul></li>
+    {{- end }}
+  </ul>
+</nav>
+<dialog class="palette" id="palette" aria-label="Search">
+  <div class="pal">
+    <div class="pal-in">{{ partial "icon.html" "search" }}<input id="pal-q" placeholder="Search the graph" autocomplete="off" spellcheck="false" role="combobox" aria-label="Search the graph" aria-controls="pal-list" aria-expanded="true" aria-autocomplete="list"></div>
+    <ul class="pal-list" id="pal-list" role="listbox" aria-label="Results"></ul>
+    <p class="sr" id="pal-count" role="status" aria-live="polite"></p>
+    <div class="pal-foot" aria-hidden="true"><span><kbd>&uarr;</kbd> <kbd>&darr;</kbd> move</span><span><kbd>&crarr;</kbd> open</span><span><kbd>esc</kbd> close</span></div>
+  </div>
+</dialog>
 </body>
 </html>
-
-{{ define "header" }}
-  {{ partial "docs/header" . }}
-  {{ if partial "docs/toc-show" . }}
-  <aside class="hidden">
-    {{ template "toc" . }}
-  </aside>
-  {{ end }}
-{{ end }}
-
-{{ define "footer" }}
-  {{ partial "docs/footer" . }}
-{{ end }}
-
-{{ define "clipboard" }}
-  {{ with resources.Get "clipboard.js" | resources.Minify }}
-    <script>{{ .Content | safeJS }}</script>
-  {{ end }}
-{{ end }}
-
-{{ define "copyright" }}
-  {{ if or .Site.Copyright .Params.Copyright }}
-  <div class="book-copyright flex justify-center">
-    {{ partial "docs/copyright" . }}
-  </div>
-  {{ end }}
-{{ end }}
-
-{{ define "comments" }}
-  {{ if and .Content (default true (default .Site.Params.BookComments .Params.BookComments)) }}
-  <div class="book-comments">
-    {{- partial "docs/comments" . -}}
-  </div>
-  {{ end }}
-{{ end }}
-
-{{ define "main" }}
-  <article class="markdown book-article">
-    {{- .Content -}}
-  </article>
-{{ end }}
-
-{{ define "toc-container" }}
-  {{ if partial "docs/toc-show" . }}
-  <aside class="book-toc">
-    <div class="book-toc-content">
-      {{ template "toc" . }}
-    </div>
-  </aside>
-  {{ end }}
-{{ end }}
-
-{{ define "toc" }}
-  {{ partial "docs/toc" . }}
-{{ end }}

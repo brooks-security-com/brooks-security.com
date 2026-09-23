@@ -1,0 +1,24 @@
+{{- $a := partialCached "assets.html" . "assets" -}}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{ with .Title }}{{ . }} | {{ end }}{{ site.Title }}</title>
+<meta name="description" content="{{ or .Description .Summary | plainify | htmlUnescape | strings.TrimSpace }}">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F5F5F7">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0C0C0F">
+<meta name="color-scheme" content="light dark">
+{{ partial "opengraph.html" . }}
+<meta property="og:image" content="{{ $a.photo.Permalink }}">
+{{ partial "schema.html" . }}
+<link rel="canonical" href="{{ .Permalink }}">
+{{- with .OutputFormats.Get "rss" }}
+<link rel="alternate" type="application/rss+xml" href="{{ .Permalink }}" title="{{ site.Title }}">
+{{- end }}
+<link rel="icon" href="{{ $a.icon32.RelPermalink }}" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="{{ $a.icon180.RelPermalink }}">
+<link rel="preload" href="/fonts/geist-v5-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="{{ $a.css.RelPermalink }}">
+{{- /* Before first paint: mark JS as available (the panel layout depends on it) and
+       apply a saved theme, so neither flashes. */}}
+<script>(function(d){d.classList.add('js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark'){d.dataset.theme=t;document.querySelectorAll('meta[name=theme-color]').forEach(function(m){m.content=t==='dark'?'#0C0C0F':'#F5F5F7'})}}catch(e){}})(document.documentElement)</script>
+<script defer src="{{ $a.graph.RelPermalink }}"></script>
+<script defer src="{{ $a.app.RelPermalink }}"></script>

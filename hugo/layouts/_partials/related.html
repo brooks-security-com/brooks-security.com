@@ -1,0 +1,20 @@
+{{- /* Related items in other clusters (graph.yaml related), for this page and the
+       anchor nodes on it. Listed here, never drawn as lines in the graph. */ -}}
+{{- $g := partialCached "graph.html" . "graph" -}}
+{{- $path := .RelPermalink -}}
+{{- $mine := slice -}}
+{{- range $g.nodes }}{{ if eq (index (split .url "#") 0) $path }}{{ $mine = $mine | append .id }}{{ end }}{{ end -}}
+{{- $out := slice -}}
+{{- range $g.related -}}
+  {{- $a := index . 0 }}{{ $b := index . 1 -}}
+  {{- if and (in $mine $a) (not (in $mine $b)) }}{{ $out = $out | append $b }}{{ end -}}
+  {{- if and (in $mine $b) (not (in $mine $a)) }}{{ $out = $out | append $a }}{{ end -}}
+{{- end -}}
+{{- with $out | uniq }}
+<h2 class="sec">Related</h2>
+<div class="chips related">
+  {{- range . }}{{ $n := index $g.byId . }}{{ $h := $n }}{{ with $n.hub }}{{ $h = index $g.byId . }}{{ end -}}
+  <a class="conn" href="{{ $n.url }}" style="--c:var(--c{{ $h.slot }})"><i></i><span>{{ $n.label }}</span></a>
+  {{- end }}
+</div>
+{{- end -}}

@@ -1,7 +1,6 @@
 public/
-book.css*
-*book.scss*
-book.js*
+# Hugo's image and asset cache, rebuilt on every build
+hugo/resources/
 
 # Terraform: generated Lambda deployment artifacts
 terraform/files/contrib-dispatch.zip

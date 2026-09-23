@@ -1,0 +1,19 @@
+{{- /* The Writing panel: /posts/, and every category and tag page as Writing filtered.
+       The filters are real links, so they work without JS; with JS they swap in place.
+       Pass dict "page" . "pages" <posts to list> "eyebrow" <text> "active" <term page or nil>. */ -}}
+{{- $all := (where site.RegularPages "Section" "posts").ByDate.Reverse -}}
+{{- $active := .active -}}
+{{- $cats := slice -}}
+{{- range $all }}{{ range first 1 (.GetTerms "categories") }}{{ if not (in $cats .RelPermalink) }}{{ $cats = $cats | append .RelPermalink }}{{ end }}{{ end }}{{ end -}}
+{{- with .eyebrow }}<p class="eyebrow">{{ . }}</p>{{ end }}
+<h1 tabindex="-1">{{ .page.Title }}</h1>
+<nav class="filters" id="cats" aria-label="Filter the writing">
+  <a href="/posts/"{{ if not $active }} aria-current="page"{{ end }}>All</a>
+  {{- range $cats }}{{ $t := site.GetPage . }}<a href="{{ . }}"{{ if and $active (eq $active.RelPermalink .) }} aria-current="page"{{ end }}>{{ $t.LinkTitle }}</a>{{ end -}}
+  {{- with $active }}{{ if eq .Data.Plural "tags" }}<a href="{{ .RelPermalink }}" aria-current="page">#{{ .Data.Term }}</a>{{ end }}{{ end -}}
+</nav>
+<div class="rows" id="plist">
+  {{- range .pages }}
+  <a class="row" href="{{ .RelPermalink }}"><b>{{ .Title }}</b><small>{{ range first 1 (.GetTerms "categories") }}{{ .LinkTitle }} &middot; {{ end }}{{ .ReadingTime }} min read</small><span class="end">{{ .Date.Format "Jan 2006" }}</span></a>
+  {{- end }}
+</div>

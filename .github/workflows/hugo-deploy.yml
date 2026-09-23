@@ -25,9 +25,9 @@ permissions:
   contents: read
 
 env:
-  # Must be >= 0.158.0 for hugo-book (shortcodes under `layouts/_shortcodes/`).
-  # We pull the `extended_withdeploy` edition: extended for the theme's SCSS,
-  # withdeploy for the `hugo deploy` subcommand (split out in 0.159.2).
+  # Must match [module.hugoVersion] min in hugo/hugo.toml.
+  # We pull the `extended_withdeploy` edition for the `hugo deploy` subcommand
+  # (split out in 0.159.2). The layouts no longer need the extended features.
   HUGO_VERSION: '0.160.1'
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -44,10 +44,9 @@ jobs:
     name: 'Hugo Build'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout (with theme submodule)
+      - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: recursive
           fetch-depth: 0
 
       - name: Detect Hugo changes
@@ -159,10 +158,9 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     environment: production
     steps:
-      - name: Checkout (with theme submodule)
+      - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: recursive
           fetch-depth: 0
 
       - name: Detect Hugo changes
