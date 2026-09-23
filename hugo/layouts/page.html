@@ -1,0 +1,11 @@
+{{ define "main" }}
+{{- if eq .Section "posts" }}
+{{ partial "post.html" . }}
+{{- else }}
+{{ partial "toc.html" (dict "page" .) }}
+<div class="prose">
+{{ partial "content.html" . }}
+</div>
+{{ partial "related.html" . }}
+{{- end }}
+{{ end }}

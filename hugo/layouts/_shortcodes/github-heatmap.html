@@ -1,0 +1,42 @@
+{{/*
+  github-heatmap: a GitHub-style contribution calendar as a static inline SVG.
+  No client-side JS, no third-party requests. Colors come from the site's
+  --hm0 to --hm4 ramp (assets/css/site.css), so it follows the theme.
+
+  Data source: hugo.Data.contributions (hugo/data/contributions.json), which is
+  regenerated at build time from the GitHub GraphQL contributionsCollection API
+  (see .github/workflows/hugo-deploy.yml). Shape:
+
+    {
+      "total": 1234,
+      "weeks": [
+        { "days": [ { "date": "2025-06-08", "count": 3,
+                      "level": "SECOND_QUARTILE", "weekday": 0 }, ... ] },
+        ...
+      ]
+    }
+
+  Fail-soft: if the data file is missing or empty (for example a fresh local
+  build before the first nightly run) it renders a notice instead of a grid.
+*/}}
+{{- $data := hugo.Data.contributions -}}
+{{- if and $data $data.weeks (gt (len $data.weeks) 0) -}}
+  {{- $cell := 11 }}{{ $gap := 3 }}{{ $step := add $cell $gap -}}
+  {{- $width := sub (mul (len $data.weeks) $step) $gap -}}
+  {{- $height := sub (mul 7 $step) $gap -}}
+  {{- $levels := dict "NONE" 0 "FIRST_QUARTILE" 1 "SECOND_QUARTILE" 2 "THIRD_QUARTILE" 3 "FOURTH_QUARTILE" 4 -}}
+<div class="gh-heatmap">
+  <p class="hm-total"><strong>{{ lang.FormatNumber 0 $data.total }}</strong> contributions on
+  <a href="https://github.com/littleseneca" rel="noopener">GitHub</a> in the last year</p>
+  <svg class="hm" viewBox="0 0 {{ $width }} {{ $height }}" role="img" aria-label="{{ $data.total }} GitHub contributions in the last year">
+    {{- range $w, $week := $data.weeks -}}
+      {{- range $week.days -}}
+      <rect x="{{ mul $w $step }}" y="{{ mul .weekday $step }}" width="{{ $cell }}" height="{{ $cell }}" rx="2" class="hm-l{{ index $levels .level | default 0 }}"><title>{{ .count }} contribution{{ if ne (int .count) 1 }}s{{ end }} on {{ .date }}</title></rect>
+      {{- end -}}
+    {{- end -}}
+  </svg>
+  <div class="hm-legend" aria-hidden="true"><span>Less</span><i class="hm-l0"></i><i class="hm-l1"></i><i class="hm-l2"></i><i class="hm-l3"></i><i class="hm-l4"></i><span>More</span></div>
+</div>
+{{- else -}}
+<p class="gh-heatmap gh-heatmap--empty">GitHub activity will appear after the next nightly build.</p>
+{{- end -}}

@@ -1,0 +1,10 @@
+{{- /* Repository badges from img.shields.io become a local GitHub chip with the
+       badge's own alt text, so pages make no third-party image requests. Every
+       other image renders as usual, lazily. */ -}}
+{{- $u := urls.Parse .Destination -}}
+{{- if eq $u.Host "img.shields.io" -}}
+<span class="repo-badge">{{ partial "icon.html" "github" }}{{ .PlainText }}</span>
+{{- else -}}
+<img src="{{ .Destination | safeURL }}" alt="{{ .PlainText }}"{{ with .Title }} title="{{ . }}"{{ end }} loading="lazy" decoding="async">
+{{- end -}}
+{{- /**/ -}}

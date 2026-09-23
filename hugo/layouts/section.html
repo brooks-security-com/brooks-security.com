@@ -1,0 +1,20 @@
+{{ define "main" }}
+{{- if eq .Section "posts" }}
+{{ partial "writing.html" (dict "page" . "pages" (where site.RegularPages "Section" "posts").ByDate.Reverse) }}
+{{- /* The old theme paged the list at 10 posts. Keep its page URLs alive as redirects home to /posts/. */}}
+{{- $stub := printf `<!DOCTYPE html><html lang="en-us"><head><title>%s</title><link rel="canonical" href="%s"><meta name="robots" content="noindex"><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=%s"></head></html>` .Permalink .Permalink .RelPermalink }}
+{{- range slice "page/1" "page/2" }}{{ $_ := (resources.FromString (printf "posts/%s/index.html" .) $stub).RelPermalink }}{{ end }}
+{{- else if .Content }}
+<div class="prose">
+{{ partial "content.html" . }}
+</div>
+{{ partial "related.html" . }}
+{{- else }}
+<h1 tabindex="-1">{{ .Title }}</h1>
+<div class="rows">
+  {{- range .Pages }}
+  <a class="row" href="{{ .RelPermalink }}"><b>{{ .Title }}</b>{{ with .Description }}<small>{{ . }}</small>{{ end }}</a>
+  {{- end }}
+</div>
+{{- end }}
+{{ end }}

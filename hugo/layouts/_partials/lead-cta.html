@@ -1,0 +1,14 @@
+{{/* Reusable author card. Rendered at the end of every blog post by
+     layouts/_partials/post.html. Edit the copy or the targets here in one place. */}}
+{{- $a := partialCached "assets.html" . "assets" }}
+<aside class="lead-cta author">
+  <img src="{{ $a.avatar.RelPermalink }}" alt="" width="44" height="44" loading="lazy">
+  <div>
+    <h3>Who wrote this</h3>
+    <p>Graham Brooks. CISSP, AWS Certified Solutions Architect, RHCE. Three years as a sales engineer and solutions architect in security software, then in-house at AvatarFleet building the security program: SOC 2 Type 1 and Type 2 with zero adverse findings, controls written in Terraform. I am looking for a Sales Engineering or Solutions Architecture role in platform security, blue-team tooling, or cloud infrastructure.</p>
+    <div class="acts">
+      <a class="btn-primary" href="/docs/curriculum-vitae/work-experience/">Read the CV &rarr;</a>
+      <a class="btn-secondary" href="/docs/contact/">Get in touch</a>
+    </div>
+  </div>
+</aside>

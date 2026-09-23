@@ -1,0 +1,140 @@
+# The knowledge graph. Nodes, labels, and dates come from hugo/content; this file
+# only says where each hub lives, how its children are found, and how they look.
+# layouts/_partials/graph.html reads it and fails the build if a page or a heading
+# id below stops existing, so renaming a heading can't quietly break the graph.
+#
+# Ring order is palette slot order: neighbors on the ring use adjacent slots of the
+# color-blind-safe categorical palette (--c1 to --c7 in assets/css/site.css).
+# Contact stays neutral (--c0). If hubs are added or removed, keep the slots
+# consecutive and re-check the palette against both theme backgrounds.
+#
+# items:
+#   posts                  every post, newest first
+#   {level: N, ...}        every heading of that level on the hub page
+#   [{page, heading}, ...] explicit list; a page with one entry is its own node,
+#                          a page with several gets one anchor node per heading
+#   links                  the "- **Name:** [text](href)" list on the hub page
+# short: shorter graph labels, keyed by heading id (graph labels only; the page,
+# tooltip, and search keep the full heading). cut: max graph label length.
+
+hubs:
+  - id: writing
+    label: Writing
+    icon: pen
+    slot: 1
+    page: /posts/
+    noun: [post, posts]
+    items: posts
+
+  - id: builds
+    label: Builds
+    icon: box
+    slot: 2
+    page: /docs/portfolio/
+    noun: [build, builds]
+    cut: 26
+    items:
+      - { page: /docs/portfolio/gitops/, heading: brooks-securitycom, featured: true, icon: git }
+      - { page: /docs/portfolio/security/, heading: local-nvd-database, featured: true, icon: db }
+      - { page: /docs/portfolio/automation/, heading: jarvis---executive-summary-agent, featured: true, icon: code }
+      - { page: /docs/portfolio/automation/, heading: hard-drive-auditor, icon: code }
+      - { page: /docs/portfolio/automation/, heading: clonezilla-image-builder, icon: code }
+      - { page: /docs/portfolio/ai-agents/, heading: agentic-skills, icon: sparkle }
+      - { page: /docs/portfolio/x-as-code/, heading: local-kubernetes-cluster---terraform--ansible, icon: layers }
+      - { page: /docs/portfolio/x-as-code/, heading: digital-ocean-rhce-lab---terraform--ansible, icon: layers }
+
+  - id: credentials
+    label: Credentials
+    icon: award
+    slot: 3
+    page: /docs/curriculum-vitae/credentials/
+    noun: [credential, credentials]
+    items: { level: 3, icon: award, degreeIcon: cap }
+
+  - id: experience
+    label: Experience
+    icon: briefcase
+    slot: 4
+    page: /docs/curriculum-vitae/work-experience/
+    also: [/docs/curriculum-vitae/]
+    noun: [role and a resume, roles and a resume]
+    cut: 24
+    items: { level: 3, icon: briefcase }
+    extra:
+      - { page: /resume/, meta: Print or plain text, icon: file }
+
+  - id: talks
+    label: Talks
+    icon: mic
+    slot: 5
+    page: /docs/portfolio/speaking/
+    noun: [section, sections]
+    cut: 32
+    items:
+      level: 2
+      icon: mic
+      icons: { spotlight-realtime-management: play, rooms-i-have-presented-in: users }
+      meta:
+        spotlight-realtime-management: Recording
+        rooms-i-have-presented-in: Stages, workshops, and seminars
+
+  - id: poc
+    label: POC playbook
+    icon: clipboard
+    slot: 6
+    page: /docs/portfolio/running-a-poc/
+    noun: [step, steps]
+    cut: 32
+    items: { level: 2, numbered: true }
+
+  - id: stack
+    label: Stack
+    icon: layers
+    slot: 7
+    page: /docs/curriculum-vitae/platforms/
+    noun: [platform group, platform groups]
+    items:
+      level: 2
+      skip: [github-activity]
+      short:
+        management-platforms--cloud-providers: Cloud Providers
+        code-management-platforms: Code Management
+        secrets-management-platforms: Secrets Management
+        inference-and-language-models: Language Models
+      icons:
+        management-platforms--cloud-providers: cloud
+        container-platforms: box
+        code-management-platforms: git
+        cicd-platforms: github
+        configuration-as-code: sliders
+        infrastructure-as-code: layers
+        database-platforms: db
+        secrets-management-platforms: key
+        load-balancers: network
+        scripting-languages: code
+        inference-and-language-models: sparkle
+        operating-systems: terminal
+
+  - id: contact
+    label: Contact
+    icon: mail
+    slot: 0
+    page: /docs/contact/
+    noun: [way to reach me, ways to reach me]
+    items: links
+    icons: { linkedin: linkedin, github: github }
+
+# Related items in different clusters: listed as Related links on each other's
+# pages and never drawn as lines. Ids are hub.slug (posts), hub.heading-id, or a
+# bare hub id.
+related:
+  - [writing.spec-driven-development, builds.agentic-skills]
+  - [writing.ai-agents-are-writing-my-code-now, builds.agentic-skills]
+  - [writing.why-ansible-outshines-chef-and-puppet-for-configuration-management, stack.configuration-as-code]
+  - [writing.the-strength-of-python-for-linux-automation, stack.scripting-languages]
+  - [writing.why-patching-servers-manually-is-not-safer, experience.senior-security-solutions-architect-syxsense-inc]
+  - [writing.the-profitability-of-honesty-a-practical-approach-to-ethical-business, talks.rooms-i-have-presented-in]
+  - [writing.grand-goals-for-2024, credentials]
+  - [talks.rooms-i-have-presented-in, experience.lead-solutions-architect-syxsense-inc]
+  - [poc.the-security-review, experience.senior-security--systems-engineer-avatarfleet]
+  - [builds.digital-ocean-rhce-lab---terraform--ansible, credentials.red-hat-certified-engineer-rhce]

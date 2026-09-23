@@ -1,0 +1,14 @@
+{{- /* "On this page", for pages with enough headings to need one. Pass dict "page" . "open" bool.
+       Posts open it: on wide screens it sits in a column to the right of the text. */ -}}
+{{- $p := .page -}}
+{{- $toc := $p.TableOfContents -}}
+{{- if and (ge (len (findRE `<li>` $toc)) 3) (ne $p.Params.bookToc false) }}
+<details class="toc"{{ if .open }} open{{ end }}>
+  <summary>On this page</summary>
+  {{ $toc }}
+</details>
+{{- if .open }}
+{{- /* Open only where it gets its own column (wide screens); closed above the text elsewhere. */}}
+<script>innerWidth<1280&&(document.currentScript.previousElementSibling.open=false)</script>
+{{- end }}
+{{- end -}}

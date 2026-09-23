@@ -1,0 +1,17 @@
+{{- /* Panel header: the hub's icon and a breadcrumb that steps back out.
+       "Graph" closes the panel when JS runs, and goes home without it. */ -}}
+{{- $p := .page }}{{ $n := .node }}{{ $h := .hub -}}
+{{- $isHub := and (eq $h.kind "cat") (eq $h.url $p.RelPermalink) -}}
+<header class="ph">
+  <span class="pic">{{ partial "icon.html" (cond (and $n (eq $n.id "me")) "user" ($h.icon | default "file")) }}</span>
+  <nav class="crumb" aria-label="Breadcrumb">
+    <a href="/" data-graph>Graph</a><span aria-hidden="true">/</span>
+    {{- if and $n (eq $n.id "me") }}<b aria-current="page">About</b>
+    {{- else if $isHub }}<b aria-current="page">{{ $h.label }}</b>
+    {{- else }}{{ with $h.url }}<a href="{{ . }}">{{ $h.label }}</a><span aria-hidden="true">/</span>{{ end }}<b aria-current="page">{{ $p.Title }}</b>
+    {{- end }}
+  </nav>
+</header>
+{{- if $isHub }}
+<p class="eyebrow">{{ $h.meta }}</p>
+{{- end }}
