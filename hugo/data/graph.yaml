@@ -122,7 +122,7 @@ hubs:
     page: /docs/contact/
     noun: [way to reach me, ways to reach me]
     items: links
-    icons: { email: mail, linkedin: linkedin, github: github }
+    icons: { linkedin: linkedin, github: github }
 
 # Related items in different clusters: listed as Related links on each other's
 # pages and never drawn as lines. Ids are hub.slug (posts), hub.heading-id, or a

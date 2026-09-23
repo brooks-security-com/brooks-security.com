@@ -8,7 +8,7 @@ bookToc: false
 <div class="home-hero">
   <img class="home-hero__photo" src="/grahambrooks.png" alt="Graham Brooks" />
   <div class="home-hero__text">
-    <h1 class="home-hero__title">Your hardest technical buyer <em>used to be me.</em></h1>
+    <h1 class="home-hero__title">I have worked <em>both sides of the security sale.</em></h1>
     <p class="home-hero__lead">I am a sales engineer and solutions architect, ten years into a career in IT. I have worked both ends of the security sales cycle.</p>
     <p class="home-hero__lead">I have been the security engineer writing the RFP, and the vendor engineer answering it. I have sent the security questionnaire, and I have sat down and filled one in. I have run the proof of concept as the customer, deciding whether a tool survived contact with our environment, and as the vendor, with the deal riding on the result.</p>
     <p class="home-hero__lead">So when I am in front of a customer's security team, I am not guessing at what they need to hear. I still write those questions: I vetoed a vendor recently for turning up without a SOC 2 Type 2. I know what wins deals, how to position a product, and I know how to hunt for the yes but find the quick no.</p>

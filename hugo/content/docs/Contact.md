@@ -11,7 +11,6 @@ If you are hiring for that seat, send a note about the product and the team and 
 
 Everything below lands in my inbox. I read all of it and usually reply within a couple of business days.
 
-- **Email:** [graham@brooks-security.com](mailto:graham@brooks-security.com)
 - **LinkedIn:** [linkedin.com/in/grahamwbrooks](https://linkedin.com/in/grahamwbrooks/)
 - **GitHub:** [github.com/littleseneca](https://github.com/littleseneca)
 

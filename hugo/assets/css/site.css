@@ -336,6 +336,7 @@ a:hover > .repo-badge { border-color: var(--accent-line); }
 .contact-status.is-ok { color: var(--ok); }
 .contact-status.is-pending { color: var(--muted); }
 .contact-status.is-error { color: var(--err); }
+.contact-noscript { margin-top: 18px; padding: 11px 14px; border-radius: 10px; background: var(--panel-2); border: 1px solid var(--line); color: var(--ink-2); font-size: 13px; }
 .contact-form-dev-notice { margin-top: 18px; padding: 11px 14px; border-radius: 10px; background: var(--warn-soft); color: var(--warn); font-size: 13px; }
 .contact-form-dev-notice a, .contact-form-dev-notice strong, .contact-form-dev-notice code { color: inherit; }
 .contact-form-dev-notice code { background: color-mix(in srgb, var(--warn) 12%, transparent); }

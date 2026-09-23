@@ -33,7 +33,7 @@
   <button class="tb theme" type="button" id="theme" aria-label="Switch theme">{{ partial "icon.html" (dict "name" "moon" "class" "i moon") }}{{ partial "icon.html" (dict "name" "sun" "class" "i sun") }}</button>
 </div>
 <section class="intro gone" id="intro" aria-label="Introduction" inert>
-  <p class="intro-h">Your hardest technical buyer <em>used to be me.</em></p>
+  <p class="intro-h">{{ with findRESubmatch `<h1 class="home-hero__title">([\s\S]*?)</h1>` site.Home.Content 1 }}{{ index (index . 0) 1 | safeHTML }}{{ end }}</p>
   <p>This is the whole site as a graph. Every node opens a part of my work. Start with my face, or pick a category.</p>
   <div class="acts"><a class="btn primary" href="/">About me</a><a class="btn" href="/docs/contact/">Get in touch</a><a class="btn" href="/resume/">Resume</a></div>
 </section>

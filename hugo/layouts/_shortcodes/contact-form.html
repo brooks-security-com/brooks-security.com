@@ -1,8 +1,8 @@
 {{- /* Markup only. The submit logic lives in assets/js/app.js (bindContact), so it
        also runs when the Contact panel is swapped in without a page load. It posts
        to /api/contact with a reCAPTCHA Enterprise token and the honeypot, exactly as
-       before. Without JS the form is hidden (it can't submit) and the email link
-       above it is the way in. */ -}}
+       before. Without JS the form is hidden (it can't submit) and a note points
+       to LinkedIn instead. */ -}}
 {{- $siteKey := site.Params.recaptchaSiteKey -}}
 {{- if $siteKey -}}
 <form id="contact-form" class="contact-form" data-sitekey="{{ $siteKey }}" novalidate>
@@ -39,6 +39,7 @@
   </div>
   <p class="contact-status" role="status" aria-live="polite"></p>
 </form>
+<noscript><p class="contact-noscript">The contact form needs JavaScript to send a message. With it turned off, LinkedIn is the best way to reach me.</p></noscript>
 {{- else -}}
 <div class="contact-form-dev-notice">
   <p><strong>Contact form unavailable in this build.</strong> The reCAPTCHA site key
