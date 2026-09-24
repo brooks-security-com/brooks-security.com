@@ -119,6 +119,29 @@ Expected:
 If `MFADelete` is missing, the call ran without root credentials or the code was
 rejected. It fails silently in that direction, so always read the response.
 
+### Confirm Terraform is not fighting it
+
+Do not skip this. The initial plan shows `mfa_delete = (known after apply)`,
+which means the provider will read the setting from the API and *may* want to
+reconcile it. `ignore_changes` is what prevents that, and nested-attribute
+ignores are a known-fragile area of Terraform, so assert the behaviour rather
+than trusting it.
+
+After enabling MFA Delete, run a plan locally and confirm it is clean:
+
+```bash
+cd terraform
+terraform plan -no-color | tail -5
+```
+
+Expected: `No changes.` If it instead proposes changing `mfa_delete` back to
+`Disabled`, the ignore is not taking effect and the resource needs restructuring
+(for example, dropping `aws_s3_bucket_versioning` for this bucket and managing
+versioning by hand alongside MFA Delete).
+
+The same check runs in CI on any pull request that touches `terraform/`, so a
+drift proposal would also surface there.
+
 ## Known limitation: no lifecycle rules
 
 **MFA Delete cannot be used with lifecycle configurations.** If noncurrent
