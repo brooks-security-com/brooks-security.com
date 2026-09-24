@@ -10,6 +10,10 @@ output "s3_bucket_name" {
   value = aws_s3_bucket.origin.id
 }
 
+output "video_archive_bucket_name" {
+  value = aws_s3_bucket.video_archive.id
+}
+
 output "acm_certificate_arn" {
   value = aws_acm_certificate.cert.arn
 }
