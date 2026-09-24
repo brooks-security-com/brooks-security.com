@@ -36,18 +36,23 @@ resource "aws_iam_role" "github_deploy" {
           # Use StringEquals (not StringLike) since the value is an exact match —
           # no wildcards, so the stricter operator is both safer and clearer.
           #
-          # This previously said `refs/heads/master`. The repo's default branch is
-          # `main`, and there is no `master`, so the condition never matched and
-          # the role could not be assumed by anything. Neither workflow used it
-          # either — both authenticated with static keys — which is why the
-          # breakage went unnoticed.
+          # This previously said `refs/heads/master` AND named the wrong owner.
+          # Two separate bugs, either of which alone made the role unassumable:
+          #
+          #   - the repo's default branch is `main`; there is no `master`
+          #   - the repo's canonical full name is `brooks-security-com/...`
+          #     (an org). `LittleSeneca/brooks-security.com` is only a redirect,
+          #     and the OIDC `sub` claim carries the canonical name.
+          #
+          # Neither workflow used the role either — both authenticated with
+          # static keys — which is why a doubly-broken trust went unnoticed.
           #
           # Consequence of the exact match: a pull_request run has
           # `refs/pull/N/merge` and therefore cannot assume this role. That is
           # intended. The PR-time steps that read SSM are fail-soft by design, so
           # PR builds still pass without it; only push-to-main and
           # workflow_dispatch assume the role.
-          "token.actions.githubusercontent.com:sub" = "repo:LittleSeneca/brooks-security.com:ref:refs/heads/main"
+          "token.actions.githubusercontent.com:sub" = "repo:brooks-security-com/brooks-security.com:ref:refs/heads/main"
         }
       }
     }]
