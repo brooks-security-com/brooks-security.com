@@ -109,6 +109,12 @@ jobs:
         run: terraform validate -no-color
         working-directory: terraform
 
+      # The AIGP sync Lambda's merge is the one place a bug erases progress on
+      # every device, so its stdlib self-check gates plan and apply like validate.
+      - name: Lambda self-check
+        if: steps.filter.outputs.terraform == 'true'
+        run: python3 -m unittest discover -s terraform/files/aigp-sync
+
   terraform-plan:
     name: 'Terraform Plan'
     runs-on: ubuntu-latest
