@@ -4,11 +4,13 @@
 # private repo). S3 origin, private, reachable only by CloudFront via OAC, behind
 # its own distribution with its own ACM cert and A/AAAA alias records.
 #
-# NO COMPUTE. The app is seven static files (study.html plus JS data and vendored
-# d3/marked); there is no API, no server-side rendering, and therefore no Lambda,
-# no Lambda@Edge and no CloudFront Function. If that ever changes, the house rule
-# is CloudFront Functions first, Lambda@Edge only if a CloudFront Function
-# genuinely cannot do the job.
+# The app is seven static files (study.html plus JS data and vendored d3/marked).
+# The one piece of compute is the optional accounts-and-sync API under /api/*,
+# defined in aigp-sync.tf: an ordinary API Gateway + Lambda origin, the same
+# pattern as the contact form. There is still no Lambda@Edge and no CloudFront
+# Function; if request rewriting is ever needed, the house rule is CloudFront
+# Functions first, Lambda@Edge only if a CloudFront Function genuinely cannot do
+# the job.
 #
 # Terraform owns the infrastructure only. The objects are synced by the app repo's
 # deploy workflow, not from here.
@@ -196,9 +198,30 @@ resource "aws_cloudfront_distribution" "aigp" {
     origin_access_control_id = aws_cloudfront_origin_access_control.aigp.id
   }
 
+  # Sync API (aigp-sync.tf), same-origin under /api/* so the app needs no CORS.
+  # The custom header is the shared secret the Lambda checks, so the public
+  # execute-api endpoint can't be called directly. CloudFront overwrites any
+  # viewer-supplied header of the same name.
+  origin {
+    origin_id   = "aigp-api"
+    domain_name = replace(aws_apigatewayv2_api.aigp.api_endpoint, "https://", "")
+
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "https-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
+    }
+
+    custom_header {
+      name  = "X-Origin-Secret"
+      value = random_password.aigp_origin.result
+    }
+  }
+
   # No function_association: the `hugo` CloudFront Function on the main
   # distribution rewrites pretty URLs to /index.html, which would mangle this
-  # app's flat file paths. No ordered_cache_behavior either — there is no API.
+  # app's flat file paths.
   default_cache_behavior {
     target_origin_id       = local.aigp_origin
     viewer_protocol_policy = "redirect-to-https"
@@ -206,6 +229,19 @@ resource "aws_cloudfront_distribution" "aigp" {
     cached_methods         = ["HEAD", "GET"]
     compress               = true
     cache_policy_id        = aws_cloudfront_cache_policy.aigp.id
+  }
+
+  # Sync API. POST passthrough with caching disabled; mirrors /api/contact on the
+  # main distribution. AllViewerExceptHostHeader so API Gateway sees its own Host.
+  ordered_cache_behavior {
+    path_pattern             = "/api/*"
+    target_origin_id         = "aigp-api"
+    viewer_protocol_policy   = "redirect-to-https"
+    allowed_methods          = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
+    cached_methods           = ["GET", "HEAD"]
+    compress                 = false
+    cache_policy_id          = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" # CachingDisabled (AWS-managed)
+    origin_request_policy_id = "b689b0a8-53d0-40ab-baf2-68738e2966ac" # AllViewerExceptHostHeader (AWS-managed)
   }
 
   viewer_certificate {
