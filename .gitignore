@@ -2,6 +2,13 @@ public/
 # Hugo's image and asset cache, rebuilt on every build
 hugo/resources/
 
+# The hugo-book theme was removed when the site was rebuilt as a knowledge graph;
+# all layouts are first-party under hugo/layouts/. hugo/hugo.toml declares no
+# theme, so anything that reappears here is inert. Ignored rather than deleted-
+# only, because `git add -A` in this repo otherwise sweeps up a 5.6 MB clone and
+# resurrects the architecture the site moved away from.
+hugo/themes/
+
 # Terraform: generated Lambda deployment artifacts
 terraform/files/contrib-dispatch.zip
 terraform/files/contact.zip
