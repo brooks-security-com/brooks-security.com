@@ -3,7 +3,11 @@
        puts on css, js, and images is safe. */ -}}
 {{- $g := partialCached "graph.html" . "graph" -}}
 {{- $photo := resources.Get "images/graham.jpg" | fingerprint -}}
-{{- /* The recording's poster keeps its old URL (content links it), and pages get a smaller copy. */ -}}
+{{- /* Publish the original video poster at its plain URL. Nothing in the content
+       links it any more (content.html now swaps every poster for a processed
+       copy), but scripts/check-urls.py lists it in the URL map as a URL the site
+       keeps live, so this line is what holds that promise. Do not remove it as
+       dead code. */ -}}
 {{- $poster := resources.Get "images/presentation-poster.jpg" -}}
 {{- $_ := $poster.RelPermalink -}}
 {{- $css := resources.Get "css/site.css" | minify | fingerprint -}}
@@ -14,7 +18,6 @@
   "build" (substr (sha256 (printf "%s %s %s" $css.Data.Integrity $app.Data.Integrity $graph.Data.Integrity)) 0 16)
   "mermaid" (resources.Get "js/vendor/mermaid.min.js" | fingerprint)
   "photo" $photo
-  "poster" ($poster.Resize "800x webp q75")
   "avatar" ($photo.Fill "192x192 Center webp q82")
   "icon32" ($photo.Fill "32x32 Center png")
   "icon180" ($photo.Fill "180x180 Center png")

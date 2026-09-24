@@ -65,16 +65,32 @@
     {{- range $items -}}
       {{- $p := index $url .page -}}
       {{- if not $p }}{{ errorf "graph.yaml: %q item points at %q, which is not a page" $hub.id .page }}{{ end -}}
-      {{- $want := .heading -}}
-      {{- $title := "" -}}
-      {{- range findRESubmatch $headRE $p.Content }}{{ if eq (index . 2) $want }}{{ $title = index . 3 | plainify | htmlUnescape | strings.TrimSpace }}{{ end }}{{ end -}}
-      {{- if not $title }}{{ errorf "graph.yaml: no heading #%s on %s" $want .page }}{{ end -}}
       {{- $single := eq (index ($s.Get "per") .page) 1 -}}
+      {{- $want := .heading -}}
+      {{- /* Node id: the heading id when one is given, else the page slug. `.heading`
+             is nil when absent, and nil is falsy but NOT equal to "", so test
+             truthiness rather than comparing to the empty string. */ -}}
+      {{- $key := path.Base (strings.TrimSuffix "/" .page) -}}
+      {{- if $want }}{{ $key = $want }}{{ end -}}
+      {{- $title := "" -}}
+      {{- if $want -}}
+        {{- range findRESubmatch $headRE $p.Content }}{{ if eq (index . 2) $want }}{{ $title = index . 3 | plainify | htmlUnescape | strings.TrimSpace }}{{ end }}{{ end -}}
+        {{- if not $title }}{{ errorf "graph.yaml: no heading #%s on %s" $want .page }}{{ end -}}
+      {{- else if $single -}}
+        {{- /* A page that is its own node does not need a heading: the page title is the label. */ -}}
+        {{- $title = $p.Title -}}
+      {{- else -}}
+        {{- errorf "graph.yaml: %q item %q needs a heading, because that page has several entries" $hub.id .page -}}
+      {{- end -}}
       {{- $nodeUrl := cond $single .page (printf "%s#%s" .page $want) -}}
       {{- if not $single }}{{ $s.SetInMap "pages" .page $hub.id }}{{ end -}}
+      {{- /* meta resolves in order: the item in graph.yaml, then a `meta` param on the
+             page itself (so a page can own its own date and duration), then the
+             builds-style default. */ -}}
       {{- $kids = $kids | append (dict
-          "id" (printf "%s.%s" $hub.id $want) "url" $nodeUrl "label" $title
-          "short" (index (split $title " - ") 0) "meta" (printf "%s · public repo" $p.Title)
+          "id" (printf "%s.%s" $hub.id $key) "url" $nodeUrl "label" $title
+          "short" (.short | default (index (split $title " - ") 0))
+          "meta" (.meta | default $p.Params.meta | default (printf "%s · public repo" $p.Title))
           "icon" (.icon | default "code") "featured" (.featured | default false)
           "text" (lower (printf "%s %s %s %s" $title $p.Title $p.Description (cond $single ($p.Summary | plainify | truncate 240) "")))) -}}
     {{- end -}}

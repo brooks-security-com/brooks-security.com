@@ -11,8 +11,13 @@
 # items:
 #   posts                  every post, newest first
 #   {level: N, ...}        every heading of that level on the hub page
-#   [{page, heading}, ...] explicit list; a page with one entry is its own node,
-#                          a page with several gets one anchor node per heading
+#   [{page, heading}, ...] explicit list. A page with ONE entry is its own node and
+#                          needs no heading: the page title becomes the label. A page
+#                          with several entries gets one anchor node per heading.
+#                          Per-item keys: icon, short, meta, featured. `meta` falls
+#                          back to a `meta` param on the page itself, so a page can
+#                          own its own date and duration rather than restating them
+#                          here.
 #   links                  the "- **Name:** [text](href)" list on the hub page
 # short: shorter graph labels, keyed by heading id (graph labels only; the page,
 # tooltip, and search keep the full heading). cut: max graph label length.
@@ -68,15 +73,23 @@ hubs:
     icon: mic
     slot: 5
     page: /docs/portfolio/speaking/
-    noun: [section, sections]
+    noun: [recording, recordings]
     cut: 32
+    # Each recording is its own page, so each opens as its own panel rather than
+    # scrolling to an anchor inside a single long page. The hub page is the
+    # overview of where Graham has presented; its headings are not nodes.
+    #
+    # Order here is the order the nodes are drawn, and it is chronological on
+    # purpose: it reads as the Syxsense arc from Solutions Architect through to
+    # Pre-Sales Manager.
     items:
-      level: 2
-      icon: mic
-      icons: { spotlight-realtime-management: play, rooms-i-have-presented-in: users }
-      meta:
-        spotlight-realtime-management: Recording
-        rooms-i-have-presented-in: Stages, workshops, and seminars
+      - { page: /docs/portfolio/speaking/realtime-management/, icon: play, short: Realtime Management }
+      - { page: /docs/portfolio/speaking/cyber-kill-chain/, icon: play, short: Cyber Kill Chain }
+      - { page: /docs/portfolio/speaking/advancing-zero-trust/, icon: play, short: Advancing Zero Trust }
+      - { page: /docs/portfolio/speaking/vulnerability-remediation/, icon: play, short: Vulnerability Remediation }
+      - { page: /docs/portfolio/speaking/it-automation-workflows/, icon: play, short: Harnessing Automation }
+      - { page: /docs/portfolio/speaking/autonomous-defense/, icon: play, short: Autonomous Defense }
+      - { page: /docs/portfolio/speaking/compliance-for-msps/, icon: play, short: Compliance for MSPs }
 
   - id: poc
     label: POC playbook
@@ -133,8 +146,10 @@ related:
   - [writing.why-ansible-outshines-chef-and-puppet-for-configuration-management, stack.configuration-as-code]
   - [writing.the-strength-of-python-for-linux-automation, stack.scripting-languages]
   - [writing.why-patching-servers-manually-is-not-safer, experience.senior-security-solutions-architect-syxsense-inc]
-  - [writing.the-profitability-of-honesty-a-practical-approach-to-ethical-business, talks.rooms-i-have-presented-in]
+  - [writing.the-profitability-of-honesty-a-practical-approach-to-ethical-business, talks.advancing-zero-trust]
   - [writing.grand-goals-for-2024, credentials]
-  - [talks.rooms-i-have-presented-in, experience.lead-solutions-architect-syxsense-inc]
+  - [talks.it-automation-workflows, experience.lead-solutions-architect-syxsense-inc]
+  - [talks.cyber-kill-chain, experience.senior-security-solutions-architect-syxsense-inc]
+  - [talks.advancing-zero-trust, writing.soc-2-field-manual-seed-stage]
   - [poc.the-security-review, experience.senior-security--systems-engineer-avatarfleet]
   - [builds.digital-ocean-rhce-lab---terraform--ansible, credentials.red-hat-certified-engineer-rhce]
