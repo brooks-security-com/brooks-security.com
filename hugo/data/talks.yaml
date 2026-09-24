@@ -1,0 +1,678 @@
+# Enrichment for the Syxsense recordings Graham presented.
+#
+# NOTHING READS THIS YET. It is staged here so the talks-section redesign is a
+# presentation change rather than a content-writing exercise. Adding this file
+# changes no rendered output.
+#
+# Source of truth for each entry is the archived recording and its cleaned
+# auto-caption transcript, not the video title. The archive lives outside this
+# repo at ~/Projects/Personal/brooks-security-video-archive/ (717 MB of video;
+# far too large for git). Paths in `archive` and `transcript` below are relative
+# to that directory, not to this repo.
+#
+# `video` is the self-hosted delivery URL, served from this site's own bucket at
+# downloads/ through CloudFront. The files are uploaded out of band and are
+# excluded from `hugo deploy` by the "**.mp4" glob in hugo.toml.
+#
+# speakers[].role_as_introduced is what the recording itself says. Where that
+# disagrees with the YouTube description, both are recorded rather than one
+# being picked.
+#
+# quotes are cleaned from auto-captions: punctuation and capitalisation added,
+# ASR name errors fixed. Wording is otherwise verbatim, and every quote carries
+# a timestamp so it can be checked against the recording. 33/33 verified as
+# faithful spans by the archive's verify_quotes.py.
+#
+# chapters_source is `video` when the upload carried its own chapter markers,
+# `transcript` when the chapters were reconstructed from topic shifts.
+
+meta:
+  source: youtube.com/@Syxsense
+  channel_subscribers: 169
+  archived: 2026-09-23
+  total_runtime_seconds: 13148
+  total_words: 34062
+  note: >
+    Syxsense no longer exists as an independent company. The channel is small
+    (169 subscribers) and these recordings carry 12-188 views each, which is
+    the profile of content that disappears without notice in a wind-down.
+
+talks:
+  - id: teIKAtg6BoY
+    youtube: https://www.youtube.com/watch?v=teIKAtg6BoY
+    video: https://www.brooks-security.com/downloads/cyber-kill-chain-masterclass.mp4
+    title: The Cyber Kill Chain Masterclass
+    series: Syxsense Master Class
+    date: 2022-07-01
+    duration_seconds: 3279
+    duration_label: "54:39"
+    views: 188
+    archive: masters/teIKAtg6BoY.mp4
+    transcript: clean/teIKAtg6BoY.txt
+    format: Two presenters, one deck, long Q&A
+    speakers:
+      - name: Graham Brooks
+        role_as_introduced: Senior Security Solutions Architect, Syxsense
+        attribution: primary
+        note: >
+          The YouTube description bills him as "Director of Threat Lab". In the
+          recording he introduces himself as Senior Security Solutions
+          Architect. Both are recorded here rather than reconciled.
+      - name: Rob Brown
+        role_as_introduced: Head of Customer Success, Syxsense
+    summary: >
+      A structured walk through the Lockheed Martin Cyber Kill Chain as a
+      defensive planning tool rather than an attacker's checklist. Graham takes
+      the eight phases one at a time and pairs each with the control that buys
+      back time, from NIDS and NIPS at reconnaissance through HIDS at delivery,
+      vulnerability management at exploitation, SIEM and the SOC at
+      installation, segmentation and DNS sinkholes at command and control, and
+      tested offline backups plus cyber insurance at actions on intent. The
+      through-line is that the kill chain is not a sequence you either stop or
+      fail, it is a clock, and every control that adds a phase transition is
+      time your team gets back.
+    chapters_source: video
+    chapters_note: >
+      These are the chapter markers Syxsense embedded in the upload itself,
+      recovered from the file's text track. The upload has no markers past
+      31:44, so the closing segments below are reconstructed from transcript
+      topic shifts and are listed separately.
+    chapters:
+      - { t: "00:00:00", title: "Introduction" }
+      - { t: "00:02:55", title: "Threat Actors" }
+      - { t: "00:06:33", title: "Cyber Defense Models" }
+      - { t: "00:09:24", title: "Lockheed Martin Cyber Kill Chain" }
+      - { t: "00:11:34", title: "Reconnaissance Phase 1 Pre-Compromise" }
+      - { t: "00:15:24", title: "Weaponization Phase 2 Pre-Compromise" }
+      - { t: "00:18:17", title: "Delivery Phase 3 Pre-Compromise" }
+      - { t: "00:20:41", title: "Exploitation Phase 4 Compromise" }
+      - { t: "00:24:30", title: "Installation Phase 5 Compromise" }
+      - { t: "00:28:58", title: "Command and Control Phase 6 Post-Compromise" }
+      - { t: "00:31:44", title: "Actions on Intent Phase 7 Post-Compromise" }
+    chapters_reconstructed:
+      - { t: "00:35:37", title: "Exfiltration and data loss prevention" }
+      - { t: "00:38:04", title: "Recap of the recommendations" }
+      - { t: "00:40:45", title: "Q&A: tracking local admin accounts, renaming the Administrator account" }
+    quotes:
+      - t: "00:03:45"
+        text: >
+          There are plenty of other vulnerabilities. In fact, I call these other
+          kinds of vulnerabilities my hidden worries. So as a security expert who
+          is responsible for looking after thousands and thousands upon thousands
+          of customer devices, I'm asked often what may, what keeps me awake at
+          night, what am I worried about. And I'm worried about the things I
+          don't know.
+      - t: "00:10:11"
+        text: >
+          Your job through this process is to slow them down as much as
+          possible, because time is your best ally during the exploit process.
+      - t: "00:13:49"
+        text: >
+          The idea of "my company is small, we don't have much stuff that can be
+          picked up in the internet facing port scan, so we aren't worried about
+          our security policy" is called security through obscurity. It's
+          dangerous and it's fiction.
+      - t: "00:34:21"
+        text: >
+          Tested offline data backups will give you a restore point to return to
+          after the complete deletion of your company. Now it sounds crazy,
+          that's the reality we're talking about. Imagine you woke up and you
+          don't have a company anymore.
+      - t: "00:47:49"
+        text: >
+          Even if you only have one or two devices, you really can't afford to
+          lose those one or two devices. Patch it.
+    topics:
+      [cyber kill chain, Lockheed Martin, MITRE ATT&CK, Diamond Model, reconnaissance,
+       weaponization, delivery, exploitation, installation, command and control,
+       actions on intent, exfiltration, NIDS, NIPS, DMZ, HIDS, SIEM, SOC, DLP,
+       network segmentation, DNS sinkhole, tarpit, offline backups, cyber insurance,
+       local admin, security through obscurity, attack surface, script kiddies,
+       advanced persistent threat, counterfeit authentication]
+    related:
+      - experience.senior-security-solutions-architect-syxsense-inc
+      - writing.why-patching-servers-manually-is-not-safer
+      - talks.rooms-i-have-presented-in
+
+  - id: Eh3A_BkEilI
+    youtube: https://www.youtube.com/watch?v=Eh3A_BkEilI
+    video: https://www.brooks-security.com/downloads/vulnerability-remediation.mp4
+    title: "Spotlight Webinar: Vulnerability Remediation"
+    series: Spotlight Webinar
+    date: 2023-03-07
+    duration_seconds: 1585
+    duration_label: "26:25"
+    views: 77
+    archive: masters/Eh3A_BkEilI.webm
+    transcript: clean/Eh3A_BkEilI.txt
+    chapters_source: transcript
+    format: Solo presenter, live product demo
+    speakers:
+      - name: Graham Brooks
+        role_as_introduced: "industry expert, Syxsense"
+        attribution: primary
+      - name: Joe
+        role_as_introduced: Host, Syxsense
+        attribution: host
+        note: >
+          Reads the 30-second show intro and hands off. Not a presenter. Left
+          out of co-presenter listings for that reason.
+    summary: >
+      The most teaching-heavy of the Spotlight series. Graham spends the first
+      ten minutes on vocabulary before touching the console: what a
+      vulnerability actually is, how CVE assigns identity, how CVSS scores
+      impact, and why the industry splits findings into patch vulnerabilities
+      and configuration vulnerabilities. He uses Follina as the case that
+      breaks the distinction, since Microsoft 365 support diagnostics was a
+      configuration mitigation until a patch arrived to fix the configuration.
+      The demo then follows a real remediation loop on three live findings, and
+      closes on the argument that remediation should be policy-driven rather
+      than pushed ad hoc, with the GPO comparison as the contrast.
+    chapters:
+      - { t: "00:00:01", title: "Introduction" }
+      - { t: "00:01:08", title: "What a vulnerability is: confidentiality, integrity, availability" }
+      - { t: "00:02:23", title: "CVE as an identity framework" }
+      - { t: "00:03:50", title: "CVSS and how severity is scored" }
+      - { t: "00:05:13", title: "Patch vulnerabilities versus configuration vulnerabilities" }
+      - { t: "00:07:44", title: "Follina: when a configuration issue becomes a patch" }
+      - { t: "00:09:11", title: "CIS benchmarks and baseline frameworks" }
+      - { t: "00:10:19", title: "Architecture and the scan-then-remediate loop" }
+      - { t: "00:13:53", title: "The vulnerability library" }
+      - { t: "00:15:09", title: "Three live findings: password complexity, DNS resolver spoofing, auto sign-in after restart" }
+      - { t: "00:17:36", title: "Resolution workflow walkthrough: registry keys, C# script, revalidation" }
+      - { t: "00:18:47", title: "Policy-based remediation over ad hoc tasks" }
+      - { t: "00:20:14", title: "Scheduling and scope: every three days, all assets" }
+      - { t: "00:22:35", title: "Against GPO: agent-based and real time" }
+      - { t: "00:23:54", title: "Reporting: patch risk and configuration risk assessments" }
+      - { t: "00:26:09", title: "Close" }
+    quotes:
+      - t: "00:01:08"
+        text: >
+          A vulnerability is a weakness in a product that could allow an
+          attacker to compromise the integrity, availability, or confidentiality
+          of that product.
+      - t: "00:05:13"
+        text: >
+          In essence, patch vulnerability is something where you deploy software
+          and it fixes the issue.
+      - t: "00:06:23"
+        text: >
+          The other class is going to be configuration based vulnerabilities, all
+          of the things that in order to fix you have to change some sort of
+          functionality in a tool.
+      - t: "00:21:25"
+        text: >
+          The traditional vulnerability compliance portfolio, where you have a
+          security team who's generating reports that show the vulnerabilities,
+          that then they hand over to the operations team, that then reviews
+          those reports, that then fixes those vulnerabilities, and that whole
+          process usually takes a month or even longer to resolve.
+      - t: "00:18:47"
+        text: >
+          We don't like deploying standard tasks. We don't want to just push work
+          on an ad hoc basis because it's not repeatable and it can slog down
+          over time.
+    topics:
+      [vulnerability management, CVE, CVSS, confidentiality integrity availability,
+       patch vulnerability, configuration vulnerability, Follina, Microsoft 365,
+       CIS benchmarks, NIST, remediation, resolution workflow, registry keys,
+       GPO, agent-based, policy-driven remediation, patch risk assessment,
+       configuration risk assessment, DNS resolver spoofing, password complexity]
+    related:
+      - experience.senior-security-solutions-architect-syxsense-inc
+      - writing.why-patching-servers-manually-is-not-safer
+
+  - id: u29nuuxiCD0
+    youtube: https://www.youtube.com/watch?v=u29nuuxiCD0
+    video: https://www.brooks-security.com/downloads/it-automation-workflows.mp4
+    title: "Spotlight Webinar: Harnessing Automation"
+    series: Spotlight Webinar
+    date: 2023-08-17
+    duration_seconds: 1248
+    duration_label: "20:48"
+    views: 102
+    archive: masters/u29nuuxiCD0.webm
+    transcript: clean/u29nuuxiCD0.txt
+    chapters_source: transcript
+    format: Solo presenter, live product demo
+    speakers:
+      - name: Graham Brooks
+        role_as_introduced: "industry expert, Syxsense"
+        attribution: primary
+      - name: Joe
+        role_as_introduced: Host, Syxsense
+        attribution: host
+        note: >
+          Reads the 30-second show intro and hands off. Not a presenter. Left
+          out of co-presenter listings for that reason.
+    summary: >
+      Explicitly scoped away from patching and vulnerability remediation, which
+      the series had already covered, to the rest of the automation surface:
+      service control, access control, and software provisioning. Graham builds
+      a drag-and-drop workflow live, starting with a Chrome-then-Teams install
+      chain, then packaging CrowdStrike Falcon, then BitLocker enforcement with
+      a branching path and a firewall check. The demo turns on a Print Spooler
+      scenario where a stopped service triggers a firewall rule that blocks a
+      DNS server, then flips back when the service returns. The closing move is
+      the one that matters: adding a step that starts the service again so the
+      policy heals the environment instead of just gating it. Ends on a 20-step
+      Log4j server remediation that touches AWS elastic load balancer queues and
+      EC2 snapshots.
+    chapters:
+      - { t: "00:00:00", title: "Introduction and scope: not patching, not remediation" }
+      - { t: "00:01:13", title: "Architecture: cloud-hosted, agent-based, multi-OS" }
+      - { t: "00:02:20", title: "Building a workflow: Chrome, then Teams" }
+      - { t: "00:03:36", title: "Packaging your own content: CrowdStrike Falcon" }
+      - { t: "00:04:42", title: "BitLocker enforcement with a branching path" }
+      - { t: "00:06:00", title: "Firewall status checks and branching" }
+      - { t: "00:07:08", title: "Embedding existing PowerShell" }
+      - { t: "00:08:19", title: "Enforcement policy demo: the Print Spooler scenario" }
+      - { t: "00:10:55", title: "Firewall rule enforcement and verification" }
+      - { t: "00:12:23", title: "Reversing the path and moving to interval scheduling" }
+      - { t: "00:15:02", title: "Closing the loop: self-healing policies" }
+      - { t: "00:17:54", title: "Real-time denial and restoration" }
+      - { t: "00:19:03", title: "Complex example: Log4j remediation on a server" }
+    quotes:
+      - t: "00:06:00"
+        text: >
+          You can build automation without having to run to VS Code and spend
+          hours debugging what you've built with PowerShell or Bash or Python.
+          Instead you can just drag and drop individual actions from our sidebar.
+          We've done all of the logic behind the scenes that you don't have to.
+          You just get to make the decision tree about what happens in what
+          order.
+      - t: "00:13:44"
+        text: >
+          It's all about making simple workflows, creating policies, and then
+          seeing those policies enforce in real time. It's really that simple.
+          You don't need to spend a lot of time building effective compliance.
+      - t: "00:17:54"
+        text: >
+          I chose 10 seconds because it's easy. You could narrow that down to
+          like two or three seconds if you wanted to.
+      - t: "00:19:03"
+        text: >
+          We're opening a ticket stating that we're evaluating a device for Log4j
+          vulnerabilities, we're taking a snapshot of a VM, we are removing that
+          VM from a load balancer queue, making calls to AWS and the elastic load
+          balancer, then we are turning services off, we're rebooting the host in
+          a pre-check context, we're then updating our ticket, we're deploying
+          remediations against the vulnerabilities, patching Apache to bring it
+          up to date.
+    topics:
+      [IT automation, Cortex, drag-and-drop workflows, no-code, service control,
+       BitLocker, firewall enforcement, Print Spooler, self-healing policy,
+       interval scheduling, PowerShell, Log4j, AWS elastic load balancer,
+       EC2 snapshots, CrowdStrike Falcon, access control, provisioning]
+    related:
+      - experience.senior-security-solutions-architect-syxsense-inc
+      - builds.agentic-skills
+
+  - id: xmz2sXNcdEQ
+    youtube: https://www.youtube.com/watch?v=xmz2sXNcdEQ
+    video: https://www.brooks-security.com/downloads/autonomous-defense.mp4
+    title: "Spotlight Webinar: Autonomous Defense"
+    series: Spotlight Webinar
+    date: 2023-09-21
+    duration_seconds: 1232
+    duration_label: "20:32"
+    views: 41
+    archive: masters/xmz2sXNcdEQ.mp4
+    transcript: clean/xmz2sXNcdEQ.txt
+    chapters_source: transcript
+    format: Solo presenter, live product demo
+    duplicate_of: null
+    duplicate_note: >
+      Re-recorded and re-uploaded on 2024-06-18 as GLbU7U7KFxw. The two
+      transcripts are 97.1% identical at the token level with matching demo
+      narrative, matching hypothetical locations, and matching closing
+      statistics. Treat as one talk with two uploads.
+    speakers:
+      - name: Graham Brooks
+        role_as_introduced: "industry expert, Syxsense"
+        attribution: primary
+      - name: Joe
+        role_as_introduced: Host, Syxsense
+        attribution: host
+        note: >
+          Reads the 30-second show intro and hands off. Not a presenter. Left
+          out of co-presenter listings for that reason.
+    summary: >
+      Builds a full defense-in-depth stack as a single Cortex workflow, layer by
+      layer: firewall enabled, then the agent itself, then antivirus, then VPN,
+      then a SIEM agent, then patch scan and deploy, then a vulnerability scan
+      filtered to CVSS 8 and above. The argument underneath it is that attackers
+      triage, and an organisation that is expensive to enter gets skipped rather
+      than defeated. The second half is the operational discipline the workflow
+      needs to survive contact with reality: publish as a policy rather than a
+      one-shot task, pick an interval that does not melt endpoints, scope by
+      location, and benchmark non-compliance month over month so improvement is
+      measurable.
+    chapters:
+      - { t: "00:00:00", title: "Introduction: defense in depth" }
+      - { t: "00:01:15", title: "Why attackers skip expensive targets" }
+      - { t: "00:02:21", title: "A portfolio of tools, not one tool" }
+      - { t: "00:03:33", title: "Architecture: agent-based telemetry" }
+      - { t: "00:04:40", title: "Building the workflow: firewall first" }
+      - { t: "00:06:53", title: "Antivirus: CrowdStrike Falcon" }
+      - { t: "00:08:08", title: "VPN, then SIEM: Splunk versus Grafana Loki" }
+      - { t: "00:09:20", title: "Patch scan and deploy" }
+      - { t: "00:10:30", title: "Vulnerability scan filtered to CVSS 8+" }
+      - { t: "00:11:43", title: "What 'not attractive anymore' looks like" }
+      - { t: "00:12:50", title: "Spear phishing, email sandboxing, and log correlation" }
+      - { t: "00:13:56", title: "Publishing a policy: choosing a cadence" }
+      - { t: "00:15:05", title: "Interval tradeoffs and endpoint CPU load" }
+      - { t: "00:16:10", title: "Scoping by location" }
+      - { t: "00:17:17", title: "Reporting and benchmarking improvement" }
+      - { t: "00:19:26", title: "Close" }
+    quotes:
+      - t: "00:00:00"
+        text: >
+          Most threat actors don't engage an organization based off of how much
+          they want to attack that org.
+      - t: "00:01:15"
+        text: >
+          They'll look for low-hanging fruit, because there is a lot of
+          low-hanging fruit out there for them to attack. And if it's easy to
+          enter, it's probably also easy to exfiltrate.
+      - t: "00:15:05"
+        text: >
+          If your interval is too aggressive you might hurt CPU capacity.
+      - t: "00:18:19"
+        text: >
+          Success needs to be measured, or else you're not going to know what's
+          happening. So you should take a snapshot at least once a month and say
+          our goal is to reduce our non-compliance against antivirus or against
+          CIS Level 1 by 25% each month.
+      - t: "00:13:56"
+        text: >
+          When we publish a policy, what we're essentially doing is writing a
+          configuration file down to the devices that are included in a list.
+        note: >
+          Framed as the practical difference between enforcement and a one-time
+          task.
+    topics:
+      [defense in depth, threat actor triage, port scanning, low-hanging fruit,
+       firewall, antivirus, VPN, SIEM, Splunk, Grafana Loki, Promtail, patch scan,
+       vulnerability scan, CVSS, policy cadence, interval scheduling, CPU load,
+       asset scoping, benchmarking, non-compliance, spear phishing, email sandboxing]
+    related:
+      - experience.senior-security-solutions-architect-syxsense-inc
+      - writing.why-patching-servers-manually-is-not-safer
+
+  - id: GLbU7U7KFxw
+    youtube: https://www.youtube.com/watch?v=GLbU7U7KFxw
+    video: https://www.brooks-security.com/downloads/autonomous-defense-2024.mp4
+    title: "Spotlight Webinar: Autonomous Defense"
+    series: Spotlight Webinar
+    date: 2024-06-18
+    duration_seconds: 1229
+    duration_label: "20:29"
+    views: 12
+    archive: masters/GLbU7U7KFxw.mp4
+    transcript: clean/GLbU7U7KFxw.txt
+    chapters_source: transcript
+    format: Solo presenter, live product demo
+    duplicate_of: xmz2sXNcdEQ
+    duplicate_note: >
+      97.1% token-level identical to xmz2sXNcdEQ (2023-09-21). Same script, same
+      demo, same hypothetical locations, same closing statistics, re-recorded
+      roughly nine months later. Recommend publishing one, or publishing both
+      with an explicit "re-recorded" note so it does not read as two distinct
+      talks.
+    speakers:
+      - name: Graham Brooks
+        role_as_introduced: "industry expert, Syxsense"
+        attribution: primary
+      - name: Joe
+        role_as_introduced: Host, Syxsense
+        attribution: host
+        note: >
+          Reads the 30-second show intro and hands off. Not a presenter. Left
+          out of co-presenter listings for that reason.
+    summary: >
+      See xmz2sXNcdEQ. Same content, later recording. The only substantive
+      differences are the upload date and a slightly different ASR pass over the
+      same words.
+    chapters:
+      - { t: "00:00:00", title: "Introduction: defense in depth" }
+      - { t: "00:04:42", title: "Building the workflow: firewall first" }
+      - { t: "00:08:09", title: "VPN, then SIEM" }
+      - { t: "00:13:56", title: "Publishing a policy: choosing a cadence" }
+      - { t: "00:17:18", title: "Reporting and benchmarking improvement" }
+    quotes: []
+    topics:
+      [defense in depth, firewall, antivirus, VPN, SIEM, patch scan, vulnerability
+       scan, CVSS, policy cadence, benchmarking, duplicate]
+    related:
+      - experience.senior-security-solutions-architect-syxsense-inc
+
+  - id: aVqQk8Td3Bo
+    youtube: https://www.youtube.com/watch?v=aVqQk8Td3Bo
+    video: https://www.brooks-security.com/downloads/msp-mssp-automated-remediation.mp4
+    title: "How MSPs and MSSPs Can Comply and Thrive with Automated Remediation"
+    series: Webinar
+    date: 2024-06-18
+    duration_seconds: 1570
+    duration_label: "26:10"
+    views: 42
+    archive: masters/aVqQk8Td3Bo.mp4
+    transcript: clean/aVqQk8Td3Bo.txt
+    chapters_source: transcript
+    format: Three presenters, market framing then demo then Q&A
+    speakers:
+      - name: Mason Johnson
+        role_as_introduced: Manager, MSP and MSSP Channels, Syxsense
+        attribution: co-presenter
+        note: Based in Minneapolis. Carries the market and regulatory framing.
+      - name: Graham Brooks
+        role_as_introduced: Pre-Sales Manager, Syxsense
+        attribution: primary
+        note: >
+          Introduced earlier in the same recording as "our lead solution
+          engineer". He runs the platform demo and takes the technical Q&A.
+      - name: Justine
+        role_as_introduced: Host, Syxsense
+        attribution: host
+    summary: >
+      The commercial one. Mason opens on the SEC disclosure rule that took
+      effect the previous month, four business days to disclose a breach, and
+      argues the follow-on pressure lands on SMB suppliers rather than only on
+      public companies. From there it is the MSP business case: tool sprawl is
+      the cost centre, proving compliance is the hard part, and CIS Level 1 and
+      2 remediations are a prepackaged service that can be sold the next day.
+      Graham's demo shows a multi-tenant console, a SOC 2 audit at 93.4% patch
+      efficacy, and remediation content deployed at scale. The Q&A is worth
+      keeping: time zone handling across 23 zones, the 90% time saving, and the
+      two-to-three hour learning curve on the workflow builder.
+    chapters:
+      - { t: "00:00:03", title: "Introductions" }
+      - { t: "00:01:56", title: "The SEC disclosure rule and the compliance opportunity" }
+      - { t: "00:04:00", title: "The security talent gap" }
+      - { t: "00:05:02", title: "What MSPs run today: tool sprawl" }
+      - { t: "00:07:08", title: "The cost of a siloed approach" }
+      - { t: "00:08:19", title: "Multi-tenant monitoring across Windows, macOS, Linux" }
+      - { t: "00:09:27", title: "Proving compliance: 20+ prepackaged reports" }
+      - { t: "00:10:33", title: "CIS Levels 1 and 2, DISA STIGs, custom benchmarks" }
+      - { t: "00:11:44", title: "Platform demo" }
+      - { t: "00:12:55", title: "Multi-tenant console, customer environments, locations" }
+      - { t: "00:14:05", title: "Pushing work and maintenance windows" }
+      - { t: "00:15:05", title: "HIPAA, PCI DSS, SOC 2, CIS, Microsoft STIG reporting" }
+      - { t: "00:16:14", title: "SOC 2 audit walkthrough and 93.4% patch efficacy" }
+      - { t: "00:17:27", title: "Remediation content at scale" }
+      - { t: "00:20:05", title: "Q&A: time zones, savings, workflow builder learning curve" }
+      - { t: "00:24:46", title: "MSP Expo Fort Lauderdale, close" }
+    quotes:
+      - t: "00:01:56"
+        speaker: Mason Johnson
+        text: >
+          The elephant in the room is the new SEC disclosure rule that came into
+          effect last month. If you're unaware, essentially, publicly traded
+          companies are now required to disclose security breaches within four
+          business days.
+      - t: "00:07:08"
+        speaker: Mason Johnson
+        text: >
+          Maintaining compliance is difficult, and proving compliance can be
+          virtually impossible.
+      - t: "00:21:23"
+        speaker: Graham Brooks
+        text: >
+          The primary savings in time is going to come from our content, because
+          our customers and our partners are spending so much time writing all of
+          this remediation material prior to adopting Syxsense, and then after
+          adopting it that content writing goes down dramatically. They're only
+          managing the exceptions, they're not having to manage the rule anymore,
+          and that's where we get that 90% from.
+      - t: "00:22:38"
+        speaker: Graham Brooks
+        text: >
+          The platform takes about two to three hours to get good with. You're
+          not going to be spending a huge amount of time trying to figure out how
+          everything works. If you love to read we've got a couple books that
+          we've written around best practices, and if you hate reading we've got
+          YouTube for you.
+      - t: "00:20:05"
+        speaker: Graham Brooks
+        text: >
+          I have one customer who has 23 time zones that they manage, and that's
+          a huge amount of effort to do if you're creating individual maintenance
+          schedules for each of those geographies. Instead what we would much
+          rather do is allow for a local time zone tag.
+    topics:
+      [MSP, MSSP, SEC disclosure rule, four business days, compliance,
+       HIPAA, PCI DSS, SOC 2, CIS Level 1, CIS Level 2, DISA STIG, HITRUST,
+       tool sprawl, multi-tenant, prepackaged reports, patch efficacy,
+       remediation at scale, time zones, maintenance windows, MSP Expo,
+       security talent gap, upsell, recurring revenue]
+    related:
+      - experience.lead-solutions-architect-syxsense-inc
+      - writing.soc-2-field-manual-seed-stage
+      - experience.senior-security-solutions-architect-syxsense-inc
+
+  - id: 6FC-R0trKPo
+    youtube: https://www.youtube.com/watch?v=6FC-R0trKPo
+    video: https://www.brooks-security.com/downloads/advancing-zero-trust-priorities.mp4
+    title: "Analyst Insights: Advancing Zero Trust Priorities"
+    series: Analyst Insights
+    date: 2023-01-26
+    duration_seconds: 3005
+    duration_label: "50:05"
+    views: 54
+    archive: masters/6FC-R0trKPo.mp4
+    transcript: clean/6FC-R0trKPo.txt
+    chapters_source: transcript
+    format: Two-person interview, no demo
+    speakers:
+      - name: Graham Brooks
+        role_as_introduced: Senior Security Solutions Architect, Syxsense
+        attribution: primary
+        note: >
+          Runs the interview. No product demo, deliberately. Tagged primary, not
+          host: "host" in this file means a non-presenting show anchor.
+      - name: Chris Steffen
+        role_as_introduced: >
+          CISSP, CISA; Managing Research Director, Enterprise Management
+          Associates (EMA); co-chair, Zero Trust Working Group, Cloud Security
+          Alliance
+        attribution: guest
+    summary: >
+      The outlier of the set and the strongest piece in it. No demo, no
+      console, no product. Graham interviews Chris Steffen of EMA, who
+      co-chairs the Cloud Security Alliance's zero trust working group, and the
+      conversation is about the discipline rather than the tooling. Chris's
+      central claim is that zero trust is a philosophy and not a product, that
+      nobody sells an out-of-the-box zero trust solution, and that most
+      organisations are already further along than they think because the
+      compliance projects on their plate already contain the components. The
+      recurring fictional example, Henry's House of Paper Clips, carries the
+      argument about passed-down compliance and vendor due diligence. The
+      closing third is the part worth quoting: the difference between checkbox
+      compliance and audit-ready, why showing 100% compliance invites a deeper
+      audit, and what a security leader can actually put in front of a
+      C-suite that is looking for a finished project in a discipline with no
+      finished state.
+    chapters:
+      - { t: "00:00:01", title: "Introduction: a different format, a conversation" }
+      - { t: "00:01:10", title: "Chris's zero trust research and the EMA surveys" }
+      - { t: "00:03:19", title: "Zero trust is a philosophy, not a product" }
+      - { t: "00:06:24", title: "A working definition: trust no one and verify everything" }
+      - { t: "00:07:35", title: "Organic authentication: identity, device, location, metadata" }
+      - { t: "00:09:42", title: "Pandemic, location, and why access has to change" }
+      - { t: "00:11:50", title: "Compliance as the driver: roughly 20% cite audit" }
+      - { t: "00:13:47", title: "You are already at step 11" }
+      - { t: "00:14:54", title: "Passed-down compliance and vendor due diligence" }
+      - { t: "00:16:48", title: "Henry's House of Paper Clips" }
+      - { t: "00:18:45", title: "Where a one-person IT shop starts" }
+      - { t: "00:22:59", title: "Data survey, risk evaluation, next steps" }
+      - { t: "00:24:48", title: "Security as a competitive differentiator" }
+      - { t: "00:29:49", title: "Colonial Pipeline and the case for constant reevaluation" }
+      - { t: "00:33:00", title: "Checkbox compliance versus audit-ready" }
+      - { t: "00:37:19", title: "Why you should not show 100% compliance" }
+      - { t: "00:38:30", title: "Presenting security KPIs to the C-suite" }
+      - { t: "00:40:41", title: "Measuring what you improve" }
+      - { t: "00:42:40", title: "The hardest part: evaluation and planning" }
+      - { t: "00:45:41", title: "What does 'done' look like" }
+      - { t: "00:48:44", title: "Close" }
+    quotes:
+      - t: "00:03:19"
+        speaker: Chris Steffen
+        text: >
+          It isn't a solution. It isn't a solution that is comprised of, you
+          know, these six things, and once you have these six things you're zero
+          trust. It just doesn't work that way.
+      - t: "00:04:29"
+        speaker: Chris Steffen
+        text: >
+          I've been doing this for a long time. I have never heard of the
+          all-in-one, out of the box zero trust solution. Once you dig into what
+          zero trust really means you'd find out that that's not really possible
+          anyway.
+      - t: "00:37:19"
+        speaker: Graham Brooks
+        text: >
+          If you're a checkbox compliance person, you're trying to meet PCI or
+          HIPAA or whatever other requirements you have, aim for 98 or 99
+          compliance. Do not aim for 100, and also don't show 100 compliance,
+          because that's how you get a much deeper dive audit.
+      - t: "00:38:00"
+        speaker: Graham Brooks
+        text: >
+          Often when I look at an environment and I see 100% compliance I say,
+          wow, you cleaned your room real well last night. This doesn't actually
+          look like a real live environment to me.
+      - t: "00:42:40"
+        speaker: Chris Steffen
+        text: >
+          Encrypting your data is easy. Okay, that is not a hard process at all.
+          Knowing what your data is, where your data is, and who needs to have
+          access to that data is extraordinarily hard.
+      - t: "00:47:44"
+        speaker: Chris Steffen
+        text: >
+          It's as secure as you need it to be, not as secure as it has to be.
+      - t: "00:48:00"
+        speaker: Chris Steffen
+        text: >
+          Security shouldn't be an impediment to taking in and getting things
+          done and doing work for your business.
+      - t: "00:35:09"
+        speaker: Chris Steffen
+        text: >
+          Zero trust is not designed to be a checkbox compliance solution.
+      - t: "00:35:50"
+        speaker: Chris Steffen
+        text: >
+          Zero trust is made for these people, the audit-ready people. That is
+          what zero trust is created for.
+    topics:
+      [zero trust, philosophy not product, trust no one verify everything,
+       Cloud Security Alliance, John Kindervag, EMA, survey, organic authentication,
+       identity, device posture, location, metadata, data classification,
+       audit-ready, checkbox compliance, PCI, HIPAA, FedRAMP, CCPA, GDPR,
+       vendor due diligence, passed-down compliance, supply chain, Colonial Pipeline,
+       MSP MSSP, C-suite, KPI, risk evaluation, Henry's House of Paper Clips]
+    related:
+      - experience.senior-security-solutions-architect-syxsense-inc
+      - writing.the-profitability-of-honesty-a-practical-approach-to-ethical-business
+      - writing.soc-2-field-manual-seed-stage
