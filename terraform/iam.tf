@@ -32,22 +32,10 @@ resource "aws_iam_role" "github_deploy" {
       Condition = {
         StringEquals = {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-          # Restrict to the brooks-security.com repo, main branch only.
+          # Restrict to the brooks-security.com repo, master branch only.
           # Use StringEquals (not StringLike) since the value is an exact match —
           # no wildcards, so the stricter operator is both safer and clearer.
-          #
-          # This previously said `refs/heads/master`. The repo's default branch is
-          # `main`, and there is no `master`, so the condition never matched and
-          # the role could not be assumed by anything. Neither workflow used it
-          # either — both authenticated with static keys — which is why the
-          # breakage went unnoticed.
-          #
-          # Consequence of the exact match: a pull_request run has
-          # `refs/pull/N/merge` and therefore cannot assume this role. That is
-          # intended. The PR-time steps that read SSM are fail-soft by design, so
-          # PR builds still pass without it; only push-to-main and
-          # workflow_dispatch assume the role.
-          "token.actions.githubusercontent.com:sub" = "repo:LittleSeneca/brooks-security.com:ref:refs/heads/main"
+          "token.actions.githubusercontent.com:sub" = "repo:LittleSeneca/brooks-security.com:ref:refs/heads/master"
         }
       }
     }]
@@ -89,26 +77,15 @@ resource "aws_iam_role_policy" "github_deploy" {
       },
       {
         # The Hugo build job reads the public reCAPTCHA site key from SSM and
-        # bakes it into the contact form.
+        # bakes it into the contact form. Granted here so it keeps working after
+        # the cutover from static keys to this OIDC role.
         Sid      = "ReadRecaptchaSiteKey"
         Effect   = "Allow"
         Action   = ["ssm:GetParameter"]
         Resource = "arn:aws:ssm:us-east-1:${var.aws_account_id}:parameter${var.recaptcha_site_key_ssm_param}"
       },
       {
-        # The same job reads a GitHub PAT to re-bake the contribution heatmap
-        # (hugo-deploy.yml, GH_CONTRIB_SSM_PARAM). Previously ungranted: the
-        # step is fail-soft, so it silently kept the committed JSON rather than
-        # failing. Now that the workflow assumes this role, grant it properly.
-        Sid      = "ReadGithubContribToken"
-        Effect   = "Allow"
-        Action   = ["ssm:GetParameter"]
-        Resource = "arn:aws:ssm:us-east-1:${var.aws_account_id}:parameter${var.github_token_ssm_param}"
-      },
-      {
-        # Covers decryption of any SSM parameter read above; the condition keeps
-        # it to the SSM path rather than blanket kms:Decrypt.
-        Sid      = "DecryptSsmParameters"
+        Sid      = "DecryptRecaptchaSiteKey"
         Effect   = "Allow"
         Action   = ["kms:Decrypt"]
         Resource = "*"
