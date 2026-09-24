@@ -159,7 +159,7 @@ if (!G || !window.d3) return; // the page still works; it just has no graph
 /* ---------- the graph's data, from the manifest ---------- */
 const nodes = G.nodes.map(n => ({ ...n })), byId = new Map(), byUrl = new Map();
 nodes.forEach(n => { byId.set(n.id, n); if (!byUrl.has(n.url)) byUrl.set(n.url, n); });
-const me = Object.assign(byId.get('me'), { r: 42, x: 0, y: 0, fx: 0, fy: 0, color: 'var(--accent)' });
+const me = Object.assign(byId.get('me'), { r: 42, x: 0, y: 0, color: 'var(--accent)' });
 const cats = nodes.filter(n => n.kind === 'cat');
 const ym = s => { const [y, m] = s.split('-').map(Number); return y * 12 + m; };
 const now = new Date(), months = n => (n.end ? ym(n.end) : now.getFullYear() * 12 + now.getMonth() + 1) - ym(n.start);
@@ -174,21 +174,15 @@ const SIZE = {
   stack: n => 8 + n.count * 1.1,
 };
 const links = [];
-const weights = cats.map(c => 3 + c.count), total = weights.reduce((a, b) => a + b, 0);
-let angle = -Math.PI / 2 - weights[0] / total * Math.PI;
 cats.forEach((c, ci) => {
-  const span = weights[ci] / total * Math.PI * 2, mid = angle + span / 2;
-  Object.assign(c, { r: 24, color: `var(--c${c.slot})`, children: nodes.filter(n => n.hub === c.id), x: Math.cos(mid) * 210, y: Math.sin(mid) * 210 });
+  Object.assign(c, { r: 24, color: `var(--c${c.slot})`, children: nodes.filter(n => n.hub === c.id) });
   links.push({ source: me, target: c, kind: 'spoke', color: c.color });
-  const kids = c.children, n = kids.length;
-  kids.forEach((k, i) => {
-    // Seed children on two staggered arcs inside their category's slice, so the layout is the same on every load.
-    const t = n === 1 ? .5 : i / (n - 1), a = angle + span * (.12 + .76 * t), rr = 320 + (i % 2) * 44;
-    Object.assign(k, { r: (SIZE[c.id] || (() => 10))(k), parent: c, color: c.color, short: cut(k.short, c.cut), x: Math.cos(a) * rr, y: Math.sin(a) * rr, i2: ci * 3 + i });
+  c.children.forEach((k, i) => {
+    Object.assign(k, { r: (SIZE[c.id] || (() => 10))(k), parent: c, color: c.color, short: cut(k.short, c.cut), i2: ci * 3 + i });
     links.push({ source: c, target: k, kind: 'leaf', color: c.color });
   });
-  angle += span;
 });
+me.children = cats;
 const adj = new Map(nodes.map(n => [n.id, new Set()]));
 links.forEach(l => { adj.get(l.source.id).add(l.target.id); adj.get(l.target.id).add(l.source.id); });
 const clusterOf = n => !n || n.kind === 'me' ? null : n.kind === 'cat' ? n : n.parent;
@@ -211,30 +205,49 @@ function area() {
   return { x: introW, y: 0, w: W - introW, h: H - 56 };
 }
 
-let svg, vp, svgEl, gNodes, gLinks, zoom, sim, ready = false, entering = false, cur = null;
+let svg, vp, svgEl, gNodes, gLinks, zoom, ready = false, entering = false, cur = null;
 // While the entrance runs, aim at where nodes are going, not where they are.
 const X = d => entering ? d.tx : d.x, Y = d => entering ? d.ty : d.y;
 
+/* Layout: a tidy tree, photo at the top left, leaves fanning out to the bottom
+   right. Depth runs left to right, breadth top to bottom.
+
+   d3.tree is NOT available here. The vendored d3 is a hand-picked subset
+   (drag, ease*, force*, max, min, randomLcg, select, timer, zoom,
+   zoomIdentity) with no d3-hierarchy, so the layout is computed directly.
+
+   For a fixed three-level tree that is the classic tidy algorithm: lay the
+   leaves out in order, then centre each parent on its children. Deterministic,
+   so the shape is identical on every load and there is nothing to settle. */
+const LEAF_GAP = 27;    // vertical spacing between neighbouring leaves
+const CLUSTER_GAP = 30; // extra space between one hub's leaves and the next
+const DEPTH_GAP = 235;  // horizontal spacing between levels
+
 function init() {
-  /* layout: settle once, deterministically (same seed as the reference), then animate into place */
-  sim = d3.forceSimulation(nodes).randomSource(d3.randomLcg(7))
-    .force('link', d3.forceLink(links).id(d => d.id).distance(l => l.kind === 'spoke' ? 210 : 58 + l.target.r).strength(l => l.kind === 'spoke' ? .9 : .7))
-    .force('charge', d3.forceManyBody().strength(d => d.kind === 'me' ? -900 : d.kind === 'cat' ? -420 : -70).distanceMax(420))
-    .force('collide', d3.forceCollide(d => d.r + (d.kind === 'cat' ? 20 : d.kind === 'me' ? 36 : 5)).iterations(2))
-    .force('ring', d3.forceRadial(d => d.kind === 'cat' ? 210 : d.kind === 'child' ? 330 : 0).strength(d => d.kind === 'cat' ? .5 : d.kind === 'child' ? .06 : 0))
-    .stop();
-  // 300 ticks reaches alpha .001, within 0.04 px of the reference's 420. Run them in slices so a
-  // tap right after load never waits on one long task. ponytail: bake positions at build time if phones ever need it.
-  let ticks = 0;
-  (function slice() {
-    for (const end = Math.min(300, ticks + 50); ticks < end; ticks++) sim.tick();
-    if (ticks < 300) setTimeout(slice, 0); else { sim.alpha(0); build(); }
-  })();
+  let cursor = 0;
+  cats.forEach((c, i) => {
+    c.x = DEPTH_GAP;
+    const kids = c.children;
+    if (!kids.length) { c.y = cursor; cursor += LEAF_GAP; return; }
+    let prev = null;
+    kids.forEach(k => {
+      k.x = DEPTH_GAP * 2;
+      // Space by radius, not by a fixed gap: posts are sized by reading time, so
+      // a flat gap lets the two biggest neighbours overlap.
+      k.y = prev ? Math.max(cursor, prev.y + prev.r + k.r + 5) : cursor;
+      prev = k;
+    });
+    cursor = prev.y + prev.r + LEAF_GAP;
+    c.y = (kids[0].y + kids[kids.length - 1].y) / 2;
+    if (i < cats.length - 1) cursor += CLUSTER_GAP;
+  });
+  me.x = 0;
+  me.y = (cats[0].y + cats[cats.length - 1].y) / 2;
+  build();
 }
 
 function build() {
   svg = d3.select('#graph'); vp = d3.select('#vp'); svgEl = svg.node();
-  d3.select('#orbits').append('circle').attr('class', 'orbit').attr('r', 210);
   gLinks = d3.select('#links').selectAll('line').data(links).join('line')
     .attr('class', l => `link ${l.kind}`).style('--c', l => l.color || null);
   // Nodes are real links: they open in a new tab, copy, and show their URL like any other link.
@@ -268,13 +281,8 @@ function build() {
 
   gNodes.on('pointerenter', (e, d) => hover(d, e)).on('pointermove', (e, d) => showTip(d, e.clientX, e.clientY)).on('pointerleave', () => hover(null))
     .on('focus', function (e, d) { if (!quietFocus && this.matches(':focus-visible')) hover(d); }).on('blur', () => hover(null));
-  const drag = d3.drag().clickDistance(5)
-    .filter(e => !reduced && !e.ctrlKey && !e.button) // under reduced motion nodes stay put
-    .on('start', (e, d) => { if (d.kind === 'me') return; if (!e.active) sim.alphaTarget(.2).restart(); d.fx = d.x; d.fy = d.y; hover(null); })
-    .on('drag', (e, d) => { if (d.kind === 'me') return; d.fx = e.x; d.fy = e.y; })
-    .on('end', (e, d) => { if (d.kind === 'me') return; if (!e.active) sim.alphaTarget(0); d.fx = null; d.fy = null; });
-  gNodes.call(drag);
-  sim.on('tick', draw);
+  // No node dragging. A tree's shape is the data, so moving one node would only
+  // break the structure. Panning and zooming stay on the svg via d3.zoom.
   $$('#sitemap a').forEach(a => { a.tabIndex = -1; }); // screen readers still reach it in browse mode
   ready = true;
 
@@ -290,7 +298,10 @@ function build() {
   pending = null; wantPal = false;
   if (reduced) { draw(); return; }
   entering = true;
-  nodes.forEach(d => { d.x = 0; d.y = 0; });
+  // Collapse to the photo, then grow outward. With a tree the photo is the root
+  // at the top left, so that is the origin, not (0,0).
+  const ox = me.tx, oy = me.ty;
+  nodes.forEach(d => { d.x = ox; d.y = oy; });
   draw();
   gNodes.style('opacity', d => d.kind === 'me' ? 1 : 0);
   const ease = d3.easeCubicOut, delayOf = d => d.kind === 'me' ? 0 : d.kind === 'cat' ? 60 + d.slot * 45 : 420 + d.i2 * 9;
@@ -299,7 +310,7 @@ function build() {
     for (const d of nodes) {
       if (d.kind === 'me') continue;
       const p = reduced ? 1 : Math.max(0, Math.min(1, (el - delayOf(d)) / (d.kind === 'cat' ? 700 : 760))), e = ease(p);
-      if (d.kind === 'cat') { d.x = d.tx * e; d.y = d.ty * e; }
+      if (d.kind === 'cat') { d.x = ox + (d.tx - ox) * e; d.y = oy + (d.ty - oy) * e; }
       else { const c = d.parent; d.x = c.x + (d.tx - c.tx) * e; d.y = c.y + (d.ty - c.ty) * e; }
       d.op = Math.min(1, p * 2.5);
       if (p < 1) done = false;

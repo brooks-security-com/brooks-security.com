@@ -24,7 +24,7 @@
   <defs><clipPath id="me-clip"><circle r="42"/></clipPath>
     {{- range $k, $v := partialCached "icons.html" "icons" }}<symbol id="i-{{ $k }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{{ $v | safeHTML }}</symbol>{{ end -}}
   </defs>
-  <g id="vp"><g id="orbits"></g><g id="links"></g><g id="nodes"></g></g>
+  <g id="vp"><g id="links"></g><g id="nodes"></g></g>
 </svg>
 <header class="brand"><b><a href="/">{{ site.Title }}</a></b><span>{{ site.Home.Title }}</span><span class="status"><i></i>Open to SE and SA roles</span></header>
 <div class="tools">
