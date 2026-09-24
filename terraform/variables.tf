@@ -17,6 +17,17 @@ variable "aws_profile" {
   default = "brooks-security"
 }
 
+# Private archive holding the master copies of the recorded talks. Not served,
+# not public, never fronted by CloudFront. The servable copies are separate
+# objects in the site bucket under downloads/.
+#
+# NOTE: Object Lock cannot be added to this bucket after creation. If it is
+# ever wanted, the bucket has to be recreated. See terraform/video-archive.tf.
+variable "video_archive_bucket" {
+  type    = string
+  default = "brooks-security-video-archive"
+}
+
 # --- GitHub contribution-heatmap nightly refresh ----------------------------
 variable "github_owner" {
   type    = string
