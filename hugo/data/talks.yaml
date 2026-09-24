@@ -6,25 +6,19 @@
 #
 # Source of truth for each entry is the archived recording and its cleaned
 # auto-caption transcript, not the video title. The archive lives outside this
-# repo at ~/Projects/Personal/brooks-security-video-archive/ (717 MB of video;
-# far too large for git). Paths in `archive` and `transcript` below are relative
-# to that directory, not to this repo.
+# repo at ~/Projects/Personal/brooks-security-video-archive/. Paths in `archive`
+# and `transcript` are relative to that directory, not to this repo.
 #
 # `video` is the self-hosted delivery URL, served from this site's own bucket at
 # downloads/ through CloudFront. The files are uploaded out of band and are
 # excluded from `hugo deploy` by the "**.mp4" glob in hugo.toml.
 #
-# speakers[].role_as_introduced is what the recording itself says. Where that
-# disagrees with the YouTube description, both are recorded rather than one
-# being picked.
+# `speaker_evidence` quotes the line in each recording that names Graham as the
+# presenter. All seven have one, and all seven are verified verbatim against the
+# transcripts by the archive's verify_quotes.py.
 #
-# quotes are cleaned from auto-captions: punctuation and capitalisation added,
-# ASR name errors fixed. Wording is otherwise verbatim, and every quote carries
-# a timestamp so it can be checked against the recording. 33/33 verified as
-# faithful spans by the archive's verify_quotes.py.
-#
-# chapters_source is `video` when the upload carried its own chapter markers,
-# `transcript` when the chapters were reconstructed from topic shifts.
+# `publish: false` marks a recording that should not render as its own entry.
+# Absent means publish. Only the duplicate re-recording carries it.
 
 meta:
   source: youtube.com/@Syxsense
@@ -36,6 +30,13 @@ meta:
     Syxsense no longer exists as an independent company. The channel is small
     (169 subscribers) and these recordings carry 12-188 views each, which is
     the profile of content that disappears without notice in a wind-down.
+  speaker_confirmation: >
+    All seven recordings name Graham as the presenter in the show intro, which
+    is the evidence of record and is quoted per recording in `speaker_evidence`.
+    Four are also named in the YouTube description. The other three are not,
+    which is why the intro is the source of truth here and not the description.
+    An earlier pass of this file wrongly listed those three as unconfirmed
+    because only the descriptions had been checked.
 
 talks:
   - id: teIKAtg6BoY
@@ -49,6 +50,9 @@ talks:
     views: 188
     archive: masters/teIKAtg6BoY.mp4
     transcript: clean/teIKAtg6BoY.txt
+    speaker_evidence: >
+      He introduces himself: "my name is Graham Brooks, I'm a Senior Security
+      Solutions Architect here with Syxsense" (00:01:24).
     format: Two presenters, one deck, long Q&A
     speakers:
       - name: Graham Brooks
@@ -145,6 +149,9 @@ talks:
     views: 77
     archive: masters/Eh3A_BkEilI.webm
     transcript: clean/Eh3A_BkEilI.txt
+    speaker_evidence: >
+      Intro: "today we have our industry expert Graham Brooks here to give us an
+      inside look into vulnerability remediation" (00:00:01).
     chapters_source: transcript
     format: Solo presenter, live product demo
     speakers:
@@ -233,6 +240,9 @@ talks:
     views: 102
     archive: masters/u29nuuxiCD0.webm
     transcript: clean/u29nuuxiCD0.txt
+    speaker_evidence: >
+      Intro: "today we are our industry expert Graham Brooks here to give us an
+      inside look into automation processes" (00:00:00).
     chapters_source: transcript
     format: Solo presenter, live product demo
     speakers:
@@ -319,6 +329,9 @@ talks:
     views: 41
     archive: masters/xmz2sXNcdEQ.mp4
     transcript: clean/xmz2sXNcdEQ.txt
+    speaker_evidence: >
+      Intro: "today we have our industry expert Graham Brooks here to give us an
+      inside look into the future of vulnerability management" (00:00:00).
     chapters_source: transcript
     format: Solo presenter, live product demo
     duplicate_of: null
@@ -411,15 +424,20 @@ talks:
     views: 12
     archive: masters/GLbU7U7KFxw.mp4
     transcript: clean/GLbU7U7KFxw.txt
+    speaker_evidence: >
+      Intro: "today we have our industry expert Graham Brooks here to give us an
+      inside look into the future of vulnerability management" (00:00:00).
     chapters_source: transcript
     format: Solo presenter, live product demo
     duplicate_of: xmz2sXNcdEQ
+    publish: false
     duplicate_note: >
       97.1% token-level identical to xmz2sXNcdEQ (2023-09-21). Same script, same
       demo, same hypothetical locations, same closing statistics, re-recorded
-      roughly nine months later. Recommend publishing one, or publishing both
-      with an explicit "re-recorded" note so it does not read as two distinct
-      talks.
+      roughly nine months later. `publish: false` means the talks section should
+      render the canonical entry only, not this one; the recording stays in the
+      archive and the delivery copy stays in S3, so the decision is reversible by
+      flipping this one flag.
     speakers:
       - name: Graham Brooks
         role_as_introduced: "industry expert, Syxsense"
@@ -458,6 +476,10 @@ talks:
     views: 42
     archive: masters/aVqQk8Td3Bo.mp4
     transcript: clean/aVqQk8Td3Bo.txt
+    speaker_evidence: >
+      Introduced by the host: "I'd like to introduce Graham Brooks, Syxsense
+      Pre-Sales Manager, who will give us an overview of the Syxsense platform"
+      (00:11:44).
     chapters_source: transcript
     format: Three presenters, market framing then demo then Q&A
     speakers:
@@ -561,6 +583,10 @@ talks:
     views: 54
     archive: masters/6FC-R0trKPo.mp4
     transcript: clean/6FC-R0trKPo.txt
+    speaker_evidence: >
+      Intro: "today we have our industry experts Graham Brooks and Chris Steffen
+      here to give us an inside look at advancing zero trust priorities"
+      (00:00:01).
     chapters_source: transcript
     format: Two-person interview, no demo
     speakers:
