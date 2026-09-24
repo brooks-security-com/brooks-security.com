@@ -67,11 +67,11 @@ h1, h2, h3 { text-wrap: balance; }
 .skip { position: fixed; z-index: 40; top: 10px; left: 10px; padding: 8px 12px; border-radius: 9px; background: var(--ink); color: var(--bg); font-weight: 500; text-decoration: none; transform: translateY(-200%); }
 .skip:focus { transform: none; }
 
-/* ---------- graph ---------- */
+/* ---------- graph (indented tree) ---------- */
 .graph { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; --k: 1; --kmin: .75; }
 .graph:active { cursor: grabbing; }
-.orbit { fill: none; stroke: var(--line); stroke-dasharray: 2 6; vector-effect: non-scaling-stroke; }
-.link { stroke: var(--line); stroke-width: 1.25; vector-effect: non-scaling-stroke; transition: opacity .25s, stroke .25s; }
+/* Elbow connectors: down from the parent's indent, then right into the child's row. */
+.link { fill: none; stroke: var(--line); stroke-width: 1.25; vector-effect: non-scaling-stroke; transition: opacity .25s, stroke .25s; }
 .link.spoke { stroke-width: 1.5; }
 .link.leaf { stroke: color-mix(in srgb, var(--c) 42%, transparent); stroke-width: 1; }
 .link.in.spoke, .link.hl.spoke { stroke: var(--c); }
@@ -79,27 +79,31 @@ h1, h2, h3 { text-wrap: balance; }
 @keyframes flow { to { stroke-dashoffset: -20; } }
 .node { cursor: pointer; transition: opacity .25s; outline: none; }
 .node .hit { fill: transparent; }
-.node .disc { fill: var(--panel); stroke: var(--c); stroke-width: 2; vector-effect: non-scaling-stroke; transition: fill .25s, stroke-width .25s; }
-.node.child .disc { fill: color-mix(in srgb, var(--c) 16%, var(--panel)); stroke-width: 1.25; }
-.node .ring { fill: none; stroke: var(--c); stroke-width: 1.5; vector-effect: non-scaling-stroke; opacity: 0; transform: scale(.8); transform-box: fill-box; transform-origin: center; transition: opacity .25s, transform .35s cubic-bezier(.2, .9, .3, 1.4); }
-.node:hover .ring, .node.sel .ring, .node.match .ring { opacity: .55; transform: none; }
-/* Keyboard focus gets its own full-strength ring, separate from hover and selection. */
-.node .focus { fill: none; stroke: var(--ink); stroke-width: 2; vector-effect: non-scaling-stroke; opacity: 0; }
-.node:focus-visible .focus { opacity: 1; }
-.node.sel .disc { fill: var(--c); }
-.node.sel .glyph { color: var(--panel); fill: var(--panel); }
-.node .glyph { color: var(--c); }
-.node text.glyph { fill: var(--c); font: 600 8.5px var(--mono); text-anchor: middle; dominant-baseline: central; pointer-events: none; }
-.node .inner { transition: transform .3s cubic-bezier(.2, .9, .3, 1.4); }
-.node:hover .inner { transform: scale(1.08); }
-.lbl { fill: var(--ink); font-weight: 600; font-size: calc(12.5px / max(var(--k), var(--kmin))); text-anchor: middle; paint-order: stroke; stroke: var(--bg); stroke-width: calc(4px / max(var(--k), var(--kmin))); stroke-linejoin: round; pointer-events: none; }
-.lbl .n { fill: var(--ink-2); font-family: var(--mono); font-weight: 500; }
-.node.child .lbl { font-weight: 500; font-size: calc(11px / max(var(--k), var(--kmin))); fill: var(--ink-2); opacity: 0; transition: opacity .25s; }
-.node.child.show-lbl .lbl { opacity: 1; }
-.me .photo-ring { fill: none; stroke: var(--accent); stroke-width: 3; vector-effect: non-scaling-stroke; }
-.me .halo { fill: none; stroke: var(--accent); stroke-width: 1.5; vector-effect: non-scaling-stroke; transform-box: fill-box; transform-origin: center; animation: halo 3.2s ease-out infinite; }
-@keyframes halo { 0% { opacity: .5; transform: scale(1); } 80%, 100% { opacity: 0; transform: scale(1.35); } }
-.me .lbl { font-size: calc(14px / max(var(--k), var(--kmin))); }
+.node .dot { fill: var(--c); }
+/* Row markers: the category icon, or the photo for the root. */
+.node .glyph { color: var(--c); fill: var(--c); }
+.node.child .glyph { opacity: .75; }
+/* Disclosure twist, left of the marker. Rotates open. */
+.node .twist { cursor: pointer; opacity: .5; }
+.node .twist path { fill: none; stroke: var(--ink-2); stroke-width: 1.6; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; }
+.node .twist:hover { opacity: 1; }
+.node.open .twist { transform: rotate(90deg); }
+.node .twist { transition: opacity .15s, transform .2s; }
+.node .photo-ring { fill: none; stroke: var(--accent); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.node .face { border-radius: 50%; }
+/* Row text scales inversely with zoom so the on-screen size stays put. */
+.node .lbl { fill: var(--ink); font-weight: 600; font-size: calc(13px / max(var(--k), var(--kmin))); pointer-events: none; }
+.node.cat .lbl { font-size: calc(13.5px / max(var(--k), var(--kmin))); }
+.node.child .lbl { font-weight: 500; fill: var(--ink-2); font-size: calc(12.5px / max(var(--k), var(--kmin))); }
+.node.me .lbl { font-size: calc(14px / max(var(--k), var(--kmin))); }
+.node .n { fill: var(--muted); font: 500 calc(11px / max(var(--k), var(--kmin))) var(--mono); pointer-events: none; }
+.node .meta { fill: var(--muted); font-size: calc(11.5px / max(var(--k), var(--kmin))); pointer-events: none; }
+/* A soft band marks the row under the pointer or the selected row. */
+.node .hit { transition: fill .15s; }
+.node:hover .hit { fill: color-mix(in srgb, var(--c) 10%, transparent); }
+.node.sel .hit { fill: color-mix(in srgb, var(--c) 16%, transparent); }
+.node.sel .lbl, .node:hover .lbl { fill: var(--ink); }
+.node:focus-visible .hit { fill: color-mix(in srgb, var(--ink) 10%, transparent); }
 .focusing .node:not(.in), .hovering .node:not(.hl), .searching .node:not(.match) { opacity: .18; }
 .focusing .link:not(.in), .hovering .link:not(.hl), .searching .link { opacity: .05; }
 .hovering .node.hl, .searching .node.match { opacity: 1; }

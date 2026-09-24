@@ -159,36 +159,21 @@ if (!G || !window.d3) return; // the page still works; it just has no graph
 /* ---------- the graph's data, from the manifest ---------- */
 const nodes = G.nodes.map(n => ({ ...n })), byId = new Map(), byUrl = new Map();
 nodes.forEach(n => { byId.set(n.id, n); if (!byUrl.has(n.url)) byUrl.set(n.url, n); });
-const me = Object.assign(byId.get('me'), { r: 42, x: 0, y: 0, fx: 0, fy: 0, color: 'var(--accent)' });
+const me = Object.assign(byId.get('me'), { x: 0, y: 0, color: 'var(--accent)' });
 const cats = nodes.filter(n => n.kind === 'cat');
-const ym = s => { const [y, m] = s.split('-').map(Number); return y * 12 + m; };
-const now = new Date(), months = n => (n.end ? ym(n.end) : now.getFullYear() * 12 + now.getMonth() + 1) - ym(n.start);
-// Node sizing: posts by reading time, roles by tenure, platform groups by platform count, featured builds larger.
-const SIZE = {
-  writing: n => 7 + Math.sqrt(n.mins) * 1.6,
-  builds: n => n.featured ? 12.5 : 10,
-  credentials: () => 10.5,
-  experience: n => n.start ? 8 + Math.sqrt(months(n)) * .85 : 10,
-  talks: n => n.icon === 'play' ? 12 : 10,
-  poc: () => 11,
-  stack: n => 8 + n.count * 1.1,
-};
+/* No SIZE map any more. Nodes were sized by reading time, tenure and platform
+   count because they were drawn as circles; in an indented tree a row is a row,
+   so the only thing left that needs a magnitude is the count next to each hub. */
 const links = [];
-const weights = cats.map(c => 3 + c.count), total = weights.reduce((a, b) => a + b, 0);
-let angle = -Math.PI / 2 - weights[0] / total * Math.PI;
-cats.forEach((c, ci) => {
-  const span = weights[ci] / total * Math.PI * 2, mid = angle + span / 2;
-  Object.assign(c, { r: 24, color: `var(--c${c.slot})`, children: nodes.filter(n => n.hub === c.id), x: Math.cos(mid) * 210, y: Math.sin(mid) * 210 });
+cats.forEach(c => {
+  Object.assign(c, { color: `var(--c${c.slot})`, children: nodes.filter(n => n.hub === c.id) });
   links.push({ source: me, target: c, kind: 'spoke', color: c.color });
-  const kids = c.children, n = kids.length;
-  kids.forEach((k, i) => {
-    // Seed children on two staggered arcs inside their category's slice, so the layout is the same on every load.
-    const t = n === 1 ? .5 : i / (n - 1), a = angle + span * (.12 + .76 * t), rr = 320 + (i % 2) * 44;
-    Object.assign(k, { r: (SIZE[c.id] || (() => 10))(k), parent: c, color: c.color, short: cut(k.short, c.cut), x: Math.cos(a) * rr, y: Math.sin(a) * rr, i2: ci * 3 + i });
+  c.children.forEach(k => {
+    Object.assign(k, { parent: c, color: c.color, short: cut(k.short, c.cut) });
     links.push({ source: c, target: k, kind: 'leaf', color: c.color });
   });
-  angle += span;
 });
+me.children = cats;
 const adj = new Map(nodes.map(n => [n.id, new Set()]));
 links.forEach(l => { adj.get(l.source.id).add(l.target.id); adj.get(l.target.id).add(l.source.id); });
 const clusterOf = n => !n || n.kind === 'me' ? null : n.kind === 'cat' ? n : n.parent;
@@ -211,75 +196,136 @@ function area() {
   return { x: introW, y: 0, w: W - introW, h: H - 56 };
 }
 
-let svg, vp, svgEl, gNodes, gLinks, zoom, sim, ready = false, entering = false, cur = null;
+let svg, vp, svgEl, gNodes, gLinks, zoom, ready = false, entering = false, cur = null;
 // While the entrance runs, aim at where nodes are going, not where they are.
 const X = d => entering ? d.tx : d.x, Y = d => entering ? d.ty : d.y;
 
+/* Layout: an indented tree, the tabular form of a hierarchy. Every node is a
+   row; depth indents it to the right and pre-order position stacks it down the
+   page, so the whole site reads from the photo at the top left out to the
+   deepest leaf at the bottom right.
+
+   This is d3's indented-tree pattern rather than d3.tree(). Rows of text joined
+   by elbow connectors need no breadth allocation and cannot collide, so a fixed
+   row height is the entire layout, and there is nothing to settle. */
+const ROW = 30;     // row height
+const INDENT = 30;  // indent per depth level
+const COL = 470;    // right edge of the meta column
+
+/* Collapse: the outermost level starts closed, so the graph opens as the photo
+   plus eight category rows rather than a wall of 62 leaves. The photo is always
+   open; every hub starts shut and is opened by its disclosure twist. */
+me.collapsed = false;
+cats.forEach(c => { c.collapsed = true; });
+const hasKids = d => !!(d.children && d.children.length);
+const isOpen = d => hasKids(d) && !d.collapsed;
+
+// Rows in draw order: pre-order, descending only into open nodes.
+function visible() {
+  const out = [];
+  (function walk(d) { out.push(d); if (isOpen(d)) d.children.forEach(walk); })(me);
+  return out;
+}
+// Row index and indent, over the visible set only.
+function relayout() {
+  let i = 0;
+  (function walk(d, depth) {
+    d.index = i++;
+    d.depth = depth;
+    d.x = depth * INDENT;
+    d.y = d.index * ROW;
+    if (isOpen(d)) d.children.forEach(k => walk(k, depth + 1));
+  })(me, 0);
+}
+
 function init() {
-  /* layout: settle once, deterministically (same seed as the reference), then animate into place */
-  sim = d3.forceSimulation(nodes).randomSource(d3.randomLcg(7))
-    .force('link', d3.forceLink(links).id(d => d.id).distance(l => l.kind === 'spoke' ? 210 : 58 + l.target.r).strength(l => l.kind === 'spoke' ? .9 : .7))
-    .force('charge', d3.forceManyBody().strength(d => d.kind === 'me' ? -900 : d.kind === 'cat' ? -420 : -70).distanceMax(420))
-    .force('collide', d3.forceCollide(d => d.r + (d.kind === 'cat' ? 20 : d.kind === 'me' ? 36 : 5)).iterations(2))
-    .force('ring', d3.forceRadial(d => d.kind === 'cat' ? 210 : d.kind === 'child' ? 330 : 0).strength(d => d.kind === 'cat' ? .5 : d.kind === 'child' ? .06 : 0))
-    .stop();
-  // 300 ticks reaches alpha .001, within 0.04 px of the reference's 420. Run them in slices so a
-  // tap right after load never waits on one long task. ponytail: bake positions at build time if phones ever need it.
-  let ticks = 0;
-  (function slice() {
-    for (const end = Math.min(300, ticks + 50); ticks < end; ticks++) sim.tick();
-    if (ticks < 300) setTimeout(slice, 0); else { sim.alpha(0); build(); }
-  })();
+  relayout();
+  build();
+}
+
+/* Row content. Enter only, so a re-render never duplicates it. */
+function fill(a) {
+  // The whole row is the target, not the marker.
+  a.append('rect').attr('class', 'hit')
+    .attr('x', -INDENT / 2).attr('y', -ROW / 2).attr('width', COL + INDENT).attr('height', ROW);
+  // Disclosure twist, only where there is something to disclose.
+  a.filter(hasKids).append('g').attr('class', 'twist')
+    .append('path').attr('d', 'M-4,-5 L3,0 L-4,5');
+  // The photo is its own marker; every other row gets its icon.
+  const meG = a.filter(d => d.kind === 'me');
+  meG.append('image').attr('class', 'face').attr('href', root.dataset.photo)
+    .attr('x', -10).attr('y', -10).attr('width', 20).attr('height', 20)
+    .attr('clip-path', 'url(#face-clip)').attr('preserveAspectRatio', 'xMidYMid slice');
+  meG.append('circle').attr('class', 'photo-ring').attr('r', 10);
+  const rest = a.filter(d => d.kind !== 'me');
+  rest.filter(d => d.icon).append('use').attr('class', 'glyph').attr('href', d => '#i-' + d.icon)
+    .attr('x', -6.5).attr('y', -6.5).attr('width', 13).attr('height', 13);
+  rest.filter(d => !d.icon).append('circle').attr('class', 'dot').attr('r', 3);
+  a.append('text').attr('class', 'lbl').attr('x', 14).attr('dy', '0.32em')
+    .attr('aria-hidden', 'true').text(d => d.short || d.label);
+  a.filter(d => d.kind === 'cat').append('text').attr('class', 'n')
+    .attr('x', d => 14 + (d.short || d.label).length * 6.4 + 8).attr('dy', '0.32em')
+    .attr('aria-hidden', 'true').text(d => d.children.length);
+  a.append('text').attr('class', 'meta').attr('x', COL).attr('dy', '0.32em')
+    .attr('text-anchor', 'end').attr('aria-hidden', 'true').text(d => d.meta || '');
+}
+
+/* The data join, re-runnable. Collapsing removes rows and re-expanding brings
+   them back through enter, so this runs on every toggle as well as on load. */
+function render() {
+  relayout();
+  const vis = visible();
+  const shown = new Set(vis.map(d => d.id));
+  const visLinks = links.filter(l => shown.has(l.source.id) && shown.has(l.target.id));
+
+  gLinks = d3.select('#links').selectAll('path').data(visLinks, l => l.target.id)
+    .join(enter => enter.append('path'), update => update, exit => exit.remove())
+    .attr('class', l => `link ${l.kind}`).style('--c', l => l.color || null);
+
+  gNodes = d3.select('#nodes').selectAll('a.node').data(vis, d => d.id)
+    .join(enter => { const a = enter.append('a'); fill(a); return a; },
+          update => update, exit => exit.remove())
+    .attr('class', d => `node ${d.kind}${d.kind === 'me' ? ' me' : ''}${isOpen(d) ? ' open' : ''}`)
+    .attr('href', d => d.url).attr('data-id', d => d.id).style('--c', d => d.color)
+    .attr('tabindex', d => d.kind === 'child' ? -1 : null)
+    .attr('aria-expanded', d => hasKids(d) ? String(isOpen(d)) : null)
+    .attr('aria-label', d => d.kind === 'me' ? 'About Graham Brooks' : d.meta ? `${d.label}, ${d.meta}` : d.label);
+
+  draw();
+  return vis;
 }
 
 function build() {
   svg = d3.select('#graph'); vp = d3.select('#vp'); svgEl = svg.node();
-  d3.select('#orbits').append('circle').attr('class', 'orbit').attr('r', 210);
-  gLinks = d3.select('#links').selectAll('line').data(links).join('line')
-    .attr('class', l => `link ${l.kind}`).style('--c', l => l.color || null);
-  // Nodes are real links: they open in a new tab, copy, and show their URL like any other link.
-  gNodes = d3.select('#nodes').selectAll('a.node').data(nodes, d => d.id).join('a')
-    .attr('class', d => `node ${d.kind}${d.kind === 'me' ? ' me' : ''}`)
-    .attr('href', d => d.url).attr('data-id', d => d.id).style('--c', d => d.color)
-    .attr('tabindex', d => d.kind === 'child' ? -1 : null)
-    .attr('aria-label', d => d.kind === 'me' ? 'About Graham Brooks' : d.meta ? `${d.label}, ${d.meta}` : d.label);
-  gNodes.append('circle').attr('class', 'hit').attr('r', d => d.r + (d.kind === 'child' ? 9 : 10));
-  const inner = gNodes.append('g').attr('class', 'inner');
-  inner.append('circle').attr('class', 'focus').attr('r', d => d.r + (d.kind === 'me' ? 8 : 8));
-  inner.filter(d => d.kind !== 'me').append('circle').attr('class', 'ring').attr('r', d => d.r + 5);
-  inner.filter(d => d.kind !== 'me').append('circle').attr('class', 'disc').attr('r', d => d.r);
-  inner.filter(d => d.icon && !d.glyph && d.kind !== 'me').append('use').attr('class', 'glyph').attr('href', d => '#i-' + d.icon)
-    .attr('x', d => -(d.kind === 'cat' ? 10 : d.r * .6)).attr('y', d => -(d.kind === 'cat' ? 10 : d.r * .6))
-    .attr('width', d => d.kind === 'cat' ? 20 : d.r * 1.2).attr('height', d => d.kind === 'cat' ? 20 : d.r * 1.2);
-  inner.filter(d => d.glyph).append('text').attr('class', 'glyph').text(d => d.glyph);
-  const meG = inner.filter(d => d.kind === 'me');
-  meG.append('circle').attr('class', 'halo').attr('r', 46);
-  meG.append('circle').attr('r', 44).attr('fill', 'var(--panel)');
-  meG.append('image').attr('href', root.dataset.photo).attr('x', -42).attr('y', -42).attr('width', 84).attr('height', 84).attr('clip-path', 'url(#me-clip)').attr('preserveAspectRatio', 'xMidYMid slice');
-  meG.append('circle').attr('class', 'photo-ring').attr('r', 44);
-  const lbl = gNodes.append('text').attr('class', 'lbl').attr('y', d => d.r + 4).attr('dy', '1.05em').attr('aria-hidden', 'true');
-  lbl.append('tspan').text(d => d.short);
-  lbl.filter(d => d.kind === 'cat').append('tspan').attr('class', 'n').attr('dx', 5).text(d => d.children.length);
-  kidLbl = lbl.filter(d => d.kind === 'child');
-
-  zoom = d3.zoom().scaleExtent([.3, 3.2]).on('zoom', e => { vp.attr('transform', e.transform); svgEl.style.setProperty('--k', e.transform.k); })
-    .on('end', e => { if (e.sourceEvent) placeLabels(clusterOf(cur), e.transform.k, cur); });
+  zoom = d3.zoom().scaleExtent([.3, 3.2]).on('zoom', e => { vp.attr('transform', e.transform); svgEl.style.setProperty('--k', e.transform.k); });
   svg.call(zoom).on('dblclick.zoom', null);
+
+  render();
+
+  // One delegated handler on the group. The twist toggles; anywhere else on the
+  // row is left to the anchor so the page still opens.
+  d3.select('#nodes').on('click', function (e) {
+    const tw = e.target.closest && e.target.closest('.twist');
+    if (!tw) return;
+    const a = tw.closest('a.node');
+    const d = a && d3.select(a).datum();
+    if (!d || !hasKids(d)) return;
+    e.preventDefault();
+    e.stopPropagation(); // keep the document-level navigator out of it
+    d.collapsed = !d.collapsed;
+    render();
+    fit(visible(), d, 0);
+  });
 
   gNodes.on('pointerenter', (e, d) => hover(d, e)).on('pointermove', (e, d) => showTip(d, e.clientX, e.clientY)).on('pointerleave', () => hover(null))
     .on('focus', function (e, d) { if (!quietFocus && this.matches(':focus-visible')) hover(d); }).on('blur', () => hover(null));
-  const drag = d3.drag().clickDistance(5)
-    .filter(e => !reduced && !e.ctrlKey && !e.button) // under reduced motion nodes stay put
-    .on('start', (e, d) => { if (d.kind === 'me') return; if (!e.active) sim.alphaTarget(.2).restart(); d.fx = d.x; d.fy = d.y; hover(null); })
-    .on('drag', (e, d) => { if (d.kind === 'me') return; d.fx = e.x; d.fy = e.y; })
-    .on('end', (e, d) => { if (d.kind === 'me') return; if (!e.active) sim.alphaTarget(0); d.fx = null; d.fy = null; });
-  gNodes.call(drag);
-  sim.on('tick', draw);
+  // No node dragging. A tree's shape is the data, so moving one node would only
+  // break the structure. Panning and zooming stay on the svg via d3.zoom.
   $$('#sitemap a').forEach(a => { a.tabIndex = -1; }); // screen readers still reach it in browse mode
   ready = true;
 
-  /* entrance: categories fly out from the photo, then each cluster blooms */
-  nodes.forEach(d => { d.tx = d.x; d.ty = d.y; });
+  const vis = visible();
+  vis.forEach(d => { d.tx = d.x; d.ty = d.y; });
   const st = history.state || {};
   const start = st.graph ? null : nodeFor(pane.dataset.path, location.hash);
   if (!start && st.graph) setPanel(false);
@@ -289,64 +335,39 @@ function build() {
   if (wantPal) openPal();
   pending = null; wantPal = false;
   if (reduced) { draw(); return; }
+  /* Entrance: rows fade in down the list. The old bloom-from-the-photo made
+     sense when nodes had radial positions to travel from; in a list it would
+     just slide rows through each other, so this staggers opacity instead. */
   entering = true;
-  nodes.forEach(d => { d.x = 0; d.y = 0; });
   draw();
-  gNodes.style('opacity', d => d.kind === 'me' ? 1 : 0);
-  const ease = d3.easeCubicOut, delayOf = d => d.kind === 'me' ? 0 : d.kind === 'cat' ? 60 + d.slot * 45 : 420 + d.i2 * 9;
+  gNodes.style('opacity', 0);
   const timer = d3.timer(el => {
     let done = true;
-    for (const d of nodes) {
-      if (d.kind === 'me') continue;
-      const p = reduced ? 1 : Math.max(0, Math.min(1, (el - delayOf(d)) / (d.kind === 'cat' ? 700 : 760))), e = ease(p);
-      if (d.kind === 'cat') { d.x = d.tx * e; d.y = d.ty * e; }
-      else { const c = d.parent; d.x = c.x + (d.tx - c.tx) * e; d.y = c.y + (d.ty - c.ty) * e; }
-      d.op = Math.min(1, p * 2.5);
+    for (const d of vis) {
+      const p = Math.max(0, Math.min(1, (el - d.index * 6) / 420));
+      d.op = p;
       if (p < 1) done = false;
     }
-    draw();
-    gNodes.style('opacity', d => d.kind === 'me' ? null : d.op < 1 ? d.op : null);
+    gNodes.style('opacity', d => d.op);
     if (done) { timer.stop(); entering = false; gNodes.style('opacity', null); }
   });
 }
 
 /* ---------- draw ---------- */
-let kidLbl;
-// Child labels sit on the outward side of their node, pointing away from the category hub.
-const labelSide = d => { const dx = X(d) - X(d.parent), dy = Y(d) - Y(d.parent), L = Math.hypot(dx, dy) || 1; return [dx / L, dy / L]; };
 function draw() {
   gNodes.attr('transform', d => `translate(${d.x},${d.y})`);
-  gLinks.attr('x1', l => l.source.x).attr('y1', l => l.source.y).attr('x2', l => l.target.x).attr('y2', l => l.target.y);
-  kidLbl.each(function (d) {
-    const [ux, uy] = labelSide(d), side = ux > .35 ? 'start' : ux < -.35 ? 'end' : 'middle';
-    this.setAttribute('x', ux * (d.r + 5)); this.setAttribute('y', uy * (d.r + 5));
-    this.setAttribute('text-anchor', side);
-    this.setAttribute('dy', side !== 'middle' ? '.35em' : uy > 0 ? '.95em' : '-.25em');
-  });
+  // Elbow: down from the parent's indent to the child's row, then right into it.
+  gLinks.attr('d', l => `M${l.source.x},${l.source.y}V${l.target.y}H${l.target.x}`);
 }
-// Show the labels that fit at this zoom: biggest nodes first, skip any that collide.
-function placeLabels(c, k, n) {
-  if (!c) { gNodes.classed('show-lbl', false); return; }
-  const kmin = parseFloat(getComputedStyle(svgEl).getPropertyValue('--kmin')) || .75, fs = 11 / Math.max(k, kmin);
-  if (fs * k < 8) { gNodes.classed('show-lbl', d => d === n); return; } // too small to read: only the selected label
-  const taken = [...c.children, c].map(d => ({ x0: X(d) - d.r, x1: X(d) + d.r, y0: Y(d) - d.r, y1: Y(d) + d.r, d }));
-  const hit = b => taken.some(t => t.d !== b.d && b.x0 < t.x1 && b.x1 > t.x0 && b.y0 < t.y1 && b.y1 > t.y0);
-  const show = new Set();
-  const order = [...c.children].sort((a, b) => (b === n) - (a === n) || b.r - a.r);
-  for (const d of order) {
-    const [ux, uy] = labelSide(d), w = d.short.length * fs * .6, h = fs * 1.2, side = ux > .35 ? 1 : ux < -.35 ? -1 : 0;
-    const ax = X(d) + ux * (d.r + 5), ay = Y(d) + uy * (d.r + 5);
-    const x0 = side === 1 ? ax : side === -1 ? ax - w : ax - w / 2, y0 = side ? ay - h / 2 : uy > 0 ? ay : ay - h;
-    const b = { x0, x1: x0 + w, y0, y1: y0 + h, d };
-    if (d === n || !hit(b)) { taken.push(b); show.add(d); }
-  }
-  gNodes.classed('show-lbl', d => show.has(d));
-}
+/* No placeLabels: in an indented tree every label is always visible, because a
+   row is text rather than a circle with a caption that can collide. The whole
+   label-collision system that the radial layout needed is gone with it. */
 
 /* ---------- camera ---------- */
 function fit(pts, focusPt, dur) {
   const a = area(), pad = innerWidth <= 860 ? 18 : 56;
-  const x0 = d3.min(pts, d => X(d) - d.r - 30), x1 = d3.max(pts, d => X(d) + d.r + 30), y0 = d3.min(pts, d => Y(d) - d.r - 12), y1 = d3.max(pts, d => Y(d) + d.r + 36);
+  const x0 = d3.min(pts, d => X(d) - 30), x1 = d3.max(pts, d => X(d) + COL + 30),
+        y0 = d3.min(pts, d => Y(d) - ROW / 2), y1 = d3.max(pts, d => Y(d) + ROW / 2);
   let k = Math.min((a.w - pad * 2) / (x1 - x0), (a.h - pad * 2) / (y1 - y0));
   k = Math.max(.3, Math.min(k, focusPt ? 2.2 : 1.5));
   let cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
@@ -356,16 +377,18 @@ function fit(pts, focusPt, dur) {
   return k;
 }
 function aim(n, dur) {
-  const c = clusterOf(n);
-  if (!c) { placeLabels(null); return fit(nodes, null, dur); }
-  placeLabels(c, fit([c, ...c.children], n.kind === 'child' ? n : null, dur), n);
+  // A list has no clusters to frame. Frame the visible rows, biased toward the
+  // selected one so opening a page does not scroll the list out from under it.
+  return fit(visible(), n || null, dur);
 }
 
 /* ---------- selection, hover, and search highlight ---------- */
 function select(n) {
   const c = clusterOf(n);
   svgEl.classList.toggle('focusing', !!c);
-  if (n && n.kind === 'child') gNodes.filter(d => d === n).raise(); // draw it, and its label, above its neighbors (hubs stay put so Tab order holds)
+  // No raise() here any more. In a radial layout raising a node lifted it above
+  // its neighbours; in a list, DOM order IS row order, so raising one would
+  // silently reorder the tree.
   gNodes.classed('sel', d => d === n).classed('in', d => !!c && (d === c || d.parent === c || d.kind === 'me' || (n && adj.get(n.id).has(d.id))));
   gLinks.classed('in', l => !!c && (l.source === c || l.target === c || l.source.parent === c || l.target.parent === c || (n && (l.source === n || l.target === n))))
     .classed('flow', l => !!c && !reduced && (l.target === c || l.source === c));
