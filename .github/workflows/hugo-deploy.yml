@@ -23,16 +23,24 @@ on:
 
 permissions:
   contents: read
+  # Required to mint the OIDC token that assumes the deploy role below. This
+  # replaces the AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY repository secrets
+  # this workflow used to carry — no long-lived AWS credential exists any more.
+  id-token: write
 
 env:
   # Must match [module.hugoVersion] min in hugo/hugo.toml.
   # We pull the `extended_withdeploy` edition for the `hugo deploy` subcommand
   # (split out in 0.159.2). The layouts no longer need the extended features.
   HUGO_VERSION: '0.160.1'
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  AWS_REGION: ${{ secrets.AWS_REGION }}
-  AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+  # Region is now stated outright rather than read from a secret. The account
+  # has a single region for this estate.
+  AWS_REGION: us-east-1
+  AWS_DEFAULT_REGION: us-east-1
+  # aws_iam_role.github_deploy, defined in terraform/iam.tf. Its trust policy
+  # admits only repo:LittleSeneca/brooks-security.com:ref:refs/heads/main, so a
+  # pull_request run cannot assume it. Not a secret.
+  AWS_DEPLOY_ROLE_ARN: arn:aws:iam::570516803292:role/brooks-security-github-deploy
   # GitHub contribution heatmap: the login whose calendar is rendered, and the
   # pre-existing SSM SecureString holding a PAT (read:user + repo scopes) used
   # to query the GraphQL contributionsCollection API.
@@ -73,6 +81,19 @@ jobs:
       - name: No Hugo changes - marking check as passed
         if: steps.gate.outputs.run != 'true'
         run: echo "No Hugo changes in this diff - marking check as passed."
+
+      # Credentials for the SSM reads below. Gated on the same condition as the
+      # deploy job: only push-to-main and workflow_dispatch can assume the role,
+      # because its trust policy matches refs/heads/main exactly and a PR run is
+      # refs/pull/N/merge. On a PR the SSM steps below are fail-soft by design,
+      # so the build still passes with the committed contributions.json and the
+      # contact form's dev-mode notice.
+      - name: Assume the deploy role
+        if: steps.gate.outputs.run == 'true' && (github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main'))
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
 
       # Re-bake hugo/data/contributions.json from the live GitHub GraphQL API.
       # Fully fail-soft: any error (missing token, non-200, empty/errored
@@ -196,6 +217,16 @@ jobs:
           mv /tmp/hugo "$HOME/.local/bin/hugo"
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
           "$HOME/.local/bin/hugo" version
+
+      # Credentials for `hugo deploy` (S3 sync + CloudFront invalidation). This
+      # job only runs on push-to-main or workflow_dispatch, which is exactly what
+      # the role's trust policy admits.
+      - name: Assume the deploy role
+        if: steps.gate.outputs.run == 'true'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Restore build artifact
         if: steps.gate.outputs.run == 'true'

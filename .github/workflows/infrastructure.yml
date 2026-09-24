@@ -1,5 +1,17 @@
 name: 'Infrastructure'
 
+# NOTE: this workflow still authenticates with static AWS_ACCESS_KEY_ID /
+# AWS_SECRET_ACCESS_KEY secrets, deliberately. `terraform apply` here manages
+# S3, CloudFront, Route 53, ACM, IAM, Lambda, API Gateway, SNS, SSM, KMS,
+# EventBridge, CloudWatch and IAM Identity Center — a deliberately-scoped OIDC
+# policy for that is a project of its own, not a drive-by edit, and guessing at
+# it risks breaking the apply path. The static key also has an unknown blast
+# radius: no IAM user in this account carries a policy that matches what these
+# workflows do, so the key's identity could not be established from the account
+# alone. Migrating this is worth doing with the key's scope known first.
+#
+# hugo-deploy.yml has been migrated to OIDC (see its permissions block).
+#
 # Runs on every push/PR to main so required status checks are always present.
 # Paths-filter inside each job skips real work when nothing relevant changed.
 # On push to main (or workflow_dispatch): fmt → validate → apply.
