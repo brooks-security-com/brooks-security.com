@@ -86,8 +86,9 @@ class Handler(unittest.TestCase):
         self.assertEqual(index.handler(event, None)["statusCode"], 400)
 
     def test_register_rules(self):
-        for pw in ("short", "correct horse battery staple", "abcabcabcabcabcabc", "1234567890123456", "qwertyuiopasdfgh", "annannannannannann"):
+        for pw in ("7 chars", "x" * 129):
             self.assertEqual(call("register", {"username": "ann", "password": pw})[0], 400, pw)
+        self.assertEqual(call("register", {"username": "bob", "password": "password"})[0], 200)  # 8 chars, anything goes
         self.assertEqual(call("register", {"username": "a!", "password": PW})[0], 400)
         code, body = call("register", {"username": " Ann ", "password": PW})
         self.assertEqual((code, body["username"]), (200, "ann"))

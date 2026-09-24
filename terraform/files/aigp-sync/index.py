@@ -13,7 +13,7 @@ sends the whole of it on every sync. This function merges it with the stored
 copy and returns the result, so the client carries no merge logic. The spec is
 docs/specs/cross-device-sync.md in the aigp-study repo.
 
-Passwords: PBKDF2-HMAC-SHA256, 600k iterations, per-user salt. Tokens are
+Passwords: 8-128 characters, PBKDF2-HMAC-SHA256, 600k iterations, per-user salt. Tokens are
 stateless HMACs over "<username>.<createdAt>.<expiry>"; createdAt binds a token
 to one registration, so deleting and re-registering a name revokes old tokens.
 No dependencies beyond the stdlib and the boto3 that ships with the runtime.
@@ -103,17 +103,6 @@ def _creds(body):
     return user.strip().lower(), unicodedata.normalize("NFKC", pw)
 
 
-def weak_password(pw, user):
-    """The SP 800-63B-4 3.1.1.2 blocklist check, minimal: whole-value, never substrings."""
-    p = re.sub(r"\s+", "", pw.lower())
-    return (
-        p == user
-        or re.fullmatch(r"(.{1,32}?)\1+", p) is not None  # aaaa..., abcabc..., passwordpassword
-        or any(p in run for run in ("0123456789" * 13, "abcdefghijklmnopqrstuvwxyz" * 5, "qwertyuiopasdfghjklzxcvbnm" * 5))
-        or p == "correcthorsebatterystaple"  # the textbook example passphrase
-    )
-
-
 def _hash(pw, salt, iterations):
     return hashlib.pbkdf2_hmac("sha256", pw.encode(), salt, iterations)
 
@@ -122,10 +111,10 @@ def register(body):
     user, pw = _creds(body)
     if not USERNAME_RE.fullmatch(user):
         return _resp(400, "Username must be 3-32 characters: letters, digits, dot, dash or underscore.")
-    if not 15 <= len(pw) <= 128:
-        return _resp(400, "Password must be 15-128 characters. A few random words make a good one.")
-    if weak_password(pw, user):
-        return _resp(400, "That password is too easy to guess. Try a few unrelated words.")
+    # ponytail: 8+ and anything goes, by choice. The account guards study progress, no PII;
+    # hashing, throttling and lockout still protect the service itself.
+    if not 8 <= len(pw) <= 128:
+        return _resp(400, "Password must be 8-128 characters.")
     salt, now = secrets.token_bytes(16), int(time.time())
     db = _db()
     try:
