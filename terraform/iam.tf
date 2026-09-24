@@ -52,7 +52,21 @@ resource "aws_iam_role" "github_deploy" {
           # intended. The PR-time steps that read SSM are fail-soft by design, so
           # PR builds still pass without it; only push-to-main and
           # workflow_dispatch assume the role.
-          "token.actions.githubusercontent.com:sub" = "repo:brooks-security-com/brooks-security.com:ref:refs/heads/main"
+          # Two subjects, because GitHub changes the claim when a job declares
+          # an environment. A job without one gets the ref form; a job with
+          # `environment: production` (hugo-deploy.yml's deploy job, and
+          # infrastructure.yml's apply job) gets the environment form instead.
+          # Both are needed, and StringEquals with a list is an OR.
+          #
+          # The environment form is broader — it does not name a ref, so any job
+          # in this repo that declares that environment would match. That is why
+          # the `production` environment is restricted to the main branch in the
+          # GitHub settings. Set that before relying on this entry; without it,
+          # a pull-request job could declare the environment and assume the role.
+          "token.actions.githubusercontent.com:sub" = [
+            "repo:brooks-security-com/brooks-security.com:ref:refs/heads/main",
+            "repo:brooks-security-com/brooks-security.com:environment:production",
+          ]
         }
       }
     }]
