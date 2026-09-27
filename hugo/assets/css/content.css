@@ -662,3 +662,25 @@ a.entry:focus-visible .entry__go { opacity: 1; transform: translate3d(0, -50%, 0
 @media (min-width: 1080px) {
   .panel__inner:has(.detail--with-rail) { max-width: 62rem; }
 }
+
+/* An item page animates its blocks in, and the design triggers that from `.sub.is-in` --
+   the layer its item pages live inside. In the port an item page is the panel's detail,
+   with no `.sub` around it, so the trigger is the panel's own state class and the
+   sequence is otherwise the design's, delay for delay.
+
+   Without this the blocks stay where .detail > * starts them: opacity 0, twelve pixels
+   down. The page renders, the text is in the DOM, and the reader sees an empty sheet.
+
+   Reduced motion gets the blocks, not the animation: `both` fill would otherwise hold
+   them at the start frame. */
+.panel.is-in .detail > * { animation: rise 0.7s var(--ease) both; }
+.panel.is-in .detail > *:nth-child(1) { animation-delay: 0.1s; }
+.panel.is-in .detail > *:nth-child(2) { animation-delay: 0.16s; }
+.panel.is-in .detail > *:nth-child(3) { animation-delay: 0.22s; }
+.panel.is-in .detail > *:nth-child(4) { animation-delay: 0.28s; }
+.panel.is-in .detail > *:nth-child(5) { animation-delay: 0.34s; }
+.panel.is-in .detail > *:nth-child(n + 6) { animation-delay: 0.4s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .detail > * { opacity: 1; transform: none; animation: none; }
+}
