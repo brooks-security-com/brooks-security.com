@@ -9,10 +9,14 @@
 {{- $best := dict -}}
 {{- $bestLen := 0 -}}
 {{- range $sections -}}
-  {{- $m := .match | default .href -}}
-  {{- if and (hasPrefix $url $m) (gt (len $m) $bestLen) -}}
-    {{- $best = . -}}
-    {{- $bestLen = len $m -}}
+  {{- $section := . -}}
+  {{- $prefixes := .match | default .href -}}
+  {{- if not (reflect.IsSlice $prefixes) }}{{ $prefixes = slice $prefixes }}{{ end -}}
+  {{- range $prefixes -}}
+    {{- if and (hasPrefix $url .) (gt (len .) $bestLen) -}}
+      {{- $best = $section -}}
+      {{- $bestLen = len . -}}
+    {{- end -}}
   {{- end -}}
 {{- end -}}
 {{- $next := dict -}}

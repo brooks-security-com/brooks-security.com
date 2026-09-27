@@ -1,0 +1,17 @@
+{{- /* The platform groups, from hugo/data/platforms.yaml (generated from the CV's platform
+       section). Each group carries its platforms, so a group page is the list and nothing
+       is written twice. */ -}}
+{{- range hugo.Data.tech.groups -}}
+  {{- $md := printf "The platforms and tools I have run in this group, with how long I have run them.\n\n" -}}
+  {{- range .platforms -}}
+    {{- $md = printf "%s### %s\n\n%s%s\n\n" $md .name (cond (eq .years "") "" (printf "%s. " .years)) .md -}}
+  {{- end -}}
+  {{- $.AddPage (dict
+      "path" (printf "/%s" .slug)
+      "kind" "page"
+      "title" .title
+      "description" (printf "%d platforms" .count)
+      "weight" .weight
+      "params" (dict "subtitle" (printf "%d platforms" .count) "platforms" .platforms)
+      "content" (dict "mediaType" "text/markdown" "value" $md)) -}}
+{{- end -}}

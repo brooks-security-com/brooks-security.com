@@ -1,0 +1,17 @@
+{{ define "main" }}
+{{- /* A platform group: the count, then the platforms in it, each with how long it has
+       been in use and what it was used for. */ -}}
+<main class="panel is-in" id="main">
+  {{ partial "panel-bar.html" . }}
+  <div class="panel__scroll" data-scroll>
+    <div class="panel__inner">
+      <div class="detail">
+        <h1 class="detail__title" id="title" tabindex="-1">{{ .Title }}</h1>
+        <p class="detail__lede">{{ .Params.subtitle }}</p>
+        <div class="prose" data-inview>{{ partial "content.html" . }}</div>
+      </div>
+      {{ partial "panel-next.html" . }}
+    </div>
+  </div>
+</main>
+{{ end }}

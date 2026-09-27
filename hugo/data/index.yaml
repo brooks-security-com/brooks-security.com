@@ -23,8 +23,8 @@ sections:
     num: "03"
     word: Work
     meta: Ten years, one direction
-    href: /docs/curriculum-vitae/work-experience/
-    match: /docs/curriculum-vitae/
+    href: /work/
+    match: /work/
   - key: talks
     num: "04"
     word: Talks
@@ -41,8 +41,12 @@ sections:
     num: "06"
     word: Tech
     meta: What I actually run
-    href: /docs/portfolio/
-    match: /docs/portfolio/
+    href: /tech/
+    # the platform groups live at /tech/<group>/ and the builds are written up under
+    # /docs/portfolio/<slug>/, which Tech links to -- both are Tech
+    match:
+      - /tech/
+      - /docs/portfolio/
   - key: contact
     num: "07"
     word: Contact
