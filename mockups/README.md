@@ -112,7 +112,7 @@ sources, so nothing here is invented copy:
 |---|---|---|
 | Talks | 6 | every recording: poster → self-hosted video, the summary from `data/talks.yaml`, the writeup from `Portfolio/speaking/`, chapters, speakers |
 | Blogs | 14 | the full post bodies, contents list, tags |
-| Tech | 18 | 6 portfolio writeups and 12 platform groups (tenure + prose per platform) |
+| Tech | 16 | 6 portfolio writeups and 10 platform groups (tenure + prose per platform). CI/CD Platforms, Configuration as Code and Infrastructure as Code are folded into one **Platforms and Tooling** page — two of them held a single platform and a single sentence |
 | Work | 6 | the CV roles with their own bullets; the last row folds the two earliest roles into one page |
 
 ```bash
@@ -155,7 +155,7 @@ sources, so nothing here is invented copy:
   zero-size box and emit NaN transforms. Without the bundle the diagrams fall
   back to showing their source text, which is readable but not the point.
 - `tools/build_content.py` namespaces heading ids per page (`<slug>--<id>`):
-  45 pages share one document, and several posts have an "Introduction".
+  42 pages share one document, and several posts have an "Introduction".
 - On desktop a post's contents sits in a sticky rail beside the body (the posts
   themselves point at "the contents on the right"); below 1080px it becomes an
   inline control above the body.
