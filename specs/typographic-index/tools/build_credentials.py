@@ -24,8 +24,8 @@ REPO = HERE.parents[2]          # tools/ -> typographic-index/ -> specs/ -> repo
 INDEX = HERE.parent / "index.html"
 DATA = REPO / "hugo" / "data" / "credentials.yaml"
 
-MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+MONTHS = ["January", "February", "March", "April", "May", "June", "July",
+          "August", "September", "October", "November", "December"]
 
 START = re.compile(r"[ \t]*<!-- creds:start.*?-->", re.DOTALL)
 END = re.compile(r"[ \t]*<!-- creds:end -->")
@@ -38,10 +38,14 @@ def esc(text: str) -> str:
 
 
 def date_label(value: str) -> str:
-    """'2026-06-05' -> 'Jun 5, 2026';  '2024-01' -> 'Jan 2024'."""
+    """Month and year, spelled out: '2026-06-05' -> 'June 2026', '2024-01' -> 'January 2024'.
+
+    The day is kept in the data because the CV records it for the CISSP, but the page
+    shows the month: a list where one row has a day and the others do not reads like an
+    accident rather than a record.
+    """
     parts = [int(p) for p in str(value).split("-")]
-    month = MONTHS[parts[1] - 1]
-    return f"{month} {parts[2]}, {parts[0]}" if len(parts) > 2 else f"{month} {parts[0]}"
+    return f"{MONTHS[parts[1] - 1]} {parts[0]}"
 
 
 def load() -> dict:
