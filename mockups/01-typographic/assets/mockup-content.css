@@ -260,25 +260,9 @@
 
 .facts dd { margin: 0; font-size: 0.95rem; line-height: 1.55; color: var(--ink-2); }
 
-.speakers { list-style: none; margin: 2rem 0 0; padding: 0; display: grid; gap: 0.55rem; }
+.chapters { margin: 2rem 0 0; border-top: 1px solid var(--rule-soft); padding-top: 0.9rem; }
 
-.speakers li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.15rem 0.75rem; }
-
-.speakers__n { font-family: var(--serif); font-size: 1.12rem; color: var(--ink); }
-
-.speakers__r {
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.chapters,
-.notes { margin: 2rem 0 0; border-top: 1px solid var(--rule-soft); padding-top: 0.9rem; }
-
-.chapters summary,
-.notes summary {
+.chapters summary {
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
@@ -292,12 +276,9 @@
   color: var(--ink-2);
 }
 
-.chapters summary::-webkit-details-marker,
-.notes summary::-webkit-details-marker { display: none; }
-.chapters summary::after,
-.notes summary::after { content: "▾"; color: var(--muted); transition: transform 0.35s var(--ease); }
-.chapters[open] summary::after,
-.notes[open] summary::after { transform: rotate(180deg); }
+.chapters summary::-webkit-details-marker { display: none; }
+.chapters summary::after { content: "▾"; color: var(--muted); transition: transform 0.35s var(--ease); }
+.chapters[open] summary::after { transform: rotate(180deg); }
 
 .chapters__count { color: var(--muted); }
 
@@ -314,12 +295,6 @@
 }
 
 .chapters__t { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
-
-/* the folded writeup: same quiet control as the chapter list, and the body it
-   reveals sits under it like any other prose */
-.notes[open] summary { margin-bottom: 0.9rem; }
-.notes .prose { margin-top: 0; }
-.notes .prose > *:first-child { margin-top: 0; }
 
 /* ---------- a post's contents list ---------- */
 .toc {

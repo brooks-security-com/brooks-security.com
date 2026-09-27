@@ -243,44 +243,132 @@ def player(talk: dict) -> str:
       </figure>"""
 
 
-def speaker_list(speakers: list[dict]) -> str:
-    rows = []
-    for speaker in speakers:
-        name = esc(speaker.get("name", ""))
-        role = esc(speaker.get("role_as_introduced", ""))
-        rows.append(f'<li><span class="speakers__n">{name}</span>'
-                    + (f'<span class="speakers__r">{role}</span>' if role else "")
-                    + "</li>")
-    return ('<ul class="speakers">' + "".join(rows) + "</ul>") if rows else ""
-
-
 LABEL_LIMIT = 62
 
+# A talk page describes the talk, not the room. The summaries in talks.yaml are
+# programme notes: they open with an editorial label ("The commercial one.") and
+# they are written around the people in the recording ("Mason opens on...",
+# "Graham spends the first ten minutes...", "Chris's central claim is..."). A
+# mechanical filter gets about half the set reading well and leaves the rest as
+# a fragment of somebody else's argument, so the subject line for each published
+# talk is set here, keyed by title, derived from the same summary with the speakers
+# removed. The
+# filter below covers any talk that is not listed.
+TALK_SUBJECT = {
+    "The Cyber Kill Chain Masterclass":
+        "The Lockheed Martin Cyber Kill Chain as a defensive planning tool rather than an "
+        "attacker's checklist: the eight phases, the control that buys back time at each, and "
+        "why the chain is a clock rather than a test you pass or fail.",
+    "Analyst Insights: Advancing Zero Trust Priorities":
+        "Zero trust as a discipline rather than a product: why it is a philosophy and not "
+        "something bought out of the box, why most organizations are further along than they "
+        "think, and the difference between checkbox compliance and audit-ready.",
+    "Spotlight Webinar: Vulnerability Remediation":
+        "What a vulnerability actually is: CVE identity, CVSS scoring, and the split between "
+        "patch and configuration vulnerabilities. Then a live remediation loop on three "
+        "findings, closing on why remediation should be policy-driven rather than pushed ad hoc.",
+    "Spotlight Webinar: Harnessing Automation":
+        "The automation surface beyond patching and vulnerability remediation: service control, "
+        "access control and software provisioning, built live as a drag-and-drop workflow that "
+        "ends in BitLocker enforcement with a branching path and a firewall check.",
+    "Spotlight Webinar: Autonomous Defense":
+        "A defense-in-depth stack assembled as a single workflow, layer by layer: firewall, "
+        "agent, antivirus, VPN, SIEM, patch and vulnerability scan. The argument underneath is "
+        "that attackers triage, so an organization that is expensive to enter gets skipped "
+        "rather than defeated.",
+    "How MSPs and MSSPs Can Comply and Thrive with Automated Remediation":
+        "The MSP business case for compliance: tool sprawl as the cost centre, proving "
+        "compliance as the hard part, and CIS Level 1 and 2 remediations as a prepackaged "
+        "service, with multi-tenant management and a SOC 2 audit at 93.4% patch efficacy.",
+}
 
-def brief(text: str, limit: int = 260) -> str:
-    """The shortest version that still says what the talk is, on sentence bounds.
+# The formats in talks.yaml count the people in the room ("Three presenters,
+# market framing then demo then Q&A"). The page does not talk about speakers, so
+# the line keeps what the session was and drops how many delivered it.
+FORMAT_KEEP = {
+    "Three presenters, market framing then demo then Q&A": "Market framing, demo, Q&A",
+    "Solo presenter, live product demo": "Live product demo",
+    "Two-person interview, no demo": "Interview, no demo",
+    "Two presenters, one deck, long Q&A": "One deck, long Q&A",
+}
+FORMAT_STRIP = re.compile(
+    r"^(?:solo|single|two|three|four)[- ]?(?:person|presenter|presenters)\b[^,]*,\s*", re.I)
+CONNECTIVE = re.compile(
+    r"^(From there|The second half|The argument|It then|The Q&A|Then\b|After that|Next\b|The rest)",
+    re.I)
+PRONOUN = re.compile(r"^(He|She|They|His|Her|Their|It)\b")
 
-    Two rules, both learned from reading the output rather than the input:
 
-    - The summaries in talks.yaml often open with an editorial label meant for
-      someone who already knows the series -- "The commercial one.", "The most
-      teaching-heavy of the Spotlight series." On a page a stranger lands on,
-      that is 19 characters that say nothing, so leading labels are dropped.
-    - Sentences are kept whole. A clause cut mid-thought reads worse than a
-      slightly longer sentence, and a dangling "which is why we built..."
-      actively misleads.
+def speaker_tokens(talk: dict) -> set[str]:
+    """Words that would name a person: full names, surnames, the principal."""
+    tokens = {"Graham", "Brooks"}
+    for speaker in talk.get("speakers") or []:
+        for part in re.split(r"[\s.]+", speaker.get("name", "")):
+            if len(part) > 2:
+                tokens.add(part)
+    return tokens
+
+
+def subject_brief(talk: dict, limit: int = 320) -> str:
+    """The fallback: up to two speaker-free sentences from the summary.
+
+    Whole sentences only, and a sentence that names someone is dropped rather
+    than edited -- correcting it would mean writing new copy about the talk.
     """
-    text = " ".join(text.split())
+    text = " ".join(talk["summary"].split())
     sentences = re.split(r"(?<=[.!?])\s+", text)
     while len(sentences) > 1 and len(sentences[0]) < LABEL_LIMIT:
         sentences.pop(0)
 
-    out = ""
+    tokens = speaker_tokens(talk)
+
+    def nameless(sentence: str) -> bool:
+        return not any(re.search(rf"\b{re.escape(token)}\b", sentence) for token in tokens)
+
+    kept: list[str] = []
     for sentence in sentences:
-        if out and len(out) + 1 + len(sentence) > limit:
+        if not nameless(sentence) or PRONOUN.match(sentence) or CONNECTIVE.match(sentence):
+            continue
+        if kept and len(" ".join(kept)) + len(sentence) > limit:
             break
-        out = f"{out} {sentence}".strip()
-    return out or sentences[0]
+        kept.append(sentence)
+        if len(kept) == 2:
+            break
+    if not kept:
+        kept = [s for s in sentences if nameless(s)][:1] or sentences[:1]
+    return " ".join(kept)
+
+
+def depersonalise(text: str, tokens: set[str]) -> str:
+    """Strip a speaker's name from the front of a chapter title.
+
+    Some chapter markers name the person doing the thing ("Chris's zero trust
+    research and the EMA surveys"). The page does not name the people in the
+    recording, so the possessor is dropped and the subject kept -- the title
+    still says what the chapter is about.
+    """
+    plain_text = plain(text)
+    names = "|".join(sorted((re.escape(t) for t in tokens), key=len, reverse=True))
+    if not names:
+        return plain_text
+    stripped = re.sub(rf"^(?:{names})(?:'s|s')?\s+", "", plain_text, flags=re.I)
+    if stripped and stripped != plain_text:
+        return stripped[:1].upper() + stripped[1:]
+    return plain_text
+
+
+def talk_intro(talk: dict) -> str:
+    """The sentence or two a talk page leads with."""
+    return TALK_SUBJECT.get(talk["title"]) or subject_brief(talk)
+
+
+def talk_format(talk: dict) -> str:
+    """The format line with the speakers taken out of it."""
+    fmt = talk["format"].strip()
+    if fmt in FORMAT_KEEP:
+        return FORMAT_KEEP[fmt]
+    stripped = FORMAT_STRIP.sub("", fmt).strip()
+    return stripped.capitalize() if stripped else fmt
 
 
 def talk_detail(talk: dict) -> str:
@@ -290,11 +378,12 @@ def talk_detail(talk: dict) -> str:
     ]
     fact_rows = "".join(
         f"<div><dt>{esc(k)}</dt><dd>{esc(v)}</dd></div>" for k, v in facts if v)
+    tokens = speaker_tokens(talk)
     chapters = ""
     if talk["chapters"]:
         rows = "".join(
             f'<li><span class="chapters__t">{esc(ch.get("t", ""))}</span>'
-            f'<span class="chapters__n">{esc(plain(ch.get("title", "")))}</span></li>'
+            f'<span class="chapters__n">{esc(depersonalise(ch.get("title", ""), tokens))}</span></li>'
             for ch in talk["chapters"])
         chapters = f"""<details class="chapters">
         <summary>Chapters <span class="chapters__count">{len(talk["chapters"])}</span></summary>
@@ -304,35 +393,23 @@ def talk_detail(talk: dict) -> str:
     if talk["youtube"]:
         watch = (f'<p class="detail__more"><a href="{esc(talk["youtube"])}" rel="noopener">'
                  f'Watch on YouTube <span aria-hidden="true">→</span></a></p>')
-    summary = ""
-    if talk["summary"]:
-        summary = (f'<p class="subhead">What it covers</p>'
-                   f'<div class="prose"><p>{esc(brief(talk["summary"]))}</p></div>')
-    # The writeup is real content, but it is not what someone opening a talk
-    # page came for: the video is. Fold it away so the page reads as a caption
-    # plus a recording, and unfolds for whoever wants the argument in full.
-    notes = ""
-    if talk["writeup"]["md"].strip():
-        notes = f"""<details class="notes">
-        <summary>The writeup</summary>
-        <div class="prose">{md(talk["writeup"]["md"], talk["slug"] + "-notes")}</div>
-      </details>"""
+    # The page is a caption plus a recording: one or two sentences about the
+    # subject, the facts, the chapters, and a way out. The writeup and the
+    # speaker list are not on it -- the writeup argued about who said what, and
+    # the page no longer talks about the people in the room.
+    intro = f'<p class="detail__lede">{esc(talk_intro(talk))}</p>'
     return detail(
         talk["slug"],
-        f'{human_date(talk["date"])} · {talk["format"]}',
+        f'{human_date(talk["date"])} · {talk_format(talk)}',
         esc(talk["title"]),
         [
             player(talk),
             f'<dl class="facts">{fact_rows}</dl>',
-            summary,
-            notes,
-            speaker_list(talk["speakers"]),
+            intro,
             chapters,
             watch,
         ],
     )
-
-
 
 def post_detail(post: dict) -> str:
     meta = [human_date(post["date"], True)]
