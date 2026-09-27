@@ -110,7 +110,7 @@ sources, so nothing here is invented copy:
 
 | Section | Pages | Content |
 |---|---|---|
-| Talks | 7 | every recording: poster → self-hosted video, the summary from `data/talks.yaml`, the writeup from `Portfolio/speaking/`, chapters, speakers; plus the one talk that was presented but never recorded |
+| Talks | 6 | every recording: poster → self-hosted video, the summary from `data/talks.yaml`, the writeup from `Portfolio/speaking/`, chapters, speakers |
 | Blogs | 14 | the full post bodies, contents list, tags |
 | Tech | 18 | 6 portfolio writeups and 12 platform groups (tenure + prose per platform) |
 | Work | 6 | the CV roles with their own bullets; the last row folds the two earliest roles into one page |
@@ -134,9 +134,13 @@ sources, so nothing here is invented copy:
   runs on the `meta` line — month, year, whole minutes — instead. It is strict:
   a recording with no writeup fails the build rather than rendering a talk with
   no description.
+- The content's own images are copied out of `hugo/static` into `assets/img/` at
+  build time, so the pages carry them rather than pointing at the live site.
 - The talk posters are the YouTube thumbnails at `i.ytimg.com`, and the videos
   are the live site's own `.mp4`s (the recordings are too large to copy in). So
-  the video pages need the internet, and everything else does not.
+  only the video pages need the internet; everything else renders offline.
+- A talk that was presented but never recorded is not offered at all — a page
+  for a video that does not exist is a dead end, not a curiosity.
 - Mermaid diagrams come from the live site's vendored bundle, so the mockup and
   the site draw them the same way. That bundle is 2.6MB and already lives in the
   repo at `hugo/assets/js/vendor/`, so it is **not committed here** — copy it in
@@ -166,3 +170,7 @@ Known limits, all deliberate:
   Those references are internal to each SVG and resolve to identical
   definitions, so there is no visible effect; the check ignores `svg [id]`.
 - The Bio and Contact sections carry no item pages; they are single reads.
+- The contents rail scrolls when a piece has many sections, so its scrollbar is
+  styled to match the theme (see `mockup-content.css`): both `scrollbar-color`
+  and the `::-webkit-scrollbar` rules, because setting the former makes Chromium
+  121+ and Firefox ignore the latter.
