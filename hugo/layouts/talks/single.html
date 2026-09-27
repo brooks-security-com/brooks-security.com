@@ -1,11 +1,11 @@
 {{ define "main" }}
-<main class="panel open" id="main">
+<main class="panel is-in" id="main">
   {{ partial "panel-bar.html" . }}
   <div class="panel__scroll" data-scroll>
     <div class="panel__inner">
       <div class="detail">
 
-        <p class="kicker">{{ .Date.Format "Jan 2006" }} · {{ .Params.series }}</p>
+        <p class="kicker">{{ partial "month-year.html" .Params.recorded }} · {{ .Params.series }}</p>
         <h1 class="detail__title" id="title" tabindex="-1">{{ .Title }}</h1>
 
         {{- /* A poster and a button, not an embed: nothing is fetched from anywhere until
@@ -14,7 +14,7 @@
                this site's own, served from downloads/ through CloudFront. */}}
         <div class="player" data-inview>
           <video controls preload="none" playsinline
-                 poster="https://i.ytimg.com/vi/{{ path.Base .Params.youtube }}maxresdefault.jpg"
+                 poster="https://i.ytimg.com/vi/{{ .Params.id }}/hqdefault.jpg"
                  src="{{ .Params.video }}">
             Your browser cannot play this video. <a href="{{ .Params.video }}">Download the recording</a> instead.
           </video>
@@ -28,7 +28,7 @@
         <dl class="facts">
           <div class="fact"><dt>Runtime</dt><dd>{{ .Params.runtime }}</dd></div>
           <div class="fact"><dt>Series</dt><dd>{{ .Params.series }}</dd></div>
-          <div class="fact"><dt>Recorded</dt><dd>{{ .Date.Format "January 2006" }}</dd></div>
+          <div class="fact"><dt>Recorded</dt><dd>{{ partial "month-year.html" .Params.recorded }}</dd></div>
         </dl>
 
         <p class="detail__lede">{{ .Params.subject }}</p>

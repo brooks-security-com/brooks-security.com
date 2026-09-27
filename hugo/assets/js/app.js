@@ -131,7 +131,10 @@
   }
 
   function finish(el) {
-    el.classList.remove('is-in', 'is-leaving-left', 'is-leaving-right');
+    /* is-in is the visible state, not the transition: a panel that loses it is a panel
+       at opacity 0 with pointer-events off. Only the leaving classes come off here. */
+    el.classList.add('is-in');
+    el.classList.remove('is-leaving-left', 'is-leaving-right');
     el.removeAttribute('aria-hidden');
     el.removeAttribute('inert');
     el.style.position = '';
@@ -277,7 +280,7 @@
   });
 
   /* -- first paint ---------------------------------------------------------- */
-  if (panel) doc.body.classList.add('panel-open');
+  if (panel) { panel.classList.add('is-in'); doc.body.classList.add('panel-open'); }
   wire(doc, false);
   history.replaceState({ panel: panel ? location.pathname : null }, '', location.href);
 })();
