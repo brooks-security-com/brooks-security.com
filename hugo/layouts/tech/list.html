@@ -1,0 +1,43 @@
+{{ define "main" }}
+{{- /* The Tech page: the builds first, then the platform groups.
+
+       The builds are the portfolio writeups and already exist as pages, under their own
+       section, so they are fetched rather than copied -- Tech is a way into them, not a
+       second copy of them. The groups are this section's own pages. */ -}}
+{{- /* the six builds the design lists, by slug, so the portfolio's other pages do not
+       quietly become rows here */ -}}
+{{- $builds := slice -}}
+{{- range hugo.Data.tech.builds -}}
+  {{- with site.GetPage (printf "/docs/portfolio/%s" .slug) }}{{ $builds = $builds | append . }}{{ end -}}
+{{- end -}}
+<main class="panel is-in" id="main">
+  {{ partial "panel-bar.html" . }}
+  <div class="panel__scroll" data-scroll>
+    <div class="panel__inner">
+      <div class="panel__head">
+        <h1 class="ptitle" id="title" tabindex="-1" style="--i:0">{{ .Title }}</h1>
+        {{- with .Params.lede }}<p class="lede" style="--i:1">{{ . }}</p>{{ end }}
+      </div>
+
+      <div class="rows" data-inview>
+        {{- range $builds }}
+        <a class="entry" href="{{ .RelPermalink }}">
+          <span class="entry__title">{{ .Title }}</span>
+          {{- with .Description }}<span class="entry__sub">{{ . }}</span>{{ end }}
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        {{- end }}
+        {{- range .Pages.ByWeight }}
+        <a class="entry" href="{{ .RelPermalink }}">
+          <span class="entry__title">{{ .Title }}</span>
+          <span class="entry__meta">{{ .Params.subtitle }}</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        {{- end }}
+      </div>
+
+      {{ partial "panel-next.html" . }}
+    </div>
+  </div>
+</main>
+{{ end }}

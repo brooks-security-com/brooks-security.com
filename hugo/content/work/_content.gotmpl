@@ -1,0 +1,12 @@
+{{- /* The roles, from hugo/data/work.yaml, which tools/build_site_data.py generates from
+       the CV. The CV keeps the prose; this keeps the list, so the two cannot disagree. */ -}}
+{{- range hugo.Data.work.roles -}}
+  {{- $.AddPage (dict
+      "path" (printf "/%s" .slug)
+      "kind" "page"
+      "title" .row_title
+      "description" .summary
+      "weight" .weight
+      "params" (dict "subtitle" .dates "company" .company "role" .title "facts" .facts)
+      "content" (dict "mediaType" "text/markdown" "value" .md)) -}}
+{{- end -}}

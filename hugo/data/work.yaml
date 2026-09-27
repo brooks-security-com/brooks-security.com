@@ -1,0 +1,185 @@
+# The roles the Work page lists, generated from the CV by tools/build_site_data.py.
+# Do not hand-edit: edit content/docs/Curriculum Vitae/work-experience.md and re-run it.
+
+context: '# Work Experience
+
+
+
+  I am a solutions architect and sales engineer in the security space, holding a CISSP, an AWS Certified
+  Solutions Architect, and a Red Hat Certified Engineer. Ten years in IT, the last six of them in security.
+
+
+  I spent three years running the technical side of security software sales: proofs of concept, RFI and
+  RFP responses, architecture sessions, and webinar and event delivery. As one of three sales engineers
+  at Syxsense, I was the presales support on deals representing 50% of the company''s total revenue in
+  my first year; over the next two that share moved to 40% and then 30% as I hired and trained the sales
+  engineering team. More than 100 new logos came through that work, and I provided primary presales support
+  on deals north of $1 million. I finished there as Lead Solutions Architect. Since March 2024 I have
+  been in-house at AvatarFleet, where I built the security program from nothing, led it through SOC 2
+  Type 1 and Type 2 with zero adverse findings, and wrote the Terraform and Ansible that enforce the controls.
+
+
+  In a pre-sales conversation that means I can scope the deployment, write the integration myself, and
+  answer the customer''s security and compliance people without escalating. I have done this across SaaS,
+  critical infrastructure, government, education, and banking.
+
+
+  I am moving back toward presales deliberately. I want technical work that is attached to organizational
+  growth and revenue rather than one step removed from it, and sales engineering is one of the few seats
+  where that comes without giving up hands-on project work.
+
+
+  **I am currently looking for a Sales Engineering or Solutions Architecture role in platform security,
+  blue-team tooling, or cloud infrastructure.** I am based in Moscow, Idaho, and happy to relocate for
+  the right role. [Get in touch](/docs/contact/), or grab the [one-page resume](/resume/).
+
+  '
+roles:
+- slug: senior-security-systems-engineer
+  title: Senior Security & Systems Engineer
+  company: AvatarFleet
+  row_title: Senior Security & Systems Engineer — AvatarFleet
+  dates: Mar 2024 – Present
+  summary: SOC 2 Type 2 accreditation · Security program initiation · Cloud security enforcement · Enterprise
+    infrastructure
+  facts:
+  - Full-time
+  - Moscow, Idaho, United States
+  - Remote
+  md: '- **SOC 2 Type 2 accreditation:** Led AvatarFleet through SOC 2 Type 1 and Type 2 accreditation
+    by establishing comprehensive security policies and procedures, strengthening compliance, and building
+    customer trust. Achieved SOC 2 Type 2 with no adverse findings.
+
+    - **Security program initiation:** Developed and implemented AvatarFleet''s initial security program,
+    including foundational policies, procedures, and a security-aware culture, in an early-stage startup
+    environment.
+
+    - **Cloud security enforcement:** Drove AWS security improvements through Terraform and Ansible, standardizing
+    controls and automating compliance for a stronger security posture.
+
+    - **Enterprise infrastructure:** Architected and built the organization''s enterprise infrastructure
+    from the ground up, replacing legacy infrastructure with minimal downtime.
+
+    '
+  weight: 1
+- slug: lead-solutions-architect
+  title: Lead Solutions Architect
+  company: Syxsense Inc.
+  row_title: Lead Solutions Architect — Syxsense Inc.
+  dates: Mar 2023 – Mar 2024
+  summary: Team leadership · Revenue contribution · Hybrid and multi-cloud expertise · Technical leadership
+    and automation
+  facts:
+  - Full-time
+  - Moscow, Idaho, United States
+  - Remote
+  md: '- **Team leadership:** Hired, trained, and led the sales engineering team, with three direct reports.
+
+    - **Revenue contribution:** Provided presales support on deals representing 30% of total company revenue,
+    with the balance increasingly carried by the team I built rather than by me.
+
+    - **Hybrid and multi-cloud expertise:** Led the design and implementation of security solutions across
+    hybrid and multi-cloud environments, focusing on automation to streamline operations and enhance security.
+
+    - **Technical leadership and automation:** Oversaw deployment of automated security solutions using
+    Ansible and Python, reducing manual overhead and improving response times.
+
+    - **Strategic development contributions:** Helped align product development with emerging cloud security
+    trends and customer needs.
+
+    - **Industry advocacy:** Presented to audiences in the hundreds from the company''s booth stage at
+    Black Hat USA, led hands-on workshops with dozens of customers at a time, and taught a week-long seminar
+    as a visiting industry partner at VIT-AP University in Vijayawada, India. Also worked large-format
+    event booths and represented the technical side in critical-path negotiations.
+
+    '
+  weight: 2
+- slug: senior-security-solutions-architect
+  title: Senior Security Solutions Architect
+  company: Syxsense Inc.
+  row_title: Senior Security Solutions Architect — Syxsense Inc.
+  dates: Apr 2022 – Mar 2023
+  summary: Revenue contribution · Solutions engineering · Vulnerability management · Product support
+  facts:
+  - Full-time
+  - Salt Lake City, Utah, United States
+  md: '- **Revenue contribution:** Provided presales support on deals representing 40% of total company
+    revenue.
+
+    - **Solutions engineering:** Designed and implemented tailored security automation solutions in critical
+    infrastructure, leveraging Ansible and Python for integration of AWS-hosted EC2 workloads into the
+    platform.
+
+    - **Vulnerability management:** Developed vulnerability management frameworks for Linux servers in
+    regulated on-premises environments, supporting customers with tens of thousands of endpoints under
+    management.
+
+    - **Product support:** Contributed to the platform user guide and technical customer support.
+
+    - **Platform engineering:** Committed code (mostly Bash and Python) to improve Linux endpoint availability
+    and reliability.
+
+    '
+  weight: 3
+- slug: solutions-architect
+  title: Solutions Architect
+  company: Syxsense Inc.
+  row_title: Solutions Architect — Syxsense Inc.
+  dates: Apr 2021 – Apr 2022
+  summary: Revenue contribution · Sales engineering · Solutions architecture · Marketing initiatives
+  facts:
+  - Full-time
+  - Salt Lake City, Utah, United States
+  md: '- **Revenue contribution:** One of three sales engineers. Provided presales support on deals representing
+    50% of Syxsense''s total company revenue in my first year, including deals north of $1 million.
+
+    - **Sales engineering:** Directly managed more than 100 new logos through proofs of concept and RFI/RFP
+    responses, including primary presales support on deals north of $1 million.
+
+    - **Solutions architecture:** Co-architected deployments to match customer environments.
+
+    - **Marketing initiatives:** Developed and delivered educational webinars for the marketing team.
+
+    '
+  weight: 4
+- slug: associate-information-technology-analyst
+  title: Associate Information Technology Analyst
+  company: Schweitzer Engineering Laboratories
+  row_title: Associate Information Technology Analyst — Schweitzer Engineering Laboratories
+  dates: Sep 2020 – Apr 2021
+  summary: Operations support · Platform development · Security operations
+  facts:
+  - Full-time
+  - Pullman, Washington, United States
+  md: '- **Operations support:** Supported Linux users across the organization.
+
+    - **Platform development:** Created a standardized, domain-integrated Ubuntu Linux distribution for
+    the company.
+
+    - **Security operations:** Partnered with Security Operations to apply CIS benchmarks to Linux endpoints
+    using Chef.
+
+    '
+  weight: 5
+- slug: information-technology-technician
+  title: Before that
+  company: Schweitzer Engineering Laboratories
+  row_title: Before that
+  dates: Nov 2016 – Sep 2020
+  summary: Desktop support and migration · Department IT support
+  facts:
+  - Full-time
+  - Pullman, Washington, United States
+  md: '- **Desktop support and migration:** Provided desktop support and played a key role in the organization''s
+    transition from Windows 7 to Windows 10.
+
+
+
+    ## IT Technician — Washington State University
+
+
+    - **Department IT support:** Provided desktop and basic physical networking support in the Chemistry
+    department while completing undergraduate studies.
+
+    '
+  weight: 6

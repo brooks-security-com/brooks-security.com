@@ -1,0 +1,19 @@
+# One or two sentences about what each recording is about, keyed by its title.
+#
+# Written for the page, not lifted from `summary` in talks.yaml: those summaries are
+# programme notes written around whoever was in the recording, and they name the
+# speakers. A talk page describes the talk.
+
+subjects:
+  - title: "The Cyber Kill Chain Masterclass"
+    subject: "The Lockheed Martin Cyber Kill Chain as a defensive planning tool rather than an attacker's checklist: the eight phases, the control that buys back time at each, and why the chain is a clock rather than a test you pass or fail."
+  - title: "Analyst Insights: Advancing Zero Trust Priorities"
+    subject: "Zero trust as a discipline rather than a product: why it is a philosophy and not something bought out of the box, why most organizations are further along than they think, and the difference between checkbox compliance and audit-ready."
+  - title: "Spotlight Webinar: Vulnerability Remediation"
+    subject: "What a vulnerability actually is: CVE identity, CVSS scoring, and the split between patch and configuration vulnerabilities. Then a live remediation loop on three findings, closing on why remediation should be policy-driven rather than pushed ad hoc."
+  - title: "Spotlight Webinar: Harnessing Automation"
+    subject: "The automation surface beyond patching and vulnerability remediation: service control, access control and software provisioning, built live as a drag-and-drop workflow that ends in BitLocker enforcement with a branching path and a firewall check."
+  - title: "Spotlight Webinar: Autonomous Defense"
+    subject: "A defense-in-depth stack assembled as a single workflow, layer by layer: firewall, agent, antivirus, VPN, SIEM, patch and vulnerability scan. The argument underneath is that attackers triage, so an organization that is expensive to enter gets skipped rather than defeated."
+  - title: "How MSPs and MSSPs Can Comply and Thrive with Automated Remediation"
+    subject: "The MSP business case for compliance: tool sprawl as the cost centre, proving compliance as the hard part, and CIS Level 1 and 2 remediations as a prepackaged service, with multi-tenant management and a SOC 2 audit at 93.4% patch efficacy."

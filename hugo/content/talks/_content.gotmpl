@@ -1,0 +1,44 @@
+{{- /* The talk pages, built from data/talks.yaml.
+
+       The recordings and everything known about them already live in that file -- the
+       archive's own record: durations, chapters, transcripts, and the line in each
+       recording that names the presenter. Writing six content files by hand would
+       duplicate all of it and then drift from it, so the pages are generated from the
+       data at build time. Edit the YAML, not this.
+
+       The recording date travels as the page's own `recorded` field rather than as the
+       page's date. Hugo's AddPage takes a date it parses and, when it cannot, gives the
+       page a zero time without complaining -- which put every recording in the year 1
+       and would have sorted the whole section wrongly. A field the template formats
+       itself cannot do that. */ -}}
+{{- $subjects := dict -}}
+{{- range (index hugo.Data "talk-subjects").subjects }}{{ $subjects = merge $subjects (dict .title .subject) }}{{ end -}}
+{{- range hugo.Data.talks.talks -}}
+  {{- $publish := true -}}
+  {{- if isset . "publish" }}{{ $publish = .publish }}{{ end -}}
+  {{- if $publish -}}
+    {{- /* Chapters arrive in whatever shape the archive wrote them; normalise to
+           time + title so the template has one thing to render. */ -}}
+    {{- $chapters := slice -}}
+    {{- range .chapters -}}
+      {{- $t := .t | default .time | default .start | default "" -}}
+      {{- $label := .title | default .label | default .text | default .name | default "" -}}
+      {{- if $label }}{{ $chapters = $chapters | append (dict "time" $t "title" $label) }}{{ end -}}
+    {{- end -}}
+    {{- $.AddPage (dict
+        "path" (printf "/%s" .id)
+        "kind" "page"
+        "title" .title
+        "description" (index $subjects .title | default "")
+        "params" (dict
+          "id" .id
+          "recorded" (substr (printf "%v" .date) 0 10)
+          "video" .video
+          "youtube" .youtube
+          "runtime" .duration_label
+          "series" .series
+          "subject" (index $subjects .title | default "")
+          "chapters" $chapters
+          "topics" .topics)) -}}
+  {{- end -}}
+{{- end -}}

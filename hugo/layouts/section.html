@@ -1,20 +1,48 @@
 {{ define "main" }}
-{{- if eq .Section "posts" }}
-{{ partial "writing.html" (dict "page" . "pages" (where site.RegularPages "Section" "posts").ByDate.Reverse) }}
-{{- /* The old theme paged the list at 10 posts. Keep its page URLs alive as redirects home to /posts/. */}}
-{{- $stub := printf `<!DOCTYPE html><html lang="en-us"><head><title>%s</title><link rel="canonical" href="%s"><meta name="robots" content="noindex"><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=%s"></head></html>` .Permalink .Permalink .RelPermalink }}
-{{- range slice "page/1" "page/2" }}{{ $_ := (resources.FromString (printf "posts/%s/index.html" .) $stub).RelPermalink }}{{ end }}
-{{- else if .Content }}
-<div class="prose">
-{{ partial "content.html" . }}
-</div>
-{{ partial "related.html" . }}
-{{- else }}
-<h1 tabindex="-1">{{ .Title }}</h1>
-<div class="rows">
-  {{- range .Pages }}
-  <a class="row" href="{{ .RelPermalink }}"><b>{{ .Title }}</b>{{ with .Description }}<small>{{ . }}</small>{{ end }}</a>
-  {{- end }}
-</div>
-{{- end }}
+{{- $sec := partial "_section.html" . -}}
+<main class="panel is-in" id="main">
+  {{ partial "panel-bar.html" . }}
+  <div class="panel__scroll" data-scroll>
+    <div class="panel__inner">
+      <div class="panel__head">
+        <h1 class="ptitle" id="title" tabindex="-1" style="--i:0">{{ .Title }}</h1>
+        {{- with .Params.lede }}
+        <p class="lede" style="--i:1">{{ . }}</p>
+        {{- end }}
+      </div>
+
+      {{- /* A section's own prose, when it has any. The reference's panels had a line or
+             two of it above the list; a section page is welcome to the same. */}}
+      {{- with .Content }}
+      <div class="prose" data-inview>{{ . }}</div>
+      {{- end }}
+
+      {{- /* Posts are listed by their parent, everything else by weight, which is how the
+             CV and portfolio sources already express their own order. */}}
+      {{- $pages := .Pages -}}
+      {{- if eq .Section "posts" }}{{ $pages = $pages.ByDate.Reverse }}{{ end -}}
+      {{- if eq .Section "talks" }}{{ $pages = sort $pages "Params.recorded" }}{{ end -}}
+      <div class="rows" data-inview>
+        {{- range $pages }}
+        <a class="entry" href="{{ .RelPermalink }}">
+          <span class="entry__title">{{ .Title }}</span>
+          {{- /* The line under a row: the section's own subtitle if it has one, then the
+                 recording date (which lives in params, not in the page's date), then an
+                 ordinary date. A zero date renders as nothing rather than as the year 1. */}}
+          {{- $meta := "" -}}
+          {{- with .Params.subtitle }}{{ $meta = . }}{{ end -}}
+          {{- if not $meta }}{{ with .Params.recorded }}{{ $meta = partial "month-year.html" . }}{{ end }}{{ end -}}
+          {{- if not $meta }}{{ if not .Date.IsZero }}{{ $meta = .Date.Format "Jan 2006" }}{{ end }}{{ end -}}
+          {{- with $meta }}<span class="entry__meta">{{ . }}</span>{{ end }}
+          {{- with .Description }}<span class="entry__sub">{{ . }}</span>
+          {{- else }}{{ with .Summary }}<span class="entry__sub">{{ . | plainify | truncate 160 }}</span>{{ end }}{{ end }}
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        {{- end }}
+      </div>
+
+      {{ partial "panel-next.html" . }}
+    </div>
+  </div>
+</main>
 {{ end }}

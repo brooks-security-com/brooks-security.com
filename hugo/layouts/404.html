@@ -1,7 +1,25 @@
 {{ define "main" }}
-<div class="prose">
-  <h1 tabindex="-1">Page not found</h1>
-  <p>That page is not on the graph. It may have moved, or the link may be mistyped.</p>
-  <div class="acts"><a class="btn primary" href="/">About me</a><a class="btn" href="/posts/">Writing</a><a class="btn" href="/docs/contact/">Get in touch</a></div>
-</div>
+{{- /* It used to say the page was not on the graph. There is no graph. A 404 that the
+       visitor can navigate out of is more use than one that explains itself, so the
+       index's own rows are the way back. */ -}}
+<main class="panel is-in" id="main">
+  {{ partial "panel-bar.html" . }}
+  <div class="panel__scroll" data-scroll>
+    <div class="panel__inner">
+      <div class="panel__head">
+        <h1 class="ptitle" id="title" tabindex="-1" style="--i:0">That page is not here.</h1>
+        <p class="lede" style="--i:1">It may have moved, or the link may be mistyped. The index is below.</p>
+      </div>
+      <div class="rows" data-inview>
+        {{- range hugo.Data.index.sections }}
+        <a class="entry" href="{{ .href }}">
+          <span class="entry__title">{{ .word }}</span>
+          <span class="entry__meta">{{ .meta }}</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        {{- end }}
+      </div>
+    </div>
+  </div>
+</main>
 {{ end }}

@@ -1,0 +1,14 @@
+{{- /* The bar at the top of every panel: back to the index, and which section this is.
+
+       It is a link, not a button. The design's reference used a button because the
+       index was always the same document; here / is a real page, so backing out works
+       with scripting off and the browser can offer it as a link. */ -}}
+{{- $sec := partial "_section.html" . -}}
+{{- $s := $sec.self -}}
+<div class="panel__bar">
+  <a class="panel__back" href="/"><span aria-hidden="true">←</span> Index</a>
+  {{- with $s }}
+  <span class="panel__tag">{{ .num }} / {{ .word }}</span>
+  {{- end }}
+  <span class="panel__progress" aria-hidden="true"><i></i></span>
+</div>

@@ -1,0 +1,75 @@
+/* Content rules carried from the previous theme.
+ *
+ * The redesign replaced the home page and the shell, but the site's *content* is older
+ * than the redesign and leans on classes it never had an opinion about: the one-page
+ * resume as a sheet of paper, .video-embed for a recording inside a doc, repository
+ * badges, the GitHub heatmap, pull quotes, illustrations floated into a post.
+ *
+ * Deliberately not a copy of the old stylesheet. The old shell's rules for .panel,
+ * .tools, .brand and the rest are NOT here: they belong to the retired graph home, and
+ * carrying them would let an obsolete .panel rule decide how the design's panel looks.
+ * That is not hypothetical -- it is exactly what happened, and it is why this file now
+ * carries a list rather than a file.
+ *
+ * Loaded before the design's stylesheets, so wherever the two disagree the design wins.
+ * Transitional: prune it as content moves onto the design's own vocabulary.
+ */
+
+.prose video, .prose .video-embed {display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border-radius: 10px; background: #000;}
+
+.prose > * + *, .prose .home-section > * + *, .prose .resume > * + *, .prose .resume-job > * + * {margin-top: 12px;}
+
+.prose .resume > * + *, .prose .resume-job > * + * {margin-top: 8px;}
+
+.prose .resume-job + .resume-job {margin-top: 14px;}
+
+.prose .resume {background: #FFFFFF; color: #2B2B33; padding: 34px 38px; border-radius: 6px; box-shadow: 0 0 0 1px var(--line); font-size: 12.5px; line-height: 1.5;}
+
+.prose .resume a {color: #3F2FC4;}
+
+.prose .resume strong {color: #111116;}
+
+.prose .resume h1 {font-size: 24px; letter-spacing: -.02em; color: #111116; margin: 0 0 2px;}
+
+.prose .resume h1 + p {font-weight: 600; color: #5645DF; margin-top: 0;}
+
+.prose .resume h2 {font: 600 10.5px 'Geist Mono', monospace; letter-spacing: .1em; text-transform: uppercase; color: #5645DF; margin: 18px 0 6px; padding-bottom: 4px; border-bottom: 1px solid #E1E1E8;}
+
+.prose .resume ul {padding-left: 16px;}
+
+.prose .resume li + li {margin-top: 3px;}
+
+.prose .resume {padding: 22px 16px;}
+
+.prose .resume {box-shadow: none; padding: 0; font-size: 10.5pt;}
+
+.prose .resume h1 {font-size: 20pt;}
+
+.prose .post-illustration, .prose .post-illustration-left {display: block; max-width: 200px; margin: 6px 0 16px 24px; float: right;}
+
+.prose .post-illustration-left {float: left; margin: 6px 24px 16px 0;}
+
+.prose .post-illustration-center {display: block; clear: both; float: none; width: 100%; max-width: 400px; margin: 24px auto;}
+
+.prose .post-illustration, .prose .post-illustration-left {float: none; max-width: 180px; margin: 18px auto;}
+
+.prose .pull-quote {margin: 26px auto; max-width: 560px; padding: 0 12px; text-align: center; font-size: 19px; line-height: 1.4; font-style: italic; color: var(--accent);}
+
+a:hover > .repo-badge {border-color: var(--accent-line);}
+
+.prose a:has(> .repo-badge) {text-decoration: none;}
+
+.gh-heatmap--empty {color: var(--muted); font-size: 13px;}
+
+.prose .highlight pre {margin: 0;}
+
+/* ---------------------------------------------------------------- print
+   A resume is the one page on the site people actually print. These are the rules
+   that keep a heading from being the last thing on a page and each employment whole
+   across a break. */
+@media print {
+  .prose .resume-job {break-inside: avoid;}
+  .prose .resume h2 + p, .prose .resume h2 + ul, .prose .resume h2 + .resume-job {break-before: avoid; page-break-before: avoid;}
+  .prose .resume p {orphans: 3; widows: 3;}
+}
+

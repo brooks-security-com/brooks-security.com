@@ -1,0 +1,6 @@
+{{- /* What follows this page, in the order data/index.yaml defines. Renders nothing
+       on the last section, which is where the index ends. */ -}}
+{{- $sec := partial "_section.html" . -}}
+{{- with $sec.next }}
+<p class="pnext" data-inview><a href="{{ .href }}" data-section="{{ .key }}">Next — {{ .word }} <span class="arrow" aria-hidden="true">→</span></a></p>
+{{- end }}

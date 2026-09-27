@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Graham Brooks — Index</title>
+<meta name="description" content="Graham Brooks: sales engineer and solutions architect in platform security, blue-team tooling, and cloud infrastructure." />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content="#faf9f7" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#101015" media="(prefers-color-scheme: dark)" />
+<link rel="icon" href="data:," />
+<link rel="preload" href="assets/fonts/instrument-serif-latin.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="assets/fonts/geist-v5-latin.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="stylesheet" href="assets/mockup.css" />
+<link rel="stylesheet" href="assets/mockup-content.css" />
+<script>
+  /* Set the entry-animation gate before first paint so nothing flashes.
+     Removed once fonts are ready (or after a short fallback), and dropped
+     immediately for reduced-motion users. */
+  (function () {
+    var root = document.documentElement;
+    root.classList.add('js', 'is-enter');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches) { root.classList.remove('is-enter'); return; }
+    var done = false;
+    function go() {
+      if (done) { return; }
+      done = true;
+      root.classList.remove('is-enter');
+      root.classList.add('is-entered');
+      document.dispatchEvent(new CustomEvent('brooks:entered'));
+    }
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(go);
+    }
+    setTimeout(go, 1200);
+  })();
+</script>
+</head>
+<body>
+
+<a class="skip" href="#index">Skip to sections</a>
+
+<!-- ==========================================================================
+     Home: name, face, index of sections
+     ========================================================================== -->
+<div class="home">
+  <div class="home__inner">
+
+    <header class="head">
+      <h1 class="head__name"><span class="mask"><span class="word">Graham</span></span> <span class="mask"><span class="word">Brooks</span></span></h1>
+      <span class="head__ring">
+        <img src="assets/portrait-960.webp"
+             srcset="assets/portrait-480.webp 480w, assets/portrait-960.webp 960w"
+             sizes="130px" width="960" height="960"
+             alt="Portrait of Graham Brooks" />
+      </span>
+
+      <ul class="cloud" aria-label="Areas of work">
+        <li class="cloud__w cloud__w--display" data-cluster="tech" style="--x:50.00%;--y:50.00%;--s:7.60">Technology</li>
+        <li class="cloud__w cloud__w--display" data-cluster="tech" style="--x:46.90%;--y:26.83%;--s:7.30">Infrastructure</li>
+        <li class="cloud__w cloud__w--display" data-cluster="comms" style="--x:50.00%;--y:72.39%;--s:7.00">Communication</li>
+        <li class="cloud__w cloud__w--mid" data-cluster="security" style="--x:22.71%;--y:55.41%;--s:4.60">Security</li>
+        <li class="cloud__w cloud__w--mid" data-cluster="tech" style="--x:73.50%;--y:48.35%;--s:4.20">Cloud</li>
+        <li class="cloud__w cloud__w--mid" data-cluster="privacy" style="--x:75.67%;--y:35.40%;--s:4.10">Privacy</li>
+        <li class="cloud__w cloud__w--mid" data-cluster="governance" style="--x:14.20%;--y:41.83%;--s:4.10">Governance</li>
+        <li class="cloud__w cloud__w--mid" data-cluster="compliance" style="--x:84.57%;--y:65.99%;--s:4.00">Compliance</li>
+        <li class="cloud__w cloud__w--mid" data-cluster="risk" style="--x:22.35%;--y:70.70%;--s:4.00">Risk</li>
+        <li class="cloud__w cloud__w--small" data-cluster="comms" style="--x:77.25%;--y:23.15%;--s:3.90">Advocacy</li>
+        <li class="cloud__w cloud__w--small" data-cluster="tech" style="--x:50.60%;--y:93.47%;--s:3.80">Programming</li>
+        <li class="cloud__w cloud__w--small" data-cluster="tech" style="--x:21.95%;--y:27.65%;--s:3.70">AWS</li>
+        <li class="cloud__w cloud__w--small" data-cluster="tech" style="--x:85.21%;--y:52.97%;--s:3.40">Linux</li>
+        <li class="cloud__w cloud__w--small" data-cluster="tech" style="--x:43.04%;--y:8.09%;--s:3.30">Automation</li>
+        <li class="cloud__w cloud__w--small" data-cluster="tech" style="--x:77.25%;--y:76.85%;--s:3.20">Python</li>
+        <li class="cloud__w cloud__w--small" data-cluster="comms" style="--x:61.00%;--y:9.56%;--s:3.20">Marketing</li>
+        <li class="cloud__w cloud__w--small" data-cluster="tech" style="--x:88.57%;--y:38.13%;--s:3.10">Azure</li>
+        <li class="cloud__w cloud__w--small" data-cluster="tech" style="--x:73.14%;--y:89.30%;--s:3.10">Terraform</li>
+        <li class="cloud__w cloud__w--small" data-cluster="security" style="--x:26.46%;--y:90.95%;--s:3.10">Zero Trust</li>
+        <li class="cloud__w cloud__w--small" data-cluster="compliance" style="--x:12.15%;--y:68.12%;--s:3.00">SOC 2</li>
+        <li class="cloud__w cloud__w--small" data-cluster="governance" style="--x:7.46%;--y:53.54%;--s:3.00">Policy</li>
+        <li class="cloud__w cloud__w--small" data-cluster="security" style="--x:20.05%;--y:12.81%;--s:2.73">Incident Response</li>
+        <li class="cloud__w cloud__w--small" data-cluster="tech" style="--x:18.56%;--y:80.98%;--s:2.90">Ansible</li>
+        <li class="cloud__w cloud__w--small" data-cluster="tech" style="--x:11.50%;--y:28.09%;--s:2.90">Docker</li>
+        <li class="cloud__w cloud__w--small" data-cluster="comms" style="--x:78.03%;--y:10.61%;--s:2.90">Writing</li>
+      </ul>
+    </header>
+
+    <nav class="index" id="index" aria-label="Sections">
+      <a class="row" href="#/bio" data-section="bio">
+        <span class="row__num">01</span>
+        <span class="row__word">Bio</span>
+        <span class="row__meta">Ten years of systems work</span>
+        <span class="row__go" aria-hidden="true">→</span>
+      </a>
+      <a class="row" href="#/credentials" data-section="credentials">
+        <span class="row__num">02</span>
+        <span class="row__word">Credentials</span>
+        <span class="row__meta">Education and certifications</span>
+        <span class="row__go" aria-hidden="true">→</span>
+      </a>
+      <a class="row" href="#/work" data-section="work">
+        <span class="row__num">03</span>
+        <span class="row__word">Work</span>
+        <span class="row__meta">Ten years, one direction</span>
+        <span class="row__go" aria-hidden="true">→</span>
+      </a>
+      <a class="row" href="#/talks" data-section="talks">
+        <span class="row__num">04</span>
+        <span class="row__word">Talks</span>
+        <span class="row__meta">Six recordings</span>
+        <span class="row__go" aria-hidden="true">→</span>
+      </a>
+      <a class="row" href="#/blogs" data-section="blogs">
+        <span class="row__num">05</span>
+        <span class="row__word">Blogs</span>
+        <span class="row__meta">Fourteen posts</span>
+        <span class="row__go" aria-hidden="true">→</span>
+      </a>
+      <a class="row" href="#/tech" data-section="tech">
+        <span class="row__num">06</span>
+        <span class="row__word">Tech</span>
+        <span class="row__meta">What I actually run</span>
+        <span class="row__go" aria-hidden="true">→</span>
+      </a>
+      <a class="row" href="#/contact" data-section="contact">
+        <span class="row__num">07</span>
+        <span class="row__word">Contact</span>
+        <span class="row__meta">Email, LinkedIn, GitHub</span>
+        <span class="row__go" aria-hidden="true">→</span>
+      </a>
+    </nav>
+
+    <footer class="home__foot">
+      <span>Graham Brooks — Moscow, Idaho</span>
+      <span>Security systems, built and answered for</span>
+    </footer>
+    <noscript>
+      <p class="noscript">Opening a section needs JavaScript. This page is the index either way.</p>
+    </noscript>
+  </div>
+</div>
+
+
+<!-- =========================================================================
+     01 — Bio
+     ========================================================================= -->
+<article class="panel" id="panel-bio" data-section="bio" data-index="01" aria-labelledby="title-bio" aria-hidden="true" inert>
+  <div class="panel__bar">
+    <button class="panel__back" type="button" data-close><span aria-hidden="true">←</span> Index</button>
+    <span class="panel__tag">01 / Bio</span>
+    <span class="panel__progress" aria-hidden="true"><i></i></span>
+  </div>
+  <div class="panel__scroll" data-scroll>
+    <div class="panel__inner">
+      <div class="panel__head">
+        <h2 class="ptitle" id="title-bio" tabindex="-1" style="--i:0">Security is a systems problem.</h2>
+        <p class="lede" style="--i:1">Ten years of building systems, and being the one who answers for them.</p>
+      </div>
+
+      <div data-inview>
+        <p>I am ten years into a career in IT, six of them in security. I have been the engineer writing the security questionnaire and the one filling it in, the person deciding whether a tool survived contact with our environment and the person whose deal rode on the result. So when I sit down with a security team, I am not guessing at what they need to hear.</p>
+        <p>Three years at Syxsense went into designing and deploying security automation inside other people's environments: Terraform and Ansible integrations, vulnerability management for Linux fleets in regulated on-premises settings, architecture sessions with critical infrastructure and government customers. I finished there as Lead Solutions Architect, having hired and trained the team that carried the work after me.</p>
+        <p>Since March 2024 I have been at AvatarFleet as senior security and systems engineer. I built the security program from nothing, led it through SOC 2 Type 1 and Type 2 with <strong>zero adverse findings</strong>, and wrote the Terraform and Ansible that enforce the controls.</p>
+      </div>
+
+      <div class="rule" data-inview></div>
+
+      <p class="subhead" data-inview>Credentials</p>
+      <p class="belts" data-inview>CISSP · AWS Certified Solutions Architect · RHCE · CompTIA Security+</p>
+
+      <div class="rule" data-inview></div>
+
+      <p data-inview>Most of what I know came from having to operate the thing I designed. <em>That is what the rest of this index is for.</em></p>
+
+      <p class="pnext" data-inview><a href="#/credentials" data-section="credentials">Next — Credentials <span class="arrow" aria-hidden="true">→</span></a></p>
+    </div>
+  </div>
+</article>
+
+<!-- =========================================================================
+     02 — Credentials
+     ========================================================================= -->
+<article class="panel" id="panel-credentials" data-section="credentials" data-index="02" aria-labelledby="title-credentials" aria-hidden="true" inert>
+  <div class="panel__bar">
+    <button class="panel__back" type="button" data-close><span aria-hidden="true">←</span> Index</button>
+    <span class="panel__tag">02 / Credentials</span>
+    <span class="panel__progress" aria-hidden="true"><i></i></span>
+  </div>
+  <div class="panel__scroll" data-scroll>
+    <div class="panel__inner">
+      <div class="panel__head">
+        <h2 class="ptitle" id="title-credentials" tabindex="-1" style="--i:0">Credentials</h2>
+      </div>
+
+      <!-- creds:start — from hugo/data/credentials.yaml; generated by tools/build_credentials.py, not hand-written -->
+      <p class="subhead" data-inview>Education</p>
+      <ul class="creds">
+        <li class="cred">
+          <span class="cred__name">BS, Civil Engineering @ Washington State University</span>
+          <span class="cred__meta">May 2018</span>
+        </li>
+      </ul>
+
+      <p class="subhead" data-inview>Certifications</p>
+      <ul class="creds">
+        <li class="cred">
+          <span class="cred__name">Certified Information Systems Security Professional (CISSP)</span>
+          <span class="cred__meta">June 2026</span>
+        </li>
+        <li class="cred">
+          <span class="cred__name">AWS Certified Solutions Architect Associate (AWS-CSA-A)</span>
+          <span class="cred__meta">January 2024</span>
+        </li>
+        <li class="cred">
+          <span class="cred__name">Red Hat Certified Engineer (RHCE)</span>
+          <span class="cred__meta">March 2023</span>
+        </li>
+        <li class="cred">
+          <span class="cred__name">Red Hat Certified Professional (RHCP)</span>
+          <span class="cred__meta">April 2022</span>
+        </li>
+        <li class="cred">
+          <span class="cred__name">CompTIA Security Plus (Sec+)</span>
+          <span class="cred__meta">February 2022</span>
+        </li>
+        <li class="cred">
+          <span class="cred__name">Red Hat Certified Systems Administrator (RHCSA)</span>
+          <span class="cred__meta">September 2020</span>
+        </li>
+      </ul>
+      <!-- creds:end -->
+
+      <p class="pnext" data-inview><a href="#/work" data-section="work">Next — Work <span class="arrow" aria-hidden="true">→</span></a></p>
+    </div>
+  </div>
+</article>
+
+<!-- =========================================================================
+     03 — Work
+     ========================================================================= -->
+<article class="panel" id="panel-work" data-section="work" data-index="03" aria-labelledby="title-work" aria-hidden="true" inert>
+  <div class="panel__bar">
+    <button class="panel__back" type="button" data-close><span aria-hidden="true">←</span> Index</button>
+    <span class="panel__tag">03 / Work</span>
+    <span class="panel__progress" aria-hidden="true"><i></i></span>
+  </div>
+  <div class="panel__scroll" data-scroll>
+    <div class="panel__inner">
+      <div class="panel__head">
+        <h2 class="ptitle" id="title-work" tabindex="-1" style="--i:0">Ten years, one direction.</h2>
+        <p class="lede" style="--i:1">Operations, then vendor-side engineering, then running a security program in-house.</p>
+      </div>
+
+      <div class="rows">
+        <a class="entry" href="#/work/senior-security-systems-engineer" data-inview>
+          <span class="entry__title">Senior Security &amp; Systems Engineer — AvatarFleet</span>
+          <span class="entry__meta">Mar 2024 — now</span>
+          <span class="entry__sub">Built the security program from nothing in an early-stage startup. SOC 2 Type 1 and Type 2 with zero adverse findings. Replaced the legacy enterprise infrastructure with minimal downtime, and wrote the Terraform and Ansible that enforce the controls. Also the person clearing the vendor reviews that block enterprise deals.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/work/lead-solutions-architect" data-inview>
+          <span class="entry__title">Lead Solutions Architect — Syxsense</span>
+          <span class="entry__meta">Mar 2023 — Mar 2024</span>
+          <span class="entry__sub">Hired, trained and led the team, three direct reports, and moved my own time from the individual deals to the platform work underneath them. Company stage at Black Hat USA, customer workshops, and a week-long seminar at VIT-AP University.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/work/senior-security-solutions-architect" data-inview>
+          <span class="entry__title">Senior Security Solutions Architect — Syxsense</span>
+          <span class="entry__meta">Apr 2022 — Mar 2023</span>
+          <span class="entry__sub">Vulnerability management frameworks for Linux servers in regulated on-premises environments, supporting customers with tens of thousands of endpoints under management.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/work/solutions-architect" data-inview>
+          <span class="entry__title">Solutions Architect — Syxsense</span>
+          <span class="entry__meta">Apr 2021 — Apr 2022</span>
+          <span class="entry__sub">Designed and deployed the platform into other people's environments: proofs of concept, RFP responses, and integrations written in Bash and Python. More than a hundred organizations through that work in my first year.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/work/associate-information-technology-analyst" data-inview>
+          <span class="entry__title">Associate IT Analyst — Schweitzer Engineering Laboratories</span>
+          <span class="entry__meta">Sep 2020 — Apr 2021</span>
+          <span class="entry__sub">Created a standardized, domain-integrated Ubuntu build for the company and applied CIS benchmarks to Linux endpoints with Chef.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/work/information-technology-technician" data-inview>
+          <span class="entry__title">Before that</span>
+          <span class="entry__meta">2016 — 2020</span>
+          <span class="entry__sub">IT technician and desktop support at Schweitzer Engineering Laboratories, including the Windows 7 to Windows 10 migration, and IT technician at Washington State University.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <p class="pnext" data-inview><a href="#/talks" data-section="talks">Next — Talks <span class="arrow" aria-hidden="true">→</span></a></p>
+    </div>
+  </div>
+  <section class="sub" data-sub hidden aria-label="work detail">
+    <div class="sub__bar">
+      <button class="sub__back" type="button" data-subback><span aria-hidden="true">←</span> <span data-subback-label>Back</span></button>
+      <span class="sub__tag" data-subtag aria-hidden="true"></span>
+      <span class="sub__progress" aria-hidden="true"><i></i></span>
+    </div>
+    <div class="sub__scroll" data-subscroll>
+      <div class="sub__inner" data-subinner></div>
+    </div>
+  </section>
+</article>
+
+<!-- =========================================================================
+     04 — Talks
+     ========================================================================= -->
+<article class="panel" id="panel-talks" data-section="talks" data-index="04" aria-labelledby="title-talks" aria-hidden="true" inert>
+  <div class="panel__bar">
+    <button class="panel__back" type="button" data-close><span aria-hidden="true">←</span> Index</button>
+    <span class="panel__tag">04 / Talks</span>
+    <span class="panel__progress" aria-hidden="true"><i></i></span>
+  </div>
+  <div class="panel__scroll" data-scroll>
+    <div class="panel__inner">
+      <div class="panel__head">
+        <h2 class="ptitle" id="title-talks" tabindex="-1" style="--i:0">Delivered to rooms, not decks.</h2>
+        <p class="lede" style="--i:1">Six recordings from three years of explaining security to the people who had to implement it.</p>
+      </div>
+
+      <p class="subhead" data-inview>Recordings · 2022 — 2024</p>
+      <div class="rows">
+        <a class="entry" href="#/talks/teIKAtg6BoY" data-inview>
+          <span class="entry__title">The Cyber Kill Chain Masterclass</span>
+          <span class="entry__meta">Jul 2022 · 54:39</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/talks/6FC-R0trKPo" data-inview>
+          <span class="entry__title">Analyst Insights: Advancing Zero Trust Priorities</span>
+          <span class="entry__meta">Jan 2023 · 50:05</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/talks/Eh3A_BkEilI" data-inview>
+          <span class="entry__title">Spotlight Webinar: Vulnerability Remediation</span>
+          <span class="entry__meta">Mar 2023 · 26:25</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/talks/u29nuuxiCD0" data-inview>
+          <span class="entry__title">Spotlight Webinar: Harnessing Automation</span>
+          <span class="entry__meta">Aug 2023 · 20:48</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/talks/xmz2sXNcdEQ" data-inview>
+          <span class="entry__title">Spotlight Webinar: Autonomous Defense</span>
+          <span class="entry__meta">Sep 2023 · 20:32</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/talks/aVqQk8Td3Bo" data-inview>
+          <span class="entry__title">How MSPs and MSSPs Can Comply and Thrive with Automated Remediation</span>
+          <span class="entry__meta">Jun 2024 · 26:10</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+              </div>
+
+      <div class="rule" data-inview></div>
+
+      <p data-inview>Off the recording, the same work happened in worse lighting: hands-on workshops with dozens of customers at a time, the technical half of the booth and the company stage at <strong>Black Hat USA</strong>, large-format event floors, and a week-long seminar as a visiting industry partner at <strong>VIT-AP University</strong> in Vijayawada, India.</p>
+
+      <p class="pnext" data-inview><a href="#/blogs" data-section="blogs">Next — Blogs <span class="arrow" aria-hidden="true">→</span></a></p>
+    </div>
+  </div>
+  <section class="sub" data-sub hidden aria-label="talks detail">
+    <div class="sub__bar">
+      <button class="sub__back" type="button" data-subback><span aria-hidden="true">←</span> <span data-subback-label>Back</span></button>
+      <span class="sub__tag" data-subtag aria-hidden="true"></span>
+      <span class="sub__progress" aria-hidden="true"><i></i></span>
+    </div>
+    <div class="sub__scroll" data-subscroll>
+      <div class="sub__inner" data-subinner></div>
+    </div>
+  </section>
+</article>
+
+<!-- =========================================================================
+     05 — Blogs
+     ========================================================================= -->
+<article class="panel" id="panel-blogs" data-section="blogs" data-index="05" aria-labelledby="title-blogs" aria-hidden="true" inert>
+  <div class="panel__bar">
+    <button class="panel__back" type="button" data-close><span aria-hidden="true">←</span> Index</button>
+    <span class="panel__tag">05 / Blogs</span>
+    <span class="panel__progress" aria-hidden="true"><i></i></span>
+  </div>
+  <div class="panel__scroll" data-scroll>
+    <div class="panel__inner">
+      <div class="panel__head">
+        <h2 class="ptitle" id="title-blogs" tabindex="-1" style="--i:0">Written about things I had to operate.</h2>
+        <p class="lede" style="--i:1">Fourteen posts since 2020. Mostly the notes I wanted to find and could not.</p>
+      </div>
+
+      <p class="subhead" data-inview>Posts · 2020 — 2026</p>
+      <div class="rows">
+        <a class="entry" href="#/blogs/soc-2-field-manual-seed-stage" data-inview>
+          <span class="entry__title">SOC 2 Field Manual for Seed Stage SaaS</span>
+          <span class="entry__meta">Jul 2026</span>
+          <span class="entry__sub">What you actually need to build before your first SOC 2 engagement, organized by platform and budget.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/blogs/why-i-moved-to-hermes" data-inview>
+          <span class="entry__title">Why I Moved to Hermes (and What It Cost)</span>
+          <span class="entry__meta">Jun 2026</span>
+          <span class="entry__sub">ChatGPT. Cursor. Claude. I ran through them all, and I kept hitting the same walls.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/blogs/ai-agents-are-writing-my-code-now" data-inview>
+          <span class="entry__title">AI Agents Are Writing My Code Now</span>
+          <span class="entry__meta">Jun 2026</span>
+          <span class="entry__sub">After a decade learning Bash, Python, Ansible, and Terraform, I have not written a line of production code in months.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/blogs/europe-isnt-behind-on-ai-its-running-a-different-race" data-inview>
+          <span class="entry__title">Europe Isn't Behind on AI. It's Running a Different Race.</span>
+          <span class="entry__meta">Jun 2026</span>
+          <span class="entry__sub">Everyone says Europe is losing the AI race. But it chose a different finish line: privacy, dignity, and human oversight.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/blogs/spec-driven-development" data-inview>
+          <span class="entry__title">Spec Driven Development</span>
+          <span class="entry__meta">Apr 2026</span>
+          <span class="entry__sub">Most software fails from unclear expectations, not weak code.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/blogs/grand-goals-for-2024" data-inview>
+          <span class="entry__title">Grand Goals for 2024</span>
+          <span class="entry__meta">Jan 2024</span>
+          <span class="entry__sub">A deliberate sequence of IT and cloud security certifications, and why I committed to finishing them this time.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/blogs/cost-effective-migration-to-the-cloud" data-inview>
+          <span class="entry__title">Cost-effective Migration to the Cloud</span>
+          <span class="entry__meta">Sep 2023</span>
+          <span class="entry__sub">Moving from on-prem to the cloud changes both your security model and your bill.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/blogs/how-i-m-developing-my-career-the-power-of-goal-oriented-learning" data-inview>
+          <span class="entry__title">How I'm Developing My Career: The Power of Goal-Oriented Learning</span>
+          <span class="entry__meta">Sep 2023</span>
+          <span class="entry__sub">How I built an IT security career through goal-oriented certifications, hands-on projects, and roles that matched where I wanted to be.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/blogs/why-patching-servers-manually-is-not-safer" data-inview>
+          <span class="entry__title">Why Patching Servers Manually is not Safer</span>
+          <span class="entry__meta">Sep 2023</span>
+          <span class="entry__sub">Patching by hand to avoid outages is a common belief and a costly mistake.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/blogs/the-necessity-of-coding-skills-for-sysadmins-bridging-the-devops-gap" data-inview>
+          <span class="entry__title">The Necessity of Coding Skills for Sysadmins: Bridging the DevOps Gap</span>
+          <span class="entry__meta">Nov 2022</span>
+          <span class="entry__sub">The line between development and operations is gone.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/blogs/why-ansible-outshines-chef-and-puppet-for-configuration-management" data-inview>
+          <span class="entry__title">Why Ansible Outshines Chef and Puppet for Configuration Management</span>
+          <span class="entry__meta">Oct 2022</span>
+          <span class="entry__sub">Why I pick Ansible over Chef and Puppet: an agentless design, Python underneath, and a fleet that does not need an agent to be managed.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/blogs/the-strength-of-python-for-linux-automation" data-inview>
+          <span class="entry__title">The Strength of Python for Linux Automation</span>
+          <span class="entry__meta">Sep 2022</span>
+          <span class="entry__sub">Python and Ruby both handle automation, but Python has real advantages on Linux: its standard library, its ecosystem, and its presence by default.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/blogs/the-profitability-of-honesty-a-practical-approach-to-ethical-business" data-inview>
+          <span class="entry__title">The Profitability of Honesty: A Practical Approach to Ethical Business</span>
+          <span class="entry__meta">Sep 2022</span>
+          <span class="entry__sub">Honesty looks like it costs you sales. In practice it builds the trust that wins long-term contracts.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/blogs/colemak-an-efficient-keyboard-layout" data-inview>
+          <span class="entry__title">Colemak: An Efficient Keyboard Layout</span>
+          <span class="entry__meta">Sep 2020</span>
+          <span class="entry__sub">Why I switched from QWERTY to Colemak, what the transition actually felt like, and whether the speed and ergonomics were worth it.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <p class="pnext" data-inview><a href="#/tech" data-section="tech">Next — Tech <span class="arrow" aria-hidden="true">→</span></a></p>
+    </div>
+  </div>
+  <section class="sub" data-sub hidden aria-label="blogs detail">
+    <div class="sub__bar">
+      <button class="sub__back" type="button" data-subback><span aria-hidden="true">←</span> <span data-subback-label>Back</span></button>
+      <span class="sub__tag" data-subtag aria-hidden="true"></span>
+      <span class="sub__progress" aria-hidden="true"><i></i></span>
+    </div>
+    <div class="sub__scroll" data-subscroll>
+      <div class="sub__inner" data-subinner></div>
+    </div>
+  </section>
+</article>
+
+<!-- =========================================================================
+     06 — Tech
+     ========================================================================= -->
+<article class="panel" id="panel-tech" data-section="tech" data-index="06" aria-labelledby="title-tech" aria-hidden="true" inert>
+  <div class="panel__bar">
+    <button class="panel__back" type="button" data-close><span aria-hidden="true">←</span> Index</button>
+    <span class="panel__tag">06 / Tech</span>
+    <span class="panel__progress" aria-hidden="true"><i></i></span>
+  </div>
+  <div class="panel__scroll" data-scroll>
+    <div class="panel__inner">
+      <div class="panel__head">
+        <h2 class="ptitle" id="title-tech" tabindex="-1" style="--i:0">What I actually run.</h2>
+        <p class="lede" style="--i:1">Not a keyword list. Tenure, and what I did with it.</p>
+      </div>
+
+      <div class="defs">
+        <div class="def" data-inview>
+          <span class="def__t">AWS</span>
+          <span class="def__d"><strong>Five years.</strong> Heaviest in IAM administration and audit, EC2, ECS, RDS and VPC, with SQS, DynamoDB, Bedrock, Route 53 and Textract in production.</span>
+        </div>
+        <div class="def" data-inview>
+          <span class="def__t">Terraform</span>
+          <span class="def__d">The control, not the diagram. Infrastructure that enforces a security posture whether or not anyone remembers the policy.</span>
+        </div>
+        <div class="def" data-inview>
+          <span class="def__t">Ansible</span>
+          <span class="def__d">Configuration management and remediation at fleet scale, including Linux estates in regulated environments.</span>
+        </div>
+        <div class="def" data-inview>
+          <span class="def__t">Python</span>
+          <span class="def__d">Integrations, Lambda behind API Gateway, data clean-up, and the automation nobody budgets a project for.</span>
+        </div>
+        <div class="def" data-inview>
+          <span class="def__t">Linux</span>
+          <span class="def__d"><strong>Twelve years.</strong> Hardening to CIS benchmarks, endpoint reliability, and a standardized Ubuntu build that an entire engineering organization ran on.</span>
+        </div>
+        <div class="def" data-inview>
+          <span class="def__t">Proxmox</span>
+          <span class="def__d"><strong>Five years.</strong> Homelab virtualization that behaves like the real thing: KVM and LXC, snapshots, backups, no licensing pain.</span>
+        </div>
+        <div class="def" data-inview>
+          <span class="def__t">Azure</span>
+          <span class="def__d"><strong>Two years.</strong> Wherever the customer runs. SQL, virtual machines, containers. AWS is where I am deepest.</span>
+        </div>
+      </div>
+
+      <div class="rule" data-inview></div>
+
+      <p class="subhead" data-inview>Projects · 6</p>
+      <div class="rows">
+        <a class="entry" href="#/tech/running-a-poc" data-inview>
+          <span class="entry__title">Running a POC</span>
+          <span class="entry__sub">Technical evaluations from both sides of the table: how I scope them, and what makes one worth the time.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/security" data-inview>
+          <span class="entry__title">Security</span>
+          <span class="entry__sub">Automating the NIST National Vulnerability Database, plus the vulnerability work behind it.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/gitops" data-inview>
+          <span class="entry__title">GitOps</span>
+          <span class="entry__sub">Pipelines that deploy themselves, with the diagrams to prove where the trust boundaries are.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/automation" data-inview>
+          <span class="entry__title">Automation</span>
+          <span class="entry__sub">The side projects where automation ideas get worked out before they go near production.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/ai-agents" data-inview>
+          <span class="entry__title">AI Agents</span>
+          <span class="entry__sub">Getting agents to do useful work without someone babysitting them.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/x-as-code" data-inview>
+          <span class="entry__title">X as Code</span>
+          <span class="entry__sub">Configuration-as-code and infrastructure-as-code, collected in one place.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <div class="rule" data-inview></div>
+
+      <p class="subhead" data-inview>Platforms · 12</p>
+      <div class="rows rows--tight">
+        <a class="entry" href="#/tech/management-platforms-cloud-providers" data-inview>
+          <span class="entry__title">Management Platforms &amp; Cloud Providers</span>
+          <span class="entry__meta">4 platforms</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/container-platforms" data-inview>
+          <span class="entry__title">Container Platforms</span>
+          <span class="entry__meta">3 platforms</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/code-management-platforms" data-inview>
+          <span class="entry__title">Code Management Platforms</span>
+          <span class="entry__meta">3 platforms</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/platforms-and-tooling" data-inview>
+          <span class="entry__title">Platforms and Tooling</span>
+          <span class="entry__meta">5 platforms</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        
+        
+        <a class="entry" href="#/tech/database-platforms" data-inview>
+          <span class="entry__title">Database Platforms</span>
+          <span class="entry__meta">2 platforms</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/secrets-management-platforms" data-inview>
+          <span class="entry__title">Secrets Management Platforms</span>
+          <span class="entry__meta">3 platforms</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/load-balancers" data-inview>
+          <span class="entry__title">Load Balancers</span>
+          <span class="entry__meta">3 platforms</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/scripting-languages" data-inview>
+          <span class="entry__title">Scripting Languages</span>
+          <span class="entry__meta">2 platforms</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/inference-and-language-models" data-inview>
+          <span class="entry__title">Inference and Language Models</span>
+          <span class="entry__meta">3 platforms</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/operating-systems" data-inview>
+          <span class="entry__title">Operating Systems</span>
+          <span class="entry__meta">3 platforms</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <div class="rule" data-inview></div>
+
+      <p class="subhead" data-inview>Also worked in</p>
+      <p class="belts" data-inview>Chef · Docker Compose · ECS · Portainer · vSphere · Bash · GitHub Actions · Splunk · Wazuh</p>
+
+      <div class="rule" data-inview></div>
+
+      <p data-inview>The unglamorous part of the inventory matters more than the logo wall: which of these I have <em>operated under audit</em>, and which I have only read about. Ask me about any line here and I will tell you which one it is.</p>
+
+      <p class="pnext" data-inview><a href="#/contact" data-section="contact">Next — Contact <span class="arrow" aria-hidden="true">→</span></a></p>
+    </div>
+  </div>
+  <section class="sub" data-sub hidden aria-label="tech detail">
+    <div class="sub__bar">
+      <button class="sub__back" type="button" data-subback><span aria-hidden="true">←</span> <span data-subback-label>Back</span></button>
+      <span class="sub__tag" data-subtag aria-hidden="true"></span>
+      <span class="sub__progress" aria-hidden="true"><i></i></span>
+    </div>
+    <div class="sub__scroll" data-subscroll>
+      <div class="sub__inner" data-subinner></div>
+    </div>
+  </section>
+</article>
+
+<!-- =========================================================================
+     07 — Contact
+     ========================================================================= -->
+<article class="panel" id="panel-contact" data-section="contact" data-index="07" aria-labelledby="title-contact" aria-hidden="true" inert>
+  <div class="panel__bar">
+    <button class="panel__back" type="button" data-close><span aria-hidden="true">←</span> Index</button>
+    <span class="panel__tag">07 / Contact</span>
+    <span class="panel__progress" aria-hidden="true"><i></i></span>
+  </div>
+  <div class="panel__scroll" data-scroll>
+    <div class="panel__inner">
+      <div class="panel__head">
+        <h2 class="ptitle" id="title-contact" tabindex="-1" style="--i:0">Send a note.</h2>
+        <p class="lede" style="--i:1">Open to roles in platform security, blue-team tooling, or cloud infrastructure.</p>
+      </div>
+
+      <p data-inview>Everything below lands in my inbox. I read all of it, and I usually reply within a couple of business days.</p>
+
+      <p data-inview style="margin-top:1.6rem"><a class="big-link" href="mailto:graham@brooks-security.com">graham@brooks-security.com</a></p>
+
+      <div class="rule" data-inview></div>
+
+      <p class="crumbs" data-inview>
+        <a href="https://linkedin.com/in/grahamwbrooks/">LinkedIn</a>
+        <a href="https://github.com/littleseneca">GitHub</a>
+        <a href="https://www.brooks-security.com/resume/">One-page résumé</a>
+        <a href="https://www.brooks-security.com/">brooks-security.com</a>
+      </p>
+
+      <div class="rule" data-inview></div>
+
+      <p data-inview>If you are hiring, tell me about the product and the team and I will tell you whether I think I am a fit. If you just want to talk shop about SOC 2, Terraform, vulnerability management, or getting AI agents to do something useful, that works too. Based in Moscow, Idaho, and happy to relocate for the right role.</p>
+
+      <p class="pnext" data-inview><a href="#/" data-close>Back to index <span class="arrow" aria-hidden="true">→</span></a></p>
+    </div>
+  </div>
+</article>
+
+<script src="assets/mockup.js" defer></script>
+</body>
+</html>

@@ -1,11 +1,24 @@
 {{ define "main" }}
-{{- $n := len .Pages }}
-<p class="eyebrow">{{ $n }} {{ cond (eq $n 1) .Data.Singular .Data.Plural }}</p>
-<h1 tabindex="-1">{{ .Title }}</h1>
-<div class="rows">
-  {{- range .Pages.ByTitle }}
-  {{- $c := len .Pages }}
-  <a class="row" href="{{ .RelPermalink }}"><b>{{ if eq $.Data.Plural "tags" }}#{{ .Data.Term }}{{ else }}{{ .LinkTitle }}{{ end }}</b><span class="end">{{ $c }} {{ cond (eq $c 1) "post" "posts" }}</span></a>
-  {{- end }}
-</div>
+<main class="panel is-in" id="main">
+  {{ partial "panel-bar.html" . }}
+  <div class="panel__scroll" data-scroll>
+    <div class="panel__inner">
+      <div class="panel__head">
+        <h1 class="ptitle" id="title" tabindex="-1" style="--i:0">{{ .Title }}</h1>
+        <p class="lede" style="--i:1">{{ len .Pages }} {{ cond (eq (len .Pages) 1) .Data.Singular .Data.Plural }}</p>
+      </div>
+      <div class="rows" data-inview>
+        {{- range .Pages.ByTitle }}
+        {{- $c := len .Pages }}
+        <a class="entry" href="{{ .RelPermalink }}">
+          <span class="entry__title">{{ if eq $.Data.Plural "tags" }}#{{ .Data.Term }}{{ else }}{{ .LinkTitle }}{{ end }}</span>
+          <span class="entry__meta">{{ $c }} {{ cond (eq $c 1) "post" "posts" }}</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        {{- end }}
+      </div>
+      {{ partial "panel-next.html" . }}
+    </div>
+  </div>
+</main>
 {{ end }}

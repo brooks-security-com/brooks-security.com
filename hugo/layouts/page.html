@@ -1,11 +1,42 @@
 {{ define "main" }}
-{{- if eq .Section "posts" }}
-{{ partial "post.html" . }}
-{{- else }}
-{{ partial "toc.html" (dict "page" .) }}
-<div class="prose">
-{{ partial "content.html" . }}
-</div>
-{{ partial "related.html" . }}
-{{- end }}
+{{- $toc := ge (len (findRE `<li>` .TableOfContents)) 3 -}}
+<main class="panel is-in" id="main">
+  {{ partial "panel-bar.html" . }}
+  <div class="panel__scroll" data-scroll>
+    <div class="panel__inner">
+      <div class="detail{{ if $toc }} detail--with-rail{{ end }}">
+        {{- if and .Date (eq .Section "posts") }}
+        <p class="kicker">{{ .Date.Format "02 Jan 2006" }}{{ with .Params.category }} · {{ . }}{{ end }}</p>
+        {{- end }}
+        <h1 class="detail__title" id="title" tabindex="-1">{{ .Title }}</h1>
+        {{- with .Description }}
+        <p class="detail__lede">{{ . }}</p>
+        {{- end }}
+        {{- with .Params.tags }}
+        <p class="tags">{{ range . }}<span class="tag">{{ . }}</span>{{ end }}</p>
+        {{- end }}
+        {{- if $toc }}{{ partial "toc.html" . }}{{ end }}
+        <div class="prose" data-inview>{{ partial "content.html" . }}</div>
+      </div>
+
+      {{- /* Related pages, when the source names any. The reference had none on an item
+             page; the site has had them for years and they are the internal links the
+             posts lean on. */}}
+      {{- with .Params.related }}
+      <div class="rows rows--tight" data-inview>
+        {{- range . }}
+        {{- with site.GetPage . }}
+        <a class="entry" href="{{ .RelPermalink }}">
+          <span class="entry__title">{{ .Title }}</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        {{- end }}
+        {{- end }}
+      </div>
+      {{- end }}
+
+      {{ partial "panel-next.html" . }}
+    </div>
+  </div>
+</main>
 {{ end }}

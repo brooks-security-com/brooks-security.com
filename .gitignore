@@ -17,3 +17,9 @@ terraform/files/subscribe-layer.zip
 terraform/files/aigp-sync.zip
 # Python bytecode (e.g. from local Lambda syntax checks)
 __pycache__/
+
+# The mockup draws the site's own mermaid diagrams with the site's own bundle.
+# It is not committed twice: run mockups/01-typographic/tools/sync-vendor.sh
+# (documented in mockups/README.md) to copy it out of hugo/assets/js/vendor.
+mockups/*/assets/mermaid.min.js
+mockups/*/assets/d3.min.js

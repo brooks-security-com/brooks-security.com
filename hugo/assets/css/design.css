@@ -1,0 +1,826 @@
+/* ==========================================================================
+   Mockup 01 — "Typographic Index"
+   Type-first personal index for Graham Brooks. Ink on paper, one accent.
+   No cards, no icons, no gradients. Layout is a table of contents; the
+   motion is one idea: the page recedes, the section slides over it.
+   ========================================================================== */
+
+/* ---------- fonts (self-hosted, shared with the live site) ---------- */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url(fonts/geist-v5-latin.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url(fonts/geist-mono-v6-latin.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/instrument-serif-latin.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/instrument-serif-italic-latin.woff2) format('woff2');
+}
+
+/* ---------- tokens ---------- */
+:root {
+  --paper: #faf9f7;
+  --ink: #14141a;
+  --ink-2: #4a4a56;
+  --muted: #6f6f7c;
+  --rule: #dcdce3;
+  --rule-soft: #ececf1;
+  --accent: #5645df;
+
+  --serif: 'Instrument Serif', ui-serif, Georgia, 'Times New Roman', serif;
+  --sans: 'Geist', system-ui, -apple-system, 'Segoe UI', Helvetica, sans-serif;
+  --mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur: 0.62s;
+  --gut: clamp(1.15rem, 4.5vw, 3rem);
+  --col: 58rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #101015;
+    --ink: #f1f1f4;
+    --ink-2: #b4b4c0;
+    --muted: #8c8c9a;
+    --rule: #2c2c36;
+    --rule-soft: #212129;
+    --accent: #9a90ff;
+  }
+}
+
+/* ---------- base ---------- */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body { min-height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 1.0625rem;
+  line-height: 1.68;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+html[data-active],
+html[data-active] body { overflow: hidden; }
+
+a { color: inherit; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip {
+  position: fixed;
+  top: 0; left: 50%;
+  transform: translate(-50%, -120%);
+  z-index: 40;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 0.85rem 1.1rem;
+  transition: transform 0.3s var(--ease);
+}
+.skip:focus { transform: translate(-50%, 0); }
+
+/* ==========================================================================
+   Home — name, face, and the index of sections
+   ========================================================================== */
+.home {
+  min-height: 100svh;
+  display: grid;
+  align-content: center;
+  padding: max(2rem, env(safe-area-inset-top)) var(--gut) max(1.1rem, env(safe-area-inset-bottom));
+}
+
+.home__inner {
+  width: 100%;
+  max-width: var(--col);
+  margin: 0 auto;
+  transition: transform var(--dur) var(--ease), opacity 0.45s ease;
+}
+
+html[data-active] .home__inner {
+  transform: translate3d(-3.5%, 0, 0) scale(0.985);
+  opacity: 0.28;
+}
+
+/* ---------- head block ---------- */
+.head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.6rem;
+  margin-bottom: clamp(1.05rem, 2.3vh, 1.6rem);
+}
+
+.head__ring {
+  width: clamp(70px, 8.6vw, 90px);
+  aspect-ratio: 1;
+  padding: 5px;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  /* Second in the entry sequence: the name lands first, then the face. */
+  transition: border-color 0.5s ease,
+              clip-path 1.1s var(--ease) 0.2s,
+              opacity 0.5s ease 0.2s;
+}
+
+.head__ring img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.05);
+  transition: filter 1.1s ease;
+}
+
+.head:hover .head__ring { border-color: var(--ink); }
+.head:hover .head__ring img { filter: grayscale(0) contrast(1); }
+
+.head__name {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(2.25rem, 6.2vw, 3.7rem);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+}
+
+.head__name .mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.06em;
+}
+
+.head__name .word {
+  display: inline-block;
+  transition: transform 1s var(--ease);
+}
+
+.head__name .mask:nth-child(1) .word { transition-delay: 0.04s; }
+.head__name .mask:nth-child(2) .word { transition-delay: 0.14s; }
+
+/* ---------- word cloud ----------
+   A real cloud: scattered, no rows, no rotation, largest words at the centre.
+   The layout is computed by tools/cloud_layout.py and baked into the markup as
+   --x / --y / --s, so nothing here measures anything at runtime and the cloud
+   renders identically with JavaScript disabled.
+
+   --s is in units of the cloud's own width (1 unit = 1cqw), which means the
+   whole composition scales as one object: a phone gets the same cloud, smaller,
+   never a different (overlapping) arrangement. Keep ASPECT in the generator and
+   aspect-ratio here in step. */
+.cloud {
+  position: relative;
+  list-style: none;
+  width: 100%;
+  max-width: 28rem;
+  aspect-ratio: 1000 / 455;
+  margin: 0.35rem 0 0;
+  padding: 0;
+  font-family: var(--sans);
+  container-type: inline-size;
+}
+
+.cloud__w {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  transform: translate(-50%, -50%);
+  font-size: calc(var(--s) * 1vw);                  /* pre-container-query fallback */
+  font-size: calc(var(--s) * var(--grow, 1) * 1cqw);
+  line-height: 1;
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+  color: var(--ink-2);
+  transition: color 0.45s ease;
+}
+
+/* Three treatments, matching the generator's `treatment` field: the biggest
+   words are serif, the middle tier is heavier sans, the tail is plain. */
+.cloud__w--display {
+  font-family: var(--serif);
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+
+.cloud__w--mid {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+/* Hovering a word brings its cluster forward and pushes the rest back. Colour
+   only, deliberately: no movement, so the cloud stays a reference, not a toy. */
+.cloud .cloud__w.is-hot { color: var(--accent); }
+.cloud .cloud__w.is-dim { color: var(--rule); }
+
+/* The cloud is one object in the entry sequence: words arrive in reading
+   order. Runs off is-entered, an animation rather than a transition, so the
+   per-word delay never leaks into the hover state. */
+html.is-enter .cloud__w { opacity: 0; }
+
+html.is-entered .cloud__w {
+  animation: cloudIn 0.55s var(--ease) both;
+  animation-delay: calc(0.42s + var(--i, 0) * 22ms);
+}
+
+/* The centring translate must appear in BOTH keyframes. With fill-mode both the
+   final keyframe persists after the run, so a `to { transform: none }` would
+   drop the -50%/-50% nudge and leave every word sitting off its position. */
+@keyframes cloudIn {
+  from { opacity: 0; transform: translate(-50%, calc(-50% + 0.6rem)); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+.noscript {
+  margin: 0.9rem 0 0;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-2);
+}
+
+/* ---------- the index ---------- */
+.index {
+  border-top: 1px solid var(--rule);
+}
+
+.row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.6rem minmax(0, 1fr) auto 1.5rem;
+  align-items: baseline;
+  gap: 0.35rem 1.1rem;
+  padding: clamp(0.25rem, 0.75vh, 0.55rem) 0.15rem;
+  border-bottom: 1px solid var(--rule);
+  text-decoration: none;
+  transition: border-color 0.45s ease, opacity 0.6s ease, transform 0.85s var(--ease);
+}
+
+.row__num,
+.row__meta {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.row__num { transition: color 0.35s ease; }
+
+.row__word {
+  font-family: var(--serif);
+  font-size: clamp(1.95rem, 5.6vw, 3.15rem);
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+  transition: transform var(--dur) var(--ease);
+}
+
+.row__meta {
+  grid-column: 3;
+  text-align: right;
+  white-space: nowrap;
+  transition: color 0.35s ease, transform var(--dur) var(--ease);
+}
+
+/* The only standing affordance in the index: a faint arrow that commits to the
+   link on hover. It is a glyph, not chrome, so the page stays type-first. */
+.row__go {
+  grid-column: 4;
+  font-size: 1.05rem;
+  line-height: 1;
+  color: var(--muted);
+  transform: translate3d(0, 0, 0);
+  transition: color 0.4s ease, transform var(--dur) var(--ease);
+}
+
+/* the only place color is allowed in: a short accent rule that draws in */
+.row::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  width: 0;
+  background: var(--accent);
+  transition: width var(--dur) var(--ease);
+}
+
+@media (hover: hover) {
+  .row:hover { border-bottom-color: var(--ink); }
+  .row:hover .row__word { transform: translate3d(0.6rem, 0, 0); }
+  .row:hover .row__meta { color: var(--ink-2); transform: translate3d(-0.4rem, 0, 0); }
+  .row:hover .row__num { color: var(--ink-2); }
+  .row:hover .row__go { color: var(--accent); transform: translate3d(0.25rem, 0, 0); }
+  .row:hover::after { width: 2.5rem; }
+}
+
+.row:focus-visible .row__go { color: var(--accent); }
+
+.row:active .row__word { transform: translate3d(0.35rem, 0, 0); }
+
+.home__foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.05rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.home__foot a {
+  color: inherit;
+  text-decoration: none;
+  padding: 0.5rem 0;
+}
+
+.home__foot a:hover { color: var(--ink); }
+
+/* ---------- entry animation (only while html.is-enter) ---------- */
+html.is-enter .head__ring {
+  clip-path: circle(0% at 50% 50%);
+  opacity: 0.001;
+}
+html.is-enter .head__name .word { transform: translate3d(0, 110%, 0); }
+/* Gate for the entry sequence only: html.js stays for the life of the page
+   (the scroll-reveal observer depends on it), so a hidden state keyed on
+   html.js would never be released. is-enter is removed once fonts are ready. */
+html.is-enter .row { opacity: 0; transform: translate3d(0, 1.1rem, 0); }
+html.is-enter .home__foot { opacity: 0; }
+
+/* Stagger lives on the base rule, not inside the gate: a transition reads the
+   target's delay at the moment the class is removed, so delays declared only
+   in the gated state would never fire. Order: name, face, cloud, index. */
+.index .row:nth-child(1) { transition-delay: 0.5s; }
+.index .row:nth-child(2) { transition-delay: 0.57s; }
+.index .row:nth-child(3) { transition-delay: 0.64s; }
+.index .row:nth-child(4) { transition-delay: 0.71s; }
+.index .row:nth-child(5) { transition-delay: 0.78s; }
+.index .row:nth-child(6) { transition-delay: 0.85s; }
+.home__foot { transition: opacity 0.8s ease 1.05s; }
+
+/* ==========================================================================
+   Panels — one per section, sliding over the index
+   ========================================================================== */
+.panel {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  background: var(--paper);
+  border-left: 1px solid var(--rule);
+  box-shadow: -32px 0 64px -36px rgb(0 0 0 / 0.18);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(101%, 0, 0);
+  transition: transform var(--dur) var(--ease), opacity 0.42s ease;
+  touch-action: pan-y;  overflow: hidden;
+}
+
+.panel.is-in { opacity: 1; pointer-events: auto; transform: none; }
+.panel.is-leaving-left { opacity: 0; transform: translate3d(-15%, 0, 0); }
+.panel.is-leaving-right { opacity: 0; transform: translate3d(101%, 0, 0); }
+
+.panel__bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.55rem var(--gut);
+  border-bottom: 1px solid var(--rule);
+  background: var(--paper);
+}
+
+.panel__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 44px;
+  padding: 0 0.1rem;
+  background: none;
+  border: 0;
+  color: var(--ink-2);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.panel__back:hover { color: var(--ink); }
+.panel__back span { transition: transform 0.4s var(--ease); }
+.panel__back:hover span { transform: translate3d(-4px, 0, 0); }
+
+.panel__tag {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.panel__progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.panel__progress i {
+  display: block;
+  height: 100%;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.15s linear;
+}
+
+.panel__scroll {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+.panel__inner {
+  width: 100%;
+  max-width: 45rem;
+  margin: 0 auto;
+  padding: clamp(1.9rem, 5.5vh, 3.6rem) var(--gut) clamp(3rem, 10vh, 6rem);
+}
+
+.panel__head > * { margin: 0 0 1.15rem; }
+
+.kicker {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.ptitle {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(2.1rem, 6vw, 3.5rem);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  margin-bottom: 1.5rem !important;
+}
+
+.lede {
+  font-family: var(--serif);
+  font-size: clamp(1.25rem, 3.4vw, 1.6rem);
+  line-height: 1.42;
+  letter-spacing: -0.005em;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+
+.panel__inner p {
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+.panel__inner p + p { margin-top: 1.05rem; }
+
+.panel__inner strong { color: var(--ink); font-weight: 500; }
+
+.panel__inner em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.08em;
+  color: var(--ink);
+}
+
+/* ---------- entry animation for the panel head ---------- */
+.panel__head > * { opacity: 0; }
+
+.panel.is-in .panel__head > * {
+  animation: rise 0.85s var(--ease) both;
+  animation-delay: calc(0.16s + var(--i, 0) * 0.075s);
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translate3d(0, 18px, 0); }
+  to { opacity: 1; transform: none; }
+}
+
+/* scroll-reveal for everything below the fold of a panel.
+   Gated on html.js so a script-less render shows all content. */
+html.js [data-inview] {
+  opacity: 0;
+  transform: translate3d(0, 14px, 0);
+  transition: opacity 0.7s ease, transform 0.8s var(--ease);
+}
+
+html.js [data-inview].is-visible { opacity: 1; transform: none; }
+
+/* ---------- shared blocks inside panels ---------- */
+.rule { height: 1px; background: var(--rule); margin: clamp(2rem, 6vh, 3rem) 0; }
+
+.subhead {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 1rem;
+}
+
+.rows { border-top: 1px solid var(--rule-soft); }
+
+.entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 0.15rem 1.25rem;
+  padding: 0.95rem 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.entry__title {
+  font-family: var(--serif);
+  font-size: clamp(1.3rem, 3.6vw, 1.75rem);
+  line-height: 1.12;
+  letter-spacing: -0.012em;
+  color: var(--ink);
+}
+
+.entry__meta {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.entry__sub {
+  grid-column: 1 / -1;
+  margin-top: 0.15rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+a.entry { text-decoration: none; transition: transform 0.5s var(--ease); }
+a.entry:hover { transform: translate3d(0.45rem, 0, 0); }
+a.entry:hover .entry__title { color: var(--accent); }
+
+.defs { display: grid; }
+
+.def {
+  display: grid;
+  grid-template-columns: 9.5rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: 0.2rem 1.25rem;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.def__t {
+  font-family: var(--serif);
+  font-size: 1.35rem;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.def__d { font-size: 0.96rem; line-height: 1.6; color: var(--ink-2); }
+
+.belts {
+  font-family: var(--serif);
+  font-size: clamp(1.3rem, 3.8vw, 1.9rem);
+  line-height: 1.5;
+  letter-spacing: -0.008em;
+  color: var(--ink-2);
+}
+
+.belts b { font-weight: 400; color: var(--ink); }
+
+.crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.1rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.crumbs a { text-decoration: none; color: var(--ink-2); border-bottom: 1px solid var(--rule); padding-bottom: 2px; }
+.crumbs a:hover { color: var(--ink); border-bottom-color: var(--ink); }
+
+.big-link {
+  display: inline-block;
+  font-family: var(--serif);
+  font-size: clamp(1.5rem, 4.6vw, 2.3rem);
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  text-decoration: none;
+  color: var(--ink);
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 0.15em;
+  transition: border-color 0.4s ease, color 0.4s ease;
+}
+
+.big-link:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+.pnext {
+  margin-top: clamp(2.4rem, 8vh, 4rem);
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--rule);
+}
+
+.pnext a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 44px;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.pnext a .arrow { transition: transform 0.45s var(--ease); }
+.pnext a:hover .arrow { transform: translate3d(5px, 0, 0); }
+
+/* ==========================================================================
+   Responsive — mobile is the primary case
+   ========================================================================== */
+
+/* Short laptop viewports (1366x768 and friends): the index has to fit without
+   a scroll, so the type steps down as a set rather than clipping the footer. */
+@media (min-width: 641px) and (max-height: 800px) {
+  .home { padding-top: max(1.25rem, env(safe-area-inset-top)); }
+  .head { margin-bottom: 0.95rem; gap: 0.5rem; }
+  .head__ring { width: clamp(66px, 9vw, 88px); padding: 5px; }
+  .head__name { font-size: clamp(2.1rem, 5.4vw, 3.2rem); }
+  .cloud { max-width: 26rem; }
+  /* Dock the type a touch at short viewports rather than shrinking the box:
+     the generator packed with 10% headroom, so this stays collision-free. */
+  .cloud__w { --grow: 0.94; }
+  .row { padding: 0.32rem 0.15rem; }
+  .row__word { font-size: clamp(1.55rem, 4.1vw, 2.25rem); }
+  .home__foot { margin-top: 0.5rem; }
+}
+
+@media (max-width: 640px) {
+  body { font-size: 1.03rem; }
+
+  .head { gap: 0.45rem; margin-bottom: 0.9rem; }
+
+  /* A phone is narrow, and a 25-word cloud in a 350px column can only be small
+     type touching itself. So the cloud breaks the page's text column and goes
+     full-bleed, and the words render at exactly the scale they were packed at
+     (--grow 1.06 == PACK_SCALE), which keeps the gutters between words honest
+     instead of eating them. 100vw inside a max-width:640px query, so there is
+     no scrollbar to account for and no horizontal overflow. */
+  .cloud {
+    width: 100vw;
+    max-width: none;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+  }
+  .cloud__w { --grow: 1.06; }
+
+  .home__foot { margin-top: 0.4rem; }
+
+  .row {
+    grid-template-columns: 1.9rem minmax(0, 1fr) 1.3rem;
+    padding: 0.25rem 0;
+  }
+
+  .row__meta {
+    grid-column: 2 / 3;
+    text-align: left;
+    white-space: normal;
+    margin-top: 0.15rem;
+  }
+
+  .row__go {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+  }
+
+  .panel {
+    border-left: 0;
+    border-top: 1px solid var(--rule);
+    transform: translate3d(0, 101%, 0);
+  }
+
+  .panel.is-leaving-left { transform: translate3d(0, -12%, 0); }
+  .panel.is-leaving-right { transform: translate3d(0, 101%, 0); }
+
+  .def { grid-template-columns: minmax(0, 1fr); }
+  .def__d { font-size: 0.94rem; }
+
+  .home__foot { flex-direction: column; gap: 0.1rem; }
+}
+
+/* ==========================================================================
+   Reduced motion — same content, no theatre
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0s !important;
+    transition-duration: 0.001ms !important;
+    transition-delay: 0s !important;
+  }
+
+  html.is-enter .head__ring { clip-path: none; opacity: 1; }
+  html.is-enter .head__name .word { transform: none; }
+  html.is-enter .row,
+  html.is-enter .home__foot { opacity: 1; transform: none; }
+
+  .panel__head > * { opacity: 1; }
+  html.js [data-inview] { opacity: 1; transform: none; }
+}
+
+/* --- Credentials ---------------------------------------------------------
+   One row per credential: the name, then the issuer and the month it was
+   earned, right-aligned. No link and no arrow, because there is nowhere to go;
+   this is the one list in the design that is a record rather than a door. */
+.creds { list-style: none; margin: 0 0 2rem; padding: 0; }
+.cred {
+  display: flex; flex-wrap: wrap; align-items: baseline;
+  gap: .2rem .9rem; padding: .95rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+.cred:first-child { border-top: 1px solid var(--rule); }
+.cred__name { font-family: var(--serif); font-size: 1.06rem; line-height: 1.35; }
+.cred__meta {
+  margin-left: auto; font-family: var(--mono); font-size: .68rem;
+  letter-spacing: .04em; text-transform: uppercase; color: var(--muted);
+  white-space: nowrap;
+}
+
+/* --- Credentials: the two lists -----------------------------------------
+   A heading that follows a list opens a new section, so it takes more air above it
+   than one row takes above the next row. Without this the gap between Education and
+   Certifications measured smaller than the ~54px row rhythm inside a list, which made
+   the section break quieter than a row break -- the hierarchy upside down. */
+.creds + .subhead { margin-top: 3rem; }
+
+/* The list that ends the page should not be separated from what follows it by
+   more than the gap that separates the two sections. */
+.creds:last-of-type { margin-bottom: 1.2rem; }

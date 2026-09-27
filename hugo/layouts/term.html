@@ -1,4 +1,25 @@
 {{ define "main" }}
-{{- $n := len .Pages }}
-{{ partial "writing.html" (dict "page" . "pages" .Pages.ByDate.Reverse "active" . "eyebrow" (printf "%s · %d %s" (.Data.Singular | strings.FirstUpper) $n (cond (eq $n 1) "post" "posts"))) }}
+{{- $n := len .Pages -}}
+<main class="panel is-in" id="main">
+  {{ partial "panel-bar.html" . }}
+  <div class="panel__scroll" data-scroll>
+    <div class="panel__inner">
+      <div class="panel__head">
+        <h1 class="ptitle" id="title" tabindex="-1" style="--i:0">{{ .Title }}</h1>
+        <p class="lede" style="--i:1">{{ $n }} {{ cond (eq $n 1) "post" "posts" }}</p>
+      </div>
+      <div class="rows" data-inview>
+        {{- range .Pages.ByDate.Reverse }}
+        <a class="entry" href="{{ .RelPermalink }}">
+          <span class="entry__title">{{ .Title }}</span>
+          <span class="entry__meta">{{ .Date.Format "Jan 2006" }}</span>
+          {{ with .Description }}<span class="entry__sub">{{ . }}</span>{{ end }}
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        {{- end }}
+      </div>
+      {{ partial "panel-next.html" . }}
+    </div>
+  </div>
+</main>
 {{ end }}
