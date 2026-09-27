@@ -254,6 +254,35 @@ def speaker_list(speakers: list[dict]) -> str:
     return ('<ul class="speakers">' + "".join(rows) + "</ul>") if rows else ""
 
 
+LABEL_LIMIT = 62
+
+
+def brief(text: str, limit: int = 260) -> str:
+    """The shortest version that still says what the talk is, on sentence bounds.
+
+    Two rules, both learned from reading the output rather than the input:
+
+    - The summaries in talks.yaml often open with an editorial label meant for
+      someone who already knows the series -- "The commercial one.", "The most
+      teaching-heavy of the Spotlight series." On a page a stranger lands on,
+      that is 19 characters that say nothing, so leading labels are dropped.
+    - Sentences are kept whole. A clause cut mid-thought reads worse than a
+      slightly longer sentence, and a dangling "which is why we built..."
+      actively misleads.
+    """
+    text = " ".join(text.split())
+    sentences = re.split(r"(?<=[.!?])\s+", text)
+    while len(sentences) > 1 and len(sentences[0]) < LABEL_LIMIT:
+        sentences.pop(0)
+
+    out = ""
+    for sentence in sentences:
+        if out and len(out) + 1 + len(sentence) > limit:
+            break
+        out = f"{out} {sentence}".strip()
+    return out or sentences[0]
+
+
 def talk_detail(talk: dict) -> str:
     facts = [
         ("Runtime", talk["duration"]),
@@ -275,9 +304,19 @@ def talk_detail(talk: dict) -> str:
     if talk["youtube"]:
         watch = (f'<p class="detail__more"><a href="{esc(talk["youtube"])}" rel="noopener">'
                  f'Watch on YouTube <span aria-hidden="true">→</span></a></p>')
-    summary = (f'<p class="subhead">What it covers</p>'
-               f'<div class="prose">{md(talk["summary"], talk["slug"])}</div>'
-               if talk["summary"] else "")
+    summary = ""
+    if talk["summary"]:
+        summary = (f'<p class="subhead">What it covers</p>'
+                   f'<div class="prose"><p>{esc(brief(talk["summary"]))}</p></div>')
+    # The writeup is real content, but it is not what someone opening a talk
+    # page came for: the video is. Fold it away so the page reads as a caption
+    # plus a recording, and unfolds for whoever wants the argument in full.
+    notes = ""
+    if talk["writeup"]["md"].strip():
+        notes = f"""<details class="notes">
+        <summary>The writeup</summary>
+        <div class="prose">{md(talk["writeup"]["md"], talk["slug"] + "-notes")}</div>
+      </details>"""
     return detail(
         talk["slug"],
         f'{human_date(talk["date"])} · {talk["format"]}',
@@ -286,8 +325,7 @@ def talk_detail(talk: dict) -> str:
             player(talk),
             f'<dl class="facts">{fact_rows}</dl>',
             summary,
-            f'<p class="subhead">Notes</p>',
-            f'<div class="prose">{md(talk["writeup"]["md"], talk["slug"] + "-notes")}</div>',
+            notes,
             speaker_list(talk["speakers"]),
             chapters,
             watch,
