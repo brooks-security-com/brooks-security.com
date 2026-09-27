@@ -1,0 +1,54 @@
+{{ define "main" }}
+<main class="panel open" id="main">
+  {{ partial "panel-bar.html" . }}
+  <div class="panel__scroll" data-scroll>
+    <div class="panel__inner">
+      <div class="detail">
+
+        <p class="kicker">{{ .Date.Format "Jan 2006" }} · {{ .Params.series }}</p>
+        <h1 class="detail__title" id="title" tabindex="-1">{{ .Title }}</h1>
+
+        {{- /* A poster and a button, not an embed: nothing is fetched from anywhere until
+               someone asks for the recording. The poster is YouTube's, because the
+               archive's master files are not in this repository; the file that plays is
+               this site's own, served from downloads/ through CloudFront. */}}
+        <div class="player" data-inview>
+          <video controls preload="none" playsinline
+                 poster="https://i.ytimg.com/vi/{{ path.Base .Params.youtube }}maxresdefault.jpg"
+                 src="{{ .Params.video }}">
+            Your browser cannot play this video. <a href="{{ .Params.video }}">Download the recording</a> instead.
+          </video>
+          <button class="player__btn" type="button">
+            <span class="player__tri" aria-hidden="true"></span>
+            <span class="player__cue">Play the recording</span>
+            <span class="player__len">{{ .Params.runtime }}</span>
+          </button>
+        </div>
+
+        <dl class="facts">
+          <div class="fact"><dt>Runtime</dt><dd>{{ .Params.runtime }}</dd></div>
+          <div class="fact"><dt>Series</dt><dd>{{ .Params.series }}</dd></div>
+          <div class="fact"><dt>Recorded</dt><dd>{{ .Date.Format "January 2006" }}</dd></div>
+        </dl>
+
+        <p class="detail__lede">{{ .Params.subject }}</p>
+
+        {{- with .Params.chapters }}
+        <details class="notes">
+          <summary>{{ len . }} chapters</summary>
+          <ol class="chapters">
+            {{- range . }}
+            <li class="chapters__t">{{ with .time }}<span class="chapters__count">{{ . }}</span>{{ end }}{{ .title }}</li>
+            {{- end }}
+          </ol>
+        </details>
+        {{- end }}
+
+        <p class="player__note">Also on <a href="{{ .Params.youtube }}">YouTube</a>{{ with .Params.topics }} · {{ delimit (first 5 .) ", " }}{{ end }}</p>
+      </div>
+
+      {{ partial "panel-next.html" . }}
+    </div>
+  </div>
+</main>
+{{ end }}

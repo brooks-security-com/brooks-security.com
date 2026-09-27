@@ -1,21 +1,20 @@
-{{- /* Every processed asset, built once per build (call through partialCached). All
-       of them are fingerprinted, so the one-year Cache-Control that hugo deploy
-       puts on css, js, and images is safe. */ -}}
-{{- $g := partialCached "graph.html" . "graph" -}}
+{{- /* Every processed asset, built once per build (call through partialCached).
+
+       Previously one graph theme; site.css is now the design and content.css is its
+       content layer. */ -}}
+{{- /* One stylesheet, in three layers, in this order:
+         the content rules carried from the previous theme (so they lose every argument
+         with the design), the design's shell, and the design's content layer. */ -}}
+{{- $css := slice
+      (resources.Get "css/legacy-content.css")
+      (resources.Get "css/site.css")
+      (resources.Get "css/content.css")
+      | resources.Concat "css/bundle.css" | minify | fingerprint -}}
+{{- $app := resources.Get "js/app.js" | minify | fingerprint -}}
 {{- $photo := resources.Get "images/graham.jpg" | fingerprint -}}
-{{- /* Publish the original video poster at its plain URL. Nothing in the content
-       links it any more (content.html now swaps every poster for a processed
-       copy), but scripts/check-urls.py lists it in the URL map as a URL the site
-       keeps live, so this line is what holds that promise. Do not remove it as
-       dead code. */ -}}
-{{- $poster := resources.Get "images/presentation-poster.jpg" -}}
-{{- $_ := $poster.RelPermalink -}}
-{{- $css := resources.Get "css/site.css" | minify | fingerprint -}}
-{{- $app := slice (resources.Get "js/vendor/d3.min.js") (resources.Get "js/app.js") | resources.Concat "js/site.js" | minify | fingerprint -}}
-{{- $graph := resources.FromString "js/graph.js" (printf "window.GRAPH=%s;" (jsonify (dict "nodes" $g.nodes))) | fingerprint -}}
 {{- return dict
-  "css" $css "app" $app "graph" $graph
-  "build" (substr (sha256 (printf "%s %s %s" $css.Data.Integrity $app.Data.Integrity $graph.Data.Integrity)) 0 16)
+  "css" $css "app" $app
+  "build" (substr (sha256 (printf "%s %s" $css.Data.Integrity $app.Data.Integrity)) 0 16)
   "mermaid" (resources.Get "js/vendor/mermaid.min.js" | fingerprint)
   "photo" $photo
   "avatar" ($photo.Fill "192x192 Center webp q82")

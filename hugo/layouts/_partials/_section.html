@@ -1,0 +1,26 @@
+{{- /* Which index entry a page belongs to, and which one follows it.
+
+       Longest matching prefix wins, so /posts/<slug>/ belongs to /posts/ and
+       /docs/portfolio/<slug>/ to /docs/portfolio/ rather than to /docs/. Returns the
+       entry, and the next entry in the order for the foot of the page. */ -}}
+{{- $page := . -}}
+{{- $url := $page.RelPermalink -}}
+{{- $sections := hugo.Data.index.sections -}}
+{{- $best := dict -}}
+{{- $bestLen := 0 -}}
+{{- range $sections -}}
+  {{- $m := .match | default .href -}}
+  {{- if and (hasPrefix $url $m) (gt (len $m) $bestLen) -}}
+    {{- $best = . -}}
+    {{- $bestLen = len $m -}}
+  {{- end -}}
+{{- end -}}
+{{- $next := dict -}}
+{{- $found := false -}}
+{{- range $sections -}}
+  {{- if $found -}}
+    {{- if not $next }}{{ $next = . }}{{ end -}}
+  {{- end -}}
+  {{- if eq .key $best.key }}{{ $found = true }}{{ end -}}
+{{- end -}}
+{{- return (dict "self" $best "next" $next "all" $sections) -}}

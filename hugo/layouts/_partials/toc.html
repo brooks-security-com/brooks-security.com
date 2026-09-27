@@ -1,14 +1,13 @@
-{{- /* "On this page", for pages with enough headings to need one. Pass dict "page" . "open" bool.
-       Posts open it: on wide screens it sits in a column to the right of the text. */ -}}
-{{- $p := .page -}}
-{{- $toc := $p.TableOfContents -}}
-{{- if and (ge (len (findRE `<li>` $toc)) 3) (ne $p.Params.bookToc false) }}
-<details class="toc"{{ if .open }} open{{ end }}>
-  <summary>On this page</summary>
-  {{ $toc }}
-</details>
-{{- if .open }}
-{{- /* Open only where it gets its own column (wide screens); closed above the text elsewhere. */}}
-<script>innerWidth<1280&&(document.currentScript.previousElementSibling.open=false)</script>
-{{- end }}
+{{- /* Contents, twice: the rail that sits beside the prose on a wide screen, and the
+       fold that appears inside the column on a narrow one. Hugo builds the table; the
+       only thing done to it here is tagging the lists so the design's styles apply.
+
+       In the reference every page lived in one document, so heading ids had to be
+       namespaced per page to stop them colliding. Here each page is its own document,
+       so Hugo's plain ids are already unique. */ -}}
+{{- $toc := .TableOfContents -}}
+{{- if ge (len (findRE `<li>` $toc)) 3 -}}
+{{- $toc = replaceRE `<ul>` `<ul class="toc__list">` $toc -}}
+<nav class="toc-rail" aria-label="Contents">{{ $toc | safeHTML }}</nav>
+<details class="toc" data-toc-inline><summary>Contents</summary>{{ $toc | safeHTML }}</details>
 {{- end -}}

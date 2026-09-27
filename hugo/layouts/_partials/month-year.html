@@ -1,0 +1,9 @@
+{{- /* A date from data/credentials.yaml as "June 2026".
+
+       The source keeps the day, because the CV records it, and the page does not show
+       it. Formatting here rather than in the data means the day can never reappear on
+       the page by accident. */ -}}
+{{- $parts := split (string .) "-" -}}
+{{- $months := slice "January" "February" "March" "April" "May" "June" "July" "August" "September" "October" "November" "December" -}}
+{{- $m := int (replaceRE "^0+" "" (index $parts 1)) -}}
+{{- printf "%s %s" (index $months (sub $m 1)) (index $parts 0) -}}

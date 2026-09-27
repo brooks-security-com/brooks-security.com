@@ -1,0 +1,37 @@
+{{- /* The talk pages, built from data/talks.yaml.
+
+       The recordings and everything known about them already live in that file (the
+       archive's own record: durations, chapters, transcripts, the line in each
+       recording that names him as the presenter). Writing six content files by hand
+       would duplicate all of it and then drift from it, so the pages are generated
+       from the data at build time instead. Edit the YAML, not this. */ -}}
+{{- $subjects := dict -}}
+{{- range (index hugo.Data "talk-subjects").subjects }}{{ $subjects = merge $subjects (dict .title .subject) }}{{ end -}}
+{{- range hugo.Data.talks.talks -}}
+  {{- $publish := true -}}
+  {{- if isset . "publish" }}{{ $publish = .publish }}{{ end -}}
+  {{- if $publish -}}
+    {{- /* Chapters arrive in whatever shape the archive wrote them; normalise to
+           time + title so the template has one thing to render. */ -}}
+    {{- $chapters := slice -}}
+    {{- range .chapters -}}
+      {{- $t := .t | default .time | default .start | default "" -}}
+      {{- $label := .title | default .label | default .text | default .name | default "" -}}
+      {{- if $label }}{{ $chapters = $chapters | append (dict "time" $t "title" $label) }}{{ end -}}
+    {{- end -}}
+    {{- $.AddPage (dict
+        "path" (printf "/%s" .id)
+        "kind" "page"
+        "title" .title
+        "description" (index $subjects .title | default "")
+        "date" (time.AsTime .date)
+        "params" (dict
+          "video" .video
+          "youtube" .youtube
+          "runtime" .duration_label
+          "series" .series
+          "subject" (index $subjects .title | default "")
+          "chapters" $chapters
+          "topics" .topics)) -}}
+  {{- end -}}
+{{- end -}}

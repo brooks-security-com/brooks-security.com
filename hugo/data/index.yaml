@@ -1,0 +1,51 @@
+# The seven sections, in order. This is the only place the order lives: the rows on
+# the home page, each  section's number and tag, and the "Next" link at the foot of
+# every page are all read from here, so renumbering a section means moving a block
+# in this file and nothing else.
+#
+# `match` is the URL prefix a page belongs to. A page belongs to the section with the
+# longest prefix that matches, which is what makes a post at /posts/<slug>/ part of
+# 05 Blogs and a build at /docs/portfolio/<slug>/ part of 06 Tech.
+sections:
+  - key: bio
+    num: "01"
+    word: Bio
+    meta: Ten years of systems work
+    href: /bio/
+    match: /bio/
+  - key: credentials
+    num: "02"
+    word: Credentials
+    meta: Education and certifications
+    href: /credentials/
+    match: /credentials/
+  - key: work
+    num: "03"
+    word: Work
+    meta: Ten years, one direction
+    href: /docs/curriculum-vitae/work-experience/
+    match: /docs/curriculum-vitae/
+  - key: talks
+    num: "04"
+    word: Talks
+    meta: Six recordings
+    href: /talks/
+    match: /talks/
+  - key: blogs
+    num: "05"
+    word: Blogs
+    meta: Fourteen posts
+    href: /posts/
+    match: /posts/
+  - key: tech
+    num: "06"
+    word: Tech
+    meta: What I actually run
+    href: /docs/portfolio/
+    match: /docs/portfolio/
+  - key: contact
+    num: "07"
+    word: Contact
+    meta: Email, LinkedIn, GitHub
+    href: /docs/contact/
+    match: /docs/contact/

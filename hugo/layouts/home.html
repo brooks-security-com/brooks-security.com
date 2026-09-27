@@ -1,5 +1,46 @@
 {{ define "main" }}
-<div class="prose home">
-{{ partial "content.html" . }}
+<div class="home">
+  <div class="home__inner">
+
+    <header class="head">
+      <h1 class="head__name">{{ range split site.Title " " }}<span class="mask"><span class="word">{{ . }}</span></span> {{ end }}</h1>
+      <span class="head__ring">
+        <img src="/portrait-960.webp"
+             srcset="/portrait-480.webp 480w, /portrait-960.webp 960w"
+             sizes="130px" width="960" height="960"
+             alt="Portrait of {{ site.Title }}" />
+      </span>
+
+      {{- /* The cloud's geometry is generated, not written here: the packer in
+             scripts/cloud-layout.py resolves the overlap and writes x/y/size to
+             data/cloud.yaml. This only spends it. */}}
+      <ul class="cloud" aria-label="Areas of work">
+        {{- range hugo.Data.cloud.words }}
+        <li class="cloud__w{{ if ne .tier "base" }} cloud__w--{{ .tier }}{{ end }}"{{ with .cluster }} data-cluster="{{ . }}"{{ end }} style="--x:{{ .x }}%;--y:{{ .y }}%;--s:{{ .size }}">{{ .word }}</li>
+        {{- end }}
+      </ul>
+    </header>
+
+    {{- /* The seven rows come from data/index.yaml, which is also where each page
+           learns its number, its tag, and what follows it. */}}
+    <nav class="index" id="index" aria-label="Sections">
+      {{- range hugo.Data.index.sections }}
+      <a class="row" href="{{ .href }}" data-section="{{ .key }}">
+        <span class="row__num">{{ .num }}</span>
+        <span class="row__word">{{ .word }}</span>
+        <span class="row__meta">{{ .meta }}</span>
+        <span class="row__go" aria-hidden="true">→</span>
+      </a>
+      {{- end }}
+    </nav>
+
+    <footer class="home__foot">
+      <span>{{ site.Title }}</span>
+      <span>Security systems, built and answered for</span>
+    </footer>
+    <noscript>
+      <p class="noscript">Sections open in place, which needs JavaScript. Every section is also a page: the links above work either way.</p>
+    </noscript>
+  </div>
 </div>
 {{ end }}

@@ -1,133 +1,158 @@
 # The keyword cloud on the home page.
 #
-# Word, weight and position. The positions are not hand-placed: they come from
-# the packer in scripts/cloud-layout.py, which spiral-packs an elliptical
-# envelope with the largest word at the exact centre and writes the result here.
-# Word widths were measured in a real browser, so the pack can be rerun without one.
-# Re-run it after adding or removing a word -- do not nudge these by hand.
+# Word, tier, and position. Positions are not hand-placed: they come from the
+# packer in scripts/cloud-layout.py, which spiral-packs an elliptical envelope with
+# the largest word at the exact centre and writes the result here. Word widths were
+# measured in a real browser, so the pack can be rerun without one. Re-run it after
+# adding or removing a word -- do not nudge these by hand.
 words:
   - word: "Technology"
     cluster: "tech"
-    size: 7.6
-    x: 50.0
-    y: 50.0
+    tier: display
+    size: 7.60
+    x: 50.00
+    y: 50.00
   - word: "Infrastructure"
     cluster: "tech"
-    size: 7.3
-    x: 46.9
+    tier: display
+    size: 7.30
+    x: 46.90
     y: 26.83
   - word: "Communication"
     cluster: "comms"
-    size: 7.0
-    x: 50.0
+    tier: display
+    size: 7.00
+    x: 50.00
     y: 72.39
   - word: "Security"
     cluster: "security"
-    size: 4.6
+    tier: mid
+    size: 4.60
     x: 22.71
     y: 55.41
   - word: "Cloud"
     cluster: "tech"
-    size: 4.2
-    x: 73.5
+    tier: mid
+    size: 4.20
+    x: 73.50
     y: 48.35
   - word: "Privacy"
     cluster: "privacy"
-    size: 4.1
+    tier: mid
+    size: 4.10
     x: 75.67
-    y: 35.4
+    y: 35.40
   - word: "Governance"
     cluster: "governance"
-    size: 4.1
-    x: 14.2
+    tier: mid
+    size: 4.10
+    x: 14.20
     y: 41.83
   - word: "Compliance"
     cluster: "compliance"
-    size: 4.0
+    tier: mid
+    size: 4.00
     x: 84.57
     y: 65.99
   - word: "Risk"
     cluster: "risk"
-    size: 4.0
+    tier: mid
+    size: 4.00
     x: 22.35
-    y: 70.7
+    y: 70.70
   - word: "Advocacy"
     cluster: "comms"
-    size: 3.9
+    tier: small
+    size: 3.90
     x: 77.25
     y: 23.15
   - word: "Programming"
     cluster: "tech"
-    size: 3.8
-    x: 50.6
+    tier: small
+    size: 3.80
+    x: 50.60
     y: 93.47
   - word: "AWS"
     cluster: "tech"
-    size: 3.7
+    tier: small
+    size: 3.70
     x: 21.95
     y: 27.65
   - word: "Linux"
     cluster: "tech"
-    size: 3.4
+    tier: small
+    size: 3.40
     x: 85.21
     y: 52.97
   - word: "Automation"
     cluster: "tech"
-    size: 3.3
+    tier: small
+    size: 3.30
     x: 43.04
     y: 8.09
   - word: "Python"
     cluster: "tech"
-    size: 3.2
+    tier: small
+    size: 3.20
     x: 77.25
     y: 76.85
   - word: "Marketing"
     cluster: "comms"
-    size: 3.2
-    x: 61.0
+    tier: small
+    size: 3.20
+    x: 61.00
     y: 9.56
   - word: "Azure"
     cluster: "tech"
-    size: 3.1
+    tier: small
+    size: 3.10
     x: 88.57
     y: 38.13
   - word: "Terraform"
     cluster: "tech"
-    size: 3.1
+    tier: small
+    size: 3.10
     x: 73.14
-    y: 89.3
+    y: 89.30
   - word: "Zero Trust"
     cluster: "security"
-    size: 3.1
+    tier: small
+    size: 3.10
     x: 26.46
     y: 90.95
   - word: "SOC 2"
     cluster: "compliance"
-    size: 3.0
+    tier: small
+    size: 3.00
     x: 12.15
     y: 68.12
   - word: "Policy"
     cluster: "governance"
-    size: 3.0
+    tier: small
+    size: 3.00
     x: 7.46
     y: 53.54
   - word: "Ansible"
     cluster: "tech"
-    size: 2.9
+    tier: small
+    size: 2.90
     x: 18.56
     y: 80.98
   - word: "Docker"
     cluster: "tech"
-    size: 2.9
-    x: 11.5
+    tier: small
+    size: 2.90
+    x: 11.50
     y: 28.09
   - word: "Writing"
     cluster: "comms"
-    size: 2.9
+    tier: small
+    size: 2.90
     x: 78.03
     y: 10.61
   - word: "Incident Response"
     cluster: "security"
+    tier: small
     size: 2.73
     x: 20.05
     y: 12.81
