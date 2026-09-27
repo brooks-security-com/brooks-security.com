@@ -45,6 +45,21 @@
   --rule-soft: #ececf1;
   --accent: #5645df;
 
+  /* The accent's two partners, dropped when this stylesheet replaced the graph
+     theme's and left three rules referencing variables that no longer existed
+     (the primary button's text, and the hairline a button takes on hover). The
+     ink that sits on the accent flips with the scheme, so the accent can be
+     light violet in the dark palette without the button going white on white. */
+  --accent-ink: #ffffff;
+  --accent-line: #cfc8ff;
+
+  /* What the contact form reports, and the one callout in the site. Readable on
+     paper first; --warn-soft only ever sits behind --warn, never carries type. */
+  --ok: #0f7443;
+  --warn: #9a5b00;
+  --warn-soft: #fff1d6;
+  --err: #b42318;
+
   --serif: 'Instrument Serif', ui-serif, Georgia, 'Times New Roman', serif;
   --sans: 'Geist', system-ui, -apple-system, 'Segoe UI', Helvetica, sans-serif;
   --mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -64,6 +79,12 @@
     --rule: #2c2c36;
     --rule-soft: #212129;
     --accent: #9a90ff;
+    --accent-ink: #101015;
+    --accent-line: #4a4290;
+    --ok: #45cf8c;
+    --warn: #edb24a;
+    --warn-soft: #2a2110;
+    --err: #ff8a80;
   }
 }
 
@@ -771,6 +792,11 @@ a.entry:hover .entry__title { color: var(--accent); }
   .def { grid-template-columns: minmax(0, 1fr); }
   .def__d { font-size: 0.94rem; }
 
+  /* Name and email share a row on a page wide enough to have one; a phone
+     does not, and the two fields stack. */
+  .prose .contact-form { grid-template-columns: 1fr; }
+  .prose .contact-form > .contact-field:nth-child(-n + 2) { grid-column: 1 / -1; }
+
   .home__foot { flex-direction: column; gap: 0.1rem; }
 }
 
@@ -823,34 +849,137 @@ a.entry:hover .entry__title { color: var(--accent); }
    more than the gap that separates the two sections. */
 .creds:last-of-type { margin-bottom: 1.2rem; }
 
-/* --- the contact form ---------------------------------------------------
+/* --- buttons --------------------------------------------------------------
+   The graph theme's button was a filled, rounded box with a soft border. This
+   design has no cards and no radii, so the button is drawn with what the page
+   is drawn with: a hairline, square-ish, and a flat accent for the primary.
+   No markup wears a bare `.btn` any more, so the two modifiers are the whole
+   vocabulary. The `.prose` selectors are not decoration -- content.css is
+   concatenated after this file and `.prose a` underlines every link it finds,
+   which outranks a bare class, so a button that is a link has to outrank it
+   back. */
+.btn-primary, .btn-secondary,
+.prose .btn-primary, .prose .btn-secondary {
+  display: inline-flex; align-items: center; gap: .45rem;
+  padding: .6rem 1.05rem;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: .95rem; font-weight: 500; line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease, color .15s ease, transform .1s ease;
+}
+.btn-primary, .prose .btn-primary {
+  background: var(--accent); border-color: var(--accent); color: var(--accent-ink);
+}
+.btn-primary:hover, .prose .btn-primary:hover {
+  background: color-mix(in srgb, var(--accent) 88%, var(--ink));
+  border-color: color-mix(in srgb, var(--accent) 88%, var(--ink));
+}
+.btn-secondary:hover, .prose .btn-secondary:hover {
+  border-color: var(--accent); color: var(--accent);
+}
+.btn-primary:active, .btn-secondary:active { transform: scale(.98); }
+.btn-primary[disabled], .btn-secondary[disabled] { opacity: .55; cursor: progress; }
+.prose .resume-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* --- the contact form -----------------------------------------------------
    Carried over from the graph theme, which is the only place this was ever
-   styled. The contact form is not part of the design's reference because the
-   reference had no server to post to; the site does, so it keeps its form and
-   this is its styling. */
-.btn:hover { border-color: var(--accent-line); }
-.btn:active { transform: scale(.98); }
-.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
-.btn[disabled] { opacity: .6; cursor: progress; }
-.prose .btn-row, .prose .card-action, .prose .resume-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-.prose .btn-primary, .author .btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
-.prose .btn-secondary:hover, .author .btn-secondary:hover { border-color: var(--accent-line); }
-.prose .btn-primary:active, .prose .btn-secondary:active { transform: scale(.98); }
-.prose .btn-primary[disabled] { opacity: .6; cursor: progress; }
-.home-hero .btn-row { margin-top: 4px; }
-.home-cta .btn-row { justify-content: flex-start !important; }
-.contact-form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px; }
+   styled, and redrawn in this design's language: a field is a rule on paper
+   rather than a filled box, and its label is the mono caption the rest of the
+   page uses for meta. The design's reference has no form at all -- it had no
+   server to post to; the site does, so the form stays and this is its styling.
+   These rules are `.prose`-qualified for the reason the buttons are, and also
+   because `.prose > * + *` owns the top margin of everything in this column. */
+.prose .contact-form {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1.35rem 1.5rem;
+  margin-top: 2.1rem;
+}
 .contact-form > * { grid-column: 1 / -1; }
-.contact-form > .contact-field:nth-child(-n+2) { grid-column: auto; }
-.contact-field label { font-size: 12.5px; font-weight: 500; color: var(--ink-2); }
-.contact-field input:focus, .contact-field textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent); }
-.grecaptcha-badge { visibility: hidden; }
-.contact-recaptcha { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 12px; }
-.contact-recaptcha img { width: 24px; height: 24px; }
+.contact-form > .contact-field:nth-child(-n + 2) { grid-column: auto; }
+
+.contact-field { display: grid; gap: .45rem; }
+.contact-field label {
+  font-family: var(--mono); font-size: .68rem; font-weight: 500;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--muted);
+}
+.prose .contact-field input,
+.prose .contact-field textarea {
+  width: 100%;
+  padding: .45rem 0 .5rem;
+  border: 0; border-bottom: 1px solid var(--rule); border-radius: 0;
+  background: transparent;
+  font-family: var(--sans); font-size: 1rem; line-height: 1.5; color: var(--ink);
+  caret-color: var(--accent);
+}
+.prose .contact-field textarea { resize: vertical; min-height: 7rem; }
+.prose .contact-field input:focus,
+.prose .contact-field textarea:focus { border-bottom-color: var(--accent); }
+.prose .contact-field ::placeholder { color: var(--muted); }
+
+/* The honeypot has to be invisible to a person and still legible to a bot, so
+   it is moved off the page rather than display:none, which the better ones
+   test for. Without this rule the field sits in the form under the name
+   "Company", and a person who fills it in is told "thanks" while nothing is
+   sent -- the one bug in here that eats a real message. */
+.contact-hp {
+  position: absolute; left: -9999px; top: 0;
+  width: 1px; height: 1px; overflow: hidden;
+}
+
+.contact-actions {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: .9rem 1.1rem; margin-top: .2rem;
+}
+.contact-recaptcha {
+  display: flex; align-items: center; gap: .5rem;
+  font-family: var(--mono); font-size: .68rem; letter-spacing: .04em; color: var(--muted);
+}
+.contact-recaptcha img { width: 22px; height: 22px; }
 .contact-recaptcha-text a { color: var(--ink-2); }
-.contact-form-dev-notice { margin-top: 18px; padding: 11px 14px; border-radius: 10px; background: var(--warn-soft); color: var(--warn); font-size: 13px; }
-.contact-form-dev-notice a, .contact-form-dev-notice strong, .contact-form-dev-notice code { color: inherit; }
-.contact-form-dev-notice code { background: color-mix(in srgb, var(--warn) 12%, transparent); }
-.pal-in input { flex: 1; height: 52px; border: 0; background: transparent; font: inherit; font-size: 16px; color: var(--ink); outline: none; }
-  .contact-form { grid-template-columns: 1fr; }
-  .contact-form > .contact-field:nth-child(-n+2) { grid-column: 1 / -1; }
+.grecaptcha-badge { visibility: hidden; }
+
+/* The form reports into one line, which grows a hairline in its own colour once
+   it has something to say -- the same left rule a blockquote is drawn with. */
+.contact-status {
+  min-height: 1.5em; margin: 0;
+  border-left: 2px solid transparent;
+  font-size: .95rem; line-height: 1.6; color: var(--muted);
+  transition: color .2s ease, border-color .2s ease;
+}
+.contact-status:not(:empty) { padding-left: .85rem; }
+.contact-status.is-ok { color: var(--ok); border-left-color: var(--ok); }
+.contact-status.is-pending { color: var(--muted); border-left-color: var(--rule); }
+.contact-status.is-error { color: var(--err); border-left-color: var(--err); }
+
+/* The form cannot submit without scripting -- the reCAPTCHA token needs it --
+   so it is not drawn without it, and the note that follows says where to go
+   instead. */
+html:not(.js) .prose .contact-form { display: none; }
+.prose .contact-noscript {
+  margin-top: 1.8rem; padding: .85rem 1rem;
+  border: 1px solid var(--rule); border-radius: 2px;
+  font-size: .92rem; line-height: 1.6; color: var(--ink-2);
+}
+.contact-noscript p { margin: 0; }
+.prose .contact-form-dev-notice {
+  margin-top: 1.8rem; padding: .85rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--warn) 32%, var(--rule));
+  border-left: 2px solid var(--warn); border-radius: 2px;
+  background: var(--warn-soft);
+  font-size: .92rem; line-height: 1.6; color: var(--warn);
+}
+.contact-form-dev-notice p { margin: 0; }
+.prose .contact-form-dev-notice a,
+.prose .contact-form-dev-notice strong,
+.prose .contact-form-dev-notice code { color: inherit; }
+.prose .contact-form-dev-notice a { text-decoration-color: currentColor; }
+.prose .contact-form-dev-notice code {
+  padding: .1em .34em; border-radius: 2px;
+  background: color-mix(in srgb, var(--warn) 12%, transparent);
+}
+
