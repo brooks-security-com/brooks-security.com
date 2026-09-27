@@ -26,6 +26,7 @@ import markdown
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import content as C  # noqa: E402
+import build_credentials as CR  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 DETAILS = ROOT / "details"
@@ -548,6 +549,15 @@ def check(pages: dict[str, list[tuple[str, str]]]) -> int:
         if section not in pages:
             print(f"  {section}: index has links but the build generates no pages")
             problems += 1
+    # Credentials is a panel, not a section with sub-pages, so it has no entry in
+    # `pages` -- but its rows are generated from hugo/data/credentials.yaml and
+    # have to be checked the same way.
+    stale = CR.check()
+    print(f"  creds   generated from hugo/data/credentials.yaml  "
+          + ("ok" if not stale else "MISMATCH"))
+    for problem in stale:
+        print(f"      {problem}")
+        problems += 1
     if problems:
         print(f"\n{problems} link(s) out of step. Fix index.html or the sources.")
     return problems

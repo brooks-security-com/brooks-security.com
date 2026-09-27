@@ -795,3 +795,30 @@ a.entry:hover .entry__title { color: var(--accent); }
   .panel__head > * { opacity: 1; }
   html.js [data-inview] { opacity: 1; transform: none; }
 }
+
+/* --- Credentials ---------------------------------------------------------
+   One row per credential: the name, then the issuer and the month it was
+   earned, right-aligned. No link and no arrow, because there is nowhere to go;
+   this is the one list in the design that is a record rather than a door. */
+.creds { list-style: none; margin: 0 0 2rem; padding: 0; }
+.cred {
+  display: flex; flex-wrap: wrap; align-items: baseline;
+  gap: .2rem .9rem; padding: .95rem 0; border-bottom: 1px solid var(--rule);
+}
+.cred:first-child { border-top: 1px solid var(--rule); }
+.cred__name { font-family: var(--serif); font-size: 1.06rem; line-height: 1.35; }
+.cred__short {
+  font-family: var(--mono); font-size: .68rem; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--muted);
+}
+.cred__meta {
+  margin-left: auto; font-family: var(--mono); font-size: .68rem;
+  letter-spacing: .04em; text-transform: uppercase; color: var(--muted); white-space: nowrap;
+}
+.cred__note { flex: 1 0 100%; color: var(--muted); font-size: .82rem; }
+.cred--lapsed .cred__name { color: var(--muted); }
+
+.subhead__note {
+  margin-left: .55rem; font-family: var(--mono); font-size: .66rem;
+  letter-spacing: .05em; text-transform: none; color: var(--muted); font-weight: 400;
+}

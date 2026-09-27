@@ -18,6 +18,41 @@ Set by Graham, 2026-09-27:
 - **The contact form stays.** It is the one working thing that is not design: reCAPTCHA
   v3 plus `POST /api/contact`. It gets the new typography around it, not a rewrite.
 
+## The index, in order
+
+| | | |
+|---|---|---|
+| 01 | Bio | the current home copy |
+| 02 | Credentials | active, lapsed, and the degree |
+| 03 | Work | six roles |
+| 04 | Talks | six recordings |
+| 05 | Blogs | fourteen posts |
+| 06 | Tech | six writeups, ten platform groups |
+| 07 | Contact | the form |
+
+Graham set this order (credentials under bio, work under credentials). The order
+lives in three places that have to agree: the rows in `index.html`, the `SECTIONS`
+array in `mockups.js`, and the "Next" link at the foot of each panel. The swipe
+direction and the back/forward behaviour are derived from `SECTIONS`, so a panel
+that is renumbered without it will slide the wrong way.
+
+## Credentials
+
+Credentials had no page of their own: they were read out of
+`content/docs/Curriculum Vitae/Credentials.md` and fed to the CV, and the graph
+carried a hub with no page behind it. The design gives them the second row.
+
+The dates are the CV's. **The status is not** — that file records when each
+credential was earned and says nothing about expiry. `hugo/data/credentials.yaml`
+is the structured source, and every entry whose status came from the issuer's
+validity period rather than from Graham's own record carries `confirm: true`
+until he checks it. Do not remove that flag by guessing; ask.
+
+`tools/build_credentials.py` renders the lists from that YAML into `index.html`
+between the `creds:start` and `creds:end` markers, and `build_content.py --check`
+fails if the page and the data disagree. Nothing about the credentials list is
+hand-written on the page.
+
 ## What the port inherits (and does not need to rebuild)
 
 Checked against the running site before designing any of this:
@@ -63,6 +98,11 @@ Checked against the running site before designing any of this:
 - The six sections are reachable from the home index and from the sitemap, with JS off.
 - Mobile first: no horizontal overflow at 320px, 64px-or-better tap targets, and the
   whole thing flattened under `prefers-reduced-motion`.
+- The Credentials page lists every credential in `hugo/data/credentials.yaml`, grouped
+  `Active` / `Past` / `Education`, with the issuer and the month earned right-aligned,
+  and it names no credential the data does not contain.
+- The index order is Bio, Credentials, Work, Talks, Blogs, Tech, Contact in the rows,
+  in `SECTIONS`, and in the Next chain.
 
 ## Run the reference
 

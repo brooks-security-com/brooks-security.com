@@ -16,7 +16,7 @@
   'use strict';
 
   var root = document.documentElement;
-  var SECTIONS = ['bio', 'talks', 'blogs', 'tech', 'work', 'contact'];
+  var SECTIONS = ['bio', 'credentials', 'work', 'talks', 'blogs', 'tech', 'contact'];
   var WITH_ITEMS = ['talks', 'blogs', 'tech', 'work'];
   var LABELS = {
     bio: 'Bio',
