@@ -18,6 +18,9 @@
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
   var DURATION = 520;
 
+  var $ = function (sel, el) { return (el || doc).querySelector(sel); };
+  var $$ = function (sel, el) { return Array.prototype.slice.call((el || doc).querySelectorAll(sel)); };
+
   var home = doc.querySelector('.home');
   var panel = doc.querySelector('main.panel');
 
@@ -124,6 +127,126 @@
     doc.head.appendChild(s);
   }
 
+  /* -- the contact form -----------------------------------------------------
+     Carried across from the graph-era script, because what it does is not graph-era:
+     POST /api/contact with a reCAPTCHA Enterprise token and the honeypot field, a
+     single completion path, and a hard fifteen-second timeout so the button can
+     never be left saying "Sending...". A half-written message survives a wander
+     through the panels via sessionStorage.
+
+     It binds whatever panel is on screen, and it is called again after every swap:
+     markup that arrives by fetch has its <script> tags dropped, so anything that
+     lives in the page has to be bound from here or it is dead on arrival. */
+  var recaptchaP = null;
+  function loadRecaptcha(key) {
+    if (recaptchaP) return recaptchaP;
+    recaptchaP = new Promise(function (ok, no) {
+      var s = doc.createElement('script');
+      s.src = 'https://www.google.com/recaptcha/enterprise.js?render=' + encodeURIComponent(key);
+      s.onload = function () { ok(); };
+      s.onerror = function () { recaptchaP = null; no(); };
+      doc.head.appendChild(s);
+    });
+    return recaptchaP;
+  }
+
+  function bindContact(scope) {
+    var form = $('form.contact-form', scope);
+    if (!form || form.dataset.bound) return;
+    form.dataset.bound = '1';
+    var statusEl = $('.contact-status', form);
+    var btn = $('.contact-submit', form);
+    var siteKey = form.dataset.sitekey;
+    var EMAIL = 'graham@brooks-security.com';
+    var val = function (name) {
+      var el = form.elements[name];
+      return el && el.value ? el.value.trim() : '';
+    };
+    var setStatus = function (msg, kind) {
+      statusEl.textContent = msg;
+      statusEl.className = 'contact-status' + (kind ? ' is-' + kind : '');
+    };
+    loadRecaptcha(siteKey).catch(function () {});   /* start early; a failure is reported on submit */
+
+    var FIELDS = ['name', 'email', 'subject', 'message'];
+    var KEY = 'contact-draft';
+    try {
+      var d = JSON.parse(sessionStorage.getItem(KEY) || '{}');
+      FIELDS.forEach(function (f) { if (d[f] && form.elements[f]) form.elements[f].value = d[f]; });
+    } catch (e) { /* no storage */ }
+    var saveDraft = function () {
+      try {
+        sessionStorage.setItem(KEY, JSON.stringify(FIELDS.reduce(function (o, f) {
+          o[f] = form.elements[f] ? form.elements[f].value : '';
+          return o;
+        }, {})));
+      } catch (e) { /* no storage */ }
+    };
+    var dropDraft = function () { try { sessionStorage.removeItem(KEY); } catch (e) { /* no storage */ } };
+    form.addEventListener('input', saveDraft);
+
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      /* Honeypot tripped: say thank you, send nothing. */
+      if (form.elements.company && form.elements.company.value) {
+        form.reset();
+        setStatus('Thanks, your message is on its way.', 'ok');
+        return;
+      }
+
+      btn.disabled = true;
+      setStatus('Sending...', 'pending');
+      dropDraft();
+
+      var done = false;
+      var timer = setTimeout(function () {
+        finish('That took too long. Please email me directly at ' + EMAIL + '.', 'error', false);
+      }, 15000);
+
+      function finish(msg, kind, reset) {
+        if (done) return;
+        done = true;
+        clearTimeout(timer);
+        if (reset) form.reset(); else saveDraft();
+        setStatus(msg, kind);
+        btn.disabled = false;
+      }
+      var blocked = function () {
+        finish('The verification script could not load (an ad blocker may be blocking it). '
+               + 'Please email me directly at ' + EMAIL + '.', 'error', false);
+      };
+
+      loadRecaptcha(siteKey).then(function () {
+        if (done) return;
+        var g = window.grecaptcha;
+        if (!g || !g.enterprise) { blocked(); return; }
+        g.enterprise.ready(function () {
+          if (done) return;
+          g.enterprise.execute(siteKey, { action: 'contact' }).then(function (token) {
+            return done ? null : fetch('/api/contact', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                name: val('name'), email: val('email'), subject: val('subject'), message: val('message'),
+                company: form.elements.company ? form.elements.company.value : '',
+                token: token
+              })
+            });
+          }).then(function (res) {
+            if (!res) return;
+            if (res.ok) { finish("Thanks, your message is on its way. I'll be in touch.", 'ok', true); return; }
+            res.json().catch(function () { return {}; }).then(function (b) {
+              finish(b.error || ('Something went wrong. Please email me directly at ' + EMAIL + '.'), 'error', false);
+            });
+          }).catch(function () {
+            finish('Network error. Please email me directly at ' + EMAIL + '.', 'error', false);
+          });
+        });
+      }, blocked);
+    });
+  }
+
   /* -- the panel ------------------------------------------------------------ */
   function focusTitle(el) {
     var t = el.querySelector('.ptitle, .detail__title');
@@ -183,6 +306,7 @@
     wireReveals(scope);
     wireSpy(scope);
     wirePlayers(scope);
+    bindContact(scope);
     ensureMermaid(scope);
     if (fresh) focusTitle(scope);
   }
