@@ -248,6 +248,17 @@ def load_work() -> dict:
     return {"context_md": "\n".join(context_lines).strip(), "roles": parsed}
 
 
+# Three groups that are thin on their own: two hold a single platform and a
+# single sentence each, so a reader clicking through gets three one-sentence
+# rooms about the same subject seen from three angles -- provisioning,
+# configuring, shipping. Folded into one page, in the order the CV lists them.
+PLATFORM_MERGE = {
+    "CI/CD Platforms": "Platforms and Tooling",
+    "Configuration as Code": "Platforms and Tooling",
+    "Infrastructure as Code": "Platforms and Tooling",
+}
+
+
 def load_platforms() -> list[dict]:
     """Platforms.md is `## group` / `### platform` / `**N years**` + prose."""
     _, body = read(HUGO / "content" / "docs" / "Curriculum Vitae" / "Platforms.md")
@@ -280,6 +291,20 @@ def load_platforms() -> list[dict]:
     flush_platform()
     if group is not None:
         groups.append(group)
+
+    merged: list[dict] = []
+    target: dict | None = None
+    for g in groups:
+        name = PLATFORM_MERGE.get(g["title"])
+        if not name:
+            merged.append(g)
+            continue
+        if target is None:
+            target = {"title": name, "blurb": [], "platforms": []}
+            merged.append(target)          # sits where the first of them sat
+        target["blurb"].extend(g["blurb"])
+        target["platforms"].extend(g["platforms"])
+    groups = merged
 
     for g in groups:
         g["slug"] = slugify(g["title"])
