@@ -59,7 +59,8 @@ def render() -> str:
     out: list[str] = []
     first = True
     for group in order:
-        rows = [c for c in creds if c["status"] == group]
+        rows = sorted((c for c in creds if c["status"] == group),
+                      key=lambda c: str(c["earned"]), reverse=True)
         if not rows:
             continue
         if not first:
