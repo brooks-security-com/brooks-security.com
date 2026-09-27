@@ -652,3 +652,13 @@ a.entry:focus-visible .entry__go { opacity: 1; transform: translate3d(0, -50%, 0
 .chroma .lnt, .chroma .ln { user-select: none; opacity: .5; padding-right: 1ch; }
 .chroma .line { display: block; }
 .prose pre:has(.chroma), .prose .highlight { margin: 0; }
+
+/* A page with a contents rail needs a wider column than one without.
+   The rail is 14rem and the gap between it and the prose is up to 4.5rem, and both
+   come out of the same 45rem column, which leaves the prose about 21rem -- roughly
+   45 characters a line, well under the readable measure everything else on the site
+   keeps. On a screen with room for the rail, give the inner room for the rail. Below
+   this width the rail is not shown at all, so nothing changes there. */
+@media (min-width: 1080px) {
+  .panel__inner:has(.detail--with-rail) { max-width: 62rem; }
+}
