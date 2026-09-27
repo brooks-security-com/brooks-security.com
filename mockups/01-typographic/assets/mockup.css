@@ -422,7 +422,7 @@ html.is-enter .home__foot { opacity: 0; }
   pointer-events: none;
   transform: translate3d(101%, 0, 0);
   transition: transform var(--dur) var(--ease), opacity 0.42s ease;
-  touch-action: pan-y;
+  touch-action: pan-y;  overflow: hidden;
 }
 
 .panel.is-in { opacity: 1; pointer-events: auto; transform: none; }
@@ -772,10 +772,6 @@ a.entry:hover .entry__title { color: var(--accent); }
   .def__d { font-size: 0.94rem; }
 
   .home__foot { flex-direction: column; gap: 0.1rem; }
-}
-
-@media (max-width: 380px) {
-  .head__meta { font-size: 0.64rem; letter-spacing: 0.1em; }
 }
 
 /* ==========================================================================

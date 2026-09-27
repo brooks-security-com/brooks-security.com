@@ -99,6 +99,70 @@ page loads, hash-routed so every section is linkable and the back button works.
 - **Mobile first:** 77px row tap targets, panels rise from the bottom, swipe
   right to go back and left to advance, and the home fits one screen at 390×844,
   1366×768 and 1440×900 with no scroll — verified, not assumed.
-- **Content:** real — drawn from the CV, `talks.yaml`, the post list and the
-  contact page. Deliberately thin; the type is the design. Panel copy leads with
-  engineering and delivery rather than deal size.
+- **Content:** real, and now complete enough to browse. See "Content layer"
+  below.
+
+### Content layer
+
+The index rows link to `#/<section>/<slug>`, and each of those opens an item
+page inside the section panel. The pages are generated from the site's own
+sources, so nothing here is invented copy:
+
+| Section | Pages | Content |
+|---|---|---|
+| Talks | 7 | every recording: poster → self-hosted video, the summary from `data/talks.yaml`, the writeup from `Portfolio/speaking/`, chapters, speakers; plus the one talk that was presented but never recorded |
+| Blogs | 14 | the full post bodies, contents list, tags |
+| Tech | 18 | 6 portfolio writeups and 12 platform groups (tenure + prose per platform) |
+| Work | 6 | the CV roles with their own bullets; the last row folds the two earliest roles into one page |
+
+```bash
+# rebuild after the site's content changes (needs ~/venvs/content for
+# python-markdown + pyyaml; huge, like the live site's own build)
+~/venvs/content/bin/python tools/build_content.py         # write, then verify
+~/venvs/content/bin/python tools/build_content.py --check # verify only
+```
+
+- `tools/content.py` parses the sources; `tools/build_content.py` renders them.
+  Nothing in either reads the live site — it is `hugo/data`, `hugo/content` and
+  nothing else.
+- **The check is the contract.** It reads every `#/<section>/<slug>` link out of
+  `index.html` and fails if a link has no page or a page has no link, so the
+  hand-curated list and the generated pages cannot drift apart. Run it after
+  touching either side.
+- Two sources disagree about talk titles ("Spotlight Webinar: Vulnerability
+  Remediation" is "Vulnerability Remediation" on the speaking page), so the join
+  runs on the `meta` line — month, year, whole minutes — instead. It is strict:
+  a recording with no writeup fails the build rather than rendering a talk with
+  no description.
+- The talk posters are the YouTube thumbnails at `i.ytimg.com`, and the videos
+  are the live site's own `.mp4`s (the recordings are too large to copy in). So
+  the video pages need the internet, and everything else does not.
+- Mermaid diagrams come from the live site's vendored bundle, so the mockup and
+  the site draw them the same way. That bundle is 2.6MB and already lives in the
+  repo at `hugo/assets/js/vendor/`, so it is **not committed here** — copy it in
+  once per clone (or after the site's copy changes):
+
+  ```bash
+  tools/sync-vendor.sh        # mermaid.min.js + d3.min.js into assets/
+  ```
+
+  It is loaded only when a page that contains a diagram is opened, and drawn
+  after the page settles — rendering mid-slide makes mermaid measure a
+  zero-size box and emit NaN transforms. Without the bundle the diagrams fall
+  back to showing their source text, which is readable but not the point.
+- `tools/build_content.py` namespaces heading ids per page (`<slug>--<id>`):
+  45 pages share one document, and several posts have an "Introduction".
+- On desktop a post's contents sits in a sticky rail beside the body (the posts
+  themselves point at "the contents on the right"); below 1080px it becomes an
+  inline control above the body.
+
+Known limits, all deliberate:
+
+- The `views` count from `talks.yaml` is not shown — it invites an unflattering
+  comparison and says nothing about the work.
+- Speaker provenance notes (`speaker_evidence`, the note about how the YouTube
+  copy bills him) stay out of the mockup; they are archive bookkeeping.
+- Mermaid repeats a handful of internal `id`s between diagrams on one page.
+  Those references are internal to each SVG and resolve to identical
+  definitions, so there is no visible effect; the check ignores `svg [id]`.
+- The Bio and Contact sections carry no item pages; they are single reads.

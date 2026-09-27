@@ -12,6 +12,7 @@
 <link rel="preload" href="assets/fonts/instrument-serif-latin.woff2" as="font" type="font/woff2" crossorigin />
 <link rel="preload" href="assets/fonts/geist-v5-latin.woff2" as="font" type="font/woff2" crossorigin />
 <link rel="stylesheet" href="assets/mockup.css" />
+<link rel="stylesheet" href="assets/mockup-content.css" />
 <script>
   /* Set the entry-animation gate before first paint so nothing flashes.
      Removed once fonts are ready (or after a short fallback), and dropped
@@ -187,30 +188,41 @@
 
       <p class="subhead" data-inview>Recordings · 2022 — 2024</p>
       <div class="rows">
-        <div class="entry" data-inview>
+        <a class="entry" href="#/talks/teIKAtg6BoY" data-inview>
           <span class="entry__title">The Cyber Kill Chain Masterclass</span>
-          <span class="entry__meta">2022 · 54:39</span>
-        </div>
-        <div class="entry" data-inview>
+          <span class="entry__meta">Jul 2022 · 54:39</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/talks/6FC-R0trKPo" data-inview>
           <span class="entry__title">Analyst Insights: Advancing Zero Trust Priorities</span>
-          <span class="entry__meta">2023 · 50:05</span>
-        </div>
-        <div class="entry" data-inview>
+          <span class="entry__meta">Jan 2023 · 50:05</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/talks/Eh3A_BkEilI" data-inview>
           <span class="entry__title">Spotlight Webinar: Vulnerability Remediation</span>
-          <span class="entry__meta">2023 · 26:25</span>
-        </div>
-        <div class="entry" data-inview>
+          <span class="entry__meta">Mar 2023 · 26:25</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/talks/u29nuuxiCD0" data-inview>
           <span class="entry__title">Spotlight Webinar: Harnessing Automation</span>
-          <span class="entry__meta">2023 · 20:48</span>
-        </div>
-        <div class="entry" data-inview>
+          <span class="entry__meta">Aug 2023 · 20:48</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/talks/xmz2sXNcdEQ" data-inview>
           <span class="entry__title">Spotlight Webinar: Autonomous Defense</span>
-          <span class="entry__meta">2023 · 20:32</span>
-        </div>
-        <div class="entry" data-inview>
+          <span class="entry__meta">Sep 2023 · 20:32</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/talks/aVqQk8Td3Bo" data-inview>
           <span class="entry__title">How MSPs and MSSPs Can Comply and Thrive with Automated Remediation</span>
-          <span class="entry__meta">2024 · 26:10</span>
-        </div>
+          <span class="entry__meta">Jun 2024 · 26:10</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/talks/realtime-management" data-inview>
+          <span class="entry__title">Spotlight: Realtime Management</span>
+          <span class="entry__meta">Presented · not recorded</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
       </div>
 
       <div class="rule" data-inview></div>
@@ -220,6 +232,16 @@
       <p class="pnext" data-inview><a href="#/blogs" data-section="blogs">Next — Blogs <span class="arrow" aria-hidden="true">→</span></a></p>
     </div>
   </div>
+  <section class="sub" data-sub hidden aria-label="talks detail">
+    <div class="sub__bar">
+      <button class="sub__back" type="button" data-subback><span aria-hidden="true">←</span> <span data-subback-label>Back</span></button>
+      <span class="sub__tag" data-subtag aria-hidden="true"></span>
+      <span class="sub__progress" aria-hidden="true"><i></i></span>
+    </div>
+    <div class="sub__scroll" data-subscroll>
+      <div class="sub__inner" data-subinner></div>
+    </div>
+  </section>
 </article>
 
 <!-- ==========================================================================
@@ -238,26 +260,107 @@
         <p class="lede" style="--i:1">Fourteen posts since 2020. Mostly the notes I wanted to find and could not.</p>
       </div>
 
+      <p class="subhead" data-inview>Posts · 2020 — 2026</p>
       <div class="rows">
-        <div class="entry" data-inview><span class="entry__title">SOC 2 Field Manual for Seed Stage SaaS</span><span class="entry__meta">2026</span></div>
-        <div class="entry" data-inview><span class="entry__title">Why I Moved to Hermes (and What It Cost)</span><span class="entry__meta">2026</span></div>
-        <div class="entry" data-inview><span class="entry__title">AI Agents Are Writing My Code Now</span><span class="entry__meta">2026</span></div>
-        <div class="entry" data-inview><span class="entry__title">Europe Isn't Behind on AI. It's Running a Different Race.</span><span class="entry__meta">2026</span></div>
-        <div class="entry" data-inview><span class="entry__title">Spec Driven Development</span><span class="entry__meta">2026</span></div>
-        <div class="entry" data-inview><span class="entry__title">Grand Goals for 2024</span><span class="entry__meta">2024</span></div>
-        <div class="entry" data-inview><span class="entry__title">Cost-effective Migration to the Cloud</span><span class="entry__meta">2023</span></div>
-        <div class="entry" data-inview><span class="entry__title">Why Patching Servers Manually is not Safer</span><span class="entry__meta">2023</span></div>
-        <div class="entry" data-inview><span class="entry__title">How I'm Developing My Career: The Power of Goal-Oriented Learning</span><span class="entry__meta">2023</span></div>
-        <div class="entry" data-inview><span class="entry__title">The Necessity of Coding Skills for Sysadmins: Bridging the DevOps Gap</span><span class="entry__meta">2022</span></div>
-        <div class="entry" data-inview><span class="entry__title">Why Ansible Outshines Chef and Puppet for Configuration Management</span><span class="entry__meta">2022</span></div>
-        <div class="entry" data-inview><span class="entry__title">The Strength of Python for Linux Automation</span><span class="entry__meta">2022</span></div>
-        <div class="entry" data-inview><span class="entry__title">The Profitability of Honesty: A Practical Approach to Ethical Business</span><span class="entry__meta">2022</span></div>
-        <div class="entry" data-inview><span class="entry__title">Colemak: An Efficient Keyboard Layout</span><span class="entry__meta">2020</span></div>
+        <a class="entry" href="#/blogs/soc-2-field-manual-seed-stage" data-inview>
+          <span class="entry__title">SOC 2 Field Manual for Seed Stage SaaS</span>
+          <span class="entry__meta">Jul 2026</span>
+          <span class="entry__sub">What you actually need to build before your first SOC 2 engagement, organized by platform and budget.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/blogs/why-i-moved-to-hermes" data-inview>
+          <span class="entry__title">Why I Moved to Hermes (and What It Cost)</span>
+          <span class="entry__meta">Jun 2026</span>
+          <span class="entry__sub">ChatGPT. Cursor. Claude. I ran through them all, and I kept hitting the same walls.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/blogs/ai-agents-are-writing-my-code-now" data-inview>
+          <span class="entry__title">AI Agents Are Writing My Code Now</span>
+          <span class="entry__meta">Jun 2026</span>
+          <span class="entry__sub">After a decade learning Bash, Python, Ansible, and Terraform, I have not written a line of production code in months.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/blogs/europe-isnt-behind-on-ai-its-running-a-different-race" data-inview>
+          <span class="entry__title">Europe Isn't Behind on AI. It's Running a Different Race.</span>
+          <span class="entry__meta">Jun 2026</span>
+          <span class="entry__sub">Everyone says Europe is losing the AI race. But it chose a different finish line: privacy, dignity, and human oversight.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/blogs/spec-driven-development" data-inview>
+          <span class="entry__title">Spec Driven Development</span>
+          <span class="entry__meta">Apr 2026</span>
+          <span class="entry__sub">Most software fails from unclear expectations, not weak code.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/blogs/grand-goals-for-2024" data-inview>
+          <span class="entry__title">Grand Goals for 2024</span>
+          <span class="entry__meta">Jan 2024</span>
+          <span class="entry__sub">A deliberate sequence of IT and cloud security certifications, and why I committed to finishing them this time.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/blogs/cost-effective-migration-to-the-cloud" data-inview>
+          <span class="entry__title">Cost-effective Migration to the Cloud</span>
+          <span class="entry__meta">Sep 2023</span>
+          <span class="entry__sub">Moving from on-prem to the cloud changes both your security model and your bill.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/blogs/how-i-m-developing-my-career-the-power-of-goal-oriented-learning" data-inview>
+          <span class="entry__title">How I'm Developing My Career: The Power of Goal-Oriented Learning</span>
+          <span class="entry__meta">Sep 2023</span>
+          <span class="entry__sub">How I built an IT security career through goal-oriented certifications, hands-on projects, and roles that matched where I wanted to be.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/blogs/why-patching-servers-manually-is-not-safer" data-inview>
+          <span class="entry__title">Why Patching Servers Manually is not Safer</span>
+          <span class="entry__meta">Sep 2023</span>
+          <span class="entry__sub">Patching by hand to avoid outages is a common belief and a costly mistake.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/blogs/the-necessity-of-coding-skills-for-sysadmins-bridging-the-devops-gap" data-inview>
+          <span class="entry__title">The Necessity of Coding Skills for Sysadmins: Bridging the DevOps Gap</span>
+          <span class="entry__meta">Nov 2022</span>
+          <span class="entry__sub">The line between development and operations is gone.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/blogs/why-ansible-outshines-chef-and-puppet-for-configuration-management" data-inview>
+          <span class="entry__title">Why Ansible Outshines Chef and Puppet for Configuration Management</span>
+          <span class="entry__meta">Oct 2022</span>
+          <span class="entry__sub">Why I pick Ansible over Chef and Puppet: an agentless design, Python underneath, and a fleet that does not need an agent to be managed.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/blogs/the-strength-of-python-for-linux-automation" data-inview>
+          <span class="entry__title">The Strength of Python for Linux Automation</span>
+          <span class="entry__meta">Sep 2022</span>
+          <span class="entry__sub">Python and Ruby both handle automation, but Python has real advantages on Linux: its standard library, its ecosystem, and its presence by default.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/blogs/the-profitability-of-honesty-a-practical-approach-to-ethical-business" data-inview>
+          <span class="entry__title">The Profitability of Honesty: A Practical Approach to Ethical Business</span>
+          <span class="entry__meta">Sep 2022</span>
+          <span class="entry__sub">Honesty looks like it costs you sales. In practice it builds the trust that wins long-term contracts.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/blogs/colemak-an-efficient-keyboard-layout" data-inview>
+          <span class="entry__title">Colemak: An Efficient Keyboard Layout</span>
+          <span class="entry__meta">Sep 2020</span>
+          <span class="entry__sub">Why I switched from QWERTY to Colemak, what the transition actually felt like, and whether the speed and ergonomics were worth it.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
       </div>
 
       <p class="pnext" data-inview><a href="#/tech" data-section="tech">Next — Tech <span class="arrow" aria-hidden="true">→</span></a></p>
     </div>
   </div>
+  <section class="sub" data-sub hidden aria-label="blogs detail">
+    <div class="sub__bar">
+      <button class="sub__back" type="button" data-subback><span aria-hidden="true">←</span> <span data-subback-label>Back</span></button>
+      <span class="sub__tag" data-subtag aria-hidden="true"></span>
+      <span class="sub__progress" aria-hidden="true"><i></i></span>
+    </div>
+    <div class="sub__scroll" data-subscroll>
+      <div class="sub__inner" data-subinner></div>
+    </div>
+  </section>
 </article>
 
 <!-- ==========================================================================
@@ -309,6 +412,108 @@
 
       <div class="rule" data-inview></div>
 
+      <p class="subhead" data-inview>Projects · 6</p>
+      <div class="rows">
+        <a class="entry" href="#/tech/running-a-poc" data-inview>
+          <span class="entry__title">Running a POC</span>
+          <span class="entry__sub">Technical evaluations from both sides of the table: how I scope them, and what makes one worth the time.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/security" data-inview>
+          <span class="entry__title">Security</span>
+          <span class="entry__sub">Automating the NIST National Vulnerability Database, plus the vulnerability work behind it.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/gitops" data-inview>
+          <span class="entry__title">GitOps</span>
+          <span class="entry__sub">Pipelines that deploy themselves, with the diagrams to prove where the trust boundaries are.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/automation" data-inview>
+          <span class="entry__title">Automation</span>
+          <span class="entry__sub">The side projects where automation ideas get worked out before they go near production.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/ai-agents" data-inview>
+          <span class="entry__title">AI Agents</span>
+          <span class="entry__sub">Getting agents to do useful work without someone babysitting them.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/x-as-code" data-inview>
+          <span class="entry__title">X as Code</span>
+          <span class="entry__sub">Configuration-as-code and infrastructure-as-code, collected in one place.</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <div class="rule" data-inview></div>
+
+      <p class="subhead" data-inview>Platforms · 12</p>
+      <div class="rows rows--tight">
+        <a class="entry" href="#/tech/management-platforms-cloud-providers" data-inview>
+          <span class="entry__title">Management Platforms &amp; Cloud Providers</span>
+          <span class="entry__meta">4 platforms</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/container-platforms" data-inview>
+          <span class="entry__title">Container Platforms</span>
+          <span class="entry__meta">3 platforms</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/code-management-platforms" data-inview>
+          <span class="entry__title">Code Management Platforms</span>
+          <span class="entry__meta">3 platforms</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/ci-cd-platforms" data-inview>
+          <span class="entry__title">CI/CD Platforms</span>
+          <span class="entry__meta">1 platform</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/configuration-as-code" data-inview>
+          <span class="entry__title">Configuration as Code</span>
+          <span class="entry__meta">3 platforms</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/infrastructure-as-code" data-inview>
+          <span class="entry__title">Infrastructure as Code</span>
+          <span class="entry__meta">1 platform</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/database-platforms" data-inview>
+          <span class="entry__title">Database Platforms</span>
+          <span class="entry__meta">2 platforms</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/secrets-management-platforms" data-inview>
+          <span class="entry__title">Secrets Management Platforms</span>
+          <span class="entry__meta">3 platforms</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/load-balancers" data-inview>
+          <span class="entry__title">Load Balancers</span>
+          <span class="entry__meta">3 platforms</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/scripting-languages" data-inview>
+          <span class="entry__title">Scripting Languages</span>
+          <span class="entry__meta">2 platforms</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/inference-and-language-models" data-inview>
+          <span class="entry__title">Inference and Language Models</span>
+          <span class="entry__meta">3 platforms</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/tech/operating-systems" data-inview>
+          <span class="entry__title">Operating Systems</span>
+          <span class="entry__meta">3 platforms</span>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <div class="rule" data-inview></div>
+
       <p class="subhead" data-inview>Also worked in</p>
       <p class="belts" data-inview>Chef · Docker Compose · ECS · Portainer · vSphere · Bash · GitHub Actions · Splunk · Wazuh</p>
 
@@ -319,6 +524,16 @@
       <p class="pnext" data-inview><a href="#/work" data-section="work">Next — Work <span class="arrow" aria-hidden="true">→</span></a></p>
     </div>
   </div>
+  <section class="sub" data-sub hidden aria-label="tech detail">
+    <div class="sub__bar">
+      <button class="sub__back" type="button" data-subback><span aria-hidden="true">←</span> <span data-subback-label>Back</span></button>
+      <span class="sub__tag" data-subtag aria-hidden="true"></span>
+      <span class="sub__progress" aria-hidden="true"><i></i></span>
+    </div>
+    <div class="sub__scroll" data-subscroll>
+      <div class="sub__inner" data-subinner></div>
+    </div>
+  </section>
 </article>
 
 <!-- ==========================================================================
@@ -338,41 +553,57 @@
       </div>
 
       <div class="rows">
-        <div class="entry" data-inview>
+        <a class="entry" href="#/work/senior-security-systems-engineer" data-inview>
           <span class="entry__title">Senior Security &amp; Systems Engineer — AvatarFleet</span>
           <span class="entry__meta">Mar 2024 — now</span>
           <span class="entry__sub">Built the security program from nothing in an early-stage startup. SOC 2 Type 1 and Type 2 with zero adverse findings. Replaced the legacy enterprise infrastructure with minimal downtime, and wrote the Terraform and Ansible that enforce the controls. Also the person clearing the vendor reviews that block enterprise deals.</span>
-        </div>
-        <div class="entry" data-inview>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/work/lead-solutions-architect" data-inview>
           <span class="entry__title">Lead Solutions Architect — Syxsense</span>
           <span class="entry__meta">Mar 2023 — Mar 2024</span>
           <span class="entry__sub">Hired, trained and led the team, three direct reports, and moved my own time from the individual deals to the platform work underneath them. Company stage at Black Hat USA, customer workshops, and a week-long seminar at VIT-AP University.</span>
-        </div>
-        <div class="entry" data-inview>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/work/senior-security-solutions-architect" data-inview>
           <span class="entry__title">Senior Security Solutions Architect — Syxsense</span>
           <span class="entry__meta">Apr 2022 — Mar 2023</span>
           <span class="entry__sub">Vulnerability management frameworks for Linux servers in regulated on-premises environments, supporting customers with tens of thousands of endpoints under management.</span>
-        </div>
-        <div class="entry" data-inview>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/work/solutions-architect" data-inview>
           <span class="entry__title">Solutions Architect — Syxsense</span>
           <span class="entry__meta">Apr 2021 — Apr 2022</span>
           <span class="entry__sub">Designed and deployed the platform into other people's environments: proofs of concept, RFP responses, and integrations written in Bash and Python. More than a hundred organizations through that work in my first year.</span>
-        </div>
-        <div class="entry" data-inview>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/work/associate-information-technology-analyst" data-inview>
           <span class="entry__title">Associate IT Analyst — Schweitzer Engineering Laboratories</span>
           <span class="entry__meta">Sep 2020 — Apr 2021</span>
           <span class="entry__sub">Created a standardized, domain-integrated Ubuntu build for the company and applied CIS benchmarks to Linux endpoints with Chef.</span>
-        </div>
-        <div class="entry" data-inview>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
+        <a class="entry" href="#/work/information-technology-technician" data-inview>
           <span class="entry__title">Before that</span>
           <span class="entry__meta">2016 — 2020</span>
           <span class="entry__sub">IT technician and desktop support at Schweitzer Engineering Laboratories, including the Windows 7 to Windows 10 migration, and IT technician at Washington State University.</span>
-        </div>
+          <span class="entry__go" aria-hidden="true">→</span>
+        </a>
       </div>
 
       <p class="pnext" data-inview><a href="#/contact" data-section="contact">Next — Contact <span class="arrow" aria-hidden="true">→</span></a></p>
     </div>
   </div>
+  <section class="sub" data-sub hidden aria-label="work detail">
+    <div class="sub__bar">
+      <button class="sub__back" type="button" data-subback><span aria-hidden="true">←</span> <span data-subback-label>Back</span></button>
+      <span class="sub__tag" data-subtag aria-hidden="true"></span>
+      <span class="sub__progress" aria-hidden="true"><i></i></span>
+    </div>
+    <div class="sub__scroll" data-subscroll>
+      <div class="sub__inner" data-subinner></div>
+    </div>
+  </section>
 </article>
 
 <!-- ==========================================================================
