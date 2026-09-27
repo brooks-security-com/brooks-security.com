@@ -684,3 +684,9 @@ a.entry:focus-visible .entry__go { opacity: 1; transform: translate3d(0, -50%, 0
 @media (prefers-reduced-motion: reduce) {
   .detail > * { opacity: 1; transform: none; animation: none; }
 }
+
+/* The design's .player__btn is a block with a 16:9 ratio, which outranks the rule the
+   hidden attribute would otherwise use -- so the control has to be taken out of the
+   layout by name when the recording replaces it, or the page doubles in height and the
+   video gets a black rectangle under it. */
+.player__btn[hidden] { display: none; }

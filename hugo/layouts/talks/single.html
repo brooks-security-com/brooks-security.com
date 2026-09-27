@@ -8,22 +8,26 @@
         <p class="kicker">{{ partial "month-year.html" .Params.recorded }} · {{ .Params.series }}</p>
         <h1 class="detail__title" id="title" tabindex="-1">{{ .Title }}</h1>
 
-        {{- /* A poster and a button, not an embed: nothing is fetched from anywhere until
-               someone asks for the recording. The poster is YouTube's, because the
-               archive's master files are not in this repository; the file that plays is
-               this site's own, served from downloads/ through CloudFront. */}}
-        <div class="player" data-inview>
-          <video controls preload="none" playsinline
-                 poster="https://i.ytimg.com/vi/{{ .Params.id }}/hqdefault.jpg"
-                 src="{{ .Params.video }}">
-            Your browser cannot play this video. <a href="{{ .Params.video }}">Download the recording</a> instead.
-          </video>
-          <button class="player__btn" type="button">
+        {{- /* The design's player: a poster with the play control over it. Nothing is
+               requested from anywhere until someone asks for the recording, and then the
+               file under it does the work -- the archive's masters are not in this
+               repository, but the self-hosted encodings are.
+
+               The picture is not an empty <video>: a video element at the foot of the page
+               is a black rectangle the height of a poster, which reads as a broken embed.
+               The element is built when the control is pressed. */}}
+        <figure class="player" data-inview
+                data-video="{{ .Params.video }}"
+                data-poster="https://i.ytimg.com/vi/{{ .Params.id }}/hqdefault.jpg">
+          <button class="player__btn" type="button"
+                  aria-label="Play {{ .Title }} ({{ .Params.runtime }})">
+            <img class="player__poster" src="https://i.ytimg.com/vi/{{ .Params.id }}/hqdefault.jpg"
+                 alt="" loading="lazy" decoding="async" width="1280" height="720">
             <span class="player__tri" aria-hidden="true"></span>
-            <span class="player__cue">Play the recording</span>
-            <span class="player__len">{{ .Params.runtime }}</span>
+            <span class="player__cue">Play the recording <span class="player__len">{{ .Params.runtime }}</span></span>
           </button>
-        </div>
+        </figure>
+        <noscript><p class="player__note"><a href="{{ .Params.video }}">Play the recording</a> ({{ .Params.runtime }}).</p></noscript>
 
         <dl class="facts">
           <div class="fact"><dt>Runtime</dt><dd>{{ .Params.runtime }}</dd></div>

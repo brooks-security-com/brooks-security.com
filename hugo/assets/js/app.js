@@ -87,24 +87,32 @@
   }
 
   /* -- the player -----------------------------------------------------------
-     A poster, not an embed: nothing third-party loads until someone asks for the
-     recording, and then the self-hosted file under it does the work. */
+     A poster with the control over it, and the file is not requested until someone asks
+     for the recording. The <video> is built on the click: an empty one sitting in the
+     markup is a black rectangle as tall as the poster, which reads as a broken embed. */
   function wirePlayers(scope) {
     Array.prototype.forEach.call((scope || doc).querySelectorAll('.player'), function (el) {
       if (el.dataset.wired) return;
-      var video = el.querySelector('video');
       var button = el.querySelector('.player__btn');
-      if (!video || !button) return;
+      var src = el.dataset.video;
+      if (!button || !src) return;
       el.dataset.wired = '1';
       button.addEventListener('click', function () {
+        var video = el.querySelector('video');
+        if (!video) {
+          video = doc.createElement('video');
+          video.controls = true;
+          video.playsInline = true;
+          video.preload = 'auto';
+          if (el.dataset.poster) video.poster = el.dataset.poster;
+          video.src = src;
+          el.appendChild(video);
+        }
         el.classList.add('is-hot');
         button.hidden = true;
         var playing = video.play();
-        if (playing && playing.catch) playing.catch(function () { /* controls are there */ });
+        if (playing && playing.catch) playing.catch(function () { /* the controls are there */ });
       });
-      video.addEventListener('play', function () { button.hidden = true; el.classList.add('is-hot'); });
-      video.addEventListener('pause', function () { if (!video.ended) button.hidden = false; });
-      video.addEventListener('ended', function () { button.hidden = false; el.classList.remove('is-hot'); });
     });
   }
 
