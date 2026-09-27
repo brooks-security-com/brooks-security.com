@@ -240,12 +240,44 @@
     });
   }
 
+  /* ---------- word cloud ----------
+     The stagger delay rides an animation (see mockup.css), so the index only
+     has to be published as a custom property. Hover brings a cluster forward:
+     colour only, and only where a real pointer exists. */
+  function wireCloud() {
+    var cloud = document.querySelector('.cloud');
+    if (!cloud) { return; }
+
+    var words = Array.prototype.slice.call(cloud.querySelectorAll('.cloud__w'));
+    words.forEach(function (word, i) { word.style.setProperty('--i', i); });
+
+    if (!window.matchMedia('(hover: hover)').matches) { return; }
+
+    function clear() {
+      words.forEach(function (word) { word.classList.remove('is-hot', 'is-dim'); });
+    }
+
+    words.forEach(function (word) {
+      word.addEventListener('pointerenter', function () {
+        var cluster = word.dataset.cluster;
+        words.forEach(function (other) {
+          var same = other.dataset.cluster === cluster;
+          other.classList.toggle('is-hot', same);
+          other.classList.toggle('is-dim', !same);
+        });
+      });
+      word.addEventListener('pointerleave', clear);
+      word.addEventListener('pointercancel', clear);
+    });
+  }
+
   /* ---------- init ---------- */
 
   Array.prototype.forEach.call(document.querySelectorAll('.panel'), function (panel) {
     wireProgress(panel);
   });
   wireReveals();
+  wireCloud();
   wireLinks();
   wireKeys();
   wireSwipe();

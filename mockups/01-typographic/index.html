@@ -26,6 +26,8 @@
       if (done) { return; }
       done = true;
       root.classList.remove('is-enter');
+      root.classList.add('is-entered');
+      document.dispatchEvent(new CustomEvent('brooks:entered'));
     }
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(go);
@@ -52,15 +54,45 @@
              alt="Portrait of Graham Brooks" />
       </span>
       <h1 class="head__name"><span class="mask"><span class="word">Graham</span></span> <span class="mask"><span class="word">Brooks</span></span></h1>
-      <p class="head__meta head__meta--role"><span>Sales Engineer &amp; Solutions Architect</span></p>
-      <p class="head__meta head__meta--facts"><span>Moscow, Idaho · CISSP · AWS SA · RHCE</span></p>
+
+      <ul class="cloud" aria-label="Areas of work">
+        <li class="cloud__tier cloud__tier--2">
+          <span class="cloud__w" data-cluster="sec">Security</span>
+          <span class="cloud__w" data-cluster="gov">Governance</span>
+          <span class="cloud__w" data-cluster="gov">Risk</span>
+          <span class="cloud__w" data-cluster="gov">Compliance</span>
+          <span class="cloud__w" data-cluster="tech">Cloud</span>
+        </li>
+        <li class="cloud__tier cloud__tier--1">
+          <span class="cloud__w" data-cluster="tech">Technology</span>
+          <span class="cloud__w" data-cluster="tech">Infrastructure</span>
+          <span class="cloud__w" data-cluster="comms">Communication</span>
+        </li>
+        <li class="cloud__tier cloud__tier--3">
+          <span class="cloud__w cloud__w--xl" data-cluster="tech">AWS</span>
+          <span class="cloud__w cloud__w--lg" data-cluster="tech">Azure</span>
+          <span class="cloud__w cloud__w--xl" data-cluster="tech">Linux</span>
+          <span class="cloud__w cloud__w--lg" data-cluster="tech">Python</span>
+          <span class="cloud__w" data-cluster="tech">Terraform</span>
+          <span class="cloud__w cloud__w--sm" data-cluster="tech">Ansible</span>
+          <span class="cloud__w" data-cluster="tech">Docker</span>
+          <span class="cloud__w cloud__w--sm" data-cluster="tech">Automation</span>
+          <span class="cloud__w cloud__w--lg" data-cluster="tech">Programming</span>
+          <span class="cloud__w cloud__w--xl" data-cluster="sec">Zero Trust</span>
+          <span class="cloud__w cloud__w--lg" data-cluster="sec">SOC 2</span>
+          <span class="cloud__w cloud__w--sm" data-cluster="sec">Incident Response</span>
+          <span class="cloud__w cloud__w--sm" data-cluster="gov">Policy</span>
+          <span class="cloud__w" data-cluster="comms">Marketing</span>
+          <span class="cloud__w cloud__w--sm" data-cluster="comms">Writing</span>
+        </li>
+      </ul>
     </header>
 
     <nav class="index" id="index" aria-label="Sections">
       <a class="row" href="#/bio" data-section="bio">
         <span class="row__num">01</span>
         <span class="row__word">Bio</span>
-        <span class="row__meta">Both sides of the sale</span>
+        <span class="row__meta">Ten years of systems work</span>
         <span class="row__go" aria-hidden="true">→</span>
       </a>
       <a class="row" href="#/talks" data-section="talks">
@@ -117,14 +149,14 @@
   <div class="panel__scroll" data-scroll>
     <div class="panel__inner">
       <div class="panel__head">
-        <h2 class="ptitle" id="title-bio" tabindex="-1" style="--i:0">Both sides of the security sale.</h2>
-        <p class="lede" style="--i:1">I have been the security engineer writing the RFP, and the vendor engineer answering it.</p>
+        <h2 class="ptitle" id="title-bio" tabindex="-1" style="--i:0">Security is a systems problem.</h2>
+        <p class="lede" style="--i:1">Ten years of building systems, and being the one who answers for them.</p>
       </div>
 
       <div data-inview>
-        <p>I am a sales engineer and solutions architect, ten years into a career in IT. I have run the proof of concept as the customer, deciding whether a tool survived contact with our environment, and as the vendor, with the deal riding on the result. So when I am in front of a customer's security team, I am not guessing at what they need to hear. I still write those questions: I vetoed a vendor recently for turning up without a SOC 2 Type 2.</p>
-        <p>For three years at Syxsense I ran the technical side of the sales cycle: proofs of concept, RFI and RFP responses, architecture sessions in critical infrastructure and government, and the webinar when marketing needed one. I was one of three sales engineers. In my first year I was the presales support on deals representing fifty percent of the company's total revenue, including deals north of a million dollars. I finished there as Lead Solutions Architect, hiring and training the team that carried the number after me.</p>
-        <p>Since March 2024 I have been at AvatarFleet as senior security and systems engineer, on the buying end of the same market. I built the security program from nothing, led it through SOC 2 Type 1 and Type 2 with <strong>zero adverse findings</strong>, and wrote the Terraform and Ansible that enforce the controls.</p>
+        <p>I am ten years into a career in IT, six of them in security. I have been the engineer writing the security questionnaire and the one filling it in, the person deciding whether a tool survived contact with our environment and the person whose deal rode on the result. So when I sit down with a security team, I am not guessing at what they need to hear.</p>
+        <p>Three years at Syxsense went into designing and deploying security automation inside other people's environments: Terraform and Ansible integrations, vulnerability management for Linux fleets in regulated on-premises settings, architecture sessions with critical infrastructure and government customers. I finished there as Lead Solutions Architect, having hired and trained the team that carried the work after me.</p>
+        <p>Since March 2024 I have been at AvatarFleet as senior security and systems engineer. I built the security program from nothing, led it through SOC 2 Type 1 and Type 2 with <strong>zero adverse findings</strong>, and wrote the Terraform and Ansible that enforce the controls.</p>
       </div>
 
       <div class="rule" data-inview></div>
@@ -134,7 +166,7 @@
 
       <div class="rule" data-inview></div>
 
-      <p data-inview>I am looking for a <strong>Sales Engineering or Solutions Architecture</strong> role in platform security, blue-team tooling, or cloud infrastructure. <em>That is what the rest of this index is for.</em></p>
+      <p data-inview>Most of what I know came from having to operate the thing I designed. <em>That is what the rest of this index is for.</em></p>
 
       <p class="pnext" data-inview><a href="#/talks" data-section="talks">Next — Talks <span class="arrow" aria-hidden="true">→</span></a></p>
     </div>
@@ -154,7 +186,7 @@
     <div class="panel__inner">
       <div class="panel__head">
         <h2 class="ptitle" id="title-talks" tabindex="-1" style="--i:0">Delivered to rooms, not decks.</h2>
-        <p class="lede" style="--i:1">Six recordings survive from three years of carrying the technical half of the sale.</p>
+        <p class="lede" style="--i:1">Six recordings from three years of explaining security to the people who had to implement it.</p>
       </div>
 
       <p class="subhead" data-inview>Recordings · 2022 — 2024</p>
@@ -306,7 +338,7 @@
     <div class="panel__inner">
       <div class="panel__head">
         <h2 class="ptitle" id="title-work" tabindex="-1" style="--i:0">Ten years, one direction.</h2>
-        <p class="lede" style="--i:1">Operations, then presales, then the buying end. Now back to presales on purpose.</p>
+        <p class="lede" style="--i:1">Operations, then vendor-side engineering, then running a security program in-house.</p>
       </div>
 
       <div class="rows">
@@ -318,17 +350,17 @@
         <div class="entry" data-inview>
           <span class="entry__title">Lead Solutions Architect — Syxsense</span>
           <span class="entry__meta">Mar 2023 — Mar 2024</span>
-          <span class="entry__sub">Hired, trained and led the sales engineering team, three direct reports. Presales support on deals representing 30% of company revenue, with the balance moving to the team I built. Company stage at Black Hat USA, customer workshops, and a week-long seminar at VIT-AP University.</span>
+          <span class="entry__sub">Hired, trained and led the team, three direct reports, and moved my own time from the individual deals to the platform work underneath them. Company stage at Black Hat USA, customer workshops, and a week-long seminar at VIT-AP University.</span>
         </div>
         <div class="entry" data-inview>
           <span class="entry__title">Senior Security Solutions Architect — Syxsense</span>
           <span class="entry__meta">Apr 2022 — Mar 2023</span>
-          <span class="entry__sub">Deals representing 40% of total revenue. Vulnerability management frameworks for Linux servers in regulated on-premises environments, supporting customers with tens of thousands of endpoints under management.</span>
+          <span class="entry__sub">Vulnerability management frameworks for Linux servers in regulated on-premises environments, supporting customers with tens of thousands of endpoints under management.</span>
         </div>
         <div class="entry" data-inview>
           <span class="entry__title">Solutions Architect — Syxsense</span>
           <span class="entry__meta">Apr 2021 — Apr 2022</span>
-          <span class="entry__sub">One of three sales engineers, and the presales support on deals representing 50% of total company revenue in my first year. More than a hundred new logos through proofs of concept and RFP responses, including deals north of a million dollars.</span>
+          <span class="entry__sub">Designed and deployed the platform into other people's environments: proofs of concept, RFP responses, and integrations written in Bash and Python. More than a hundred organizations through that work in my first year.</span>
         </div>
         <div class="entry" data-inview>
           <span class="entry__title">Associate IT Analyst — Schweitzer Engineering Laboratories</span>
@@ -360,7 +392,7 @@
     <div class="panel__inner">
       <div class="panel__head">
         <h2 class="ptitle" id="title-contact" tabindex="-1" style="--i:0">Send a note.</h2>
-        <p class="lede" style="--i:1">Open to sales engineering and solutions architecture in platform security, blue-team tooling, or cloud infrastructure.</p>
+        <p class="lede" style="--i:1">Open to roles in platform security, blue-team tooling, or cloud infrastructure.</p>
       </div>
 
       <p data-inview>Everything below lands in my inbox. I read all of it, and I usually reply within a couple of business days.</p>
@@ -378,7 +410,7 @@
 
       <div class="rule" data-inview></div>
 
-      <p data-inview>If you are hiring for that seat, tell me about the product and the team and I will tell you whether I think I am a fit. If you just want to talk shop about SOC 2, Terraform, vulnerability management, or getting AI agents to do something useful, that works too. Based in Moscow, Idaho, and happy to relocate for the right role.</p>
+      <p data-inview>If you are hiring, tell me about the product and the team and I will tell you whether I think I am a fit. If you just want to talk shop about SOC 2, Terraform, vulnerability management, or getting AI agents to do something useful, that works too. Based in Moscow, Idaho, and happy to relocate for the right role.</p>
 
       <p class="pnext" data-inview><a href="#/" data-close>Back to index <span class="arrow" aria-hidden="true">→</span></a></p>
     </div>
