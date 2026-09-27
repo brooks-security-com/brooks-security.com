@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Render the Certifications list from hugo/data/credentials.yaml.
+"""Render the two Credentials lists from hugo/data/credentials.yaml.
 
-A flat list: the certification as its issuer names it, and the date it was earned.
-No groups, no status, no notes -- the dates are the whole story.
+Two lists, Education and Certifications: each entry as its issuer or university
+names it, and the date it was earned. No status, no notes -- the dates are the story.
 
     build_credentials.py           write the list into index.html
     build_credentials.py --check   fail if index.html says anything else
@@ -50,19 +50,29 @@ def load() -> dict:
 
 def render() -> str:
     creds = load()["credentials"]
-    # the degree leads, the certifications run newest first
-    education = [c for c in creds if c.get("kind") == "education"]
-    certs = sorted((c for c in creds if c.get("kind") != "education"),
-                   key=lambda c: str(c["earned"]), reverse=True)
-    rows = education + certs
-    out = ['      <ul class="creds">']
-    for c in rows:
-        out.append('        <li class="cred">')
-        out.append(f'          <span class="cred__name">{esc(c["name"])}</span>')
-        out.append(f'          <span class="cred__meta">{date_label(c["earned"])}</span>')
-        out.append("        </li>")
-    out.append("      </ul>")
-    return "\n".join(out) + "\n"
+    # Two lists. The degree is not a certification and sorts to the bottom of a date
+    # order, so it is separated rather than ranked: Education first, then the
+    # certifications newest first. A heading is only emitted for a group that has rows,
+    # so removing every certification leaves a page with one list and no empty heading.
+    groups = [
+        ("Education", [c for c in creds if c.get("kind") == "education"]),
+        ("Certifications", sorted((c for c in creds if c.get("kind") != "education"),
+                                  key=lambda c: str(c["earned"]), reverse=True)),
+    ]
+    out: list[str] = []
+    for heading, rows in groups:
+        if not rows:
+            continue
+        out.append(f'      <p class="subhead" data-inview>{esc(heading)}</p>')
+        out.append('      <ul class="creds">')
+        for c in rows:
+            out.append('        <li class="cred">')
+            out.append(f'          <span class="cred__name">{esc(c["name"])}</span>')
+            out.append(f'          <span class="cred__meta">{date_label(c["earned"])}</span>')
+            out.append("        </li>")
+        out.append("      </ul>")
+        out.append("")
+    return "\n".join(out).rstrip() + "\n"
 
 
 def block(body: str) -> str:
