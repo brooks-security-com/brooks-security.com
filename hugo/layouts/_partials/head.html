@@ -3,11 +3,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{{ with .Title }}{{ . }} | {{ end }}{{ site.Title }}</title>
 <meta name="description" content="{{ or .Description .Summary | plainify | htmlUnescape | strings.TrimSpace }}">
-{{- /* The design is light: one theme colour, and no dark scheme to opt into. The graph
-       theme carried a light/dark pair and a saved preference; the new stylesheet has no
-       dark palette, so promising the browser one would only produce a mismatch. */}}
-<meta name="theme-color" content="#F7F6F3">
-<meta name="color-scheme" content="light">
+{{- /* The design is not light-only: the stylesheet carries a dark palette and the
+       reference emitted a theme colour for each scheme. Saying "light" here made
+       the browser paint the controls it owns -- the contact form's fields and
+       every scrollbar -- in the light scheme on a dark page, which is what made
+       the form look like it had been dropped in from somewhere else. */}}
+<meta name="theme-color" content="#faf9f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#101015" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
 {{ partial "opengraph.html" . }}
 <meta property="og:image" content="{{ $a.photo.Permalink }}">
 {{ partial "schema.html" . }}
