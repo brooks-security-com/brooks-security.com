@@ -110,7 +110,7 @@ sources, so nothing here is invented copy:
 
 | Section | Pages | Content |
 |---|---|---|
-| Talks | 6 | every recording: poster → self-hosted video, the summary from `data/talks.yaml`, the writeup from `Portfolio/speaking/`, chapters, speakers |
+| Talks | 6 | every recording: poster → self-hosted video, one or two sentences about the subject, the chapter list, a link to YouTube. **No writeup and no speaker list** — the subject lines are set explicitly in `tools/build_content.py` (`TALK_SUBJECT`), derived from the `talks.yaml` summaries with the speakers removed; the source summaries name the people in the recording and describe the room |
 | Blogs | 14 | the full post bodies, contents list, tags |
 | Tech | 16 | 6 portfolio writeups and 10 platform groups (tenure + prose per platform). CI/CD Platforms, Configuration as Code and Infrastructure as Code are folded into one **Platforms and Tooling** page — two of them held a single platform and a single sentence |
 | Work | 6 | the CV roles with their own bullets; the last row folds the two earliest roles into one page |
