@@ -8,7 +8,7 @@
 # already lives in the repo once, at hugo/assets/js/vendor/. Run this after
 # cloning or when the site's copy is updated.
 #
-#   mockups/01-typographic/tools/sync-vendor.sh
+#   specs/typographic-index/tools/sync-vendor.sh
 #
 # Without it the diagrams fall back to showing their source text, which is
 # readable but not the point.

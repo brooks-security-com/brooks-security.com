@@ -1,6 +1,6 @@
 # Spec: Knowledge-graph redesign
 
-**Status:** Reference for the port. Not live. This folder holds the approved design as a working mockup. Nothing here is built or deployed by the site's workflows.
+**Status:** Ported and live — this is the design the site currently runs. Kept as the design reference for the graph home, which the typographic index (see `specs/typographic-index/`) retires.
 
 **Goal:** Rebuild brooks-security.com as the knowledge-graph design in this folder, keep every feature the current site has, and keep serving it as static files from the private S3 origin behind CloudFront.
 
