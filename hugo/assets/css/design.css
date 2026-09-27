@@ -813,3 +813,14 @@ a.entry:hover .entry__title { color: var(--accent); }
   letter-spacing: .04em; text-transform: uppercase; color: var(--muted);
   white-space: nowrap;
 }
+
+/* --- Credentials: the two lists -----------------------------------------
+   A heading that follows a list opens a new section, so it takes more air above it
+   than one row takes above the next row. Without this the gap between Education and
+   Certifications measured smaller than the ~54px row rhythm inside a list, which made
+   the section break quieter than a row break -- the hierarchy upside down. */
+.creds + .subhead { margin-top: 3rem; }
+
+/* The list that ends the page should not be separated from what follows it by
+   more than the gap that separates the two sections. */
+.creds:last-of-type { margin-bottom: 1.2rem; }
