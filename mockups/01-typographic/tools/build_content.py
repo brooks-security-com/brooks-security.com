@@ -16,6 +16,7 @@ curated list and the generated content cannot drift apart silently.
 
 from __future__ import annotations
 
+from pathlib import Path
 import html
 import pathlib
 import re
@@ -30,6 +31,9 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 DETAILS = ROOT / "details"
 INDEX = ROOT / "index.html"
 LIVE = "https://www.brooks-security.com"
+REPO = Path(__file__).resolve().parents[3]
+STATIC = REPO / "hugo" / "static"
+IMAGES = Path(__file__).resolve().parents[1] / "assets" / "img"
 
 
 # --------------------------------------------------------------------------
@@ -87,6 +91,28 @@ def scope_ids(rendered: str, prefix: str) -> str:
     return ANCHOR.sub(lambda m: f'href="#{prefix}--{m.group(1)}"', rendered)
 
 
+def local_asset(url: str) -> str:
+    """Copy an asset the site serves out of hugo/static into the variant.
+
+    Post illustrations are part of the content, so the pages carry them rather
+    than pointing at the live site: a mockup that needs the network to show its
+    own screenshots breaks the moment the box has no DNS, and it makes the
+    variant's fidelity depend on what is deployed. Returns "" when the file is
+    not in the repo, in which case the caller falls back to the live URL.
+    """
+    if not url.startswith("/") or url.startswith("//"):
+        return ""
+    source = STATIC / url.lstrip("/")
+    if not source.is_file():
+        return ""
+    # flatten, but keep a hint of the original directory so two files with the
+    # same name cannot overwrite each other
+    stem = url.lstrip("/").replace("/", "-")
+    IMAGES.mkdir(parents=True, exist_ok=True)
+    (IMAGES / stem).write_bytes(source.read_bytes())
+    return f"assets/img/{stem}"
+
+
 def md(text: str, prefix: str = "") -> str:
     """Markdown -> HTML, rewiring the site's internal links to mockup routes.
 
@@ -111,6 +137,9 @@ def md(text: str, prefix: str = "") -> str:
             if url.startswith("http") and "brooks-security.com" not in url:
                 return f'href="{url}" rel="noopener"'
             return f'href="{url}"'
+        local = local_asset(url)
+        if local:
+            return f'src="{local}" loading="lazy" decoding="async"'
         if url.startswith("/") and not url.startswith("//"):
             return f'src="{LIVE}{url}"'
         return f'src="{url}"'
@@ -266,17 +295,6 @@ def talk_detail(talk: dict) -> str:
     )
 
 
-def writeup_detail(writeup: dict) -> str:
-    """A talk that was presented but never recorded -- the site has a page for
-    it, so the mockup does too, without a player it cannot honestly show."""
-    return detail(
-        writeup["slug"],
-        f'Presented · {esc(writeup["meta"])}' if writeup["meta"] else "Presented",
-        esc(writeup["title"]),
-        [f'<p class="note">No recording of this one. The writeup stands on its own.</p>',
-         f'<div class="prose">{md(writeup["md"], writeup["slug"])}</div>'],
-    )
-
 
 def post_detail(post: dict) -> str:
     meta = [human_date(post["date"], True)]
@@ -367,7 +385,7 @@ def build() -> dict[str, list[tuple[str, str]]]:
 
     return {
         "talks": ([(t["slug"], talk_detail(t)) for t in talks]
-                  + [(w["slug"], writeup_detail(w)) for w in unrecorded]),
+                  + []),   # a talk with no recording is not offered; nothing to play
         "blogs": [(p["slug"], post_detail(p)) for p in posts],
         "tech": ([(p["slug"], project_detail(p)) for p in projects]
                  + [(g["slug"], platform_detail(g)) for g in platforms]),

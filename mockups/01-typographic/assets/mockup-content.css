@@ -390,7 +390,25 @@
     top: clamp(1.2rem, 4vh, 2.4rem);
     max-height: 76vh;
     overflow-y: auto;
+    padding-right: 0.55rem;
+    /* This rail scrolls when a piece has many sections, and the platform
+       scrollbar is the one thing on the page that nobody designed: a grey
+       trough and a chunky thumb sitting in the middle of near-monochrome type.
+       Both spellings are needed — setting scrollbar-color makes Chromium 121+
+       and Firefox ignore the ::-webkit- rules, so older Chromium and Safari
+       fall through to those instead of getting nothing. */
+    scrollbar-width: thin;
+    scrollbar-color: var(--rule) transparent;
   }
+
+  .detail--with-rail .toc-rail::-webkit-scrollbar { width: 5px; height: 5px; }
+  .detail--with-rail .toc-rail::-webkit-scrollbar-track { background: transparent; }
+  .detail--with-rail .toc-rail::-webkit-scrollbar-thumb {
+    background: var(--rule);
+    border-radius: 999px;
+  }
+  .detail--with-rail .toc-rail:hover::-webkit-scrollbar-thumb,
+  .detail--with-rail .toc-rail:focus-within::-webkit-scrollbar-thumb { background: var(--muted); }
 
   .toc-rail__label {
     margin: 0 0 0.9rem;
@@ -575,6 +593,16 @@
 .mermaid[data-processed] { display: grid; justify-items: center; padding: 0.5rem 0; }
 .mermaid svg { max-width: 100%; height: auto; }
 
+/* Running text keeps a readable measure. The column is wide enough for the
+   contents rail beside it, and a 720px line of 16px serif runs to ~95
+   characters, which is past comfortable. Media and headings still take the full
+   column; only the prose is capped. */
+.detail__lede,
+.prose > p,
+.prose > ul,
+.prose > ol,
+.prose blockquote > p { max-width: 70ch; }
+
 /* ---------- the row that opens an item ---------- */
 a.entry { position: relative; padding-right: 1.7rem; }
 
@@ -584,8 +612,10 @@ a.entry { position: relative; padding-right: 1.7rem; }
   right: 0;
   font-family: var(--mono);
   color: var(--muted);
-  opacity: 0;
-  transform: translate3d(-5px, -50%, 0);
+  /* visible at rest: an affordance that only appears on hover is not one, and
+     it is invisible on a phone, which has no hover at all */
+  opacity: 0.42;
+  transform: translate3d(-4px, -50%, 0);
   transition: opacity 0.35s ease, transform 0.5s var(--ease), color 0.35s ease;
 }
 
