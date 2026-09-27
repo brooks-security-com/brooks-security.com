@@ -1,0 +1,83 @@
+# Website mockups
+
+Local design variations of brooks-security.com, served from the seedbox over the
+tailnet so they can be opened on a phone or a desktop before anything touches the
+real site.
+
+**Nothing here is deployed.** The directory sits at the repo root, outside
+`hugo/`, so `dorny/paths-filter` sees no change and the Hugo deploy workflow
+never runs for it. The live site is untouched by anything in this folder.
+
+## Serving
+
+`~/Projects/seedbox-caddy` owns the tailnet vhosts. `Caddyfile` has two blocks
+for this directory, and `compose.yml` mounts it read-only at `/mockups`:
+
+| URL | What |
+|---|---|
+| `https://seedbox.brooks-security.com/` | the gallery (`index.html` + `mockups.json`) |
+| `https://seedbox.brooks-security.com/01-typographic/` | variant 01 by path |
+| `https://seedbox.brooks-security.com:8443/` | variant 01 on its own port |
+
+Real Let's Encrypt cert via Route 53 DNS-01, bound to `100.113.78.51`, so it is
+reachable only from the tailnet. The A record for `seedbox.brooks-security.com`
+already pointed at the tailnet IP, so adding these vhosts needed no Terraform
+change.
+
+## Adding a variant
+
+1. Create `mockups/NN-slug/` with its own `index.html` and `assets/`. Keep each
+   variant self-contained: its own CSS, JS, fonts and images, no shared build.
+2. Add an entry to `mockups.json` (the gallery renders from it — `id`, `name`,
+   `port`, `brief`, `status`).
+3. Add a Caddy block: copy the `:8443` one, bump the port, repoint `root` at the
+   new directory.
+4. Recreate Caddy — the Caddyfile is bind-mounted by inode, so an edited file
+   needs `docker compose up -d --force-recreate`, not just a reload:
+
+   ```bash
+   cd ~/Projects/seedbox-caddy
+   docker compose up -d --force-recreate --no-build
+   ```
+
+   Run that with `background=true` if driving it from Hermes: the terminal tool's
+   long-lived-process guard rejects `docker compose up` in the foreground.
+
+## Verifying a variant
+
+The page is a single self-contained document, so verification is a real browser
+run, not a code read. Script pattern: `~/.hermes/cache/scratch/verify-mockup-01.py`
+(Playwright, screenshots plus computed-style assertions) — adapt it per variant.
+
+Two things to know:
+
+- **`/etc/hosts` on the seedbox maps `seedbox.brooks-security.com` to
+  `127.0.1.1`**, so a browser on the box cannot resolve the vhost. Map the name
+  in Chromium instead of editing `/etc/hosts`:
+  `args=["--host-resolver-rules=MAP seedbox.brooks-security.com 100.113.78.51"]`.
+- Check the rendered page, not just the DOM: a gating bug once left the six index
+  rows at `opacity: 0` while every DOM assertion still passed. Screenshot and
+  look at it.
+
+## Variants
+
+### 01 — Typographic Index (`01-typographic/`)
+
+Text and type only, near-monochrome. The home page is a centred portrait, name,
+and a six-row index of sections (Bio, Talks, Blogs, Tech, Work, Contact). Each
+row opens its section as a panel that slides over the index — no page loads,
+hash-routed so every section is linkable and the back button works.
+
+- **Type:** Instrument Serif for display, Geist and Geist Mono for body and
+  metadata (the latter two are the live site's own self-hosted fonts).
+- **Colour:** ink and paper plus one accent, used only on the row arrow, the
+  hairline that draws in under a hovered row, and focus rings.
+- **Motion:** portrait clip-reveal, name rising per word, index rows staggering
+  in; panels slide over a receding home, direction-aware when moving between
+  sections; scroll progress rule in the panel bar. All of it collapses under
+  `prefers-reduced-motion`.
+- **Mobile first:** 80px row tap targets, panels rise from the bottom, swipe
+  right to go back and left to advance, and the home fits one screen at 390×844
+  and 1366×768 with no scroll.
+- **Content:** real — drawn from the CV, `talks.yaml`, the post list and the
+  contact page. Deliberately thin; the type is the design.

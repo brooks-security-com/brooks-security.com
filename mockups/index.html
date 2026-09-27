@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>brooks-security.com — mockups</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" href="data:," />
+<link rel="preload" href="assets/fonts/instrument-serif-latin.woff2" as="font" type="font/woff2" crossorigin />
+<style>
+  @font-face { font-family: 'Instrument Serif'; font-style: normal; font-weight: 400; font-display: swap; src: url(assets/fonts/instrument-serif-latin.woff2) format('woff2'); }
+  @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400 600; font-display: swap; src: url(assets/fonts/geist-mono-v6-latin.woff2) format('woff2'); }
+
+  :root {
+    --paper: #faf9f7;
+    --ink: #14141a;
+    --ink-2: #4a4a56;
+    --muted: #8b8b98;
+    --rule: #dcdce3;
+    --accent: #5645df;
+    --serif: 'Instrument Serif', ui-serif, Georgia, serif;
+    --mono: 'Geist Mono', ui-monospace, Menlo, monospace;
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --paper: #101015; --ink: #f1f1f4; --ink-2: #b4b4c0; --muted: #7c7c8a; --rule: #2c2c36; --accent: #9a90ff; }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100svh;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    padding: clamp(1.5rem, 6vw, 4rem) clamp(1.15rem, 5vw, 3rem) 4rem;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 52rem; margin: 0 auto; }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(2.2rem, 7vw, 3.6rem);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    margin: 0 0 0.5rem;
+  }
+  .kicker { font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin: 0 0 1.1rem; }
+  .intro { color: var(--ink-2); max-width: 40rem; margin: 0 0 2.5rem; }
+  .variant {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    border-top: 1px solid var(--rule);
+    padding: 1.4rem 0 1.6rem;
+    transition: transform 0.5s var(--ease);
+  }
+  .variant:last-of-type { border-bottom: 1px solid var(--rule); }
+  .variant:hover { transform: translate3d(0.4rem, 0, 0); }
+  .variant__top { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+  .variant__name { font-family: var(--serif); font-size: clamp(1.6rem, 5vw, 2.3rem); line-height: 1.1; letter-spacing: -0.015em; }
+  .variant__port { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .variant__url { font-size: 0.78rem; color: var(--accent); margin-top: 0.35rem; word-break: break-all; }
+  .variant__brief { color: var(--ink-2); max-width: 44rem; margin: 0.7rem 0 0; }
+  footer { margin-top: 2.5rem; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+  #empty { color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <p class="kicker">Local mockups · not deployed</p>
+  <h1>brooks-security.com — mockups</h1>
+  <p class="intro">Design variations of the personal site, built and served from the seedbox so they can be opened on a phone or a desktop before anything touches the real site. One variant per port.</p>
+  <div id="list"></div>
+  <footer id="stamp">Loading manifest…</footer>
+</main>
+<script>
+  (function () {
+    var host = location.hostname;
+    var proto = location.protocol;
+    fetch('mockups.json', { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        var list = document.getElementById('list');
+        (data.variants || []).forEach(function (v) {
+          var a = document.createElement('a');
+          a.className = 'variant';
+          a.href = proto + '//' + host + (v.port ? ':' + v.port : '') + '/';
+          var url = proto + '//' + host + (v.port ? ':' + v.port : '') + '/';
+          a.innerHTML =
+            '<span class="variant__top"><span class="variant__name"></span>' +
+            '<span class="variant__port"></span></span>' +
+            '<span class="variant__url"></span>' +
+            '<p class="variant__brief"></p>';
+          a.querySelector('.variant__name').textContent = v.name;
+          a.querySelector('.variant__port').textContent = (v.port ? 'port ' + v.port + ' · ' : '') + (v.status || 'wip');
+          a.querySelector('.variant__url').textContent = url;
+          a.querySelector('.variant__brief').textContent = v.brief || '';
+          list.appendChild(a);
+        });
+        document.getElementById('stamp').textContent = 'manifest updated ' + (data.updated || 'n/a') + ' · ' + host;
+        if (!data.variants || !data.variants.length) {
+          document.getElementById('list').innerHTML = '<p id="empty">No variants in the manifest yet.</p>';
+        }
+      })
+      .catch(function (err) {
+        document.getElementById('stamp').textContent = 'manifest failed to load: ' + err.message;
+      });
+  })();
+</script>
+</body>
+</html>

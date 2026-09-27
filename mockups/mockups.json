@@ -1,0 +1,13 @@
+{
+  "updated": "2026-09-27",
+  "note": "Local-only mockups of brooks-security.com. Nothing here is deployed; the site itself is untouched. Variants are served from this directory on the seedbox over the tailnet.",
+  "variants": [
+    {
+      "id": "01-typographic",
+      "name": "Typographic Index",
+      "port": 8443,
+      "brief": "Text and type only, near-monochrome. Home is a centred name, face, and a large-text index of six sections. Each section slides over the index in place: no page loads, hash-routed, mobile-first motion.",
+      "status": "built"
+    }
+  ]
+}
