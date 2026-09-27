@@ -64,20 +64,29 @@ Two things to know:
 ### 01 — Typographic Index (`01-typographic/`)
 
 Text and type only, near-monochrome. The home page is a centred portrait, name,
-and a six-row index of sections (Bio, Talks, Blogs, Tech, Work, Contact). Each
-row opens its section as a panel that slides over the index — no page loads,
-hash-routed so every section is linkable and the back button works.
+a keyword cloud, and a six-row index of sections (Bio, Talks, Blogs, Tech, Work,
+Contact). Each row opens its section as a panel that slides over the index — no
+page loads, hash-routed so every section is linkable and the back button works.
 
 - **Type:** Instrument Serif for display, Geist and Geist Mono for body and
   metadata (the latter two are the live site's own self-hosted fonts).
 - **Colour:** ink and paper plus one accent, used only on the row arrow, the
   hairline that draws in under a hovered row, and focus rings.
-- **Motion:** portrait clip-reveal, name rising per word, index rows staggering
-  in; panels slide over a receding home, direction-aware when moving between
-  sections; scroll progress rule in the panel bar. All of it collapses under
-  `prefers-reduced-motion`.
-- **Mobile first:** 80px row tap targets, panels rise from the bottom, swipe
-  right to go back and left to advance, and the home fits one screen at 390×844
-  and 1366×768 with no scroll.
+- **Keyword cloud:** the head carries no positioning copy at all. Under the name
+  sits a 23-word cloud — three tiers on a shared baseline, no rotation, sizes
+  varied per word with `--w` modifiers so it reads as a cloud rather than a tag
+  list. Technology / Infrastructure / Communication are the largest, in the
+  serif. Words carry `data-cluster` (`tech` / `sec` / `gov` / `comms`); hovering
+  one brings its cluster forward and pushes the rest back, colour only, and only
+  on `(hover: hover)`. Hover must never be wired to the entry stagger, which is
+  why the stagger is an `animation` on `html.is-entered` and not a transition.
+- **Motion:** portrait clip-reveal, name rising per word, cloud words arriving in
+  reading order, index rows staggering in; panels slide over a receding home,
+  direction-aware when moving between sections; scroll progress rule in the panel
+  bar. All of it collapses under `prefers-reduced-motion`.
+- **Mobile first:** 77px row tap targets, panels rise from the bottom, swipe
+  right to go back and left to advance, and the home fits one screen at 390×844,
+  1366×768 and 1440×900 with no scroll — verified, not assumed.
 - **Content:** real — drawn from the CV, `talks.yaml`, the post list and the
-  contact page. Deliberately thin; the type is the design.
+  contact page. Deliberately thin; the type is the design. Panel copy leads with
+  engineering and delivery rather than deal size.
