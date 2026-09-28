@@ -261,6 +261,25 @@
     if (t) t.focus({ preventScroll: true });
   }
 
+  /* Focus handed back to a row by script is not focus earned by the keyboard, and
+     WebKit cannot tell the difference: it matches :focus-visible for any script
+     focus, which is how the accent ring ended up around the whole Bio row on iOS
+     the moment a reader came back to the index. The attribute marks that moment, and
+     the first key press or the moment focus leaves clears it -- so a reader who
+     really does Tab into the index still gets the ring. The keydown listener runs
+     before the browser moves focus, so the row the Tab lands on is drawn normally. */
+  function returnFocus(el) {
+    var release = function () {
+      el.removeAttribute('data-returning');
+      el.removeEventListener('blur', release);
+      el.removeEventListener('keydown', release);
+    };
+    el.setAttribute('data-returning', '');
+    el.addEventListener('blur', release);
+    el.addEventListener('keydown', release);
+    el.focus({ preventScroll: true });
+  }
+
   function finish(el) {
     /* is-in is the visible state, not the transition: a panel that loses it is a panel
        at opacity 0 with pointer-events off. Only the leaving classes come off here. */
@@ -306,7 +325,7 @@
       old.remove();
       panel = null;
       var first = home.querySelector('.row');
-      if (first) first.focus({ preventScroll: true });
+      if (first) returnFocus(first);
     }, idle() ? 0 : DURATION);
   }
 
