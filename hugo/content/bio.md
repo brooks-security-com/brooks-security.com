@@ -1,27 +1,28 @@
 ---
-title: Security is a systems problem.
-description: Ten years of building systems, and being the one who answers for them.
+title: Bio
+summary: Security and systems engineer in logistics and transportation. Ten years in IT, six in cyber security. CISSP, AWS Certified Solutions Architect Associate, RHCE.
 ---
 
-I am ten years into a career in IT, six of them in security. I have been the engineer
-writing the security questionnaire and the one filling it in, the person deciding whether
-a tool survived contact with our environment and the person whose deal rode on the
-result. So when I sit down with a security team, I am not guessing at what they need to
-hear.
+<figure class="bio-figure">
+  <img src="/images/graham-acropolis-640.webp"
+       srcset="/images/graham-acropolis-640.webp 640w, /images/graham-acropolis-1280.webp 1280w"
+       sizes="(max-width: 720px) 100vw, 660px"
+       width="1280" height="835"
+       alt="Graham Brooks standing in front of the ruins on the Acropolis in Athens"
+       loading="lazy" decoding="async">
+  <figcaption>The Acropolis, Athens</figcaption>
+</figure>
 
-Three years at Syxsense went into designing and deploying security automation inside
-other people's environments: Terraform and Ansible integrations, vulnerability management
-for Linux fleets in regulated on-premises settings, architecture sessions with critical
-infrastructure and government customers. I finished there as Lead Solutions Architect,
-having hired and trained the team that carried the work after me.
+Hey! I am Graham Brooks, a Security and Systems Engineer working in the logistics and
+transportation industry. I have ten years of experience in IT, six of them dedicated to cyber
+security, mostly in GRC and infrastructure hardening. I have built SOC 2 compliance from scratch
+and survived multiple audits, and I live in the wild world of DevSecOps. Most of my workdays go
+into reviewing pull requests, writing Ansible, and crawling through mountains of documentation. I
+am obsessed with Linux, and I am an active advocate in the privacy and open source communities.
+In a previous life I worked as a Sales Engineer and Solutions Architect, doing everything from
+live demos of security products to teaching vulnerability management at VIT-AP University in
+India. I hold a CISSP, an AWS Certified Solutions Architect Associate, and an RHCE.
 
-Since March 2024 I have been at AvatarFleet as senior security and systems engineer. I
-built the security program from nothing, led it through SOC 2 Type 1 and Type 2 with zero
-adverse findings, and wrote the Terraform and Ansible that enforce the controls.
-
-### Credentials
-
-CISSP &middot; AWS Certified Solutions Architect &middot; RHCE &middot; CompTIA Security+
-
-Most of what I know came from having to operate the thing I designed. That is what the
-rest of this index is for.
+When I am not at work I am in the gym, on a run, or with my family and friends. I live in Moscow,
+Idaho with my wife and our son. I travel as much as the calendar allows, and powerlifting is the
+habit I have kept longest, because the bar does not care how I feel about it that morning.

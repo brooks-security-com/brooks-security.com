@@ -539,6 +539,28 @@
 .prose img,
 .prose svg { display: block; max-width: 100%; height: auto; margin: 1.7rem auto; }
 
+/* A photograph with a caption, used by the bio. In colour, unlike the index
+   portrait, which is grey on paper and comes up in colour under the pointer: this
+   one is a place, and its colour is the point of showing it. The caption is the
+   mono label the rest of the design gives metadata. */
+.prose figure { margin: 1.9rem 0; }
+
+.prose figure img {
+  width: 100%;
+  margin: 0;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+}
+
+.prose figcaption {
+  margin-top: 0.6rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
 .prose table {
   display: block;
   width: 100%;
