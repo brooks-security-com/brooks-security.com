@@ -1,20 +1,18 @@
 {{ define "main" }}
-{{- /* The name the home page prints. Taken from site.Params.homeName rather than
-       site.Title because the letterhead carries the credential ("CISSP") while the
-       document's own <title> and the RSS feed stay the bare name: they are not the
-       letterhead. site.title is the fallback, so an empty param prints the plain
-       name rather than an empty heading. */ -}}
-{{- $name := or site.Params.homeName site.Title -}}
+{{- /* The letterhead is the site's own name, split on whitespace so each word can be
+       masked and revealed in sequence. Each word therefore needs its own
+       transition-delay in site.css -- an unlisted one arrives before the words it
+       follows, so a new word here needs a matching .head__name .mask:nth-child(n). */ -}}
 <div class="home">
   <div class="home__inner">
 
     <header class="head">
-      <h1 class="head__name">{{ range split $name " " }}<span class="mask"><span class="word">{{ . }}</span></span> {{ end }}</h1>
+      <h1 class="head__name">{{ range split site.Title " " }}<span class="mask"><span class="word">{{ . }}</span></span> {{ end }}</h1>
       <span class="head__ring">
         <img src="/portrait-960.webp"
              srcset="/portrait-480.webp 480w, /portrait-960.webp 960w"
              sizes="130px" width="960" height="960"
-             alt="Portrait of {{ $name }}" />
+             alt="Portrait of {{ site.Title }}" />
       </span>
 
       {{- /* The cloud's geometry is generated, not written here: the packer in
@@ -41,7 +39,7 @@
     </nav>
 
     <footer class="home__foot">
-      <span>{{ $name }}</span>
+      <span>{{ site.Title }}</span>
       <span>Security systems, built and answered for</span>
     </footer>
     <noscript>
