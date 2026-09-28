@@ -15,7 +15,7 @@ In a pre-sales conversation that means I can scope the deployment, write the int
 
 I am moving back toward presales deliberately. I want technical work that is attached to organizational growth and revenue rather than one step removed from it, and sales engineering is one of the few seats where that comes without giving up hands-on project work.
 
-**I am currently looking for a Sales Engineering or Solutions Architecture role in platform security, blue-team tooling, or cloud infrastructure.** I am based in Moscow, Idaho, and happy to relocate for the right role. [Get in touch](/docs/contact/), or grab the [one-page resume](/resume/).
+**I am currently looking for a Sales Engineering or Solutions Architecture role in platform security, blue-team tooling, or cloud infrastructure.** I am based in Moscow, Idaho. [Get in touch](/docs/contact/), or grab the [one-page resume](/resume/).
 
 ## Experience:
 ### Senior Security & Systems Engineer, AvatarFleet
