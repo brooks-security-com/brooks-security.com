@@ -17,6 +17,12 @@
       <div class="panel__head">
         <h1 class="ptitle" id="title" tabindex="-1" style="--i:0">{{ .Title }}</h1>
         {{- with .Params.lede }}<p class="lede" style="--i:1">{{ . }}</p>{{ end }}
+        {{- /* What I have actually been building, as the year GitHub recorded it: the
+               same calendar the CV's platform page draws, third in the head's entry
+               sequence so it follows the title and the lede rather than pre-empting
+               them. It reads the nightly-baked hugo/data/contributions.json, and
+               inherits the partial's own notice when that data is not there. */}}
+        {{ partial "github-heatmap.html" (dict "i" 2) }}
       </div>
 
       <div class="rows" data-inview>
