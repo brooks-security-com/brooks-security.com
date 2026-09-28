@@ -539,6 +539,43 @@
 .prose img,
 .prose svg { display: block; max-width: 100%; height: auto; margin: 1.7rem auto; }
 
+/* A repository link. Writeups carry the repo as a shields.io badge; render-image.html
+   turns that image into this chip so the page makes no third-party request. It is a
+   chip rather than a line of type because it is the one thing on a writeup a reader
+   can act on. The rules below are a component, not an override: nothing else sizes
+   the badge or the mark inside it, and the media rule above would make the mark 100%
+   of the column wide. */
+.prose .repo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 100%;
+  padding: 0.2rem 0.62rem 0.2rem 0.5rem;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--ink-2);
+  transition: color 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+}
+
+/* The block margins of the media rule above belong to a figure, not to an icon in a
+   chip: left as they are, they put 27px of air above and below the mark and the chip
+   becomes three times its label's height. The mark gets its own size for the same
+   reason the chip is a component -- at the 1em the icon partial defaults to, the
+   octocat's tail and ears turn to mush at 12px. */
+.prose .repo-badge svg { width: 0.9rem; height: 0.9rem; margin: 0; }
+
+.prose a:has(> .repo-badge) { text-decoration: none; }
+
+.prose a:hover > .repo-badge,
+.prose a:focus-visible > .repo-badge {
+  border-color: var(--accent-line);
+  background: var(--rule-soft);
+  color: var(--accent);
+}
+
 /* A photograph with a caption, used by the bio. In colour, unlike the index
    portrait, which is grey on paper and comes up in colour under the pointer: this
    one is a place, and its colour is the point of showing it. The caption is the
@@ -658,11 +695,12 @@ a.entry:focus-visible .entry__go { opacity: 1; transform: translate3d(0, -50%, 0
 }
 
 /* Carried over from the previous theme. These rules are for content that predates the
-   redesign -- the one-page resume, a video embedded in a doc, repository badges, an
-   illustration floated into a post -- and the redesign never had an opinion about
-   them. Dropping them would have left that content unstyled, which is not a redesign.
-   Selectors belonging to the retired graph home were removed, and @media blocks are
-   kept whole so print rules stay print rules. */
+   redesign -- the one-page resume, a video embedded in a doc, an illustration floated
+   into a post -- and the redesign never had an opinion about them. Dropping them would
+   have left that content unstyled, which is not a redesign. Selectors belonging to the
+   retired graph home were removed, repository badges became a component of this layer
+   (above, with .prose), and @media blocks are kept whole so print rules stay print
+   rules. */
 
 /* Code blocks, as Hugo emits them when highlighting is on: a .chroma wrapper, a table
    when line numbers are asked for, and .cl/.line per row. This is layout only. The
