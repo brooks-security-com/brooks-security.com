@@ -23,7 +23,7 @@ description: "Resume for Graham Brooks, Sales Engineer and Solutions Architect. 
 <p>Sales Engineer / Solutions Architect</p>
 
 <p>
-Moscow, Idaho, United States (open to relocation)<br>
+Moscow, Idaho, United States<br>
 Email: <a href="mailto:graham@brooks-security.com">graham@brooks-security.com</a><br>
 LinkedIn: <a href="https://linkedin.com/in/grahamwbrooks/">linkedin.com/in/grahamwbrooks</a><br>
 GitHub: <a href="https://github.com/littleseneca">github.com/littleseneca</a><br>
