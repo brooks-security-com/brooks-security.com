@@ -24,5 +24,5 @@ live demos of security products to teaching vulnerability management at VIT-AP U
 India. I hold a CISSP, an AWS Certified Solutions Architect Associate, and an RHCE.
 
 When I am not at work I am in the gym, on a run, or with my family and friends. I live in Moscow,
-Idaho with my wife and our son. I travel as much as the calendar allows, and powerlifting is the
-habit I have kept longest, because the bar does not care how I feel about it that morning.
+Idaho with my wife and our son. Powerlifting is the habit I have kept longest, because the bar does
+not care how I feel about it that morning.
