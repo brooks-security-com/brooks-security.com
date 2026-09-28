@@ -10,7 +10,7 @@ sections:
   - key: bio
     num: "01"
     word: Bio
-    meta: Ten years of systems work
+    meta: "Start here for context"
     href: /bio/
     match: /bio/
   - key: credentials
@@ -22,25 +22,25 @@ sections:
   - key: work
     num: "03"
     word: Work
-    meta: Ten years, one direction
+    meta: "Employment and Contracts I've worked on"
     href: /work/
     match: /work/
   - key: talks
     num: "04"
     word: Talks
-    meta: Six recordings
+    meta: "Presentations I have given"
     href: /talks/
     match: /talks/
   - key: blogs
     num: "05"
     word: Blogs
-    meta: Fourteen posts
+    meta: "Random musings and maybe some useful tutorials"
     href: /posts/
     match: /posts/
   - key: tech
     num: "06"
     word: Tech
-    meta: What I actually run
+    meta: "The meat and potatoes of my career"
     href: /tech/
     # the platform groups live at /tech/<group>/ and the builds are written up under
     # /docs/portfolio/<slug>/, which Tech links to -- both are Tech
