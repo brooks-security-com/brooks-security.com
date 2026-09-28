@@ -539,21 +539,18 @@
 .prose img,
 .prose svg { display: block; max-width: 100%; height: auto; margin: 1.7rem auto; }
 
-/* A photograph with a caption, used by the bio. Photographs on the site are grey on
-   paper and come up in colour under the pointer, the same treatment the index
-   portrait gets, so a photograph never argues with the near-monochrome type. The
-   caption is the mono label the rest of the design uses for metadata. */
+/* A photograph with a caption, used by the bio. In colour, unlike the index
+   portrait, which is grey on paper and comes up in colour under the pointer: this
+   one is a place, and its colour is the point of showing it. The caption is the
+   mono label the rest of the design gives metadata. */
 .prose figure { margin: 1.9rem 0; }
 
 .prose figure img {
   width: 100%;
   margin: 0;
   border: 1px solid var(--rule);
-  filter: grayscale(1) contrast(1.05);
-  transition: filter 1.1s ease;
+  border-radius: 12px;
 }
-
-.prose figure:hover img { filter: grayscale(0) contrast(1); }
 
 .prose figcaption {
   margin-top: 0.6rem;
@@ -643,7 +640,6 @@ a.entry:focus-visible .entry__go { opacity: 1; transform: translate3d(0, -50%, 0
 @media (prefers-reduced-motion: reduce) {
   .detail > * { opacity: 1; transform: none; }
   .entry__go { opacity: 1; transform: translate3d(0, -50%, 0); }
-  .prose figure img { transition: none; }
 }
 
 /* On phones the panel is a bottom sheet, so its item pages come up the same way. */
