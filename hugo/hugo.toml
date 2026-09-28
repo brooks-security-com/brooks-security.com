@@ -8,6 +8,12 @@ title = 'Graham Brooks'
   min = '0.160.1'
 
 [params]
+# The name the home page prints as its letterhead. It is deliberately not
+# site.title: the credential belongs on the page, and every <title>, the RSS
+# feed and the portrait's alt text do not need it repeated once per page.
+# site.title stays the fallback when this is empty.
+homeName = 'Graham Brooks, CISSP'
+
 # Public reCAPTCHA v3 site key. Empty here on purpose: injected at build time
 # from SSM (/brooks-security.com/recaptcha/site_key) via the
 # HUGO_PARAMS_RECAPTCHASITEKEY env var (see .github/workflows/hugo-deploy.yml).

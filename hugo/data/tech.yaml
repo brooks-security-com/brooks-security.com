@@ -3,9 +3,6 @@
 # tools/build_site_data.py. Do not hand-edit: edit the source and re-run it.
 
 builds:
-- slug: running-a-poc
-  title: Running a POC
-  weight: 2
 - slug: security
   title: Security
   weight: 3

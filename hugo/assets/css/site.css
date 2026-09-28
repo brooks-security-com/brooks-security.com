@@ -237,6 +237,7 @@ html[data-active] .home__inner {
 
 .head__name .mask:nth-child(1) .word { transition-delay: 0.04s; }
 .head__name .mask:nth-child(2) .word { transition-delay: 0.14s; }
+.head__name .mask:nth-child(3) .word { transition-delay: 0.24s; }
 
 /* ---------- word cloud ----------
    A real cloud: scattered, no rows, no rotation, largest words at the centre.

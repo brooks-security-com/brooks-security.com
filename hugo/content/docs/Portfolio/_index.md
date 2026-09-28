@@ -9,7 +9,6 @@ title: "Portfolio"
 Every project here has a public repository behind it, so you can check the claims against the code.
 
 - **[Speaking](/docs/portfolio/speaking/)** — a recorded Syxsense Master Class, plus the Black Hat USA booth stage, hands-on customer workshops, and a week-long university seminar in India.
-- **[Running a POC](/docs/portfolio/running-a-poc/)** — how I scope, run, and close a technical evaluation, including the vendor security review that stalls most enterprise security deals.
 - **[Security](/docs/portfolio/security/)** — a local NIST NVD mirror in PostgreSQL, so vulnerability data can be joined against a real asset inventory instead of queried through someone else's UI.
 - **[GitOps](/docs/portfolio/gitops/)** — this site: Hugo content and the Terraform that runs it in one repository, shipping itself to S3 and CloudFront through GitHub Actions for about a dollar a month.
 - **[Automation](/docs/portfolio/automation/)** — Jarvis, a plugin-based executive brief agent, plus a hard drive triage auditor and a Clonezilla image builder.
