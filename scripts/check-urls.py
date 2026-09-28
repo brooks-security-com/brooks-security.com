@@ -25,8 +25,14 @@ URL_MAP = [
     '/docs/curriculum-vitae/credentials/', '/docs/curriculum-vitae/platforms/',
     '/docs/portfolio/', '/docs/portfolio/gitops/', '/docs/portfolio/security/',
     '/docs/portfolio/ai-agents/', '/docs/portfolio/automation/', '/docs/portfolio/x-as-code/',
-    '/docs/portfolio/speaking/', '/docs/portfolio/running-a-poc/', '/posts/',
+    '/docs/portfolio/speaking/', '/posts/',
     '/docs/contact/', '/resume/',
+    # /docs/portfolio/running-a-poc/ was on this list. The writeup was retired
+    # deliberately (the POC playbook is sales-engineer material the Tech page no
+    # longer carries), which is the one thing this list is for: a promise the site
+    # keeps. Drop it here when a URL is retired on purpose, never to make a failure
+    # go away -- and if the retirement is meant to be a redirect instead, an
+    # `aliases` entry on the Portfolio index points the old URL there.
     # Not in the map, but live today and linked from outside:
     '/docs/', '/tags/', '/categories/', '/404.html',
     '/posts/how-im-developing-my-career-the-power-of-goal-oriented-learning-copy/',
