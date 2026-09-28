@@ -1,15 +1,22 @@
 {{ define "main" }}
-{{- /* The Tech page: the builds first, then the platform groups.
+{{- /* The Tech page: the projects first, then the platform groups.
 
-       The builds are the portfolio writeups and already exist as pages, under their own
+       Both are lists, and the design's reference separates them with a hairline and a mono
+       subhead that counts what is under it. The reference's own count was hand-written and
+       wrong, so the count here is the length of the list it labels: the label and the list
+       cannot drift apart.
+
+       The projects are the portfolio writeups and already exist as pages, under their own
        section, so they are fetched rather than copied -- Tech is a way into them, not a
        second copy of them. The groups are this section's own pages. */ -}}
-{{- /* the six builds the design lists, by slug, so the portfolio's other pages do not
-       quietly become rows here */ -}}
 {{- $builds := slice -}}
 {{- range hugo.Data.tech.builds -}}
   {{- with site.GetPage (printf "/docs/portfolio/%s" .slug) }}{{ $builds = $builds | append . }}{{ end -}}
 {{- end -}}
+{{- /* Where the calendar sits in the head's entry sequence: the lede's slot when the page
+       has no lede, so it does not wait a beat for a paragraph that is not there. */ -}}
+{{- $i := 1 -}}
+{{- with .Params.lede }}{{ $i = 2 }}{{ end -}}
 <main class="panel is-in" id="main">
   {{ partial "panel-bar.html" . }}
   <div class="panel__scroll" data-scroll>
@@ -17,14 +24,16 @@
       <div class="panel__head">
         <h1 class="ptitle" id="title" tabindex="-1" style="--i:0">{{ .Title }}</h1>
         {{- with .Params.lede }}<p class="lede" style="--i:1">{{ . }}</p>{{ end }}
-        {{- /* What I have actually been building, as the year GitHub recorded it: the
-               same calendar the CV's platform page draws, third in the head's entry
-               sequence so it follows the title and the lede rather than pre-empting
-               them. It reads the nightly-baked hugo/data/contributions.json, and
-               inherits the partial's own notice when that data is not there. */}}
-        {{ partial "github-heatmap.html" (dict "i" 2) }}
+        {{- /* What I have actually been building, as the year GitHub recorded it: the same
+               calendar the CV's platform page draws. It reads the nightly-baked
+               hugo/data/contributions.json, and inherits the partial's own notice when
+               that data is not there. */}}
+        {{ partial "github-heatmap.html" (dict "i" $i) }}
       </div>
 
+      <div class="rule" data-inview></div>
+
+      <p class="subhead" data-inview>Projects · {{ len $builds }}</p>
       <div class="rows" data-inview>
         {{- range $builds }}
         <a class="entry" href="{{ .RelPermalink }}">
@@ -33,6 +42,14 @@
           <span class="entry__go" aria-hidden="true">→</span>
         </a>
         {{- end }}
+      </div>
+
+      <div class="rule" data-inview></div>
+
+      <p class="subhead" data-inview>Platforms · {{ len .Pages }}</p>
+      {{- /* The design gives a long list the tighter row rhythm -- ten groups against five
+             projects -- which is what `rows--tight` is for (content.css). */}}
+      <div class="rows rows--tight" data-inview>
         {{- range .Pages.ByWeight }}
         <a class="entry" href="{{ .RelPermalink }}">
           <span class="entry__title">{{ .Title }}</span>
