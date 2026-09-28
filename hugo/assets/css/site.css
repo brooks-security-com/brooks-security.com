@@ -132,6 +132,13 @@ a { color: inherit; }
   border-radius: 2px;
 }
 
+/* The icon partial, sized where it is used. Its markup carries a viewBox and no
+   width or height, so an icon with no rule of its own takes the width of whatever
+   column it lands in -- and the prose layer's `.prose svg` then caps it at that
+   same width, which is what turned the repository chip's octocat into a 624px
+   square. One em, and never shrink it as a flex item. */
+.i { width: 1em; height: 1em; flex: none; }
+
 .sr-only {
   position: absolute;
   width: 1px; height: 1px;

@@ -2,10 +2,12 @@
  *
  * The redesign replaced the home page and the shell, but the site's *content* is older
  * than the redesign and leans on classes it never had an opinion about: the one-page
- * resume as a sheet of paper, .video-embed for a recording inside a doc, repository
- * badges, pull quotes, illustrations floated into a post. The GitHub heatmap used to be
- * on that list; the design styles it itself now (the tail of site.css), so its one rule
- * here was pruned rather than carried.
+ * resume as a sheet of paper, .video-embed for a recording inside a doc, pull quotes,
+ * illustrations floated into a post. The GitHub heatmap used to be on that list; the
+ * design styles it itself now (the tail of site.css), so its one rule here was pruned
+ * rather than carried. Repository badges left the list the same way: the badges are
+ * the design's own component now, in content.css, because the render hook builds them
+ * instead of the old shields.io image landing in the prose.
  *
  * Deliberately not a copy of the old stylesheet. The old shell's rules for .panel,
  * .tools, .brand and the rest are NOT here: they belong to the retired graph home, and
@@ -56,10 +58,6 @@
 .prose .post-illustration, .prose .post-illustration-left {float: none; max-width: 180px; margin: 18px auto;}
 
 .prose .pull-quote {margin: 26px auto; max-width: 560px; padding: 0 12px; text-align: center; font-size: 19px; line-height: 1.4; font-style: italic; color: var(--accent);}
-
-a:hover > .repo-badge {border-color: var(--accent-line);}
-
-.prose a:has(> .repo-badge) {text-decoration: none;}
 
 .prose .highlight pre {margin: 0;}
 

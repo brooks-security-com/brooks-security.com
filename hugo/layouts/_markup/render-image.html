@@ -1,9 +1,11 @@
-{{- /* Repository badges from img.shields.io become a local GitHub chip with the
-       badge's own alt text, so pages make no third-party image requests. Every
-       other image renders as usual, lazily. */ -}}
+{{- /* Repository badges from img.shields.io become a local GitHub chip, so pages make
+       no third-party image requests. The badge's alt text is the link's accessible
+       name ("GitHub: LittleSeneca/local-nvd"); the chip shows the repo path alone
+       because the mark beside it already says GitHub. Every other image renders as
+       usual, lazily. */ -}}
 {{- $u := urls.Parse .Destination -}}
 {{- if eq $u.Host "img.shields.io" -}}
-<span class="repo-badge">{{ partial "icon.html" "github" }}{{ .PlainText }}</span>
+<span class="repo-badge">{{ partial "icon.html" "github" }}<span class="sr-only">GitHub: </span>{{ strings.TrimPrefix "GitHub: " .PlainText }}</span>
 {{- else -}}
 <img src="{{ .Destination | safeURL }}" alt="{{ .PlainText }}"{{ with .Title }} title="{{ . }}"{{ end }} loading="lazy" decoding="async">
 {{- end -}}
