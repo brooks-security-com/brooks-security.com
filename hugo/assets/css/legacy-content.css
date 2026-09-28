@@ -3,7 +3,9 @@
  * The redesign replaced the home page and the shell, but the site's *content* is older
  * than the redesign and leans on classes it never had an opinion about: the one-page
  * resume as a sheet of paper, .video-embed for a recording inside a doc, repository
- * badges, the GitHub heatmap, pull quotes, illustrations floated into a post.
+ * badges, pull quotes, illustrations floated into a post. The GitHub heatmap used to be
+ * on that list; the design styles it itself now (the tail of site.css), so its one rule
+ * here was pruned rather than carried.
  *
  * Deliberately not a copy of the old stylesheet. The old shell's rules for .panel,
  * .tools, .brand and the rest are NOT here: they belong to the retired graph home, and
@@ -58,8 +60,6 @@
 a:hover > .repo-badge {border-color: var(--accent-line);}
 
 .prose a:has(> .repo-badge) {text-decoration: none;}
-
-.gh-heatmap--empty {color: var(--muted); font-size: 13px;}
 
 .prose .highlight pre {margin: 0;}
 

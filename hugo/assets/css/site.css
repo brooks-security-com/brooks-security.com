@@ -53,6 +53,16 @@
   --accent-ink: #ffffff;
   --accent-line: #cfc8ff;
 
+  /* The GitHub calendar's five fills, least to most. Its own ramp rather than
+     shades of --accent: a contribution calendar is read as a quantity, and a
+     quantity needs steps a reader can tell apart at 11px, which the accent's
+     own range does not have. */
+  --hm0: #ebebf0;
+  --hm1: #d8d1ff;
+  --hm2: #afa3ff;
+  --hm3: #7f70f0;
+  --hm4: #4f3fd3;
+
   /* What the contact form reports, and the one callout in the site. Readable on
      paper first; --warn-soft only ever sits behind --warn, never carries type. */
   --ok: #0f7443;
@@ -81,6 +91,11 @@
     --accent: #9a90ff;
     --accent-ink: #101015;
     --accent-line: #4a4290;
+    --hm0: #1b1b21;
+    --hm1: #2d2960;
+    --hm2: #4b42a6;
+    --hm3: #7166e6;
+    --hm4: #a39bff;
     --ok: #45cf8c;
     --warn: #edb24a;
     --warn-soft: #2a2110;
@@ -981,5 +996,71 @@ html:not(.js) .prose .contact-form { display: none; }
 .prose .contact-form-dev-notice code {
   padding: .1em .34em; border-radius: 2px;
   background: color-mix(in srgb, var(--warn) 12%, transparent);
+}
+
+/* --- the GitHub contribution calendar ------------------------------------
+   The one block on the site that is a picture of a year. Two places draw it:
+   the top of the Tech panel, and the platform page's GitHub Activity section.
+   It came across from the graph theme as a card -- a filled, rounded panel with
+   a 12px radius -- and this design has no cards and no radii, so it is redrawn
+   flat: the calendar drawn straight onto the page, and the count said in the
+   mono caption the rest of the design gives metadata. The five fills are tokens
+   (--hm0 to --hm4), so the calendar follows the scheme like everything else.
+
+   Three rules that are load-bearing rather than decorative:
+
+   - `.gh-heatmap .hm` has to out-specify content.css's `.prose svg` (0,1,1), or
+     the SVG picks up that rule's `margin: 1.7rem auto` on the CV page and the
+     block is spaced twice, once by the column and once by the picture.
+   - `.gh-heatmap .hm-total` has to out-specify `.panel__inner p` (0,1,1) for the
+     same reason: without it the count line inherits the body colour instead of
+     the caption's.
+   - The legend's swatches are sized in container-query units off the same 11px
+     cell the SVG draws at viewBox scale -- 53 weeks at 11px + 3px gutters is the
+     739 the division names -- which is what keeps a swatch the size of a square
+     in the calendar at every width. That is why .gh-heatmap is a container. */
+.gh-heatmap {
+  container-type: inline-size;
+  margin: 0 0 clamp(1.6rem, 4.5vh, 2.4rem);
+}
+
+.gh-heatmap--empty { color: var(--muted); font-size: .82rem; }
+
+.gh-heatmap .hm-total {
+  margin: 0 0 .7rem;
+  font-family: var(--mono); font-size: .7rem;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--muted);
+}
+.gh-heatmap .hm-total strong { color: var(--ink); font-weight: 500; }
+.gh-heatmap .hm-total a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--rule);
+  text-underline-offset: 3px;
+}
+.gh-heatmap .hm-total a:hover { color: var(--accent); text-decoration-color: currentColor; }
+
+.gh-heatmap .hm { display: block; width: 100%; height: auto; margin: 0; }
+
+/* fill for the calendar's squares, background for the legend's swatches: the same
+   class does both because SVG has no background and HTML has no fill. */
+.gh-heatmap .hm-l0 { fill: var(--hm0); background: var(--hm0); }
+.gh-heatmap .hm-l1 { fill: var(--hm1); background: var(--hm1); }
+.gh-heatmap .hm-l2 { fill: var(--hm2); background: var(--hm2); }
+.gh-heatmap .hm-l3 { fill: var(--hm3); background: var(--hm3); }
+.gh-heatmap .hm-l4 { fill: var(--hm4); background: var(--hm4); }
+
+.gh-heatmap .hm-legend {
+  display: flex; align-items: center; justify-content: flex-end; gap: .35rem;
+  margin-top: .55rem;
+  font-family: var(--mono); font-size: .62rem;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--muted);
+}
+.gh-heatmap .hm-legend i {
+  width: calc(100cqw * 11 / 739);
+  height: calc(100cqw * 11 / 739);
+  border-radius: 2px;
 }
 
