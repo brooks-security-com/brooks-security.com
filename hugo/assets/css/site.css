@@ -403,7 +403,16 @@ html.is-entered .cloud__w {
   .row:hover::after { width: 2.5rem; }
 }
 
-.row:focus-visible .row__go { color: var(--accent); }
+/* Returning to the index from a section hands focus back to the first row, so a
+   reader who was in a section does not start again from the top of the document.
+   That focus is placed by script, and WebKit is the engine that reads script focus
+   as :focus-visible -- on iOS that drew the accent ring around the whole Bio row
+   for a reader who had only come back (webkit.org/b/239472). The row wears
+   data-returning for the moment it takes the focus, and the ring goes back to
+   being what it is: the reward for arriving by Tab. */
+.row[data-returning]:focus-visible { outline: none; }
+
+.row:focus-visible:not([data-returning]) .row__go { color: var(--accent); }
 
 .row:active .row__word { transform: translate3d(0.35rem, 0, 0); }
 
