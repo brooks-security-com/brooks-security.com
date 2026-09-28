@@ -1,7 +1,11 @@
 {{- $a := partialCached "assets.html" . "assets" -}}
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>{{ with .Title }}{{ . }} | {{ end }}{{ site.Title }}</title>
+{{- /* The home page *is* the site, so its title is the site's name and nothing else.
+       Every other page leads with its own name first, because a tab bar of eight
+       panels all reading "Graham Brooks, CISSP" tells you nothing about which one
+       you are looking at. */}}
+<title>{{ if not .IsHome }}{{ with .Title }}{{ . }} | {{ end }}{{ end }}{{ site.Title }}</title>
 <meta name="description" content="{{ or .Description .Summary | plainify | htmlUnescape | strings.TrimSpace }}">
 {{- /* The design is not light-only: the stylesheet carries a dark palette and the
        reference emitted a theme colour for each scheme. Saying "light" here made
